@@ -1,0 +1,24 @@
+/Makefile/1.1.1.1/Sun May  2 03:58:46 1999//Tnetwork_cmds-67
+/Makefile.dist/1.1.1.1/Sun May  2 03:58:46 1999//Tnetwork_cmds-67
+/Makefile.preamble/1.1.1.1/Sun May  2 03:58:46 1999//Tnetwork_cmds-67
+/PB.project/1.1.1.2/Tue Jan 11 01:49:46 2000//Tnetwork_cmds-67
+/README/1.1.1.1/Sun May  2 03:58:46 1999//Tnetwork_cmds-67
+/authenc.c/1.1.1.1/Sun May  2 03:58:46 1999//Tnetwork_cmds-67
+/commands.c/1.1.1.2/Tue Jan 11 01:49:47 2000//Tnetwork_cmds-67
+/defines.h/1.1.1.1/Sun May  2 03:58:46 1999//Tnetwork_cmds-67
+/externs.h/1.1.1.2/Tue Jan 11 01:49:47 2000//Tnetwork_cmds-67
+/fdset.h/1.1.1.1/Sun May  2 03:58:46 1999//Tnetwork_cmds-67
+/general.h/1.1.1.1/Sun May  2 03:58:46 1999//Tnetwork_cmds-67
+/krb4-proto.h/1.1.1.1/Sun May  2 03:58:46 1999//Tnetwork_cmds-67
+/main.c/1.1.1.2/Tue Jan 11 01:49:47 2000//Tnetwork_cmds-67
+/network.c/1.1.1.1/Sun May  2 03:58:47 1999//Tnetwork_cmds-67
+/ring.c/1.1.1.1/Sun May  2 03:58:47 1999//Tnetwork_cmds-67
+/ring.h/1.1.1.1/Sun May  2 03:58:47 1999//Tnetwork_cmds-67
+/sys_bsd.c/1.1.1.1/Sun May  2 03:58:47 1999//Tnetwork_cmds-67
+/telnet.1/1.1.1.1/Sun May  2 03:58:47 1999//Tnetwork_cmds-67
+/telnet.c/1.1.1.2/Tue Jan 11 01:49:48 2000//Tnetwork_cmds-67
+/terminal.c/1.1.1.1/Sun May  2 03:58:47 1999//Tnetwork_cmds-67
+/tn3270.c/1.1.1.2/Tue Jan 11 01:49:48 2000//Tnetwork_cmds-67
+/types.h/1.1.1.1/Sun May  2 03:58:47 1999//Tnetwork_cmds-67
+/utilities.c/1.1.1.2/Tue Jan 11 01:49:48 2000//Tnetwork_cmds-67
+D

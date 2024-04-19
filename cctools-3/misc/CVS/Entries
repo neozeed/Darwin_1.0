@@ -1,0 +1,22 @@
+/Makefile/1.1.1.2/Fri Feb  4 21:24:40 2000//Tcctools-3
+/atom.c/1.1.1.1/Fri May  7 17:46:36 1999//Tcctools-3
+/checksyms.c/1.1.1.2/Fri Feb  4 21:24:39 2000//Tcctools-3
+/cmpdylib.c/1.1.1.1/Fri May  7 17:46:37 1999//Tcctools-3
+/dylib_pcsampler.c/1.1.1.1/Fri May  7 17:46:37 1999//Tcctools-3
+/indr.c/1.1.1.1/Fri May  7 17:46:35 1999//Tcctools-3
+/inout.c/1.1.1.1/Fri May  7 17:46:34 1999//Tcctools-3
+/kern_tool.c/1.1.1.1/Fri May  7 17:46:36 1999//Tcctools-3
+/libtool.c/1.1.1.2/Fri Feb  4 21:24:38 2000//Tcctools-3
+/lipo.c/1.1.1.2/Fri Feb  4 21:24:38 2000//Tcctools-3
+/main.c/1.1.1.1/Fri May  7 17:46:33 1999//Tcctools-3
+/make.defs/1.1.1.1/Fri May  7 17:46:38 1999//Tcctools-3
+/make_defs.h/1.1.1.1/Fri May  7 17:46:38 1999//Tcctools-3
+/nm.c/1.1.1.2/Fri Feb  4 21:24:39 2000//Tcctools-3
+/notes/1.1.1.2/Fri Feb  4 21:24:40 2000//Tcctools-3
+/pagestuff.c/1.1.1.1/Fri May  7 17:46:37 1999//Tcctools-3
+/redo_prebinding.c/1.1.1.1/Fri May  7 17:46:38 1999//Tcctools-3
+/segedit.c/1.1.1.1/Fri May  7 17:46:36 1999//Tcctools-3
+/size.c/1.1.1.1/Fri May  7 17:46:33 1999//Tcctools-3
+/strings.c/1.1.1.1/Fri May  7 17:46:34 1999//Tcctools-3
+/strip.c/1.1.1.2/Fri Feb  4 21:24:39 2000//Tcctools-3
+D

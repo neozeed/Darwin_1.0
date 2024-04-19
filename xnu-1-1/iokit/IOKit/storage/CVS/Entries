@@ -1,0 +1,18 @@
+/IOApplePartitionScheme.h/1.1.1.1/Sat Mar 25 21:02:46 2000//Txnu-1-1
+/IOCDDrive.h/1.1.1.1/Sat Mar 25 21:02:46 2000//Txnu-1-1
+/IOCDDriveNub.h/1.1.1.1/Sat Mar 25 21:02:46 2000//Txnu-1-1
+/IOCDMedia.h/1.1.1.1/Sat Mar 25 21:02:46 2000//Txnu-1-1
+/IOCDTypes.h/1.1.1.1/Sat Mar 25 21:02:46 2000//Txnu-1-1
+/IODrive.h/1.1.1.1/Sat Mar 25 21:02:46 2000//Txnu-1-1
+/IOFDiskPartitionScheme.h/1.1.1.1/Sat Mar 25 21:02:46 2000//Txnu-1-1
+/IOHDDrive.h/1.1.1.1/Sat Mar 25 21:02:46 2000//Txnu-1-1
+/IOHDDriveNub.h/1.1.1.1/Sat Mar 25 21:02:46 2000//Txnu-1-1
+/IOHDTypes.h/1.1.1.1/Sat Mar 25 21:02:46 2000//Txnu-1-1
+/IOMedia.h/1.1.1.1/Sat Mar 25 21:02:46 2000//Txnu-1-1
+/IOMediaBSDClient.h/1.1.1.1/Sat Mar 25 21:02:46 2000//Txnu-1-1
+/IONeXTPartitionScheme.h/1.1.1.1/Sat Mar 25 21:02:46 2000//Txnu-1-1
+/IOPartitionScheme.h/1.1.1.1/Sat Mar 25 21:02:46 2000//Txnu-1-1
+/IOStorage.h/1.1.1.1/Sat Mar 25 21:02:46 2000//Txnu-1-1
+/Makefile/1.1.1.1/Sat Mar 25 21:02:46 2000//Txnu-1-1
+D/ata////
+D/scsi////

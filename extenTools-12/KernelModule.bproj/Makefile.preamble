@@ -1,0 +1,19 @@
+VERSIONING_SYSTEM = next-sgs
+OTHER_GENERATED_OFILES = $(VERS_OFILE)
+AFTER_INSTALL += fix_resource_permissions install_makefiles
+
+PRIVATE_HDR_INSTALLDIR = $(INSTALLDIR)/$(NAME).$(BUNDLE_EXTENSION)/PrivateHeaders
+OTHER_PRIVATE_HEADERS = MDA_Debug.h
+
+TYPE_MAKEFILE = kmod.make
+TYPE_MAKEFILE_PRE = $(TYPE_MAKEFILE).preamble
+TYPE_MAKEFILE_POST = $(TYPE_MAKEFILE).postamble
+
+MAKEFILE_INSTALL_DIR = $(DSTROOT)/System/Developer/Makefiles/pb_makefiles
+LOCAL_MAKEFILE_INSTALL_DIR = $(DSTROOT)/Local/Developer/Makefiles/pb_makefiles
+
+ifeq "$(wildcard /System/Library/Frameworks/ProjectBuilder.framework)" ""
+# No PB framework; can't build the plugin.
+CLASSES = 
+FRAMEWORKS = 
+endif

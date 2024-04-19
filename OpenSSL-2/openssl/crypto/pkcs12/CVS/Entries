@@ -1,0 +1,18 @@
+/Makefile.ssl/1.2/Sun Mar  5 03:45:49 2000//TOpenSSL-2
+/p12_add.c/1.1.1.1/Sun Mar  5 02:30:58 2000//TOpenSSL-2
+/p12_attr.c/1.1.1.1/Sun Mar  5 02:30:58 2000//TOpenSSL-2
+/p12_bags.c/1.1.1.1/Sun Mar  5 02:30:58 2000//TOpenSSL-2
+/p12_crpt.c/1.1.1.1/Sun Mar  5 02:30:58 2000//TOpenSSL-2
+/p12_crt.c/1.1.1.1/Sun Mar  5 02:30:58 2000//TOpenSSL-2
+/p12_decr.c/1.1.1.1/Sun Mar  5 02:30:58 2000//TOpenSSL-2
+/p12_init.c/1.1.1.1/Sun Mar  5 02:30:58 2000//TOpenSSL-2
+/p12_key.c/1.1.1.1/Sun Mar  5 02:30:58 2000//TOpenSSL-2
+/p12_kiss.c/1.1.1.1/Sun Mar  5 02:30:58 2000//TOpenSSL-2
+/p12_lib.c/1.1.1.1/Sun Mar  5 02:30:58 2000//TOpenSSL-2
+/p12_mac.c/1.1.1.1/Sun Mar  5 02:30:58 2000//TOpenSSL-2
+/p12_mutl.c/1.1.1.1/Sun Mar  5 02:30:58 2000//TOpenSSL-2
+/p12_sbag.c/1.1.1.1/Sun Mar  5 02:30:58 2000//TOpenSSL-2
+/p12_utl.c/1.1.1.1/Sun Mar  5 02:30:58 2000//TOpenSSL-2
+/pk12err.c/1.1.1.1/Sun Mar  5 02:30:58 2000//TOpenSSL-2
+/pkcs12.h/1.1.1.1/Sun Mar  5 02:30:58 2000//TOpenSSL-2
+D

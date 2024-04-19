@@ -1,0 +1,26 @@
+/Makefile/1.1.1.1/Sat Mar 25 21:02:29 2000//Txnu-1-1
+/krpc.h/1.1.1.1/Sat Mar 25 21:02:28 2000//Txnu-1-1
+/krpc_subr.c/1.1.1.1/Sat Mar 25 21:02:28 2000//Txnu-1-1
+/nfs.h/1.1.1.1/Sat Mar 25 21:02:28 2000//Txnu-1-1
+/nfs_bio.c/1.1.1.1/Sat Mar 25 21:02:28 2000//Txnu-1-1
+/nfs_boot.c/1.1.1.1/Sat Mar 25 21:02:28 2000//Txnu-1-1
+/nfs_node.c/1.1.1.1/Sat Mar 25 21:02:28 2000//Txnu-1-1
+/nfs_nqlease.c/1.1.1.1/Sat Mar 25 21:02:28 2000//Txnu-1-1
+/nfs_serv.c/1.1.1.1/Sat Mar 25 21:02:28 2000//Txnu-1-1
+/nfs_socket.c/1.1.1.1/Sat Mar 25 21:02:29 2000//Txnu-1-1
+/nfs_srvcache.c/1.1.1.1/Sat Mar 25 21:02:29 2000//Txnu-1-1
+/nfs_subs.c/1.1.1.1/Sat Mar 25 21:02:29 2000//Txnu-1-1
+/nfs_syscalls.c/1.1.1.1/Sat Mar 25 21:02:29 2000//Txnu-1-1
+/nfs_vfsops.c/1.1.1.1/Sat Mar 25 21:02:29 2000//Txnu-1-1
+/nfs_vnops.c/1.1.1.1/Sat Mar 25 21:02:29 2000//Txnu-1-1
+/nfsdiskless.h/1.1.1.1/Sat Mar 25 21:02:29 2000//Txnu-1-1
+/nfsm_subs.h/1.1.1.1/Sat Mar 25 21:02:29 2000//Txnu-1-1
+/nfsmount.h/1.1.1.1/Sat Mar 25 21:02:29 2000//Txnu-1-1
+/nfsnode.h/1.1.1.1/Sat Mar 25 21:02:29 2000//Txnu-1-1
+/nfsproto.h/1.1.1.1/Sat Mar 25 21:02:29 2000//Txnu-1-1
+/nfsrtt.h/1.1.1.1/Sat Mar 25 21:02:29 2000//Txnu-1-1
+/nfsrvcache.h/1.1.1.1/Sat Mar 25 21:02:29 2000//Txnu-1-1
+/nqnfs.h/1.1.1.1/Sat Mar 25 21:02:29 2000//Txnu-1-1
+/rpcv2.h/1.1.1.1/Sat Mar 25 21:02:29 2000//Txnu-1-1
+/xdr_subs.h/1.1.1.1/Sat Mar 25 21:02:29 2000//Txnu-1-1
+D

@@ -1,0 +1,254 @@
+%!PS-Adobe-3.0
+%%Creator: groff version 1.10
+%%CreationDate: Mon Jun 21 14:21:56 1999
+%%DocumentNeededResources: font Times-Roman
+%%DocumentSuppliedResources: procset grops 1.10 0
+%%Pages: 1
+%%PageOrder: Ascend
+%%Orientation: Portrait
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset grops 1.10 0
+/setpacking where{
+pop
+currentpacking
+true setpacking
+}if
+/grops 120 dict dup begin
+/SC 32 def
+/A/show load def
+/B{0 SC 3 -1 roll widthshow}bind def
+/C{0 exch ashow}bind def
+/D{0 exch 0 SC 5 2 roll awidthshow}bind def
+/E{0 rmoveto show}bind def
+/F{0 rmoveto 0 SC 3 -1 roll widthshow}bind def
+/G{0 rmoveto 0 exch ashow}bind def
+/H{0 rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/I{0 exch rmoveto show}bind def
+/J{0 exch rmoveto 0 SC 3 -1 roll widthshow}bind def
+/K{0 exch rmoveto 0 exch ashow}bind def
+/L{0 exch rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/M{rmoveto show}bind def
+/N{rmoveto 0 SC 3 -1 roll widthshow}bind def
+/O{rmoveto 0 exch ashow}bind def
+/P{rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/Q{moveto show}bind def
+/R{moveto 0 SC 3 -1 roll widthshow}bind def
+/S{moveto 0 exch ashow}bind def
+/T{moveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/SF{
+findfont exch
+[exch dup 0 exch 0 exch neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/MF{
+findfont
+[5 2 roll
+0 3 1 roll
+neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/level0 0 def
+/RES 0 def
+/PL 0 def
+/LS 0 def
+/MANUAL{
+statusdict begin/manualfeed true store end
+}bind def
+/PLG{
+gsave newpath clippath pathbbox grestore
+exch pop add exch pop
+}bind def
+/BP{
+/level0 save def
+1 setlinecap
+1 setlinejoin
+72 RES div dup scale
+LS{
+90 rotate
+}{
+0 PL translate
+}ifelse
+1 -1 scale
+}bind def
+/EP{
+level0 restore
+showpage
+}bind def
+/DA{
+newpath arcn stroke
+}bind def
+/SN{
+transform
+.25 sub exch .25 sub exch
+round .25 add exch round .25 add exch
+itransform
+}bind def
+/DL{
+SN
+moveto
+SN
+lineto stroke
+}bind def
+/DC{
+newpath 0 360 arc closepath
+}bind def
+/TM matrix def
+/DE{
+TM currentmatrix pop
+translate scale newpath 0 0 .5 0 360 arc closepath
+TM setmatrix
+}bind def
+/RC/rcurveto load def
+/RL/rlineto load def
+/ST/stroke load def
+/MT/moveto load def
+/CL/closepath load def
+/FL{
+currentgray exch setgray fill setgray
+}bind def
+/BL/fill load def
+/LW/setlinewidth load def
+/RE{
+findfont
+dup maxlength 1 index/FontName known not{1 add}if dict begin
+{
+1 index/FID ne{def}{pop pop}ifelse
+}forall
+/Encoding exch def
+dup/FontName exch def
+currentdict end definefont pop
+}bind def
+/DEFS 0 def
+/EBEGIN{
+moveto
+DEFS begin
+}bind def
+/EEND/end load def
+/CNT 0 def
+/level1 0 def
+/PBEGIN{
+/level1 save def
+translate
+div 3 1 roll div exch scale
+neg exch neg exch translate
+0 setgray
+0 setlinecap
+1 setlinewidth
+0 setlinejoin
+10 setmiterlimit
+[]0 setdash
+/setstrokeadjust where{
+pop
+false setstrokeadjust
+}if
+/setoverprint where{
+pop
+false setoverprint
+}if
+newpath
+/CNT countdictstack def
+userdict begin
+/showpage{}def
+}bind def
+/PEND{
+clear
+countdictstack CNT sub{end}repeat
+level1 restore
+}bind def
+end def
+/setpacking where{
+pop
+setpacking
+}if
+%%EndResource
+%%IncludeResource: font Times-Roman
+grops begin/DEFS 1 dict def DEFS begin/u{.001 mul}bind def end/RES 72
+def/PL 792 def/LS false def/ENC0[/asciicircum/asciitilde/Scaron/Zcaron
+/scaron/zcaron/Ydieresis/trademark/quotesingle/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/space/exclam/quotedbl/numbersign/dollar/percent
+/ampersand/quoteright/parenleft/parenright/asterisk/plus/comma/hyphen
+/period/slash/zero/one/two/three/four/five/six/seven/eight/nine/colon
+/semicolon/less/equal/greater/question/at/A/B/C/D/E/F/G/H/I/J/K/L/M/N/O
+/P/Q/R/S/T/U/V/W/X/Y/Z/bracketleft/backslash/bracketright/circumflex
+/underscore/quoteleft/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y
+/z/braceleft/bar/braceright/tilde/.notdef/quotesinglbase/guillemotleft
+/guillemotright/bullet/florin/fraction/perthousand/dagger/daggerdbl
+/endash/emdash/ff/fi/fl/ffi/ffl/dotlessi/dotlessj/grave/hungarumlaut
+/dotaccent/breve/caron/ring/ogonek/quotedblleft/quotedblright/oe/lslash
+/quotedblbase/OE/Lslash/.notdef/exclamdown/cent/sterling/currency/yen
+/brokenbar/section/dieresis/copyright/ordfeminine/guilsinglleft
+/logicalnot/minus/registered/macron/degree/plusminus/twosuperior
+/threesuperior/acute/mu/paragraph/periodcentered/cedilla/onesuperior
+/ordmasculine/guilsinglright/onequarter/onehalf/threequarters
+/questiondown/Agrave/Aacute/Acircumflex/Atilde/Adieresis/Aring/AE
+/Ccedilla/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute/Icircumflex
+/Idieresis/Eth/Ntilde/Ograve/Oacute/Ocircumflex/Otilde/Odieresis
+/multiply/Oslash/Ugrave/Uacute/Ucircumflex/Udieresis/Yacute/Thorn
+/germandbls/agrave/aacute/acircumflex/atilde/adieresis/aring/ae/ccedilla
+/egrave/eacute/ecircumflex/edieresis/igrave/iacute/icircumflex/idieresis
+/eth/ntilde/ograve/oacute/ocircumflex/otilde/odieresis/divide/oslash
+/ugrave/uacute/ucircumflex/udieresis/yacute/thorn/ydieresis]def
+/Times-Roman@0 ENC0/Times-Roman RE
+%%EndProlog
+%%Page: 1 1
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF .256(The program is a general interf)72 12 R
+.256(ace to nameserv)-.1 F .256(ers via BIND resolv)-.15 F .256
+(er library calls.)-.15 F .256(The program supports queries to)5.256 F
+1.157(the nameserv)72 24 R 1.157(er with an opcode of Q)-.15 F(UER)-.1 E
+6.237 -1.29(Y. T)-.65 H 1.157
+(his program is intended to be a replacement or supplement to pro-)1.29
+F 1.368(grams lik)72 36 R 3.868(en)-.1 G 1.368
+(stest, nsquery and nslookup.)-3.868 F 1.367(All ar)6.367 F 1.367
+(guments e)-.18 F 1.367(xcept for and are treated without case-sensiti)
+-.15 F(vity)-.25 E 6.367(.T)-.65 G(he)-6.367 E(nameserv)72 48 Q .523
+(er to be used in the query)-.15 F 5.523(.N)-.65 G(ameserv)-5.523 E .523
+(ers can appear as either Internet addresses of the form or can appear)
+-.15 F .873(as domain names.)72 60 R(\(Def)5.873 E .873
+(ault: as speci\214ed in The type of resource record of interest.)-.1 F
+-.8(Ty)5.873 G .873(pes include: address name-).8 F(serv)72 72 Q .858
+(er canonical name domain name pointer start of authority well-kno)-.15
+F .858(wn service host information mailbox infor)-.25 F(-)-.2 E .42
+(mation mail e)72 84 R .42
+(xchange responsible person mail group member DCE or AFS serv)-.15 F .42
+(er wildcard Note that an)-.15 F 2.92(yc)-.15 G .42(ase may)-2.92 F .547
+(be used.)72 96 R(\(Def)5.547 E .547
+(ault: The class of resource records of interest.)-.1 F .548
+(Classes include: Internet Hesiod Chaos wildcard Note)5.548 F .013
+(that an)72 108 R 2.513(yc)-.15 G .013(ase may be used.)-2.513 F(\(Def)
+5.013 E .013(ault: The number of times to retry if the nameserv)-.1 F
+.013(er is not responding.)-.15 F(\(Def)5.013 E 2.513(ault: 4.\))-.1 F
+.101(Period to w)72 120 R .101(ait before timing out.)-.1 F(\(Def)5.101
+E .101(ault: T)-.1 F .101(urn on deb)-.45 F 2.601(ugging. This)-.2 F
+.101(sets the bit of the resolv)2.601 F(er')-.15 E 2.601<738c>-.55 G
+2.601(eld. \(Def)-2.601 F 2.602(ault: no)-.1 F(deb)72 132 Q 2.76
+(ugging.\) Use)-.2 F 2.76(ar)2.76 G .26(ather than a pack)-2.76 F 2.76
+(et. This)-.1 F .26(uses a TCP stream connection with the nameserv)2.76
+F .26(er rather than a UDP)-.15 F 3.14(datagram. This)72 144 R .64
+(sets the bit of the resolv)3.14 F(er')-.15 E 3.14<738c>-.55 G 3.14
+(eld. \(Def)-3.14 F 3.14(ault: UDP)-.1 F 3.14(datagram.\) Synon)3.14 F
+.64(ym for the \215ag.)-.15 F .64(The name of)5.64 F .633
+(the host \(or domain\) of interest.)72 156 R .632(to get the def)5.632
+F .632(ault ns and search lists list of usable RR types and classes list of re-)
+-.1 F(solv)72 168 Q .386(er \215ags If the resolv)-.15 F .386(er f)-.15
+F .386(ails to answer the query and deb)-.1 F .386
+(ugging has not been turned on, will simply print a mes-)-.2 F .275
+(sage lik)72 180 R .275(e: The v)-.1 F .274(alue of the return code is supplied by Bryan Beecher Queries of a class other than can ha)
+-.25 F .574 -.15(ve i)-.2 H(nterest-).15 E .17
+(ing results since ordinarily a nameserv)72 192 R .17
+(er only has a list of root nameserv)-.15 F .171
+(ers for class resource records.)-.15 F .171(uses a call to)5.171 F .163
+(to determine if the ar)72 204 R .162(gument for the option is a v)-.18
+F .162(alid Internet address.)-.25 F(Unfortunately)5.162 E 2.662(,s)-.65
+G .162(eems to cause a se)-2.662 F(gmentation)-.15 E -.1(fa)72 216 S
+(ult with some \(bad\) IP addresses \(e.g., 1.2.3.4.5\).).1 E EP
+%%Trailer
+end
+%%EOF

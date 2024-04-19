@@ -1,0 +1,64 @@
+SQLBind 8
+
+Remember, this still in development so don't blame me if something
+goes wronge...  
+
+Now, with that out of the way, lets get started.
+This is the README from version 0.4.1.  Please check
+http://bind.linuxos.net for a new copy if you are not
+sure this is the current release.
+
+Requirements:
+Bind 8.1.2, 8.2, or 8.2.1 source.
+MySQL installed.
+
+To apply the diff:
+1. cd into src/bin/named under the bind src tree and do a:
+patch </path/to/bind-8.x.diff
+where bind-8.x.diff is the version of bind you are using.
+Things should patch cleanly.  If not, send me an email at
+bind@linuxos.net and I will see what i can do.  
+
+2. Edit src/bin/named/Makefile and change:
+   SQLINC = include dir for the sql server's headers
+   SQLLIBDIR = path to sql servers libs
+   SQLLIB = library to compile against (-lmysqlclient for now)
+
+3. Create a database in mysql called 'bind' to hold the tables.
+If you want to use a different db name, just change the dbname[]
+in db_sql.c to whatever you want.
+
+4. create a set of tables to hold the zones using the examples
+in table.layout.  Replace the '.' in a zone name with a '_' and
+replace a '-' with a '__' so test.org would be test_org and
+0.0.127.in-addr.arpa would be 0_0_127_in__addr_arpa. Please 
+name the fields the same as what I'm using unless you want to 
+change it in db_sql.c to prevent problems.
+
+5. create or modify /etc/named.conf using named.conf-sql as a
+template.  Don't forget to create a db user in mysql and add 
+them to named.conf.  The user only needs read access to the db.
+Fill in the assorted db-* fields in named.conf with what you want.
+There is no need for a 'file' statment under each zone.  The 
+'sql {}' takes the place of it.  The host, user, pass, and mbox 
+all use defaults now if there is no value entered for them in
+named.conf.  
+Defaults are as follows:
+   host = localhost
+   user = bind
+   pass = bindpass
+   mbox = bind.localhost
+
+6. Insert the data into the table.  Remember, there isn't much
+error checking just yet so make sure of what your entering.
+
+7. cd into the src directory where you uncompressed bind's source
+and 'make clean && make depend && make' to compile up a fresh copy.
+
+8. Make sure you backup you current named and copy the new named to
+where ever you want and fire it up.
+
+Mitchell Broome
+http://bind.linuxos.net
+6/8/99
+

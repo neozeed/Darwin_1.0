@@ -1,0 +1,124 @@
+.\" %Z% %M% %I% %E% %Z%
+.TH GENDHCP 1 "%E%"
+.UC 4
+.SH NAME
+gendhcp \- generate a DHCP bootstrap file from flat relational tables
+.SH SYNOPSIS
+.B gendhcp
+[
+.B -d dbdirectory
+]
+[
+.B -k
+]
+[
+.B -v
+]
+.SH DESCRIPTION
+.B gendhcp
+is a back end to the
+.B updatehosts
+command.
+It should normally only be invoked from the
+.B updatehosts
+command.
+.PP
+.B gendhcp
+converts a set of flat (relational) files into a DHCP server bootstrap
+file.
+All input files are kept in the
+.B dbdirectory
+which can be specified by the -d command line option.
+The output file which is named dhcpd.conf is placed in the current directory.
+When run under
+.B updatehosts
+the current directory is normally
+.B /var/named
+and the input directory is normally
+.B /var/named/db.
+However, these defaults may be different depending upon the updatehosts
+configuration.
+See the
+.B updatehosts(1)
+manual page for details.
+.PP
+The -k option generates a bootstrap file so only known hosts (e.g. those
+with registered MAC layer addresses can bootstrap. This option is off by
+default which allows any host to boot.
+The -v option generates additional output on the progress of the bootstrap
+file generation.
+.SH
+Input File Formats
+.PP
+.B gendhcp
+uses
+.B readinfo
+to preprocess the input files.
+The format of each file consists of a set of records separated into fields.
+Care should be taken to insure the field names are not altered.  Otherwise
+.B gendhcp
+will complain.
+Each fields attributes should be examined carefully when editing the input
+files.
+Each file used by gendhcp is described as follows:
+.TP
+main:
+Contains information about each host.  The fields from this file used by
+.B gendhcp
+are as follows:
+.RS
+.TP
+host:
+The domain name of the host.
+.TP
+ip:
+The IP address of the host. This field may be set to "dynamic" to indicate
+this host will be given a dynamic IP address when it boots.  If the IP
+address is a normal IP address then the DHCP configuration will use the
+static IP address indicated.
+.TP
+ether:
+The hardware MAC address of the host. This must be present for statically
+configured hosts or for dynamic hosts when the -k flag is set.  
+.RE
+.PP
+subnet:
+Contains information about subnets used to generate the
+DHCP configuration files
+.RS
+.TP
+subnet:
+The subnet prefix in dotted decimal notation
+.TP
+mask:
+The mask of the subnet in dotted-decimal
+.TP
+gateway:
+The IP address of the default gateway for the subnet
+dns:
+The IP address of one or more DNS servers separated with commas.
+.TP
+domain:
+The default domain.
+.TP
+time:
+The IP address of one or more NTP timeserver separated with commas.
+.TP
+hardware:
+The hardware type of the clients (defaults to ether).
+.TP
+dhcprange:
+Range of IP addresses used for dynamic allocation of IP addresses.
+.TP
+maxdhcplease:
+Maximum time in seconds before a DHCP lease expires.
+.TP
+dynamicbootp:
+Allows dynamic BOOTP (defaults to no).
+.SH
+See also
+.PP
+.B gendns(1)
+.B poke_dhcp(1)
+.B poke_ns(1)
+.B updatehosts(1)

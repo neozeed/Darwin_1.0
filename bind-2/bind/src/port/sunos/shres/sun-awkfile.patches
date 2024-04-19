@@ -1,0 +1,32 @@
+*** awkfile.orig	Thu Oct 11 20:36:31 1990
+--- awkfile	Mon Jun 12 14:33:24 1995
+***************
+*** 5,15 ****
+  	CUSTOM = 0
+  }
+  
+! 	{
+! 		if ($3 > MAJOR)
+  			MAJOR = $3
+! 		if ($4 > MINOR)
+  			MINOR = $4
+  		if ($5 > CUSTOM)
+  			CUSTOM = $5
+  	}
+--- 5,20 ----
+  	CUSTOM = 0
+  }
+  
+! NF >=4 && $5 != "FCS"	{
+! 		if ($3 > MAJOR) {
+  			MAJOR = $3
+! 			MINOR = 0
+! 			CUSTOM = 0
+! 		}
+! 		if ($4 > MINOR) {
+  			MINOR = $4
++ 			CUSTOM = 0
++ 		}
+  		if ($5 > CUSTOM)
+  			CUSTOM = $5
+  	}

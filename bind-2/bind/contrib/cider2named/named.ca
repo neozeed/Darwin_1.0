@@ -1,0 +1,27 @@
+.	99999999	IN NS	a.root-servers.net.
+	99999999	IN NS	b.root-servers.net.
+	99999999	IN NS	c.root-servers.net.
+	99999999	IN NS	d.root-servers.net.
+	99999999	IN NS	e.root-servers.net.
+	99999999	IN NS	f.root-servers.net.
+	99999999	IN NS	g.root-servers.net.
+	99999999	IN NS	h.root-servers.net.
+	99999999	IN NS	i.root-servers.net.
+	99999999	IN NS	j.root-servers.net.
+	99999999	IN NS	k.root-servers.net.
+	99999999	IN NS	l.root-servers.net.
+	99999999	IN NS	m.root-servers.net.
+a.root-servers.net.  99999999 IN A  198.41.0.4
+b.root-servers.net.  99999999 IN A  128.9.0.107
+c.root-servers.net.  99999999 IN A  192.33.4.12
+d.root-servers.net.  99999999 IN A  128.8.10.90
+e.root-servers.net.  99999999 IN A  192.203.230.10
+f.root-servers.net.  99999999 IN A  192.5.5.241
+g.root-servers.net.  99999999 IN A  192.112.36.4
+h.root-servers.net.  99999999 IN A  128.63.2.53
+i.root-servers.net.  99999999 IN A  192.36.148.17
+j.root-servers.net.  99999999 IN A  198.41.0.10
+k.root-servers.net.  99999999 IN A  193.0.14.129
+l.root-servers.net.  99999999 IN A  198.32.64.12
+m.root-servers.net.  99999999 IN A  202.12.27.33
+

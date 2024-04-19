@@ -1,0 +1,106 @@
+/AnyDBM_File.pm/1.1.1.2/Fri Mar 31 05:11:41 2000//Tperl-13
+/AutoLoader.pm/1.1.1.4/Fri Mar 31 05:11:41 2000//Tperl-13
+/AutoSplit.pm/1.1.1.4/Fri Mar 31 05:11:41 2000//Tperl-13
+/Benchmark.pm/1.1.1.4/Fri Mar 31 05:11:41 2000//Tperl-13
+/CGI.pm/1.1.1.4/Fri Mar 31 05:11:42 2000//Tperl-13
+/CPAN.pm/1.1.1.4/Fri Mar 31 05:11:42 2000//Tperl-13
+/Carp.pm/1.1.1.4/Fri Mar 31 05:11:42 2000//Tperl-13
+/Cwd.pm/1.1.1.4/Fri Mar 31 05:11:43 2000//Tperl-13
+/DB.pm/1.1.1.1/Fri Mar 31 05:11:43 2000//Tperl-13
+/DirHandle.pm/1.1.1.1/Fri Apr 23 01:28:05 1999//Tperl-13
+/Dumpvalue.pm/1.1.1.2/Fri Mar 31 05:11:43 2000//Tperl-13
+/English.pm/1.1.1.3/Fri Mar 31 05:11:43 2000//Tperl-13
+/Env.pm/1.1.1.3/Fri Mar 31 05:11:43 2000//Tperl-13
+/Exporter.pm/1.1.1.2/Fri Mar 31 05:11:43 2000//Tperl-13
+/Fatal.pm/1.1.1.3/Fri Mar 31 05:11:43 2000//Tperl-13
+/FileCache.pm/1.1.1.1/Fri Apr 23 01:28:05 1999//Tperl-13
+/FileHandle.pm/1.1.1.3/Fri Mar 31 05:11:44 2000//Tperl-13
+/FindBin.pm/1.1.1.4/Fri Mar 31 05:11:44 2000//Tperl-13
+/SelectSaver.pm/1.1.1.1/Fri Apr 23 01:28:05 1999//Tperl-13
+/SelfLoader.pm/1.1.1.4/Fri Mar 31 05:11:44 2000//Tperl-13
+/Shell.pm/1.1.1.2/Fri Mar 31 05:11:44 2000//Tperl-13
+/Symbol.pm/1.1.1.3/Tue Oct  5 23:56:36 1999//Tperl-13
+/Test.pm/1.1.1.3/Fri Mar 31 05:11:44 2000//Tperl-13
+/UNIVERSAL.pm/1.1.1.2/Fri Mar 31 05:11:45 2000//Tperl-13
+/abbrev.pl/1.1.1.2/Fri Mar 31 05:11:45 2000//Tperl-13
+/assert.pl/1.1.1.1/Fri Apr 23 01:28:06 1999//Tperl-13
+/attributes.pm/1.1.1.1/Fri Mar 31 05:11:45 2000//Tperl-13
+/autouse.pm/1.1.1.3/Fri Mar 31 05:11:45 2000//Tperl-13
+/base.pm/1.1.1.3/Fri Mar 31 05:11:45 2000//Tperl-13
+/bigfloat.pl/1.1.1.2/Fri Mar 31 05:11:45 2000//Tperl-13
+/bigint.pl/1.1.1.3/Fri Mar 31 05:11:45 2000//Tperl-13
+/bigrat.pl/1.1.1.2/Fri Mar 31 05:11:46 2000//Tperl-13
+/blib.pm/1.1.1.3/Fri Mar 31 05:11:46 2000//Tperl-13
+/bytes.pm/1.1.1.1/Fri Mar 31 05:11:46 2000//Tperl-13
+/bytes_heavy.pl/1.1.1.1/Fri Mar 31 05:11:46 2000//Tperl-13
+/cacheout.pl/1.1.1.2/Fri Mar 31 05:11:46 2000//Tperl-13
+/charnames.pm/1.1.1.1/Fri Mar 31 05:11:46 2000//Tperl-13
+/chat2.pl/1.1.1.3/Fri Mar 31 05:11:46 2000//Tperl-13
+/complete.pl/1.1.1.2/Fri Mar 31 05:11:46 2000//Tperl-13
+/constant.pm/1.1.1.4/Fri Mar 31 05:11:46 2000//Tperl-13
+/ctime.pl/1.1.1.2/Fri Mar 31 05:11:46 2000//Tperl-13
+/diagnostics.pm/1.1.1.3/Fri Mar 31 05:11:46 2000//Tperl-13
+/dotsh.pl/1.1.1.2/Fri Mar 31 05:11:47 2000//Tperl-13
+/dumpvar.pl/1.1.1.3/Fri Mar 31 05:11:47 2000//Tperl-13
+/exceptions.pl/1.1.1.2/Fri Mar 31 05:11:47 2000//Tperl-13
+/fastcwd.pl/1.1.1.2/Fri Mar 31 05:11:47 2000//Tperl-13
+/fields.pm/1.1.1.3/Fri Mar 31 05:11:47 2000//Tperl-13
+/filetest.pm/1.1.1.1/Fri Mar 31 05:11:47 2000//Tperl-13
+/find.pl/1.1.1.1/Fri Apr 23 01:28:07 1999//Tperl-13
+/finddepth.pl/1.1.1.1/Fri Apr 23 01:28:07 1999//Tperl-13
+/flush.pl/1.1.1.2/Fri Mar 31 05:11:47 2000//Tperl-13
+/ftp.pl/1.1.1.2/Fri Mar 31 05:11:47 2000//Tperl-13
+/getcwd.pl/1.1.1.2/Fri Mar 31 05:11:47 2000//Tperl-13
+/getopt.pl/1.1.1.2/Fri Mar 31 05:11:47 2000//Tperl-13
+/getopts.pl/1.1.1.2/Fri Mar 31 05:11:48 2000//Tperl-13
+/hostname.pl/1.1.1.2/Fri Mar 31 05:11:48 2000//Tperl-13
+/importenv.pl/1.1.1.2/Fri Mar 31 05:11:48 2000//Tperl-13
+/integer.pm/1.1.1.3/Fri Mar 31 05:11:48 2000//Tperl-13
+/less.pm/1.1.1.1/Fri Apr 23 01:28:08 1999//Tperl-13
+/lib.pm/1.1.1.3/Fri Mar 31 05:11:48 2000//Tperl-13
+/locale.pm/1.1.1.2/Fri Mar 31 05:11:48 2000//Tperl-13
+/look.pl/1.1.1.2/Fri Mar 31 05:11:48 2000//Tperl-13
+/newgetopt.pl/1.1.1.2/Fri Mar 31 05:11:48 2000//Tperl-13
+/open.pm/1.1.1.1/Fri Mar 31 05:11:48 2000//Tperl-13
+/open2.pl/1.1.1.1/Fri Apr 23 01:28:08 1999//Tperl-13
+/open3.pl/1.1.1.1/Fri Apr 23 01:28:08 1999//Tperl-13
+/overload.pm/1.1.1.4/Fri Mar 31 05:11:48 2000//Tperl-13
+/perl5db.pl/1.1.1.4/Fri Mar 31 05:11:49 2000//Tperl-13
+/pwd.pl/1.1.1.2/Fri Mar 31 05:11:49 2000//Tperl-13
+/shellwords.pl/1.1.1.1/Fri Apr 23 01:28:09 1999//Tperl-13
+/sigtrap.pm/1.1.1.1/Fri Apr 23 01:28:09 1999//Tperl-13
+/stat.pl/1.1.1.2/Fri Mar 31 05:11:49 2000//Tperl-13
+/strict.pm/1.1.1.3/Fri Mar 31 05:11:49 2000//Tperl-13
+/subs.pm/1.1.1.2/Fri Apr 23 01:32:42 1999//Tperl-13
+/syslog.pl/1.1.1.2/Fri Mar 31 05:11:49 2000//Tperl-13
+/tainted.pl/1.1.1.1/Fri Apr 23 01:28:09 1999//Tperl-13
+/termcap.pl/1.1.1.2/Fri Mar 31 05:11:49 2000//Tperl-13
+/timelocal.pl/1.1.1.1/Fri Apr 23 01:28:09 1999//Tperl-13
+/utf8.pm/1.1.1.1/Fri Mar 31 05:11:50 2000//Tperl-13
+/utf8_heavy.pl/1.1.1.1/Fri Mar 31 05:11:50 2000//Tperl-13
+/validate.pl/1.1.1.2/Fri Mar 31 05:11:50 2000//Tperl-13
+/vars.pm/1.1.1.3/Fri Mar 31 05:11:50 2000//Tperl-13
+/warnings.pm/1.1.1.1/Fri Mar 31 05:11:50 2000//Tperl-13
+D/CGI////
+D/CPAN////
+D/Carp////
+D/Class////
+D/Devel////
+D/Exporter////
+D/ExtUtils////
+D/File////
+D/Getopt////
+D/I18N////
+D/IPC////
+D/Math////
+D/Net////
+D/Pod////
+D/Search////
+D/Term////
+D/Test////
+D/Text////
+D/Tie////
+D/Time////
+D/User////
+D/unicode////
+D/warnings////

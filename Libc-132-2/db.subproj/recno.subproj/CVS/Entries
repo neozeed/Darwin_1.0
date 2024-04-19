@@ -1,0 +1,15 @@
+/Makefile/1.1.1.2/Thu Oct 14 21:08:38 1999//TLibc-132-2
+/Makefile.postamble/1.1.1.2/Thu Oct 14 21:08:38 1999//TLibc-132-2
+/Makefile.preamble/1.1.1.2/Thu Oct 14 21:08:39 1999//TLibc-132-2
+/PB.project/1.1.1.2/Thu Oct 14 21:08:39 1999//TLibc-132-2
+/extern.h/1.2/Thu Oct 14 21:18:54 1999//TLibc-132-2
+/rec_close.c/1.2/Thu Oct 14 21:18:55 1999//TLibc-132-2
+/rec_delete.c/1.2/Thu Oct 14 21:18:55 1999//TLibc-132-2
+/rec_get.c/1.2/Thu Oct 14 21:18:55 1999//TLibc-132-2
+/rec_open.c/1.2/Thu Oct 14 21:18:55 1999//TLibc-132-2
+/rec_put.c/1.2/Thu Oct 14 21:18:55 1999//TLibc-132-2
+/rec_search.c/1.2/Thu Oct 14 21:18:55 1999//TLibc-132-2
+/rec_seq.c/1.2/Thu Oct 14 21:18:55 1999//TLibc-132-2
+/rec_utils.c/1.2/Thu Oct 14 21:18:55 1999//TLibc-132-2
+/recno.h/1.2/Thu Oct 14 21:18:55 1999//TLibc-132-2
+D

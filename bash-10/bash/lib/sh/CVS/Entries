@@ -1,0 +1,15 @@
+/Makefile.in/1.1.1.2/Thu Sep  2 04:09:12 1999//Tbash-10
+/clktck.c/1.1.1.1/Thu Apr 15 17:29:55 1999//Tbash-10
+/getcwd.c/1.1.1.1/Thu Apr 15 17:29:55 1999//Tbash-10
+/getenv.c/1.1.1.1/Thu Apr 15 17:29:55 1999//Tbash-10
+/itos.c/1.1.1.2/Thu Sep  2 04:09:13 1999//Tbash-10
+/oslib.c/1.1.1.2/Thu Sep  2 04:09:13 1999//Tbash-10
+/rename.c/1.1.1.1/Thu Sep  2 04:09:13 1999//Tbash-10
+/setlinebuf.c/1.1.1.1/Thu Apr 15 17:29:55 1999//Tbash-10
+/strcasecmp.c/1.1.1.1/Thu Apr 15 17:29:55 1999//Tbash-10
+/strerror.c/1.1.1.1/Thu Apr 15 17:29:55 1999//Tbash-10
+/strtod.c/1.1.1.1/Thu Apr 15 17:29:55 1999//Tbash-10
+/strtol.c/1.1.1.2/Thu Sep  2 04:09:13 1999//Tbash-10
+/strtoul.c/1.1.1.1/Thu Apr 15 17:29:55 1999//Tbash-10
+/vprint.c/1.1.1.1/Thu Apr 15 17:29:55 1999//Tbash-10
+D

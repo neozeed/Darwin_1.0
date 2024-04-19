@@ -1,0 +1,4 @@
+#if defined(_AIX)
+# include <sys/time.h>
+# define TIME_H_INCLUDED
+#endif

@@ -1,0 +1,47 @@
+19. BIND 4.9.5 T6B integrated.
+
+18. Fix "qdcount assumed to be 1" and "soa compare used strcmp" in tools/dig.c.
+
+17. a new directive in named.boot, "source-port PORT#", will set the port 
+    number for this.  the default is "0" which causes the kernel to assign one
+    at random from the range above 1024.  for firewall designers in need of a
+    fixed port number we suggest "42", after doug adams and IEN 116.
+
+16. a new directive in named.boot, "source-addr DOTTEDQUAD", will set
+    the source address of forwarded and recursive queries emanating from this
+    server.  the default is 0.0.0.0, which tells the kernel to always use the
+    address of the outbound interface.  127.0.0.1 is not allowed here.
+
+15. a new directive in named.boot, "logging", controls specific syslogs that
+    are not widely seen as useful.  "logging lame-delegations" will enable
+    logging of remote server configuration errors, for those who care.
+
+14. LAME_DELEGATION is no longer optional.  LAME_LOGGING is gone; the hardwired
+    logging priority of a lame delegation message is LOG_INFO.
+
+13. the wildcard address is no longer listened on, only interface addresses.
+
+12. added "listen-on" directive to named.boot.
+
+11. ns_sort.c is gone.  Servers don't sort responses, resolvers do.
+
+10. db_reload.c removed, its last function was merged into ns_maint.c.
+
+9. RR types T_UNSPEC, T_UID, T_GID, and T_UINFO are gone.
+
+8. "make links" is now done by each Makefile, not just the top one.
+
+7. eventlib vastly cleaned up and reorganized.
+
+6. now using SIGILL in preference to the nonstandard SIGIOT/SIGABRT
+
+5. moved tree.c, dmalloc.c to ../lib/isc/.  removed storage.c.
+
+4. added new file ns_xfr.c.  named now uses eventlib.
+
+3. added "-w" option to named.  converted named to use getopt().
+
+2. DATUMREFCNT, NO_GLUE, CLEANCACHE, PURGE_ZONE, GEN_AXFR
+   are no longer optional.
+
+1. INVQ, LOCALDOM, VALIDATE and ALLOW_UPDATES, ALLOW_T_UNSPEC are gone.

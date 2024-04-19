@@ -1,0 +1,80 @@
+Return-Path: amoss@cs.huji.ac.il
+Received: by gw.home.vix.com id AA25918; Mon, 31 Jan 94 13:49:18 -0800
+Received: from picton.cs.huji.ac.il by cs.huji.ac.il with SMTP id AA05782
+  (5.65c/HUJI 4.153 for <paul@vix.com>); Mon, 31 Jan 1994 23:40:39 +0200
+Received: from localhost by picton.cs.huji.ac.il with SMTP id AA16137
+  (5.65c/HUJI 4.1 for sommerfeld@apollo.hp.com); Mon, 31 Jan 1994 23:40:37 +0200
+Message-Id: <199401312140.AA16137@picton.cs.huji.ac.il>
+To: paul@vix.com, dpk@fid.morgan.com (Doug Kingston),
+        Bill Sommerfeld <sommerfeld@apollo.hp.com>
+Subject: Re: NTP time distribution network configuration and control 
+In-Reply-To: Your message of Mon, 31 Jan 94 12:55:50 -0800 .
+             <9401312055.AA08576@office> 
+From: Amos Shapira <amoss@cs.huji.ac.il>
+Date: Mon, 31 Jan 1994 23:40:26 +0200
+Sender: amoss@CS.HUJI.AC.IL
+
+In message <9401312055.AA08576@office> you write:
+|>  About a year or two ago I wrote a DNS asynchronous access library which
+|>I intended to use with an X interface for DNS digging. It worked great
+|>as far as sending/recieving/parsing packets asynchronously goes.  Will
+|>love to contribute this code if someone is interested.
+|
+|i would love to see this code.
+
+That's about what all of you sent me.  I'm sorry to disappoint you but
+all the library does is to build and parse DNS packets.  The asynchrounous
+stuff was done in the X program which used the library.  Nevertheless it
+might help someone build a library routine which is able to do the same.
+
+I made the tar file available for retrieving on ftp.huji.ac.il:
+/pub/network/ntp/xdns.tar.gz,  that's the entire X program (which does
+NOT compile for me now because it uses some extra libs, but worked fine
+back then).
+
+Here is the README file I compiled, so you don't have to retrieve it if you
+don't like it.
+
+Enjoy,
+
+--Amos
+
+--Amos Shapira (Jumper Extraordinaire) | "War does not determine who is right,
+C.S. System Group, Hebrew University,  |  but who is left"
+Jerusalem 91904, ISRAEL                |
+amoss@cs.huji.ac.il                    |          -- Anonymous?
+
+----------------------------------------------------------------------
+This directory contains sources for an incomplete X interface for
+Domain Name Service 'digging' tool.  The program used to work on Suns
+running SunOS 4.* sometime during '92.  I can't compile it today
+because it requires the Widget Creation Library (Wcl) and maybe some
+other stuff which we don't have now.
+
+The code in dnslib.c and dnslib.h helps to deal with the various
+fields of the DNS packets in C programs more easely.
+
+The asynchrounous code some people asked about (3 people in 5
+minutes since I mentioned it :) is actually a re-arrengment of
+the basic query sending routine from the DNS packege writen by Paul Vixie.
+This is done in the file sendquery.c
+
+________________________________________________________________________
+
+
+This code have been writen by Amos Shapira (amoss@cs.huji.ac.il) while
+working at the Computer Science System Group, the Hebrew University,
+Jerusalem, Israel, during mid 1992.
+
+Please be fair and give credit when credit is due (allready had my
+FTP library code drowned in the sources of Xarchie :)
+
+Enjoy, and please let me know what you are doing with this.
+
+--Amos Shapira
+January 31st, 1994
+
+--Amos Shapira (Jumper Extraordinaire) | "Of course Australia was marked for
+C.S. System Group, Hebrew University,  |  glory, for its people had been chosen
+Jerusalem 91904, ISRAEL                |  by the finest judges in England."
+amoss@cs.huji.ac.il                    |                         -- Anonymous

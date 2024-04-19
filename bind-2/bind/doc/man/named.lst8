@@ -1,0 +1,262 @@
+NAMED(8)                  BSD System Manager's Manual                 NAMED(8)
+
+NNAAMMEE
+     nnaammeedd - Internet domain name server (DNS)
+
+SSYYNNOOPPSSIISS
+     NNAAMMEEDD [--dd _d_e_b_u_g_l_e_v_e_l] [--pp _p_o_r_t_#] [--(bb|cc) _c_o_n_f_i_g___f_i_l_e] [--ff --qq --rr] [--uu
+           _u_s_e_r___n_a_m_e] [--gg _g_r_o_u_p___n_a_m_e] [--tt _d_i_r_e_c_t_o_r_y] [--ww _d_i_r_e_c_t_o_r_y]
+           [_c_o_n_f_i_g___f_i_l_e]
+
+DDEESSCCRRIIPPTTIIOONN
+     NNaammeedd is the Internet domain name server.  See RFC's 1033, 1034, and 1035
+     for more information on the Internet name-domain system.  Without any ar-
+     guments, nnaammeedd will read the default configuration file _/_e_t_c_/_n_a_m_e_d_._c_o_n_f,
+     read any initial data, and listen for queries.  A _c_o_n_f_i_g___f_i_l_e argument
+     given at the end of the command line will override any _c_o_n_f_i_g___f_i_l_e speci-
+     fied by using the ``--bb'' or ``--cc'' flags.
+
+     NNOOTTEE:: Several of nnaammeedd's options, and much more of its behaviour, can be
+     controlled in the configuration file.  Please refer to the configuration
+     file guide included with this BBIINNDD distribution for further information.
+
+     Options are:
+
+     --dd _d_e_b_u_g_l_e_v_e_l
+                 Print debugging information.  The _d_e_b_u_g_l_e_v_e_l is a number de-
+                 termines the level of messages printed.  If negative,
+                 _d_e_b_u_g_l_e_v_e_l is set to ``1''.
+
+                 NNOOTTEE:: The new debugging framework is considerably more so-
+                 phisticated than it was in older versions of NNAAMMEEDD. The con-
+                 figuration file's ``logging'' statement allows for multiple,
+                 distinct levels of debugging for each of a large set of cate-
+                 gories of events (such as queries, transfers in or out,
+                 etc.).  Please refer to the configuration file guide included
+                 with this BBIINNDD distribution for further information about
+                 these extensive new capabilities.
+
+     --pp _p_o_r_t_#    Use the specified remote port number; this is the port number
+                 to which NNAAMMEEDD will send queries.  The default value is the
+                 standard port number, i.e., the port number returned by get-
+                 servbyname(3) for service ``domain''.
+
+                 NNOOTTEE:: Previously, the syntax ``--pp _p_o_r_t_#[_/_l_o_c_a_l_p_o_r_t_#]'' was
+                 supported; the first port was that used when contacting
+                 _r_e_m_o_t_e servers, and the second one was the service port bound
+                 by the _l_o_c_a_l instance of NNAAMMEEDD. The current usage is equiva-
+                 lent to the old usage without the _l_o_c_a_l_p_o_r_t_# specified; this
+                 functionality can be specified with the ``listen-on'' clause
+                 of the configuration file's ``options'' statement.
+
+     --(bb|cc) _c_o_n_f_i_g___f_i_l_e
+                 Use an alternate _c_o_n_f_i_g___f_i_l_e; this argument is overridden by
+                 any _c_o_n_f_i_g___f_i_l_e which is specified at the end of the command
+                 line.  The default value is _/_e_t_c_/_n_a_m_e_d_._c_o_n_f.
+
+     --ff          Run this process in the foreground; don't fork(2) and daemo-
+                 nize.  (The default is to daemonize.)
+
+     --qq          Trace all incoming queries if NNAAMMEEDD has been compiled with
+                 QRYLOG defined.
+
+                 NNOOTTEE:: This option is deprecated in favor of the ``queries''
+                 _l_o_g_g_i_n_g _c_a_t_e_g_o_r_y of the configuration file's ``logging''
+                 statement; for more information, please refer to the configu-
+
+                 ration file guide included with this distribution of BBIINNDD.
+
+     --rr          Turns recursion off in the server.  Answers can come only
+                 from local (primary or secondary) zones.  This can be used on
+                 root servers.  The default is to use recursion.
+
+                 NNOOTTEE:: This option can be overridden by and is deprecated in
+                 favor of the ``recursion'' clause of the configuration file's
+                 ``options'' statement.
+
+     --uu _u_s_e_r___n_a_m_e
+                 Specifies the user the server should run as after it initial-
+                 izes.  The value specified may be either a username or a nu-
+                 meric user id.  If the ``--gg'' flag is not specified, then the
+                 group id used will be the primary group of the user specified
+                 (initgroups() is called, so all of the user's groups will be
+                 available to the server).
+
+     --gg _g_r_o_u_p___n_a_m_e
+                 Specifies the group the server should run as after it ini-
+                 tializes.  The value specified may be either a groupname or a
+                 numeric group id.
+
+     --tt _d_i_r_e_c_t_o_r_y
+                 Specifies the directory the server should chroot() into as
+                 soon as it is finshed processing command line arguments.
+
+     --ww _d_i_r_e_c_t_o_r_y
+                 Sets the working directory of the server.  The ``directory''
+                 clause of the configuration file's ``options'' statement
+                 overrides any value specified on the command line.  The de-
+                 fault working directory is the current directory (``.'').
+
+     Any additional argument is taken as the name of the configuration file,
+     for compatibility with older implementations; as noted above, this argu-
+     ment overrides any _c_o_n_f_i_g___f_i_l_e specified by the use of the ``--bb'' or
+     ``--cc'' flags.  If no further argument is given, then the default configu-
+     ration file is used (_/_e_t_c_/_n_a_m_e_d_._c_o_n_f).
+
+   MMaasstteerr FFiillee FFoorrmmaatt
+     The master file consists of control information and a list of resource
+     records for objects in the zone of the forms:
+
+           $INCLUDE <filename> <opt_domain>
+           $ORIGIN <domain>
+           $TTL <ttl>
+           <domain> <opt_ttl> <opt_class> <type> <resource_record_data>
+
+     where:
+
+     _d_o_m_a_i_n        is ``.'' for root, ``@'' for the current origin, or a stan-
+                   dard domain name. If _d_o_m_a_i_n is a standard domain name that
+                   does _n_o_t end with ``.'', the current origin is appended to
+                   the domain. Domain names ending with ``.'' are unmodified.
+
+     _o_p_t___d_o_m_a_i_n    This field is used to define an origin for the data in an
+                   included file.  It is equivalent to placing an $ORIGIN
+                   statement before the first line of the included file.  The
+                   field is optional.  Neither the _o_p_t___d_o_m_a_i_n field nor
+                   $ORIGIN statements in the included file modify the current
+                   origin for this file.
+
+     _t_t_l           A integer number that sets the default time-to-live for fu-
+
+
+                   ture records without an explicit ttl.
+
+     _o_p_t___t_t_l       An optional integer number for the time-to-live field.  If
+                   not set the ttl is taken from the last $TTL statement.  If
+                   no $TTL statement has occured then the SOA minimum value is
+                   used and a warning is generated.
+
+     _o_p_t___c_l_a_s_s     The object address type; currently only one type is sup-
+                   ported, IN, for objects connected to the DARPA Internet.
+
+     _t_y_p_e          This field contains one of the following tokens; the data
+                   expected in the _r_e_s_o_u_r_c_e___r_e_c_o_r_d___d_a_t_a field is in parenthe-
+                   ses:
+
+                         A          a host address (dotted-quad IP address)
+
+                         NS         an authoritative name server (domain)
+
+                         MX         a mail exchanger (domain), preceded by a
+                                    preference value (0..32767), with lower
+                                    numeric values representing higher logical
+                                    preferences.
+
+                         CNAME      the canonical name for an alias (domain)
+
+                         SOA        marks the start of a zone of authority
+                                    (domain of originating host, domain ad-
+                                    dress of maintainer, a serial number and
+                                    the following parameters in seconds: re-
+                                    fresh, retry, expire and minimum TTL (see
+                                    RFC 883 and RFC 2308)).
+
+                         NULL       a null resource record (no format or data)
+
+                         RP         a Responsible Person for some domain name
+                                    (mailbox, TXT-referral)
+
+                         PTR        a domain name pointer (domain)
+
+                         HINFO      host information (cpu_type OS_type)
+
+     Resource records normally end at the end of a line, but may be continued
+     across lines between opening and closing parentheses.  Comments are in-
+     troduced by semicolons and continue to the end of the line.
+
+     NNOOTTEE:: There are other resource record types not shown here.  You should
+     consult the BBIINNDD Operations Guide (``BOG'') for the complete list.  Some
+     resource record types may have been standardized in newer RFC's but not
+     yet implemented in this version of BBIINNDD.
+
+   SSOOAA RReeccoorrdd FFoorrmmaatt
+     Each master zone file should begin with an SOA record for the zone.  An
+     example SOA record is as follows:
+
+     @       IN      SOA     ucbvax.Berkeley.EDU. rwh.ucbvax.Berkeley.EDU. (
+                                     1989020501      ; serial
+                                     10800   ; refresh
+                                     3600    ; retry
+                                     3600000 ; expire
+                                     86400 ) ; minimum
+
+     The SOA specifies a serial number, which should be changed each time the
+     master file is changed.  Note that the serial number can be given as a
+     dotted number, but this is a _v_e_r_y unwise thing to do since the transla-
+     tion to normal integers is via concatenation rather than multiplication
+     and addition.  You can spell out the year, month, day of month, and 0..99
+     version number and still fit inside the unsigned 32-bit size of this
+     field.  (It's true that we will have to rethink this strategy in the year
+     4294, but we're not worried about it.)
+
+     Secondary servers check the serial number at intervals specified by the
+     refresh time in seconds; if the serial number changes, a zone transfer
+     will be done to load the new data.  If a master server cannot be contact-
+     ed when a refresh is due, the retry time specifies the interval at which
+     refreshes should be attempted.  If a master server cannot be contacted
+     within the interval given by the expire time, all data from the zone is
+     discarded by secondary servers.  The minimum value is the cache time-to-
+     live for negative answers (RFC 2308).
+
+NNOOTTEESS
+     The boot file directives ``domain'' and ``suffixes'' have been obsoleted
+     by a more useful, resolver-based implementation of suffixing for partial-
+     ly-qualified domain names.  The prior mechanisms could fail under a num-
+     ber of situations, especially when then local nameserver did not have
+     complete information.
+
+     The following signals have the specified effect when sent to the server
+     process using the kill(1) command:
+
+     SIGHUP    Causes server to read _n_a_m_e_d_._c_o_n_f and reload the database.  If
+               the server is built with the FORCED_RELOAD compile-time option,
+               then SIGHUP will also cause the server to check the serial num-
+               ber on all secondary zones; normally, the serial numbers are
+               only checked at the SOA-specified intervals.
+
+     SIGINT    Dumps the current data base and cache to
+               ``_/_v_a_r_/_t_m_p_/_n_a_m_e_d___d_u_m_p_._d_b'' or the value of _PATH_DUMPFILE.
+
+     SIGILL    Dumps statistics data into _n_a_m_e_d_._s_t_a_t_s if the server is com-
+               piled with -DSTATS. Statistics data is appended to the file.
+
+     SIGSYS    Dumps the profiling data in _/_v_a_r_/_t_m_p if the server is compiled
+               with profiling (server forks, chdirs and exits).
+
+     SIGTERM   Saves any modified dynamic zones to the file system, and shuts
+               down the server.
+
+     SIGUSR1   Turns on debugging; each SIGUSR1 increments debug level.
+               (SIGEMTon older systems without SIGUSR1.)
+
+     SIGUSR2   Turns off debugging completely.   (SIGFPEon older systems
+               without SIGUSR2.)
+
+     SIGWINCH  Toggles logging of all incoming queries via syslog(8) (requires
+               server to have been built with the QRYLOG option).
+
+FFIILLEESS
+     /etc/named.conf                             default name server configu-
+                                                 ration file
+     /var/run/named.pid (_PATH_PIDFILE)          the process id
+     /var/tmp/named_dump.db (_PATH_DUMPFILE)     dump of the name server
+                                                 database
+     /var/tmp/named.run (file: _PATH_DEBUG)      debug output
+     /var/tmp/named.stats (file: _PATH_STATS)    nameserver statistics data
+
+SSEEEE AALLSSOO
+     gethostbyname(3),  hostname(7),  kill(1),  resolver(3),  resolver(5),
+     signal(2),  RFC 882, RFC 883, RFC 973, RFC 974, RFC 1033, RFC 1034, RFC
+     1035, RFC 1123, RFC 2308 ``Name Server Operations Guide for BBIINNDD''
+
+4th Berkeley Distribution      February 1, 1996                              4

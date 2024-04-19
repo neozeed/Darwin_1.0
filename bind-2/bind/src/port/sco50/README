@@ -1,0 +1,32 @@
+
+Preliminary port of BIND 8.1 to SCO OSE 5.0.0 / 5.0.2
+
+Modification history:
+
+Date	  Who	What
+====	  ===	====
+
+01-Apr-97 E.V.	Eduard Vopicka, <eda@vse.cz>
+		Initial work.
+		Good date to start with any port, isn't it?
+
+23-Apr-97 E.V.	Some fixes for forthcoming T4B.
+01-May-97 E.V.	Added libbind.sh. Added BIND_4_COMPAT.
+08-Apr-98 P.P.	Phillip Porch, <ppp@theporch.com>
+		Added Makefile.set.gcc for gcc
+		Changed default install to use bin/install
+		Another option is Gnu install ginstall (works for me).
+		Changed the default installation directory to be relative
+		to /usr/local so as to leave the original in place as some
+		SCO install scripts complain loudly if the file sizes have
+		changed. The new named will be in /usr/local/etc/named.
+		If you wish the new named to run by default, edit 
+		/etc/rc2.d/S85tcp to run /usr/local/etc/named instead of
+		/etc/named. The new named expects the named.conf file to be
+		in /etc.
+
+		If one does not have the SCO SDK, then you also need to obtain
+		bison and flex and I also recommned ginstall. Flex and Bison
+		can be obtained from the skunkware directory on SCO's ftp
+		site: ftp://ftp.sco.com/skunkware/devtools. ginstall may be 
+		there but I obtained and compiled it from prep.ai.mit.edu.

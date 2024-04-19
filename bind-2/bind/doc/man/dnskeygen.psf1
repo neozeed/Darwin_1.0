@@ -1,0 +1,250 @@
+%!PS-Adobe-3.0
+%%Creator: groff version 1.10
+%%CreationDate: Mon Jun 21 14:21:57 1999
+%%DocumentNeededResources: font Times-Roman
+%%DocumentSuppliedResources: procset grops 1.10 0
+%%Pages: 1
+%%PageOrder: Ascend
+%%Orientation: Portrait
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset grops 1.10 0
+/setpacking where{
+pop
+currentpacking
+true setpacking
+}if
+/grops 120 dict dup begin
+/SC 32 def
+/A/show load def
+/B{0 SC 3 -1 roll widthshow}bind def
+/C{0 exch ashow}bind def
+/D{0 exch 0 SC 5 2 roll awidthshow}bind def
+/E{0 rmoveto show}bind def
+/F{0 rmoveto 0 SC 3 -1 roll widthshow}bind def
+/G{0 rmoveto 0 exch ashow}bind def
+/H{0 rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/I{0 exch rmoveto show}bind def
+/J{0 exch rmoveto 0 SC 3 -1 roll widthshow}bind def
+/K{0 exch rmoveto 0 exch ashow}bind def
+/L{0 exch rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/M{rmoveto show}bind def
+/N{rmoveto 0 SC 3 -1 roll widthshow}bind def
+/O{rmoveto 0 exch ashow}bind def
+/P{rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/Q{moveto show}bind def
+/R{moveto 0 SC 3 -1 roll widthshow}bind def
+/S{moveto 0 exch ashow}bind def
+/T{moveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/SF{
+findfont exch
+[exch dup 0 exch 0 exch neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/MF{
+findfont
+[5 2 roll
+0 3 1 roll
+neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/level0 0 def
+/RES 0 def
+/PL 0 def
+/LS 0 def
+/MANUAL{
+statusdict begin/manualfeed true store end
+}bind def
+/PLG{
+gsave newpath clippath pathbbox grestore
+exch pop add exch pop
+}bind def
+/BP{
+/level0 save def
+1 setlinecap
+1 setlinejoin
+72 RES div dup scale
+LS{
+90 rotate
+}{
+0 PL translate
+}ifelse
+1 -1 scale
+}bind def
+/EP{
+level0 restore
+showpage
+}bind def
+/DA{
+newpath arcn stroke
+}bind def
+/SN{
+transform
+.25 sub exch .25 sub exch
+round .25 add exch round .25 add exch
+itransform
+}bind def
+/DL{
+SN
+moveto
+SN
+lineto stroke
+}bind def
+/DC{
+newpath 0 360 arc closepath
+}bind def
+/TM matrix def
+/DE{
+TM currentmatrix pop
+translate scale newpath 0 0 .5 0 360 arc closepath
+TM setmatrix
+}bind def
+/RC/rcurveto load def
+/RL/rlineto load def
+/ST/stroke load def
+/MT/moveto load def
+/CL/closepath load def
+/FL{
+currentgray exch setgray fill setgray
+}bind def
+/BL/fill load def
+/LW/setlinewidth load def
+/RE{
+findfont
+dup maxlength 1 index/FontName known not{1 add}if dict begin
+{
+1 index/FID ne{def}{pop pop}ifelse
+}forall
+/Encoding exch def
+dup/FontName exch def
+currentdict end definefont pop
+}bind def
+/DEFS 0 def
+/EBEGIN{
+moveto
+DEFS begin
+}bind def
+/EEND/end load def
+/CNT 0 def
+/level1 0 def
+/PBEGIN{
+/level1 save def
+translate
+div 3 1 roll div exch scale
+neg exch neg exch translate
+0 setgray
+0 setlinecap
+1 setlinewidth
+0 setlinejoin
+10 setmiterlimit
+[]0 setdash
+/setstrokeadjust where{
+pop
+false setstrokeadjust
+}if
+/setoverprint where{
+pop
+false setoverprint
+}if
+newpath
+/CNT countdictstack def
+userdict begin
+/showpage{}def
+}bind def
+/PEND{
+clear
+countdictstack CNT sub{end}repeat
+level1 restore
+}bind def
+end def
+/setpacking where{
+pop
+setpacking
+}if
+%%EndResource
+%%IncludeResource: font Times-Roman
+grops begin/DEFS 1 dict def DEFS begin/u{.001 mul}bind def end/RES 72
+def/PL 792 def/LS false def/ENC0[/asciicircum/asciitilde/Scaron/Zcaron
+/scaron/zcaron/Ydieresis/trademark/quotesingle/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/space/exclam/quotedbl/numbersign/dollar/percent
+/ampersand/quoteright/parenleft/parenright/asterisk/plus/comma/hyphen
+/period/slash/zero/one/two/three/four/five/six/seven/eight/nine/colon
+/semicolon/less/equal/greater/question/at/A/B/C/D/E/F/G/H/I/J/K/L/M/N/O
+/P/Q/R/S/T/U/V/W/X/Y/Z/bracketleft/backslash/bracketright/circumflex
+/underscore/quoteleft/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y
+/z/braceleft/bar/braceright/tilde/.notdef/quotesinglbase/guillemotleft
+/guillemotright/bullet/florin/fraction/perthousand/dagger/daggerdbl
+/endash/emdash/ff/fi/fl/ffi/ffl/dotlessi/dotlessj/grave/hungarumlaut
+/dotaccent/breve/caron/ring/ogonek/quotedblleft/quotedblright/oe/lslash
+/quotedblbase/OE/Lslash/.notdef/exclamdown/cent/sterling/currency/yen
+/brokenbar/section/dieresis/copyright/ordfeminine/guilsinglleft
+/logicalnot/minus/registered/macron/degree/plusminus/twosuperior
+/threesuperior/acute/mu/paragraph/periodcentered/cedilla/onesuperior
+/ordmasculine/guilsinglright/onequarter/onehalf/threequarters
+/questiondown/Agrave/Aacute/Acircumflex/Atilde/Adieresis/Aring/AE
+/Ccedilla/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute/Icircumflex
+/Idieresis/Eth/Ntilde/Ograve/Oacute/Ocircumflex/Otilde/Odieresis
+/multiply/Oslash/Ugrave/Uacute/Ucircumflex/Udieresis/Yacute/Thorn
+/germandbls/agrave/aacute/acircumflex/atilde/adieresis/aring/ae/ccedilla
+/egrave/eacute/ecircumflex/edieresis/igrave/iacute/icircumflex/idieresis
+/eth/ntilde/ograve/oacute/ocircumflex/otilde/odieresis/divide/oslash
+/ugrave/uacute/ucircumflex/udieresis/yacute/thorn/ydieresis]def
+/Times-Roman@0 ENC0/Times-Roman RE
+%%EndProlog
+%%Page: 1 1
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF .094(\(DNS K)72 12 R .394 -.15(ey G)-.25 H .094
+(enerator\) is a tool to generate and maintain k).15 F -.15(ey)-.1 G
+2.594(sf).15 G .093(or DNS Security within the DNS \(Domain Name Sys-)
+-2.594 F 3.915(tem\). can)72 24 R 1.415(generate public and pri)3.915 F
+-.25(va)-.25 G 1.416(te k).25 F -.15(ey)-.1 G 3.916(st).15 G 3.916(oa)
+-3.916 G 1.416(uthenticate zone data, and shared secret k)-3.916 F -.15
+(ey)-.1 G 3.916(st).15 G 3.916(ob)-3.916 G 3.916(eu)-3.916 G 1.416
+(sed for Re-)-3.916 F(quest/T)72 36 Q .857(ransaction signatures.)-.35 F
+(Dnsk)5.857 E -.15(ey)-.1 G .857(gen will generate a k).15 F -.15(ey)-.1
+G 5.857(.m)-.5 G .856(ust be one of [512, 576, 640, 704, 768, 832, 896,)
+-5.857 F .098(960, 1024].)72 48 R(Dnsk)5.098 E -.15(ey)-.1 G .098
+(gen will generate an k).15 F -.15(ey)-.1 G 5.098(.m)-.5 G .098
+(ust be between 128 and 504.)-5.098 F(Dnsk)5.099 E -.15(ey)-.1 G .099
+(gen will generate an k).15 F -.15(ey)-.1 G 5.099(.m)-.5 G(ust)-5.099 E
+.235(be between 512 and 4096.)72 60 R .235(Use a lar)5.235 F .235(ge e)
+-.18 F .235(xponent for k)-.15 F .535 -.15(ey g)-.1 H 2.735
+(eneration. These).15 F .235(\215ags de\214ne the type of k)2.735 F .535
+-.15(ey b)-.1 H .235(eing gener).15 F(-)-.2 E .396(ated: Zone \(DNS v)72
+72 R .396(alidation\) k)-.25 F -.15(ey)-.1 G 2.896(,H)-.5 G .396
+(ost \(host or service\) k)-2.896 F .696 -.15(ey o)-.1 H 2.896(rU).15 G
+.396(ser \(e.g. email\) k)-2.896 F -.15(ey)-.1 G 2.897(,r)-.5 G(especti)
+-2.897 E -.15(ve)-.25 G(ly).15 E 5.397(.E)-.65 G .397(ach k)-5.397 F
+.697 -.15(ey i)-.1 H 2.897(so).15 G(nly)-2.897 E(allo)72 84 Q .488
+(wed to be one of these.)-.25 F .488(Indicates that the k)5.488 F .788
+-.15(ey b)-.1 H 2.988(eu).15 G .488(sed for authentication.)-2.988 F
+.487(Indicates that the k)5.487 F .787 -.15(ey b)-.1 H 2.987(eu).15 G
+.487(sed for en-)-2.987 F 2.664(cryption. Sets)72 96 R .164(the k)2.664
+F -.15(ey)-.1 G 1.264 -.55('s p).15 H .164(rotocol \214eld to ; the def)
+.55 F .164
+(ault is \(DNSSEC\) if or is speci\214ed and \(EMAIL\) otherwise.)-.1 F
+(Other)5.165 E .057(accepted v)72 108 R .057
+(alues are \(TLS\), \(IPSEC\), and \(ANY\).)-.25 F .057(Sets the k)5.057
+F -.15(ey)-.1 G 1.157 -.55('s s).15 H .057(trength \214eld to the def)
+.55 F .057(ault is Sets the k)-.1 F -.15(ey)-.1 G 1.157 -.55('s n).15 H
+.057(ame to).55 F .581(stores each k)72 120 R .882 -.15(ey i)-.1 H 3.082
+(nt).15 G .782 -.1(wo \214)-3.082 H .582
+(les: and The \214le contains the pri).1 F -.25(va)-.25 G .582(te k).25
+F .882 -.15(ey i)-.1 H 3.082(nap).15 G .582(ortable format.)-3.082 F
+.582(The \214le contains the public)5.582 F -.1(ke)72 132 S 2.872(yi)
+-.05 G 2.872(nt)-2.872 G .372(he DNS zone \214le format: No en)-2.872 F
+.372(vironmental v)-.4 F .372(ariables are used.)-.25 F .371
+(on secure DNS and the Internet Draft.)5.371 F(Ola-)5.371 E .776
+(fur Gudmundsson \(ogud@tis.com\).)72 144 R .776
+(The underlying cryptographic math is done by the DNSSAFE and/or F)5.776
+F(ounda-)-.15 E(tion T)72 156 Q(oolkit libraries.)-.8 E(None are kno)5 E
+(wn at this time)-.25 E EP
+%%Trailer
+end
+%%EOF

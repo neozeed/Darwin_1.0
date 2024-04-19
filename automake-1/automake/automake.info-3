@@ -1,0 +1,690 @@
+This is automake.info, produced by Makeinfo version 3.12b from
+automake.texi.
+
+INFO-DIR-SECTION GNU admin
+START-INFO-DIR-ENTRY
+* automake: (automake).		Making Makefile.in's
+END-INFO-DIR-ENTRY
+
+INFO-DIR-SECTION Individual utilities
+START-INFO-DIR-ENTRY
+* aclocal: (automake)Invoking aclocal.          Generating aclocal.m4
+END-INFO-DIR-ENTRY
+
+   This file documents GNU automake 1.4
+
+   Copyright (C) 1995, 96, 97, 98 Free Software Foundation, Inc.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+
+
+File: automake.info,  Node: Gnits,  Next: Cygnus,  Prev: Conditionals,  Up: Top
+
+The effect of `--gnu' and `--gnits'
+***********************************
+
+   The `--gnu' option (or `gnu' in the `AUTOMAKE_OPTIONS' variable)
+causes `automake' to check the following:
+
+   * The files `INSTALL', `NEWS', `README', `COPYING', `AUTHORS', and
+     `ChangeLog' are required at the topmost directory of the package.
+
+   * The options `no-installman' and `no-installinfo' are prohibited.
+
+   Note that this option will be extended in the future to do even more
+checking; it is advisable to be familiar with the precise requirements
+of the GNU standards.  Also, `--gnu' can require certain non-standard
+GNU programs to exist for use by various maintainer-only targets; for
+instance in the future `pathchk' might be required for `make dist'.
+
+   The `--gnits' option does everything that `--gnu' does, and checks
+the following as well:
+
+   * `make dist' will check to make sure the `NEWS' file has been
+     updated to the current version.
+
+   * The file `COPYING.LIB' is prohibited.  The LGPL is apparently
+     considered a failed experiment.
+
+   * `VERSION' is checked to make sure its format complies with Gnits
+     standards.
+
+   * If `VERSION' indicates that this is an alpha release, and the file
+     `README-alpha' appears in the topmost directory of a package, then
+     it is included in the distribution.  This is done in `--gnits'
+     mode, and no other, because this mode is the only one where version
+     number formats are constrained, and hence the only mode where
+     Automake can automatically determine whether `README-alpha' should
+     be included.
+
+   * The file `THANKS' is required.
+
+
+File: automake.info,  Node: Cygnus,  Next: Extending,  Prev: Gnits,  Up: Top
+
+The effect of `--cygnus'
+************************
+
+   Cygnus Solutions has slightly different rules for how a
+`Makefile.in' is to be constructed.  Passing `--cygnus' to `automake'
+will cause any generated `Makefile.in' to comply with Cygnus rules.
+
+   Here are the precise effects of `--cygnus':
+
+   * Info files are always created in the build directory, and not in
+     the source directory.
+
+   * `texinfo.tex' is not required if a Texinfo source file is
+     specified.  The assumption is that the file will be supplied, but
+     in a place that Automake cannot find.  This assumption is an
+     artifact of how Cygnus packages are typically bundled.
+
+   * `make dist' will look for files in the build directory as well as
+     the source directory.  This is required to support putting info
+     files into the build directory.
+
+   * Certain tools will be searched for in the build tree as well as in
+     the user's `PATH'.  These tools are `runtest', `expect',
+     `makeinfo' and `texi2dvi'.
+
+   * `--foreign' is implied.
+
+   * The options `no-installinfo' and `no-dependencies' are implied.
+
+   * The macros `AM_MAINTAINER_MODE' and `AM_CYGWIN32' are required.
+
+   * The `check' target doesn't depend on `all'.
+
+   GNU maintainers are advised to use `gnu' strictness in preference to
+the special Cygnus mode.
+
+
+File: automake.info,  Node: Extending,  Next: Distributing,  Prev: Cygnus,  Up: Top
+
+When Automake Isn't Enough
+**************************
+
+   Automake's implicit copying semantics means that many problems can be
+worked around by simply adding some `make' targets and rules to
+`Makefile.in'.  Automake will ignore these additions.
+
+   There are some caveats to doing this.  Although you can overload a
+target already used by Automake, it is often inadvisable, particularly
+in the topmost directory of a non-flat package.  However, various useful
+targets have a `-local' version you can specify in your `Makefile.in'.
+Automake will supplement the standard target with these user-supplied
+targets.
+
+   The targets that support a local version are `all', `info', `dvi',
+`check', `install-data', `install-exec', `uninstall', and the various
+`clean' targets (`mostlyclean', `clean', `distclean', and
+`maintainer-clean').  Note that there are no `uninstall-exec-local' or
+`uninstall-data-local' targets; just use `uninstall-local'.  It doesn't
+make sense to uninstall just data or just executables.
+
+   For instance, here is one way to install a file in `/etc':
+
+     install-data-local:
+             $(INSTALL_DATA) $(srcdir)/afile /etc/afile
+
+   Some targets also have a way to run another target, called a "hook",
+after their work is done.  The hook is named after the principal target,
+with `-hook' appended.  The targets allowing hooks are `install-data',
+`install-exec', `dist', and `distcheck'.
+
+   For instance, here is how to create a hard link to an installed
+program:
+
+     install-exec-hook:
+             ln $(bindir)/program $(bindir)/proglink
+
+
+File: automake.info,  Node: Distributing,  Next: Future,  Prev: Extending,  Up: Top
+
+Distributing `Makefile.in's
+***************************
+
+   Automake places no restrictions on the distribution of the resulting
+`Makefile.in's.  We still encourage software authors to distribute
+their work under terms like those of the GPL, but doing so is not
+required to use Automake.
+
+   Some of the files that can be automatically installed via the
+`--add-missing' switch do fall under the GPL; examine each file to see.
+
+
+File: automake.info,  Node: Future,  Next: Macro and Variable Index,  Prev: Distributing,  Up: Top
+
+Some ideas for the future
+*************************
+
+   Here are some things that might happen in the future:
+
+   * HTML support.
+
+   * The output will be cleaned up.  For instance, only variables which
+     are actually used will appear in the generated `Makefile.in'.
+
+   * There will be support for automatically recoding a distribution.
+     The intent is to allow a maintainer to use whatever character set
+     is most convenient locally, but for all distributions to be
+     Unicode or ISO 10646 with the UTF-8 encoding.
+
+   * Rewrite in Guile.  This won't happen in the near future, but it
+     will eventually happen.
+
+
+File: automake.info,  Node: Macro and Variable Index,  Next: General Index,  Prev: Future,  Up: Top
+
+Macro and Variable Index
+************************
+
+* Menu:
+
+* _LDADD:                                A Program.
+* _LDFLAGS:                              A Program.
+* _LIBADD:                               A Library.
+* _SOURCES:                              A Program.
+* _TEXINFOS:                             Texinfo.
+* AC_ARG_PROGRAM:                        Requirements.
+* AC_CANONICAL_HOST:                     Optional.
+* AC_CANONICAL_SYSTEM:                   Optional.
+* AC_CHECK_PROG:                         Optional.
+* AC_CHECK_PROGS:                        Optional.
+* AC_CHECK_TOOL:                         Optional.
+* AC_CONFIG_AUX_DIR:                     Optional.
+* AC_CONFIG_HEADER:                      Optional.
+* AC_DECL_YYTEXT:                        Optional.
+* AC_F77_LIBRARY_LDFLAGS:                Optional.
+* AC_FUNC_ALLOCA:                        Optional.
+* AC_FUNC_FNMATCH:                       Optional.
+* AC_FUNC_GETLOADAVG:                    Optional.
+* AC_FUNC_MEMCMP:                        Optional.
+* AC_OUTPUT:                             Requirements.
+* AC_PATH_PROG:                          Optional.
+* AC_PATH_PROGS:                         Optional.
+* AC_PATH_XTRA:                          Optional.
+* AC_PROG_CXX:                           Optional.
+* AC_PROG_F77:                           Optional.
+* AC_PROG_INSTALL:                       Requirements.
+* AC_PROG_LEX:                           Optional.
+* AC_PROG_MAKE_SET:                      Requirements.
+* AC_PROG_RANLIB:                        Optional.
+* AC_PROG_YACC:                          Optional.
+* AC_REPLACE_FUNCS:                      Optional.
+* AC_REPLACE_GNU_GETOPT:                 Optional.
+* AC_STRUCT_ST_BLOCKS:                   Optional.
+* AC_SUBST:                              Optional.
+* ALL_LINGUAS:                           Optional.
+* AM_C_PROTOTYPES <1>:                   ANSI.
+* AM_C_PROTOTYPES <2>:                   Macros.
+* AM_C_PROTOTYPES:                       Optional.
+* AM_CONDITIONAL:                        Conditionals.
+* AM_CONFIG_HEADER:                      Macros.
+* am_cv_sys_posix_termios:               Macros.
+* AM_FUNC_ERROR_AT_LINE:                 Macros.
+* AM_FUNC_MKTIME:                        Macros.
+* AM_FUNC_OBSTACK:                       Macros.
+* AM_FUNC_STRTOD <1>:                    Macros.
+* AM_FUNC_STRTOD:                        Optional.
+* AM_GNU_GETTEXT:                        Optional.
+* AM_HEADER_TIOCGWINSZ_NEEDS_SYS_IOCTL:  Macros.
+* AM_INIT_AUTOMAKE:                      Requirements.
+* AM_MAINTAINER_MODE:                    Optional.
+* AM_PATH_LISPDIR:                       Macros.
+* AM_PROG_LIBTOOL:                       Optional.
+* AM_WITH_REGEX:                         Optional.
+* AUTOMAKE_OPTIONS <1>:                  Options.
+* AUTOMAKE_OPTIONS <2>:                  Dependencies.
+* AUTOMAKE_OPTIONS:                      ANSI.
+* bin_PROGRAMS:                          A Program.
+* bin_SCRIPTS:                           Scripts.
+* build_alias:                           Optional.
+* BUILT_SOURCES:                         Sources.
+* check_LTLIBRARIES:                     A Shared Library.
+* CLEANFILES:                            Clean.
+* COMPILE:                               Program variables.
+* CXX:                                   C++ Support.
+* CXXCOMPILE:                            C++ Support.
+* CXXFLAGS:                              C++ Support.
+* CXXLINK:                               C++ Support.
+* DATA <1>:                              Data.
+* DATA:                                  Uniform.
+* data_DATA:                             Data.
+* DEJATOOL:                              Tests.
+* DESTDIR:                               Install.
+* DIST_SUBDIRS:                          Dist.
+* DISTCLEANFILES:                        Clean.
+* ELCFILES:                              Emacs Lisp.
+* ETAGS_ARGS:                            Tags.
+* EXPECT:                                Tests.
+* EXTRA_DIST:                            Dist.
+* EXTRA_PROGRAMS:                        A Program.
+* F77:                                   Fortran 77 Support.
+* F77COMPILE:                            Fortran 77 Support.
+* FFLAGS:                                Fortran 77 Support.
+* FLINK:                                 Fortran 77 Support.
+* HAVE_PTRDIFF_T:                        Macros.
+* HEADERS <1>:                           Headers.
+* HEADERS:                               Uniform.
+* host_alias:                            Optional.
+* host_triplet:                          Optional.
+* include_HEADERS:                       Headers.
+* INCLUDES:                              Program variables.
+* info_TEXINFOS:                         Texinfo.
+* LDADD:                                 A Program.
+* LDFLAGS:                               Program variables.
+* lib_LIBRARIES:                         A Library.
+* lib_LTLIBRARIES:                       A Shared Library.
+* LIBADD:                                A Library.
+* libexec_PROGRAMS:                      A Program.
+* libexec_SCRIPTS:                       Scripts.
+* LIBOBJS:                               Optional.
+* LIBRARIES:                             Uniform.
+* LINK:                                  Program variables.
+* LISP <1>:                              Emacs Lisp.
+* LISP:                                  Uniform.
+* lisp_LISP:                             Emacs Lisp.
+* localstate_DATA:                       Data.
+* MAINTAINERCLEANFILES:                  Clean.
+* man_MANS:                              Man pages.
+* MANS <1>:                              Man pages.
+* MANS:                                  Uniform.
+* MOSTLYCLEANFILES:                      Clean.
+* noinst_HEADERS:                        Headers.
+* noinst_LIBRARIES:                      A Library.
+* noinst_LISP:                           Emacs Lisp.
+* noinst_LTLIBRARIES:                    A Shared Library.
+* noinst_PROGRAMS:                       A Program.
+* noinst_SCRIPTS:                        Scripts.
+* oldinclude_HEADERS:                    Headers.
+* OMIT_DEPENDENCIES:                     Dependencies.
+* PACKAGE <1>:                           Dist.
+* PACKAGE <2>:                           Requirements.
+* PACKAGE:                               Uniform.
+* pkgdata_DATA:                          Data.
+* pkgdata_SCRIPTS:                       Scripts.
+* pkgdatadir:                            Uniform.
+* pkginclude_HEADERS:                    Headers.
+* pkgincludedir:                         Uniform.
+* pkglib_LIBRARIES:                      A Library.
+* pkglib_LTLIBRARIES:                    A Shared Library.
+* pkglib_PROGRAMS:                       A Program.
+* pkglibdir:                             Uniform.
+* PROGRAMS:                              Uniform.
+* ptrdiff_t:                             Macros.
+* RFLAGS:                                Fortran 77 Support.
+* RUNTEST:                               Tests.
+* RUNTESTDEFAULTFLAGS:                   Tests.
+* RUNTESTFLAGS:                          Tests.
+* sbin_PROGRAMS:                         A Program.
+* sbin_SCRIPTS:                          Scripts.
+* SCRIPTS <1>:                           Scripts.
+* SCRIPTS:                               Uniform.
+* sharedstate_DATA:                      Data.
+* SOURCES:                               A Program.
+* SUBDIRS <1>:                           Top level.
+* SUBDIRS:                               Depth.
+* SUFFIXES:                              Suffixes.
+* sysconf_DATA:                          Data.
+* TAGS_DEPENDENCIES:                     Tags.
+* target_alias:                          Optional.
+* TESTS:                                 Tests.
+* TESTS_ENVIRONMENT:                     Tests.
+* TEXINFO_TEX:                           Texinfo.
+* TEXINFOS <1>:                          Texinfo.
+* TEXINFOS:                              Uniform.
+* VERSION <1>:                           Dist.
+* VERSION:                               Requirements.
+* WITH_DMALLOC:                          Macros.
+* WITH_REGEX:                            Macros.
+* YACC:                                  Optional.
+
+
+File: automake.info,  Node: General Index,  Prev: Macro and Variable Index,  Up: Top
+
+General Index
+*************
+
+* Menu:
+
+* ## (special Automake comment):         General Operation.
+* -a:                                    Invoking Automake.
+* -acdir:                                Invoking aclocal.
+* -add-missing:                          Invoking Automake.
+* -amdir:                                Invoking Automake.
+* -build-dir:                            Invoking Automake.
+* -cygnus:                               Invoking Automake.
+* -enable-debug, example:                Conditionals.
+* -enable-maintainer-mode:               Optional.
+* -foreign:                              Invoking Automake.
+* -generate-deps:                        Invoking Automake.
+* -gnits:                                Invoking Automake.
+* -gnits, complete description:          Gnits.
+* -gnu:                                  Invoking Automake.
+* -gnu, complete description:            Gnits.
+* -gnu, required files:                  Gnits.
+* -help <1>:                             Invoking aclocal.
+* -help:                                 Invoking Automake.
+* -hook targets:                         Extending.
+* -I:                                    Invoking aclocal.
+* -i:                                    Invoking Automake.
+* -include-deps:                         Invoking Automake.
+* -local targets:                        Extending.
+* -no-force:                             Invoking Automake.
+* -o:                                    Invoking Automake.
+* -output:                               Invoking aclocal.
+* -output-dir:                           Invoking Automake.
+* -print-ac-dir:                         Invoking aclocal.
+* -srcdir-name:                          Invoking Automake.
+* -v:                                    Invoking Automake.
+* -verbose <1>:                          Invoking aclocal.
+* -verbose:                              Invoking Automake.
+* -version <1>:                          Invoking aclocal.
+* -version:                              Invoking Automake.
+* -with-dmalloc:                         Macros.
+* -with-regex:                           Macros.
+* @ALLOCA@, special handling:            LIBOBJS.
+* @LIBOBJS@, special handling:           LIBOBJS.
+* @LTLIBOBJS@, special handling:         A Shared Library.
+* _DATA primary, defined:                Data.
+* _DEPENDENCIES, defined:                A Program.
+* _HEADERS primary, defined:             Headers.
+* _JAVA primary, defined:                Java.
+* _LDFLAGS, defined:                     A Program.
+* _LIBADD primary, defined:              A Library.
+* _LIBRARIES primary, defined:           A Library.
+* _LISP primary, defined:                Emacs Lisp.
+* _LTLIBRARIES primary, defined:         A Shared Library.
+* _MANS primary, defined:                Man pages.
+* _PROGRAMS primary variable:            Uniform.
+* _SCRIPTS primary, defined:             Scripts.
+* _SOURCES and header files:             A Program.
+* _SOURCES primary, defined:             A Program.
+* _TEXINFOS primary, defined:            Texinfo.
+* AC_OUTPUT, scanning:                   Requirements.
+* acinclude.m4, defined:                 Complete.
+* aclocal program, introduction:         Complete.
+* aclocal, extending:                    Extending aclocal.
+* aclocal, Invoking:                     Invoking aclocal.
+* aclocal.m4, preexisting:               Complete.
+* Adding new SUFFIXES:                   Suffixes.
+* all:                                   Extending.
+* all-local:                             Extending.
+* AM_INIT_AUTOMAKE, example use:         Complete.
+* ansi2knr:                              ANSI.
+* Automake constraints:                  Introduction.
+* Automake options:                      Invoking Automake.
+* Automake requirements <1>:             Requirements.
+* Automake requirements:                 Introduction.
+* Automake, invoking:                    Invoking Automake.
+* Automake, recursive operation:         General Operation.
+* Automatic linker selection:            How the Linker is Chosen.
+* BUGS, reporting:                       Introduction.
+* BUILT_SOURCES, defined:                Sources.
+* C++ support:                           C++ Support.
+* canonicalizing Automake macros:        Canonicalization.
+* cfortran:                              Mixing Fortran 77 With C and C++.
+* check:                                 Extending.
+* check primary prefix, definition:      Uniform.
+* check-local:                           Extending.
+* check_LTLIBRARIES, not allowed:        A Shared Library.
+* clean-local:                           Extending.
+* Comment, special to Automake:          General Operation.
+* Complete example:                      Complete.
+* Conditional example,  -enable-debug:   Conditionals.
+* Conditionals:                          Conditionals.
+* config.guess:                          Invoking Automake.
+* configure.in, from GNU Hello:          Hello.
+* configure.in, scanning:                configure.
+* Constraints of Automake:               Introduction.
+* cpio example:                          Uniform.
+* ctags Example:                         etags.
+* cvs-dist:                              General Operation.
+* cvs-dist, non-standard example:        General Operation.
+* Cygnus strictness:                     Cygnus.
+* DATA primary, defined:                 Data.
+* de-ANSI-fication, defined:             ANSI.
+* Deep package:                          Depth.
+* dejagnu:                               Tests.
+* dist <1>:                              Dist.
+* dist:                                  Dependencies.
+* dist-hook <1>:                         Extending.
+* dist-hook:                             Dist.
+* dist-shar:                             Options.
+* dist-tarZ:                             Options.
+* dist-zip:                              Options.
+* distcheck:                             Dist.
+* distclean-local:                       Extending.
+* dmalloc, support for:                  Macros.
+* dvi:                                   Extending.
+* dvi-local:                             Extending.
+* E-mail, bug reports:                   Introduction.
+* EDITION Texinfo macro:                 Texinfo.
+* else:                                  Conditionals.
+* endif:                                 Conditionals.
+* etags Example:                         etags.
+* Example conditional -enable-debug:     Conditionals.
+* Example of recursive operation:        General Operation.
+* Example of shared libraries:           A Shared Library.
+* Example, ctags and etags:              etags.
+* Example, EXTRA_PROGRAMS:               Uniform.
+* Example, GNU Hello:                    Hello.
+* Example, handling Texinfo files:       Hello.
+* Example, mixed language:               Mixing Fortran 77 With C and C++.
+* Example, regression test:              Hello.
+* Exit status 77, special interpretation: Tests.
+* Extending aclocal:                     Extending aclocal.
+* Extending list of installation directories: Uniform.
+* Extra files distributed with Automake: Invoking Automake.
+* EXTRA_, prepending:                    Uniform.
+* EXTRA_prog_SOURCES, defined:           A Program.
+* EXTRA_PROGRAMS, defined <1>:           A Program.
+* EXTRA_PROGRAMS, defined:               Uniform.
+* Files distributed with Automake:       Invoking Automake.
+* First line of Makefile.am:             General Operation.
+* Flat package:                          Depth.
+* FLIBS, defined:                        Mixing Fortran 77 With C and C++.
+* foreign strictness:                    Strictness.
+* Fortran 77 support:                    Fortran 77 Support.
+* Fortran 77, mixing with C and C++:     Mixing Fortran 77 With C and C++.
+* Fortran 77, Preprocessing:             Preprocessing Fortran 77.
+* Future directions:                     Future.
+* Gettext support:                       gettext.
+* gnits strictness:                      Strictness.
+* GNU Gettext support:                   gettext.
+* GNU Hello, configure.in:               Hello.
+* GNU Hello, example:                    Hello.
+* GNU make extensions:                   General Operation.
+* GNU Makefile standards:                Introduction.
+* Guile rewrite:                         Future.
+* Header files in _SOURCES:              A Program.
+* HEADERS primary, defined:              Headers.
+* HEADERS, installation directories:     Headers.
+* Hello example:                         Hello.
+* Hello, configure.in:                   Hello.
+* hook targets:                          Extending.
+* HP-UX 10, lex problems:                Macros.
+* HTML support, example:                 Uniform.
+* id:                                    Tags.
+* if:                                    Conditionals.
+* include:                               Include.
+* INCLUDES, example usage:               Hello.
+* info <1>:                              Extending.
+* info:                                  Options.
+* info-local:                            Extending.
+* install:                               Install.
+* install-data <1>:                      Extending.
+* install-data:                          Install.
+* install-data-hook:                     Extending.
+* install-data-local <1>:                Extending.
+* install-data-local:                    Install.
+* install-exec <1>:                      Extending.
+* install-exec:                          Install.
+* install-exec-hook:                     Extending.
+* install-exec-local <1>:                Extending.
+* install-exec-local:                    Install.
+* install-info <1>:                      Options.
+* install-info:                          Texinfo.
+* install-info target:                   Texinfo.
+* install-man <1>:                       Options.
+* install-man:                           Man pages.
+* install-man target:                    Man pages.
+* install-strip:                         Install.
+* Installation directories, extending list: Uniform.
+* Installation support:                  Install.
+* installdirs:                           Install.
+* Installing headers:                    Headers.
+* Installing scripts:                    Scripts.
+* Invoking aclocal:                      Invoking aclocal.
+* Invoking Automake:                     Invoking Automake.
+* JAVA primary, defined:                 Java.
+* JAVA restrictions:                     Java.
+* lex problems with HP-UX 10:            Macros.
+* lex, multiple lexers:                  Yacc and Lex.
+* LIBADD primary, defined:               A Library.
+* LIBRARIES primary, defined:            A Library.
+* Linking Fortran 77 with C and C++:     Mixing Fortran 77 With C and C++.
+* LISP primary, defined:                 Emacs Lisp.
+* local targets:                         Extending.
+* LTLIBRARIES primary, defined:          A Shared Library.
+* Macros Automake recognizes:            Optional.
+* Macros, overriding:                    General Operation.
+* make check:                            Tests.
+* make clean support:                    Clean.
+* make dist:                             Dist.
+* make distcheck:                        Dist.
+* make install support:                  Install.
+* Make targets, overriding:              General Operation.
+* Makefile.am, first line:               General Operation.
+* MANS primary, defined:                 Man pages.
+* mdate-sh:                              Texinfo.
+* Mixed language example:                Mixing Fortran 77 With C and C++.
+* Mixing Fortran 77 with C and C++:      Mixing Fortran 77 With C and C++.
+* Mixing Fortran 77 with C and/or C++:   Mixing Fortran 77 With C and C++.
+* mostlyclean-local:                     Extending.
+* Multiple configure.in files:           Invoking Automake.
+* Multiple lex lexers:                   Yacc and Lex.
+* Multiple yacc parsers:                 Yacc and Lex.
+* no-dependencies:                       Dependencies.
+* no-installinfo:                        Texinfo.
+* no-installman:                         Man pages.
+* no-texinfo.tex:                        Texinfo.
+* noinst primary prefix, definition:     Uniform.
+* noinstall-info target:                 Texinfo.
+* noinstall-man target:                  Man pages.
+* Non-GNU packages:                      Strictness.
+* Non-standard targets:                  General Operation.
+* Option, ansi2knr:                      Options.
+* Option, check-news:                    Options.
+* Option, cygnus:                        Options.
+* Option, dejagnu:                       Options.
+* Option, dist-shar:                     Options.
+* Option, dist-tarZ:                     Options.
+* Option, dist-zip:                      Options.
+* Option, foreign:                       Options.
+* Option, gnits:                         Options.
+* Option, gnu:                           Options.
+* Option, no-dependencies:               Options.
+* Option, no-installinfo:                Options.
+* Option, no-installman:                 Options.
+* Option, no-texinfo:                    Options.
+* Option, readme-alpha:                  Options.
+* Option, version:                       Options.
+* Options, Automake:                     Invoking Automake.
+* Overriding make macros:                General Operation.
+* Overriding make targets:               General Operation.
+* Overriding SUBDIRS:                    Top level.
+* Package, deep:                         Depth.
+* Package, Flat:                         Depth.
+* Package, shallow:                      Depth.
+* pkgdatadir, defined:                   Uniform.
+* pkgincludedir, defined:                Uniform.
+* pkglibdir, defined:                    Uniform.
+* POSIX termios headers:                 Macros.
+* Preprocessing Fortran 77:              Preprocessing Fortran 77.
+* Primary variable, DATA:                Data.
+* Primary variable, defined:             Uniform.
+* Primary variable, HEADERS:             Headers.
+* Primary variable, JAVA:                Java.
+* Primary variable, LIBADD:              A Library.
+* Primary variable, LIBRARIES:           A Library.
+* Primary variable, LISP:                Emacs Lisp.
+* Primary variable, LTLIBRARIES:         A Shared Library.
+* Primary variable, MANS:                Man pages.
+* Primary variable, PROGRAMS:            Uniform.
+* Primary variable, SCRIPTS:             Scripts.
+* Primary variable, SOURCES:             A Program.
+* Primary variable, TEXINFOS:            Texinfo.
+* prog_LDADD, defined:                   A Program.
+* PROGRAMS primary variable:             Uniform.
+* PROGRAMS, bindir:                      A Program.
+* Ratfor programs:                       Preprocessing Fortran 77.
+* README-alpha:                          Gnits.
+* Recognized macros by Automake:         Optional.
+* Recursive operation of Automake:       General Operation.
+* regex package:                         Macros.
+* Regression test example:               Hello.
+* Reporting BUGS:                        Introduction.
+* Requirements of Automake:              Requirements.
+* Requirements, Automake:                Introduction.
+* Restrictions for JAVA:                 Java.
+* rx package:                            Macros.
+* Scanning configure.in:                 configure.
+* SCRIPTS primary, defined:              Scripts.
+* SCRIPTS, installation directories:     Scripts.
+* Selecting the linker automatically:    How the Linker is Chosen.
+* Shallow package:                       Depth.
+* Shared libraries, support for:         A Shared Library.
+* SOURCES primary, defined:              A Program.
+* Special Automake comment:              General Operation.
+* Strictness, defined:                   Strictness.
+* Strictness, foreign:                   Strictness.
+* Strictness, gnits:                     Strictness.
+* Strictness, gnu:                       Strictness.
+* SUBDIRS, deep package:                 Depth.
+* SUBDIRS, explained:                    Top level.
+* SUBDIRS, overriding:                   Top level.
+* suffix .la, defined:                   A Shared Library.
+* suffix .lo, defined:                   A Shared Library.
+* SUFFIXES, adding:                      Suffixes.
+* Support for C++:                       C++ Support.
+* Support for Fortran 77:                Fortran 77 Support.
+* Support for GNU Gettext:               gettext.
+* tags:                                  Tags.
+* TAGS support:                          Tags.
+* Target, install-info:                  Texinfo.
+* Target, install-man:                   Man pages.
+* Target, noinstall-info:                Texinfo.
+* Target, noinstall-man:                 Man pages.
+* termios POSIX headers:                 Macros.
+* Test suites:                           Tests.
+* Texinfo file handling example:         Hello.
+* Texinfo macro, EDITION:                Texinfo.
+* Texinfo macro, UPDATED:                Texinfo.
+* Texinfo macro, VERSION:                Texinfo.
+* texinfo.tex:                           Texinfo.
+* TEXINFOS primary, defined:             Texinfo.
+* Uniform naming scheme:                 Uniform.
+* uninstall <1>:                         Extending.
+* uninstall:                             Install.
+* uninstall-local:                       Extending.
+* UPDATED Texinfo macro:                 Texinfo.
+* VERSION Texinfo macro:                 Texinfo.
+* yacc, multiple parsers:                Yacc and Lex.
+* ylwrap:                                Yacc and Lex.
+* zardoz example:                        Complete.
+
+

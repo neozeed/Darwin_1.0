@@ -1,0 +1,85 @@
+# MySQL dump 5.13
+#
+# Host: localhost    Database: bind
+#--------------------------------------------------------
+# Server version	3.22.19b
+
+#
+# Table structure for table '0_0_127_in__addr_arpa'
+#
+CREATE TABLE 0_0_127_in__addr_arpa (
+  sqlID int(11) DEFAULT '0' NOT NULL auto_increment,
+  sqlOrigin char(100) DEFAULT '' NOT NULL,
+  sqlOwner char(100),
+  sqlClass char(20) DEFAULT '' NOT NULL,
+  sqlTTL char(15),
+  sqlType char(10) DEFAULT '' NOT NULL,
+  sqlPref char(5),
+  sqlData char(255) DEFAULT '' NOT NULL,
+  sqlTime timestamp(14),
+  sqlComment char(30),
+  PRIMARY KEY (sqlID)
+);
+
+#
+# Dumping data for table '0_0_127_in__addr_arpa'
+#
+
+INSERT INTO 0_0_127_in__addr_arpa VALUES (1,'0.0.127.in-addr.arpa','@','IN','','SOA','','0.0.127.in-addr.arpa',NULL,NULL);
+INSERT INTO 0_0_127_in__addr_arpa VALUES (2,'0.0.127.in-addr.arpa','@','IN','','NS','','localhost',NULL,NULL);
+INSERT INTO 0_0_127_in__addr_arpa VALUES (3,'0.0.127.in-addr.arpa','1','IN','','PTR','','localhost',NULL,NULL);
+
+#
+# Table structure for table '123_123_123_in__addr_arpa'
+#
+CREATE TABLE 123_123_123_in__addr_arpa (
+  sqlID int(11) DEFAULT '0' NOT NULL auto_increment,
+  sqlOrigin char(100) DEFAULT '' NOT NULL,
+  sqlOwner char(100),
+  sqlClass char(20) DEFAULT '' NOT NULL,
+  sqlTTL char(15),
+  sqlType char(10) DEFAULT '' NOT NULL,
+  sqlPref char(5),
+  sqlData char(255) DEFAULT '' NOT NULL,
+  sqlTime timestamp(14),
+  sqlComment char(30),
+  PRIMARY KEY (sqlID)
+);
+
+#
+# Dumping data for table '123_123_123_in__addr_arpa'
+#
+
+INSERT INTO 123_123_123_in__addr_arpa VALUES (1,'123.123.123.IN-ADDR.ARPA','@','IN','','SOA','','123.123.123.in-addr.arpa',NULL,NULL);
+INSERT INTO 123_123_123_in__addr_arpa VALUES (2,'123.123.123.IN-ADDR.ARPA','@','IN','','NS','','ns.test.org',NULL,NULL);
+INSERT INTO 123_123_123_in__addr_arpa VALUES (3,'123.123.123.IN-ADDR.ARPA','123','IN','','PTR','','www.test.org',NULL,NULL);
+
+#
+# Table structure for table 'test_org'
+#
+CREATE TABLE test_org (
+  sqlID int(11) DEFAULT '0' NOT NULL auto_increment,
+  sqlOrigin char(100) DEFAULT '' NOT NULL,
+  sqlOwner char(100),
+  sqlClass char(20) DEFAULT '' NOT NULL,
+  sqlTTL char(15),
+  sqlType char(10) DEFAULT '' NOT NULL,
+  sqlPref char(5),
+  sqlData char(255) DEFAULT '' NOT NULL,
+  sqlTime timestamp(14),
+  sqlComment char(30),
+  PRIMARY KEY (sqlID)
+);
+
+#
+# Dumping data for table 'test_org'
+#
+
+INSERT INTO test_org VALUES (1,'test.org','@','IN','','SOA','','test.org',NULL,NULL);
+INSERT INTO test_org VALUES (2,'test.org','','IN','','NS','','ns.test.org',NULL,NULL);
+INSERT INTO test_org VALUES (3,'test.org','www','IN','','A','','123.123.123.123',NULL,NULL);
+INSERT INTO test_org VALUES (4,'test.org','boo','IN','','CNAME','','www.test.org',NULL,NULL);
+INSERT INTO test_org VALUES (5,'test.org','','IN','','MX','10','test.org',NULL,NULL);
+INSERT INTO test_org VALUES (6,'test.org','t1','IN','','A','','111.222.111.222',NULL,NULL);
+INSERT INTO test_org VALUES (7,'test.org','t1','IN','','MX','10','t1.test.org',NULL,NULL);
+

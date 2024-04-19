@@ -1,0 +1,34 @@
+/Makefile/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/README/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/settings/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/systype/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+D/Grot////
+D/aix32////
+D/aix4////
+D/aux////
+D/bsdos////
+D/bsdos2////
+D/darwin////
+D/decunix////
+D/freebsd////
+D/hpux////
+D/hpux10////
+D/hpux9////
+D/irix////
+D/linux////
+D/lynxos////
+D/mpe////
+D/netbsd////
+D/next////
+D/openbsd////
+D/prand_conf////
+D/qnx////
+D/rhapsody////
+D/sco42////
+D/sco50////
+D/solaris////
+D/sunos////
+D/ultrix////
+D/unixware20////
+D/unixware212////
+D/unixware7////

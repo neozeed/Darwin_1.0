@@ -1,0 +1,4 @@
+Package: dpkg
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Description: The `dpkg' package-management tool
+Build-Depends: build-base, perl, gnudiff

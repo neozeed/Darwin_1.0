@@ -1,0 +1,260 @@
+%!PS-Adobe-3.0
+%%Creator: groff version 1.10
+%%CreationDate: Mon Jun 21 14:22:01 1999
+%%DocumentNeededResources: font Times-Roman
+%%DocumentSuppliedResources: procset grops 1.10 0
+%%Pages: 1
+%%PageOrder: Ascend
+%%Orientation: Portrait
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset grops 1.10 0
+/setpacking where{
+pop
+currentpacking
+true setpacking
+}if
+/grops 120 dict dup begin
+/SC 32 def
+/A/show load def
+/B{0 SC 3 -1 roll widthshow}bind def
+/C{0 exch ashow}bind def
+/D{0 exch 0 SC 5 2 roll awidthshow}bind def
+/E{0 rmoveto show}bind def
+/F{0 rmoveto 0 SC 3 -1 roll widthshow}bind def
+/G{0 rmoveto 0 exch ashow}bind def
+/H{0 rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/I{0 exch rmoveto show}bind def
+/J{0 exch rmoveto 0 SC 3 -1 roll widthshow}bind def
+/K{0 exch rmoveto 0 exch ashow}bind def
+/L{0 exch rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/M{rmoveto show}bind def
+/N{rmoveto 0 SC 3 -1 roll widthshow}bind def
+/O{rmoveto 0 exch ashow}bind def
+/P{rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/Q{moveto show}bind def
+/R{moveto 0 SC 3 -1 roll widthshow}bind def
+/S{moveto 0 exch ashow}bind def
+/T{moveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/SF{
+findfont exch
+[exch dup 0 exch 0 exch neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/MF{
+findfont
+[5 2 roll
+0 3 1 roll
+neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/level0 0 def
+/RES 0 def
+/PL 0 def
+/LS 0 def
+/MANUAL{
+statusdict begin/manualfeed true store end
+}bind def
+/PLG{
+gsave newpath clippath pathbbox grestore
+exch pop add exch pop
+}bind def
+/BP{
+/level0 save def
+1 setlinecap
+1 setlinejoin
+72 RES div dup scale
+LS{
+90 rotate
+}{
+0 PL translate
+}ifelse
+1 -1 scale
+}bind def
+/EP{
+level0 restore
+showpage
+}bind def
+/DA{
+newpath arcn stroke
+}bind def
+/SN{
+transform
+.25 sub exch .25 sub exch
+round .25 add exch round .25 add exch
+itransform
+}bind def
+/DL{
+SN
+moveto
+SN
+lineto stroke
+}bind def
+/DC{
+newpath 0 360 arc closepath
+}bind def
+/TM matrix def
+/DE{
+TM currentmatrix pop
+translate scale newpath 0 0 .5 0 360 arc closepath
+TM setmatrix
+}bind def
+/RC/rcurveto load def
+/RL/rlineto load def
+/ST/stroke load def
+/MT/moveto load def
+/CL/closepath load def
+/FL{
+currentgray exch setgray fill setgray
+}bind def
+/BL/fill load def
+/LW/setlinewidth load def
+/RE{
+findfont
+dup maxlength 1 index/FontName known not{1 add}if dict begin
+{
+1 index/FID ne{def}{pop pop}ifelse
+}forall
+/Encoding exch def
+dup/FontName exch def
+currentdict end definefont pop
+}bind def
+/DEFS 0 def
+/EBEGIN{
+moveto
+DEFS begin
+}bind def
+/EEND/end load def
+/CNT 0 def
+/level1 0 def
+/PBEGIN{
+/level1 save def
+translate
+div 3 1 roll div exch scale
+neg exch neg exch translate
+0 setgray
+0 setlinecap
+1 setlinewidth
+0 setlinejoin
+10 setmiterlimit
+[]0 setdash
+/setstrokeadjust where{
+pop
+false setstrokeadjust
+}if
+/setoverprint where{
+pop
+false setoverprint
+}if
+newpath
+/CNT countdictstack def
+userdict begin
+/showpage{}def
+}bind def
+/PEND{
+clear
+countdictstack CNT sub{end}repeat
+level1 restore
+}bind def
+end def
+/setpacking where{
+pop
+setpacking
+}if
+%%EndResource
+%%IncludeResource: font Times-Roman
+grops begin/DEFS 1 dict def DEFS begin/u{.001 mul}bind def end/RES 72
+def/PL 792 def/LS false def/ENC0[/asciicircum/asciitilde/Scaron/Zcaron
+/scaron/zcaron/Ydieresis/trademark/quotesingle/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/space/exclam/quotedbl/numbersign/dollar/percent
+/ampersand/quoteright/parenleft/parenright/asterisk/plus/comma/hyphen
+/period/slash/zero/one/two/three/four/five/six/seven/eight/nine/colon
+/semicolon/less/equal/greater/question/at/A/B/C/D/E/F/G/H/I/J/K/L/M/N/O
+/P/Q/R/S/T/U/V/W/X/Y/Z/bracketleft/backslash/bracketright/circumflex
+/underscore/quoteleft/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y
+/z/braceleft/bar/braceright/tilde/.notdef/quotesinglbase/guillemotleft
+/guillemotright/bullet/florin/fraction/perthousand/dagger/daggerdbl
+/endash/emdash/ff/fi/fl/ffi/ffl/dotlessi/dotlessj/grave/hungarumlaut
+/dotaccent/breve/caron/ring/ogonek/quotedblleft/quotedblright/oe/lslash
+/quotedblbase/OE/Lslash/.notdef/exclamdown/cent/sterling/currency/yen
+/brokenbar/section/dieresis/copyright/ordfeminine/guilsinglleft
+/logicalnot/minus/registered/macron/degree/plusminus/twosuperior
+/threesuperior/acute/mu/paragraph/periodcentered/cedilla/onesuperior
+/ordmasculine/guilsinglright/onequarter/onehalf/threequarters
+/questiondown/Agrave/Aacute/Acircumflex/Atilde/Adieresis/Aring/AE
+/Ccedilla/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute/Icircumflex
+/Idieresis/Eth/Ntilde/Ograve/Oacute/Ocircumflex/Otilde/Odieresis
+/multiply/Oslash/Ugrave/Uacute/Ucircumflex/Udieresis/Yacute/Thorn
+/germandbls/agrave/aacute/acircumflex/atilde/adieresis/aring/ae/ccedilla
+/egrave/eacute/ecircumflex/edieresis/igrave/iacute/icircumflex/idieresis
+/eth/ntilde/ograve/oacute/ocircumflex/otilde/odieresis/divide/oslash
+/ugrave/uacute/ucircumflex/udieresis/yacute/thorn/ydieresis]def
+/Times-Roman@0 ENC0/Times-Roman RE
+%%EndProlog
+%%Page: 1 1
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF .257(hesiod, hesiod_init, hesiod_resolv)72 12 R
+.256
+(e, hesiod_free_list, hesiod_to_bind, hesiod_end \255 Hesiod name serv)
+-.15 F .256(er interf)-.15 F .256(ace li-)-.1 F(brary)72 24 Q .215
+(This f)72 36 R .215(amily of functions allo)-.1 F .216
+(ws you to perform lookups of Hesiod information, which is stored as te)
+-.25 F .216(xt records in the)-.15 F .814(Domain Name Service.)72 48 R
+2.414 -.8(To p)5.814 H .814(erform lookups, you must \214rst initialize a an opaque object which stores information)
+.8 F 1.312(used internally by the library between calls.)72 60 R 1.313
+(initializes a conte)6.313 F 1.313(xt, storing a pointer to the conte)
+-.15 F 1.313(xt in the location)-.15 F .126(pointed to by the ar)72 72 R
+2.626(gument. frees)-.18 F .126(the resources used by a conte)2.626 F
+2.626(xt. is)-.15 F .126(the primary interf)2.626 F .126
+(ace to the library)-.1 F 5.126(.I)-.65 G 2.626(fs)-5.126 G(uccess-)
+-2.626 E .178(ful, it returns a list of one or more strings gi)72 84 R
+.178
+(ving the records matching and The last element of the list is follo)
+-.25 F .179(wed by)-.25 F 3.07(aN)72 96 S .57(ULL pointer)-3.07 F 5.57
+(.I)-.55 G 3.07(ti)-5.57 G 3.07(st)-3.07 G .57(he caller')-3.07 F 3.07
+(sr)-.55 G .57
+(esponsibility to call to free the resources used by the returned list.)
+-3.07 F(con)5.57 E -.15(ve)-.4 G .57(rts and).15 F .639
+(into the DNS name used by It is the caller')72 108 R 3.139(sr)-.55 G
+.639(esponsibility to free the returned string using If successful, returns 0;)
+-3.139 F .027(otherwise it returns \2551 and sets to indicate the error)
+72 120 R 5.027(.O)-.55 G 2.527(nf)-5.027 G .027
+(ailure, and return NULL and set the global v)-2.627 F .027
+(ariable to indi-)-.25 F .492(cate the error)72 132 R 5.492(.I)-.55 G
+2.992(ft)-5.492 G .492(he en)-2.992 F .492(vironment v)-.4 F .492
+(ariable is set, it will o)-.25 F -.15(ve)-.15 G .493
+(rride the domain in the Hesiod con\214guration \214le.).15 F .493
+(If the)5.493 F(en)72 144 Q .228(vironment v)-.4 F .227(ariable is set, it speci\214es the location of the Hesiod con\214guration \214le.)
+-.25 F .227(`Hesiod - Project Athena T)5.227 F(ech-)-.7 E .94(nical Plan -- Name Service', named\(8\), hesiod.conf\(5\) Hesiod calls may f)
+72 156 R .941(ail because of: Insuf)-.1 F .941(\214cient memory w)-.25 F
+(as)-.1 E -.2(av)72 168 S .872
+(ailable to carry out the requested operation.)-.05 F -.1(fa)5.871 G
+.871(iled because the Hesiod con\214guration \214le w).1 F .871(as in)
+-.1 F -.25(va)-.4 G 3.371(lid. f).25 F .871(ailed be-)-.1 F .103
+(cause no name serv)72 180 R .103
+(er could be contacted to answer the query)-.15 F 5.103(.f)-.65 G .103
+(ailed because the query or response w)-5.203 F .104
+(as too big to \214t)-.1 F .274(into the pack)72 192 R .274(et b)-.1 F
+(uf)-.2 E 2.774(fers. f)-.25 F .274(ailed because the name serv)-.1 F
+.274(er had no te)-.15 F .273(xt records matching and or f)-.15 F .273
+(ailed because the ar)-.1 F(gu-)-.18 E .881(ment had a domain e)72 204 R
+.882(xtension which could not be resolv)-.15 F .882(ed with type `)-.15
+F(`rhs-e)-.74 E(xtension')-.15 E 3.382('i)-.74 G 3.382(nt)-3.382 G .882
+(he local Hesiod domain.)-3.382 F(Ste)72 216 Q .3 -.15(ve D)-.25 H(yer)
+.15 E 2.5(,I)-.4 G(BM/Project Athena)-2.5 E(Gre)72 228 Q 2.5(gH)-.15 G
+(udson, MIT T)-2.5 E(eam Athena)-.7 E(Cop)72 240 Q .706
+(yright 1987, 1988, 1995, 1996 by the Massachusetts Institute of T)-.1 F
+(echnology)-.7 E 5.706(.T)-.65 G .706(he strings corresponding to the)
+-5.706 F -.25(va)72 252 S
+(lues set by the Hesiod functions are not particularly indicati).25 E .3
+-.15(ve o)-.25 H 2.5(fw).15 G(hat went wrong, especially for and)-2.5 E
+EP
+%%Trailer
+end
+%%EOF

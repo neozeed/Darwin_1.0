@@ -1,0 +1,4 @@
+Package: appletalk
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Description: AppleTalk library
+Build-Depends: build-base

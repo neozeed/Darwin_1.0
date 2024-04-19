@@ -1,0 +1,12 @@
+#!/bin/sh
+
+uname=/usr/bin/uname
+
+if [ -f $uname ]; then
+	case `$uname -s`-`$uname -r` in
+	HP-UX-B.10.30) exit 1 ;;
+	HP-UX-B.10.*) exit 0 ;;
+	esac
+fi
+
+exit 1

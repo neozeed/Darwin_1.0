@@ -1,0 +1,111 @@
+Received: by gw.home.vix.com id AA11305; Thu, 8 Dec 94 20:20:49 -0800
+Received: (from ellozy@localhost) by netman-mel.dfci.harvard.edu (8.6.9/8.6.6) id XAA13731; Thu, 8 Dec 1994 23:20:48 -0500
+From: Mohamed Ellozy <ellozy@netman-mel.dfci.harvard.edu>
+Message-Id: <199412090420.XAA13731@netman-mel.dfci.harvard.edu>
+Subject: Re: BIND 4.9.3 Beta11 Patch4 is available
+To: paul@vix.com
+Date: Thu, 8 Dec 1994 23:20:47 -0500 (EST)
+Cc: bind-workers@vix.com
+In-Reply-To: <9412090153.AA07907@gw.home.vix.com> from "Paul A Vixie" at Dec 8, 94 05:53:28 pm
+Reply-To: ellozy@dfci.harvard.edu
+X-Organization: Dana-Farber Cancer Institute
+X-Phone: 617-632-3034, 617-632-3425
+X-Mailer: ELM [version 2.4 PL22]
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Content-Length: 4884      
+
+Paul A Vixie writes
+> 
+> i am willing to look at checker if someone sends me a copy.
+
+Date: Fri, 28 May 93 16:09:43 PDT
+From: smiller@caldera.usc.edu (Stephen B. Miller)
+To: ellozy@farber.harvard.edu
+Subject: The Checker Project
+
+Mohamed,
+
+Please ftp from ~ftp/pub/checker on caldera.usc.edu for the code and 
+documentation on our research work with the DNS query traffic that I 
+mentioned yesterday.  Also included there is the announcement that I 
+am mailing to the bind mail group about the project.
+
+Stephen Miller
+
+Its still there, here is the announce.txt:
+
+The earlier request for aid from Mohamed Ellozy has prompted me to go
+ahead and release some information on a project ongoing at USC that 
+might be of some aid to others like him.  With this announcement I
+am hoping to get some discussion on the concepts implied below, and
+suggestions for things that I should be testing for.  Please feel free
+to dredge up any old history as I have only been watching bind activity
+for about a year and have only managed microscopic domains by comparison
+to some of you.
+
+                         The Checker Project
+
+The following work is an extension of the paper titled "An Analysis of 
+Wide-Area Name Server Traffic" by Danzig, Obraczka, and Kumar from the 
+1992 SIGCOMM.  A postscript copy of the paper is available on anonymous 
+ftp from caldera.usc.edu in the ~ftp/pub/checker directory.  Design,
+coding, and testing has been conducted by Stephen Miller (smiller@
+caldera.usc.edu), Peter Danzig (danzig@usc.edu), and Anant Kumar
+(anant@isi.edu) in the USC networking research laboratory.
+
+The Checker Project is an attempt to build onto named the ability to 
+scan the incoming query traffic looking for client machines that may be 
+experiencing problems getting their requests satisfied.  The project
+itself is a set of C code that builds a database from the nameserver 
+query and response traffic.  Whenever a query or response is passed 
+through the checker code its timing and response code is checked against 
+some historical parameters to see if the client's activity falls within 
+some behavioral patterns previously identified with some broken resolver 
+or nameserver implementations.  Reports are generated upon request and 
+include such things as: activity summary, client address sorted by 
+number of different queries, query name sorted by number of requests, 
+and client addresses that have had behaviors that fall with the 
+predefined patterns.
+
+Knowing that Paul Vixie was putting immense effort into the 4.9 version 
+I chose to make as few incursions into named as possible, which resulted 
+in 5 lines of code being changed in each of ns_req.c and ns_resp.c (not 
+including some ifdef/endif sets).  As far as I can tell the changes that 
+we made to let us test with bind 4.8.3 are still valid in 4.9.  Even
+though the code is present in the ftp directory mentioned above I would
+respectfully request people to email me before taking a copy as there
+are changes being made.  Please feel free to get a copy of the postscript
+installation and operations guide.  Any comments on that are especially
+welcome.  The C dialect is pretty generic, but testing has only been done
+using SunOS; following Paul's style for handling multiple platforms is
+on my list of things to do.
+
+The current alpha version of Checker has been running one of the roots
+for the US domain for a few weeks with no failures, under a load of
+several thousand queries a day.  Our initial experiences show some good
+stuff, along with some things to look at.  We have had no problem seeing
+the clients that seem to be making a lot of absurd queries, but I doubled
+named's dynamic memory usage at the same time.  Memory usage is configured
+by the record cache time though, and I tend to run long periods on our
+research machine. Other upgrades coming include altering the reports to
+show query rates rather than absolute counts.  After running for a week
+without rebooting the counts get very large, but divided by the time
+factor show no real problem.
+
+An interesting feature, currently disabled for the US domain testing, is
+the ability for the program to randomly choose a query name, and eat all
+replies to that name for a short (configurable) period of time.  The
+theory behind this is that the client should choose another server pretty
+quickly and stop using the one that isn't replying.  If the client keeps
+asking then the DNS implementation the client is running may need to be
+upgraded.  During the first phase of testing when I directed USC's 
+networking laboratory toward a named-checker installation we found that
+most of our installations behaved as predicted.  I have not turned this
+feature on yet for the US domain as we still have yet to fully understand 
+the passive mode for the larger amount of traffic.
+
+Stephen Miller
+University of Southern California
+smiller@caldera.usc.edu.

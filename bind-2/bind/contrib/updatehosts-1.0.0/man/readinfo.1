@@ -1,0 +1,111 @@
+.\" @(#) readinfo.1 1.2 99/01/04 @(#)
+.TH READINFO 1 "99/01/04"
+.UC 4
+.SH NAME
+readinfo \- read fields from a relational
+.SH SYNOPSIS
+.B readinfo
+[
+.B -i filename
+]
+[
+.B -o filename
+]
+fieldname ...
+.SH DESCRIPTION
+Reads a formatted table in a relational format with named fields.
+Input is from stdin unless the
+.B -i
+is specified.
+Output is to stdout unless the
+.B -o
+option is specified.
+.PP
+The file is
+described by a special comment which defines the field names and any
+prefixes or suffixes to add to each field.  The following is a simple
+example which illustrates the usage.
+.PP
+.nf
+#
+# short readinfo example
+#FIELDS GLOBAL null=X no=. domain suffix=.tic.com ip prefix=192.135.128.
+akasha             129
+xfr                133
+.br
+oak.zilker.net.    .198.252.182.129
+.fi
+.PP
+The special #FIELDS comment describes each field in the file.  Field
+descriptions appear in the order the appear in the file. There is no whitespace
+between the '#' and the 'FIELDS'.  'FIELDS' must be all uppercase.
+.PP
+In this example two fields with the names "domain" and "ip" are defined.
+The special field "GLOBAL" defines global parameters which apply to all
+fields in the file.
+Each field description is the name of the field which can be any arbitrary name
+followed by optional field parameters which are keyword=value pairs.
+The field parameters and their semantics are:
+.TP
+null=<string>
+Sets the empty field value to the <string>.  Whenever <string> appears as a
+field value,
+.B readinfo
+emits an empty value for the field.
+.TP
+prefix=<string>
+Adds a prefix of <string> to each field value output.
+.TP
+suffix=<string>
+Adds a suffix of <string> to each field value output.
+.TP
+no=<character>
+Does not add a prefix or suffix to the field value whenever <character>
+either starts or ends the string respectively.
+.PP
+Only fields listed on the command line are output to stdout. For example the
+command
+.PP
+.RS
+readinfo domain ip <example
+.RE
+produces the following output
+.RS
+.nf
+akasha.tic.com	192.135.128.129
+xfr.tic.com	192.135.128.133
+oak.zilker.net	198.252.182.129
+.fi
+.RE
+.PP
+Each emitted field value is separated by a single TAB characters.
+The command
+.PP
+.RS
+readinfo ip <example
+.RE
+.PP
+produces the following output
+.PP
+.RS
+.nf
+192.135.128.129
+192.135.128.133
+198.252.182.129
+.fi
+.RE
+.PP
+Fields are emitted in the order they appear on the command line.  Fields
+may be duplicated by putting their names multiple times on the command
+line.
+.PP
+Field values may be any ASCII character except for a TAB. Spaces may be
+inserted in a field by escaping the space character with a backslash or by
+quoting the entire field value in either single or double quotes. A line
+may extend across multiple input lines by ending each line except the last
+line with a backslash.
+.PP
+A comment which starts with #INCLUDE allows including input from an
+alternate file. The filename is specified after the #INCLUDE.
+After the alternate file is read, input resumes from the
+file with the #INCLUDE directive.

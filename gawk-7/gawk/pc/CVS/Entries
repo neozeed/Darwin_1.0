@@ -1,0 +1,14 @@
+/ChangeLog/1.1.1.2/Thu Sep  2 06:05:13 1999//Tgawk-7
+/Makefile/1.1.1.2/Thu Sep  2 06:05:13 1999//Tgawk-7
+/Makefile.tst/1.1.1.2/Thu Sep  2 06:05:13 1999//Tgawk-7
+/PB.project/1.1.1.1/Fri Apr 23 00:50:01 1999//Tgawk-7
+/config.h/1.1.1.2/Thu Sep  2 06:05:13 1999//Tgawk-7
+/gawk.def/1.1.1.1/Fri Apr 23 00:48:46 1999//Tgawk-7
+/gawkmisc.pc/1.1.1.1/Fri Apr 23 00:48:46 1999//Tgawk-7
+/getid.c/1.1.1.2/Thu Sep  2 06:05:14 1999//Tgawk-7
+/install.awk/1.1.1.1/Fri Apr 23 00:48:46 1999//Tgawk-7
+/mkinstal.sh/1.1.1.1/Fri Apr 23 00:48:46 1999//Tgawk-7
+/popen.c/1.1.1.2/Thu Sep  2 06:05:14 1999//Tgawk-7
+/popen.h/1.1.1.2/Thu Sep  2 06:05:14 1999//Tgawk-7
+D/awklib////
+D/include////

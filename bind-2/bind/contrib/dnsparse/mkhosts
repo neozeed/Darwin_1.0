@@ -1,0 +1,69 @@
+#!/usr/bin/perl
+#
+# mkhosts
+#
+# $Id: mkhosts,v 1.1.1.1 1999/10/04 22:25:52 wsanchez Exp $
+# $Source: /cvs/Darwin/Services/bind/bind/contrib/dnsparse/mkhosts,v $
+#
+# Usage:
+#	./mkhosts
+#
+# Front-end to create /etc/hosts files from DNS data.
+#
+# Creates a HOSTS.<domain>.<version> file for each domain listed in
+#  the ./domlist file.  That file should contain one domain per line, e.g.:
+#	cse.ogi.edu
+#
+# Also requires ./zonelist file containing filename,zonename pairs for
+#  each zone, one pair per line, e.g.:
+#	/usr/local/named/conf/zone.ogi.cse,cse.ogi.edu
+#
+# Runs ./dns2hosts for "real" work.
+#
+# Distribution of the resultant HOSTS.* files is done elsewhere,
+#  perhaps by a parent Makefile or calling script, etc.
+#
+
+$ver = &getver;
+
+$zone = &getzonelist;
+
+open(DOM, 'domlist') || die "Couldn't open 'domlist': $!\n";
+
+$| = 1;		# set STDOUT to flush
+
+while (<DOM>) {
+  chop;
+  $fil=HOSTS.".".$_.".".$ver;
+  print "$fil\n";
+  system("./dns2hosts -d$_ $zone > $fil");
+  chmod(0444,$fil);
+}
+
+
+sub getzonelist {
+#
+# Read ./zonelist, return a list of filename,zonename pairs for dns2hosts args.
+# Equivalent to `cat zonelist` .
+#
+	open(ZONE, 'zonelist') || die "Couldn't open 'zonelist': $!\n";
+	while (<ZONE>) {
+		chop;
+		$zonelist = $zonelist." ".$_;
+	}
+	return($zonelist);
+}
+
+
+sub getver {
+#
+# Generate a version number string for HOSTS.* files, based on current date.
+# Example: Thu May 20 1993 becomes 930520 .
+#
+	($sec,$min,$hour,$mday,$mon,$year,@rest) = localtime(time);
+	$mon++;     # convert to 1 == January
+	$ver = sprintf('%02d%02d%02d', $year, $mon, $mday);
+	return($ver);
+}
+
+

@@ -1,0 +1,345 @@
+@(#) OVERVIEW 1.4 99/01/08 @(#)
+
+OVERVIEW
+
+The updatehosts system is compatile used with the BIND DNS nameserver.
+Either version 4 or version 8 of BIND can be used.
+
+All DNS zone files are generated from a set of input relations.
+In addition the bootstrap file for either version of BIND is also
+generated.  Most of the commonly used bootstrap options are integrated
+into the updatehosts package.  Sites which use odd or seldom used options
+may call a postprocessor script to fix up the generated bootstrap file.
+But for almost all sites this step should be unnecessary.  If you have
+an option you would like to incorporate let me know what you want to do
+or incorporate it into the code and send me an update for inclusion in
+the next release.
+
+Updatehosts can also generate a DHCP configuration bootstrap file for the
+Internet Software Consortium's DHCP server.
+
+Updatehosts is currently in production use by several major
+corporations, so while I am just now open sourcing the code, it is a
+robust system with several years of production use under its
+belt.  I also use it to maintain my own domain and have for quite a few
+years.
+
+Here is a description of the general architecture of the system. The
+nameserver information is contained in a set of flat relational files.
+For now these files are simply ASCII text files. However, with a slight
+modifications the nameserver information could be maintained in a
+relational database.  Each file is composed of a set of fields.  The
+relations used in this system are as follows:
+
+cname <host, alias, ttl>
+global <directory, cache, forwarders, checknames, slave>
+main <host, ip, ether, hard, os, contact, ptr, ttl>
+mx <domain, priority, host, ttl>
+ns <domain, server, ttl>
+secondary <domain, ip, checknames>
+soa <domain, server, contact, refresh, retry, expire, min, checknames,
+	notify, also_notify>
+subnet <subnet, mask, gateway, dns, domain, time, hardware, dhcprange,
+	maxdhcplease, dynamicbootp>
+
+Those familiar with relational database terminology will see that some
+of the relation map to a specific resource record type in the DNS.  For
+example the "cname" relation contains three fields - "host", "alias",
+and "ttl".  Each tuple (or entry) in this relation corresponds to a
+single CNAME record.  The "mx", 'ns", and "soa" relations correspond to
+MX, NS, and SOA record types in the DNS.  The fields in each of these
+relations correspond to the value of the DNS resource record.  There is
+also a "ttl" field which allows a non-default time to live to be
+defined for a specific resource record.
+
+The "soa" relation defines the fields associated with the SOA resource
+record.  Note that there is no "serial" field.  The system
+automatically generates a serial number each time the zone files are
+generated.  The serial number is in a yyyymmddvv format where the vv
+runs from 00 to 99 which gives an update granularity of about 15
+minutes.  The "checknames", "notify" and "also_notify" fields implement
+these specific V8 BIND options for each zone.  The value of this field
+is the same as the V8 option values.  See the BIND documentation for
+details on these options.
+
+The "main" relation holds information about hosts including their IP
+addresses (DNS A records).  Additional information is also included for
+each host.  For example from the "hard" and "os" fields (which contain
+information about the machines hardware type and operating system) the
+DNS HINFO records are generated.
+
+Some non-DNS information is also captured.  For example the "ether"
+field in the main relation captures the MAC layer (Ethernet) address
+of a host.  This information can be used to generate DHCP or BOOTP
+configuration files along with information in the subnet relation.
+This information is optional and can be left empty if so desired.
+
+There is also a "contact" field which can be used for any contact
+information for the machine such as the user of the machine or its
+location.  It is also possible to add fields to this relation for any
+other purpose without any impact on the updatehosts system.  You may
+wish to do this to capture non-DNS host information in one place.
+
+One additional and valuable feature of the system is the ability
+to generate in-addr.arpa zone files from the set of relations.  When
+updatehosts runs it determines the zones the server is authoritative for
+and generates all the information for each zone file.  This includes any
+of the in-addr.arpa reverse zones.  There is also support for generating
+reverse zones for non-byte boundary subnets of Class C addresses per
+RFC2317.
+
+The "secondary" relation contains information about any zones this
+server is a secondary server (slave in BIND V8 terminology).  The
+"checknames" field allows the same V8 option to be defined for each
+secondary zone which lets non-standard hostnames pass the V8 syntax
+checking.
+
+The "global" relation contains a single tuple which holds global
+information.  The "directory" field defines the directory where the
+zone files are stored.  The "cache" field defines the pathname of the
+root cache file.  The "forwarders", "checknames", and "slave" fields
+define a few of the more common global nameserver options for BIND.
+
+How the System Works.
+
+Each of the relations is stored as a flat ASCII file.  To facilitate
+reading the information each file is preprocessed with a program called
+readinfo.  See the man page for readinfo for more details.  A file in
+readinfo format is a self-defining relation.  It has a special #FIELDS
+comment which defines each field in the file.
+
+An example is probably the best way to describe the format.  Here is an
+example of the cname relation:
+
+#FIELDS host suffix=.tic.com no=. alias suffix=.tic.com no=. ttl
+#host		alias		ttl
+xfrsparc	mail
+xfrsparc	smtp
+
+Comments in this file use the standard # convention.  However, the
+#FIELDS comment defines a special comment which defines the name and some
+characteristics of each field.  This particular relation has 3 fields
+-- "host", "alias", and "ttl".  The FIELDS comment names each of the
+fields in the order they appear in each line of the file.  Each field
+is described by its fieldname, followed by an optional prefix=, suffix=,
+no= or null= descriptor.  Fields may be empty. In this example the "ttl" field
+is empty for each record.
+
+The prefix= and suffix= describe what will be prepended or appended to
+the field value when readinfo outputs the field.  The no= field gives a
+character which says to display the host value as given and ignore any
+prefix or suffix.  In this example file for the "host" and the "alias"
+fields the suffix is ".tic.com" and the no= value is a period (".").
+This allows a convenient shorthand for domain names.
+
+Note that readinfo knows nothing about domain names.  So the suffix
+in this case is the literal string ".tic.com".  The null= defines a
+special string to stand for the empty value.  Defining this as, say, "X"
+is a convenient way to set a place holders for an empty value.  However,
+the quoted empty string can also be used as the empty field value or in
+this example the "ttl" field is empty, since it is the last field of the
+relation and no value appears in the field.
+
+There is also a special GLOBAL field where global values can be set for all
+fields in a single place.  This is often the place the empty value is set
+for all fields. 
+
+Field values only need be separated with whitespace.  A tuple can also be
+continued across multiple lines by the standard convention of having the
+last character on a line be a backslash ("\").  If whitespace is needed in
+a field value it can either be escaped with a backslash or the entire field
+value can be quoted with either single or double quotes.  If there are
+fewer values than field names, the extra fields are set to the empty string.
+
+readinfo is used to read all or a subset of the fields in the relation.
+The gendns program uses readinfo to select the appropriate fields in each
+relation to generate the zone files.  readinfo outputs all fields with the
+defined suffix and prefix attached to each value.  The fields are separated
+with TAB characters.
+
+gendns first reads the "soa" relation which defines the DNS zones for
+which this server is authoritative.  It determines if the zone is a normal
+zone or a reverse zone (e.g.in-addr.arpa).  If the zone is a forward zone,
+gendns first outputs the zone's SOA record using the fields in the "soa"
+relations.  It uses the all the fields except the "checknames", "notify"
+and "also-notify" fields.  These fields are used to generate options by the
+same name for the zone, if the nameserver is a V8 version of BIND.  The
+options are generated when the V8 bootstrap file is created.
+
+After the SOA record is generated, gendns finds all the tuples in the
+"ns" relation which match the domain name and generates the NS records for
+the zone.  There may also be NS records for delegated subdomains which are
+also generated.
+
+Once the NS records are generated, gendns scans the "main", "cname", and
+"mx" relations for matching domain names within the zone.  For the "main"
+relation, gendns looks at the domain and ip fields and generates DNS A
+records.  An equivalent process is done for the "cname" and "mx"
+relations.
+
+The above process is repeated for every normal zone.  If the zone is a
+reverse zone (e.g. in-addr.arpa) only the "ns" relation is scanned for the
+matching NS records. The "main" relation is then scanned for "ip" fields
+which match the reverse zone and the appropriate PTR records are
+generated.
+
+After each zone file is generated, gendns generates the bootstrap file.
+The "global" relation is used to generate the bootstrap information for
+the cache, as well as some global V8 BIND options.  This relation is unique
+in that it must have exactly 1 tuple.
+
+An Example
+
+Here is a complete example for a set of updatehosts relations. The output
+for each zone is also shown.  This example shows the real live nameserver
+in use on my own nameserver, xfrsparc.tic.com.  You may want to view the
+files with a wide terminal, since some of the lines wrap at the standard
+terminal screen width of 80 characters.
+
+/usr/local/bin/updatehosts.env:
+NAMED_DIR=/var/named
+DB_DIR=/var/named/db
+VERSION=8
+DB_FILES="main cname mx soa ns secondary subnets global"
+GENDHCP=1
+USESCCS=1
+
+Comments: This shows the various options in use.  In this case the zone
+files are kept in /var/named and the relational input files are in
+/var/named/db.  I am using Version 8 of BIND.  I am also generating a DHCP
+configuration file for the ISC version of DHCP.  DB_FILES lists the legal
+names of the relations used in the system.  I am using SCCS to maintain the
+relation database files.
+
+/var/named/db/global:
+#FIELDS directory cache forwarders checknames slave
+/var/named  db/named.root
+
+Comments: The directory option in BIND is set to /var/named.  The cache
+file pathname relative to the directory is db/named.cache.  The rest of
+the fields are empty.
+
+/var/named/db/soa:
+#FIELDS domain server suffix=.tic.com no=. contact suffix=.tic.com \
+refresh retry expire min checknames notify also_notify
+#domain          server     contact refresh retry expire min   checknames notify also_notify
+tic.com          xfrsparc   root    86400   300   604800 86400 warn yes   206.225.60.3
+localhost        localhost. root    86400   300   604800 86400 warn no
+127.in-addr.arpa localhost. root    86400   300   604800 86400 warn no
+# St. Michaels
+st-michaels.org  xfrsparc   root    86400   300   604800 86400 warn yes
+
+Comments:  This shows there are 4 zones which this server is authoritative
+for - tic.com, localhost, 127.in-addr.arpa and st-michaels.org.  The two
+zones, localhost and 127.in-addr.arpa define the software loopback
+interface.  These zones are strictly local since neither appear in the root
+DNS servers.
+
+/var/named/db/ns:
+#FIELDS domain server ttl
+#domain                  server			ttl
+tic.com                  xfrsparc.tic.com
+tic.com                  akasha.mids.org
+tic.com                  oak.zilker.net
+localhost                localhost
+127.in-addr.arpa         localhost
+st-michaels.org          xfrsparc.tic.com
+st-michaels.org          ns.jump.net
+st-michaels.org          ns2.jump.net
+
+Comments:  This defines the nameservers for each zone found in the soa
+relation.
+
+/var/named/db/main:
+#FIELDS GLOBAL null=X host suffix=.tic.com no=. ip prefix=206.225.55. no=. ether hard os contact ptr ttl
+# host          ip     ether    hard    os      contact ptr ttl
+casa-gw		33
+clunker		33	X	X	X	smoot	no
+casa-pc		34
+casa-mac	35
+notebook	36 	X	X	X	smoot
+xfrsparc	37
+tic.com.	37	X	X	X	smoot	no
+www		37 	X	X	X	smoot	no
+localhost.	.127.0.0.1
+# St. Michaels
+#FIELDS GLOBAL null=X host suffix=.st-michaels.org no=. ip prefix=206.225.55. no=. ether hard os contact ptr ttl
+www             38      X       X       X       smoot
+
+Comment: The main relation gives information about each host in all the
+zones.  This files shows the use of multiple #FIELDS lines to change the
+suffix definition for the "host" field from ".tic.com" to ".st-michaels.org".
+This is allowed and can be very useful where many zones are maintained. 
+It also shows the use of the "ptr" field.  Setting this field to "no" means
+the IP address is ignored when the in-addr.arpa zones are generated.  This
+allows a single PTR record to be generated for each IP address.  The line
+with the "tic.com>" host field shows the use of the no= parameter.
+
+/var/named/db/cname:
+#FIELDS host suffix=.tic.com no=. alias suffix=.tic.com no=. ttl
+#host		alias		ttl
+localhost.	loopback
+localhost.	localhost
+localhost.	loghost
+xfrsparc	mail
+xfrsparc	smtp
+xfrsparc	mailhost
+xfrsparc	mailrelay
+xfrsparc	xfr
+xfrsparc	news
+xfrsparc	src
+xfrsparc	fax
+xfrsparc	ftp
+xfrsparc	gopher
+xfrsparc	pop
+xfrsparc	ntp
+
+Comments:  This shows the aliases for the tic.com domain and also shows the
+effect use of the suffix=.tic.com parameter for shortening the alias names.
+
+/var/named/db/mx:
+#FIELDS domain priority host ttl
+#domain		priority    host		ttl
+tic.com         5           xfrsparc.tic.com
+tic.com         100         akasha.mids.org
+www.tic.com     5           xfrsparc.tic.com
+www.tic.com     100         akasha.mids.org
+st-michaels.org 5           xfrsparc.tic.com
+
+Comments: This shows the mx relation.  It also shows how fully-qualified
+domain names are written when a suffix is not defined.
+
+/var/named/db/subnet:
+#FIELDS subnet prefix=206.225.55. mask gateway prefix=206.225.55. \
+dns prefix=206.225.55. domain time prefix=206.225.55. hardware dhcprange \
+maxdhcplease dynamicbootp
+32 255.255.255.248 33 37 tic.com 37 ether 36-36 3600 86400
+
+Comments: This shows the subnet relation which is used to generate the DHCP
+bootstrap file.
+
+Generating DHCP Information
+
+The gendhcp script is used to generate an ISC DHCP bootstrap file.
+Two relations, "main" and "subnet" are used to generate this information.  The
+resulting bootstrap file is created in the current directory and is called
+dhcp.conf.  Normally the script is run in the NAMED_DIR directory and added
+to the updatehosts shell script by setting the variable GENDHCP in the
+updatehosts.env file.
+
+Common practice if this facility is used is to symlink the location of the
+dhcpd.conf file to the generated bootstrap file.  Updatehosts takes care of
+restarting the DHCP server once the new bootstrap file is generated.  It
+uses the poke_dhcp program which should be installed setuid to root and
+executable only by the DNS administrative group (default is staff).
+poke_dhcp also requires a configuration file called poke_dhcp.env.  A
+template of this file is found in the source directory.
+
+Delegating Subdomains
+
+Subdomain delegation is handled by listing the NS records for each
+delegated subdomain.  These subdomain records are automatically entered
+into the zone file for the parent domain.  Glue A records for a subdomain
+server within the delegated subdomain only need to be added to the "main"
+relation.  gendns will pick up the glue records, since it sees them as part
+of the parent domain.

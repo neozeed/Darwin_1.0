@@ -1,0 +1,19 @@
+# $Header: /cvs/Darwin/Services/bind/bind/contrib/decwrl/Distfile.datadir,v 1.1.1.1 1999/10/04 22:25:51 wsanchez Exp $
+# $Source: /cvs/Darwin/Services/bind/bind/contrib/decwrl/Distfile.datadir,v $
+
+SERVERS = ( )
+ARCH = titan
+
+FILES = (	restart.named setup.secondary
+		cache.db hacks.db named.boot.secondary
+		named.boot.hesiod setup.hesiod
+	)
+
+BINARIES = (	mips/named{-xfer,}	)
+
+# Make the master files last because "special" keys on it.
+
+( ${FILES} ${ARCH} ) -> ( ${SERVERS} )
+	install /etc/wrl.named/. ;
+	special ( named.boot.secondary ${ARCH}/named )
+		"/etc/wrl.named/restart.named" ;

@@ -1,0 +1,21 @@
+/MacOSStubs.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/Makefile/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/hfs.h/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/hfs_btreeio.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/hfs_dbg.h/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/hfs_encodings.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/hfs_encodings.h/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/hfs_format.h/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/hfs_link.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/hfs_lockf.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/hfs_lockf.h/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/hfs_lookup.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/hfs_macos_defs.h/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/hfs_mount.h/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/hfs_readwrite.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/hfs_search.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/hfs_vfsops.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/hfs_vfsutils.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/hfs_vhash.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/hfs_vnodeops.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+D/hfscommon////

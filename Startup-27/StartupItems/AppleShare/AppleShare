@@ -1,0 +1,17 @@
+#!/bin/sh
+
+. /etc/rc.common
+
+##
+# Start the AFP Server
+##
+if [ "${AFPSERVER:=-NO-}" = "-YES-" ]; then
+    CheckForNetwork 
+
+    if [ "${NETWORKUP}" = "-NO-" ]; then exit; fi
+
+    ConsoleMessage "Starting AppleShare"
+
+    echo "Starting the WebAdmin server"
+    /usr/sbin/webadminctl start
+fi

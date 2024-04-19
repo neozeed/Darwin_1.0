@@ -1,0 +1,777 @@
+diff -r -w -c 494p1/compat/lib/setitimer.c os2-494p1/compat/lib/setitimer.c
+*** 494p1/compat/lib/setitimer.c	Wed Dec 14 22:23:52 1994
+--- os2-494p1/compat/lib/setitimer.c	Tue Sep 03 22:37:20 1996
+***************
+*** 2,7 ****
+--- 2,20 ----
+  static char rcsid[] = "$Id: diffs.txt,v 1.1.1.1 1999/10/04 22:25:55 wsanchez Exp $";
+  #endif
+  
++ #ifdef __EMX__
++ #include <sys/time.h>
++ 
++ int setitimer(int which, const struct itimerval *value,
++             struct itimerval *ovalue)
++ {
++         if (alarm(value->it_value.tv_sec) >= 0)
++                 return (0);
++         else
++                 return (-1);
++ }
++ #endif
++ 
+  /*
+   * Setitimer emulation routine for UNICOS BIND.
+   */
+diff -r -w -c 494p1/conf/options.h os2-494p1/conf/options.h
+*** 494p1/conf/options.h	Fri May 17 02:10:41 1996
+--- os2-494p1/conf/options.h	Tue Sep 03 22:24:22 1996
+***************
+*** 88,94 ****
+  #define QRYLOG  	/* enable SIGWINCH for query logging (bb) */
+  /*#define YPKLUDGE  	/* deal effectively with broken "ypserv -i" (mcsun) */
+  #define TRACEROOT  	/* trace bogus root servers and ignore them (pma,bb) */
+! /*#define LOCALDOM	/* permit "domain" directive in named.boot (ucb) */
+  #define FORCED_RELOAD	/* refresh secondary zones on SIGHUP (pma) */
+  #define SLAVE_FORWARD	/* use sensible timeouts on slave forwarders (pma) */
+  #define WANT_PIDFILE	/* if you want the named.pid file (ucb/arc) */
+--- 88,94 ----
+  #define QRYLOG          /* enable SIGWINCH for query logging (bb) */
+  /*#define YPKLUDGE      /* deal effectively with broken "ypserv -i" (mcsun) */
+  #define TRACEROOT       /* trace bogus root servers and ignore them (pma,bb) */
+! #define LOCALDOM      /* permit "domain" directive in named.boot (ucb)
+  #define FORCED_RELOAD   /* refresh secondary zones on SIGHUP (pma) */
+  #define SLAVE_FORWARD   /* use sensible timeouts on slave forwarders (pma) */
+  #define WANT_PIDFILE    /* if you want the named.pid file (ucb/arc) */
+***************
+*** 116,122 ****
+  #define PURGE_ZONE	/* remove all traces of a zone when reloading (mpa) */
+  #define STATS		/* keep nameserver statistics; uses more memory */
+  #define RENICE  	/* named-xfer should run at normal priority */
+! /*#define XSTATS	/* extended statistics, syslogged periodically (bg) */
+  /*#define BIND_NOTIFY	/* experimental - do not enable in customer products */
+  #define LOC_RR		/* support for LOC record parsing (ckd/vix) */
+  #define SORT_RESPONSE	/* should we try to sort responses optimally? (vix) */
+--- 116,122 ----
+  #define PURGE_ZONE      /* remove all traces of a zone when reloading (mpa) */
+  #define STATS           /* keep nameserver statistics; uses more memory */
+  #define RENICE          /* named-xfer should run at normal priority */
+! #define XSTATS        /* extended statistics, syslogged periodically (bg)
+  /*#define BIND_NOTIFY   /* experimental - do not enable in customer products */
+  #define LOC_RR          /* support for LOC record parsing (ckd/vix) */
+  #define SORT_RESPONSE   /* should we try to sort responses optimally? (vix) */
+diff -r -w -c 494p1/conf/portability.h os2-494p1/conf/portability.h
+*** 494p1/conf/portability.h	Thu Jun 06 13:19:09 1996
+--- os2-494p1/conf/portability.h	Tue Sep 03 22:31:14 1996
+***************
+*** 153,158 ****
+--- 153,166 ----
+  # define SYSV
+  #endif
+  
++ #ifdef __EMX__
++ # define vfork fork
++ # define USE_POSIX
++ # define USE_UTIME
++ # define HAVE_SETVBUF
++ # define NEED_STRCASECMP
++ #endif
++ 
+  #if defined(_POSIX_SOURCE) || defined(__sgi) || defined(__ultrix) || \
+          defined(__hpux) || (defined(BSD) && (BSD >= 199103)) || \
+          (defined(sun) && defined(SYSV))
+***************
+*** 424,430 ****
+  # define PORT_WOULDBLK	EWOULDBLOCK
+  #endif
+  
+! #if defined(USE_POSIX)
+  # define USE_SETSID
+  #endif
+  
+--- 432,438 ----
+  # define PORT_WOULDBLK  EWOULDBLOCK
+  #endif
+  
+! #if defined(USE_POSIX) && !defined(__EMX__)
+  # define USE_SETSID
+  #endif
+  
+diff -r -w -c 494p1/include/netdb.h os2-494p1/include/netdb.h
+*** 494p1/include/netdb.h	Wed May 08 22:59:10 1996
+--- os2-494p1/include/netdb.h	Tue Sep 03 22:15:52 1996
+***************
+*** 67,77 ****
+--- 67,85 ----
+  #endif
+  #include <sys/cdefs.h>
+  
++ #ifdef __EMX__
++ #define _PATH_HEQUIV    "/tcpip/etc/hosts.equ"
++ #define _PATH_HOSTS     "/tcpip/etc/hosts"
++ #define _PATH_NETWORKS  "/tcpip/etc/networks"
++ #define _PATH_PROTOCOLS "/tcpip/etc/protocol"
++ #define _PATH_SERVICES  "/tcpip/etc/services"
++ #else
+  #define _PATH_HEQUIV    "/etc/hosts.equiv"
+  #define _PATH_HOSTS     "/etc/hosts"
+  #define _PATH_NETWORKS  "/etc/networks"
+  #define _PATH_PROTOCOLS "/etc/protocols"
+  #define _PATH_SERVICES  "/etc/services"
++ #endif
+  
+  extern int h_errno;
+  
+diff -r -w -c 494p1/include/resolv.h os2-494p1/include/resolv.h
+*** 494p1/include/resolv.h	Sun Jun 02 01:20:38 1996
+--- os2-494p1/include/resolv.h	Tue Sep 03 22:16:26 1996
+***************
+*** 87,93 ****
+--- 87,97 ----
+   */
+  
+  #ifndef _PATH_RESCONF
++ #ifdef __EMX__
++ #define _PATH_RESCONF        "/tcpip/etc/resolv"
++ #else
+  #define _PATH_RESCONF        "/etc/resolv.conf"
++ #endif
+  #endif
+  
+  /*
+diff -r -w -c 494p1/named/db_dump.c os2-494p1/named/db_dump.c
+*** 494p1/named/db_dump.c	Mon Aug 05 01:31:30 1996
+--- os2-494p1/named/db_dump.c	Tue Sep 03 21:42:00 1996
+***************
+*** 139,145 ****
+--- 139,150 ----
+          return;
+      }
+  
++ 
++ #ifdef __EMX__
++     if (rename_unixstyle(tmpcheckfile, cache_file)) {
++ #else
+      if (rename(tmpcheckfile, cache_file)) {
++ #endif
+          dprintf(3, (ddt, "doachkpt(install %s to %s failed, %d)\n",
+                      tmpcheckfile, cache_file, errno));
+      }
+***************
+*** 235,242 ****
+--- 240,259 ----
+  {
+          FILE    *fp;
+  
++ #ifdef __EMX__
++         char *cp;
++ #endif
++ 
+          dprintf(3, (ddt, "doadump()\n"));
+          syslog(LOG_NOTICE, "dumping nameserver data\n");
++ 
++ #ifdef __EMX__
++         if (((cp = getenv("TMP")) != NULL) || ((cp = getenv("TEMP")) != NULL)) {
++         /* TMP or TEMP points to the OS/2 temporaries directory */
++           strcpy(dumpfile, cp);
++           strcat(dumpfile, _PATH_DUMPFILEF);
++         }
++ #endif
+  
+          if ((fp = fopen(dumpfile, "w")) == NULL)
+                  return;
+diff -r -w -c 494p1/named/db_glob.h os2-494p1/named/db_glob.h
+*** 494p1/named/db_glob.h	Wed Dec 06 12:34:39 1995
+--- os2-494p1/named/db_glob.h	Thu Aug 08 11:12:16 1996
+***************
+*** 71,80 ****
+--- 71,92 ----
+          /* current line number */
+  DECL    int             lineno;
+  
++ #ifdef __EMX__
++ 
+  #ifdef DUMPFILE
++ DECL    char            path_dumpfile[_MAX_PATH] INIT(DUMPFILE);
++ #else
++ DECL    char            path_dumpfile[_MAX_PATH] INIT(_PATH_DUMPFILE);
++ #endif
++ DECL    char            *dumpfile INIT(path_dumpfile);
++ #else
++ 
++ #ifdef DUMPFILE
+  DECL    char            *dumpfile INIT(DUMPFILE);
+  #else
+  DECL    char            *dumpfile INIT(_PATH_DUMPFILE);
++ #endif
++ 
+  #endif
+  
+          /* root hash table */
+diff -r -w -c 494p1/named/named-xfer.c os2-494p1/named/named-xfer.c
+*** 494p1/named/named-xfer.c	Mon Aug 05 01:31:31 1996
+--- os2-494p1/named/named-xfer.c	Tue Sep 03 22:01:56 1996
+***************
+*** 113,119 ****
+--- 113,123 ----
+  
+  static  struct zoneinfo zone;           /* zone information */
+  
++ #ifdef __EMX__
++ static  char            ddtfilename[_MAX_PATH] = _PATH_TMPXFER,
++ #else
+  static  char            ddtfilename[] = _PATH_TMPXFER,
++ #endif
+                          *ddtfile = ddtfilename,
+                          *tmpname,
+                          *domain;                /* domain being xfered */
+***************
+*** 276,281 ****
+--- 280,286 ----
+                                 tmpname);
+                  exit(XFER_FAIL);
+          }
++ #ifndef __EMX__
+  #if HAVE_FCHMOD
+          if (fchmod(dbfd, 0644) == -1)
+  #else
+***************
+*** 288,293 ****
+--- 293,299 ----
+                                 tmpname);
+                  exit(XFER_FAIL);
+          }
++ #endif
+          if ((dbfp = fdopen(dbfd, "r+")) == NULL) {
+                  perror(tmpname);
+                  if (!quiet)
+***************
+*** 296,306 ****
+--- 302,322 ----
+          }
+  #ifdef DEBUG
+          if (debug) {
++ #ifdef __EMX__
++                 /* for OS/2 we check the TMP environment-variable first */
++                 char *cp;
++ 
++                 if (((cp = getenv("TMP")) != NULL) || ((cp = getenv("TEMP")) != NULL)) {
++                   strcpy(ddtfilename, cp);
++                   strcat(ddtfilename, _PATH_TMPXFERF);
++                 }
++ #endif
+                  /* ddtfile is now something like "/usr/tmp/xfer.ddt.XXXXXX" */
+                  if ((ddtd = mkstemp(ddtfile)) == -1) {
+                          perror(ddtfile);
+                          debug = 0;
+                  }
++ #ifndef __EMX__
+  #if HAVE_FCHMOD
+                  else if (fchmod(ddtd, 0644) == -1)
+  #else
+***************
+*** 309,315 ****
+  		{
+  			perror(ddtfile);
+  			debug = 0;
+! 		} else if ((ddt = fdopen(ddtd, "w")) == NULL) {
+  			perror(ddtfile);
+  			debug = 0;
+  		} else {
+--- 325,333 ----
+                  {
+                          perror(ddtfile);
+                          debug = 0;
+!                 }
+! #endif
+!                 else if ((ddt = fdopen(ddtd, "w")) == NULL) {
+                          perror(ddtfile);
+                          debug = 0;
+                  } else {
+***************
+*** 412,418 ****
+--- 430,440 ----
+          switch (result) {
+  
+          case XFER_SUCCESS:                      /* ok exit */
++ #ifdef __EMX__
++                 if (rename_unixstyle(tmpname, dbfile) == -1) {
++ #else
+                  if (rename(tmpname, dbfile) == -1) {
++ #endif
+                          perror("rename");
+                          if (!quiet)
+                              syslog(LOG_ERR, "rename %s to %s: %m",
+diff -r -w -c 494p1/named/ns_glob.h os2-494p1/named/ns_glob.h
+*** 494p1/named/ns_glob.h	Mon May 20 08:10:02 1996
+--- os2-494p1/named/ns_glob.h	Tue Sep 03 23:27:00 1996
+***************
+*** 190,197 ****
+--- 190,252 ----
+          /* next query to retry */
+  DECL    struct qinfo            *retryqp        INIT(NULL);
+  
++ #ifdef __EMX__
++ /* initialization of some files differs due to the possibility of environment
++  * variable overrides; these get fixed in ns_main.c somewhere in main() */
++ 
+          /* default boot file */
+  #ifdef BOOTFILE
++ DECL    char                    path_boot[_MAX_PATH]       INIT(BOOTFILE);
++ #else
++ DECL    char                    path_boot[_MAX_PATH]       INIT(_PATH_BOOT);
++ #endif
++ DECL    char                    *bootfile                  INIT(path_boot);
++ 
++         /* default debug output file */
++ #ifdef DEBUGFILE
++ DECL    char                    path_debug[_MAX_PATH]      INIT(DEBUGFILE);
++ #else
++ DECL    char                    path_debug[_MAX_PATH]      INIT(_PATH_DEBUG);
++ #endif
++ DECL    char                    *debugfile                 INIT(path_debug);
++ 
++ #ifdef WANT_PIDFILE
++         /* file to store current named PID */
++ #ifdef PIDFILE
++ DECL    char                    path_pidfile[_MAX_PATH]    INIT(PIDFILE);
++ #else
++ DECL    char                    path_pidfile[_MAX_PATH]    INIT(_PATH_PIDFILE);
++ #endif
++ DECL    char                    *PidFile                   INIT(path_pidfile);
++ #endif /* WANT_PIDFILE */
++ 
++ #ifdef STATSFILE
++ DECL    char                    path_stats[_MAX_PATH]      INIT(STATSFILE);
++ #else
++ DECL    char                    path_stats[_MAX_PATH]      INIT(_PATH_STATS);
++ #endif
++ DECL    char                    *statsfile                 INIT(path_stats);
++ 
++ #ifdef TMPDIR
++ DECL    char                    path_tempdir[_MAX_PATH]    INIT(TMPDIR);
++ #else
++ DECL    char                    path_tempdir[_MAX_PATH]    INIT(_PATH_TMPDIR);
++ #endif
++ DECL    char                    *path_tmpdir               INIT(path_tempdir);
++ 
++ #ifdef PATH_XFER
++ DECL    char                    path_named_xfer[_MAX_PATH] INIT(PATH_XFER);
++ #else
++ DECL    char                    path_named_xfer[_MAX_PATH] INIT(_PATH_XFER);
++ #endif
++ DECL    char                    *path_xfer                 INIT(path_named_xfer);
++ 
++ DECL    char                    path_xferddt[_MAX_PATH]    INIT(_PATH_XFERDDT);
++ DECL    char                    path_xfertrace[_MAX_PATH]  INIT(_PATH_XFERTRACE);
++ 
++ #else
++         /* default boot file */
++ #ifdef BOOTFILE
+  DECL    char                    *bootfile       INIT(BOOTFILE);
+  #else
+  DECL    char                    *bootfile       INIT(_PATH_BOOT);
+***************
+*** 213,218 ****
+--- 268,281 ----
+  #endif
+  #endif /*WANT_PIDFILE*/
+  
++ #ifdef STATSFILE
++ DECL    const char              *statsfile      INIT(STATSFILE);
++ #else
++ DECL    const char              *statsfile      INIT(_PATH_STATS);
++ #endif
++ 
++ #endif
++ 
+          /* zone information */
+  DECL    struct zoneinfo         *zones          INIT(NULL);
+  
+***************
+*** 245,256 ****
+  #ifdef SLAVE_FORWARD
+  	/* retry time when a slave */
+  DECL	int			slave_retry	INIT(4);
+- #endif
+- 
+- #ifdef STATSFILE
+- DECL	const char		*statsfile	INIT(STATSFILE);
+- #else
+- DECL	const char		*statsfile	INIT(_PATH_STATS);
+  #endif
+  
+  DECL	const char		sendtoStr[]	INIT("sendto");
+--- 308,313 ----
+diff -r -w -c 494p1/named/ns_init.c os2-494p1/named/ns_init.c
+*** 494p1/named/ns_init.c	Mon Aug 05 01:31:32 1996
+--- os2-494p1/named/ns_init.c	Tue Sep 03 21:48:56 1996
+***************
+*** 267,273 ****
+--- 267,277 ----
+                  }
+                  if (strcasecmp(buf, "directory") == 0) {
+                          (void) getword(buf, sizeof(buf), fp, 0);
++ #ifdef __EMX__
++                         if (_chdir2(buf) < 0) {
++ #else
+                          if (chdir(buf) < 0) {
++ #endif
+                                  syslog(LOG_CRIT, "directory %s: %m\n",
+                                          buf);
+                                  exit(1);
+***************
+*** 588,595 ****
+--- 592,604 ----
+                                   * We will always transfer this zone again
+                                   * after a reload.
+                                   */
++ #ifdef __EMX__
++                                  sprintf(buf, "%s/NsTmp%ld.%d", path_tmpdir,
++                                         (long)getpid(), tmpnum++);
++ #else
+                                   sprintf(buf, "%s/NsTmp%ld.%d", _PATH_TMPDIR,
+                                          (long)getpid(), tmpnum++);
++ #endif
+                                  source = savestr(buf);
+                                  zp->z_flags |= Z_TMP_FILE;
+                          } else
+diff -r -w -c 494p1/named/ns_main.c os2-494p1/named/ns_main.c
+*** 494p1/named/ns_main.c	Mon Aug 05 01:31:32 1996
+--- os2-494p1/named/ns_main.c	Tue Sep 03 23:37:40 1996
+***************
+*** 197,202 ****
+--- 197,236 ----
+          u_char ip_opts[50];             /* arbitrary size */
+  #endif
+  
++ #ifdef __EMX__
++         char *cp;
++         if ((cp = getenv("ETC")) != NULL) {
++           /* ETC points to the OS/2 version of the /etc directory */
++           strcpy(bootfile, cp);
++           strcat(bootfile, _PATH_BOOTF);
++           strcpy(PidFile, cp);
++           strcat(PidFile, _PATH_PIDFILEF);
++         }
++ 
++         if (((cp = getenv("TMP")) != NULL) || ((cp = getenv("TEMP")) != NULL)) {
++           /* TMP or TEMP points to the OS/2 temporaries directory */
++           strcpy(debugfile, cp);
++           strcat(debugfile, _PATH_DEBUGF);
++           strcpy(statsfile, cp);
++           strcat(statsfile, _PATH_STATSF);
++           strcpy(path_xfertrace, cp);
++           strcat(path_xfertrace, _PATH_XFERTRACEF);
++           strcpy(path_xferddt, cp);
++           strcat(path_xferddt, _PATH_XFERDDTF);
++           strcpy(path_tmpdir, cp);
++         }
++ 
++         if ((cp = getenv("NAMED_XFER")) != NULL) {
++           /* NAMED_XFER points to the named-xfer program */
++           strcpy(path_xfer, cp);
++         }
++ 
++         if ((cp = getenv("NAMED_BOOT")) != NULL) {
++           /* NAMED_BOOT points to the named.boot file */
++           strcpy(bootfile, cp);
++         }
++ #endif
++ 
+          local_ns_port = ns_port = htons(NAMESERVER_PORT);
+  
+          /* BSD has a better random number generator but it's not clear
+***************
+*** 507,512 ****
+--- 541,547 ----
+  #if defined(SYSV) || defined(hpux)
+                  setpgrp();
+  #else
++ #ifndef __EMX__
+                  {
+                          struct itimerval ival;
+  
+***************
+*** 531,536 ****
+--- 566,572 ----
+                                  (void) my_close(n);
+                          }
+                  }
++ #endif
+  #endif /* SYSV */
+  #endif /* HAVE_DAEMON */
+          }
+diff -r -w -c 494p1/named/ns_maint.c os2-494p1/named/ns_maint.c
+*** 494p1/named/ns_maint.c	Mon Aug 05 01:31:32 1996
+--- os2-494p1/named/ns_maint.c	Tue Sep 03 21:54:20 1996
+***************
+*** 414,421 ****
+  #endif
+  
+  	dprintf(1, (ddt, "startxfer() %s\n", zp->z_origin));
+! 
+  	argv[argc++] = _PATH_XFER;
+  	argv[argc++] = "-z";
+  	argv[argc++] = zp->z_origin;
+  	argv[argc++] = "-f";
+--- 414,424 ----
+  #endif
+  
+          dprintf(1, (ddt, "startxfer() %s\n", zp->z_origin));
+! #ifdef __EMX__
+!         argv[argc++] = path_xfer;
+! #else
+          argv[argc++] = _PATH_XFER;
++ #endif
+          argv[argc++] = "-z";
+          argv[argc++] = zp->z_origin;
+          argv[argc++] = "-f";
+***************
+*** 443,452 ****
+--- 446,463 ----
+                  sprintf(debug_str, "%d", debug);
+                  argv[argc++] = debug_str;
+                  argv[argc++] = "-l";
++ #ifdef __EMX__
++                 argv[argc++] = path_xferddt;
++ #else
+                  argv[argc++] = _PATH_XFERDDT;
++ #endif
+                  if (debug > 5) {
+                          argv[argc++] = "-t";
++ #ifdef __EMX__
++                         argv[argc++] = path_xfertrace;
++ #else
+                          argv[argc++] = _PATH_XFERTRACE;
++ #endif
+                  }
+          }
+  #endif
+***************
+*** 503,510 ****
+--- 514,526 ----
+  
+          if (pid == 0) {
+                  /* Child. */
++ #ifdef __EMX__
++                 execv(path_xfer, argv);
++                 syslog(LOG_ERR, "can't exec %s: %m", path_xfer);
++ #else
+                  execv(_PATH_XFER, argv);
+                  syslog(LOG_ERR, "can't exec %s: %m", _PATH_XFER);
++ #endif
+                  _exit(XFER_FAIL);       /* Avoid duplicate buffer flushes. */
+          }
+          /* Parent. */
+diff -r -w -c 494p1/named/ns_req.c os2-494p1/named/ns_req.c
+*** 494p1/named/ns_req.c	Mon Aug 05 01:31:33 1996
+--- os2-494p1/named/ns_req.c	Tue Sep 03 23:41:44 1996
+***************
+*** 2034,2041 ****
+--- 2034,2043 ----
+          static const int sndbuf = XFER_BUFSIZE * 2;
+  #endif
+  #ifdef SO_LINGER
++ #ifndef __EMX__
+          static const struct linger ll = { 1, 120 };
+  #endif
++ #endif
+  
+          dprintf(5, (ddt, "startxfr()\n"));
+  
+***************
+*** 2136,2141 ****
+--- 2138,2144 ----
+          fwritemsg(rfp, soa, soalen);
+          (void) fflush(rfp);
+  #ifdef SO_LINGER
++ #ifndef __EMX__
+          /* kernels that map pages for IO end up failing if the pipe is full
+           * at exit and we take away the final buffer.  this is really a kernel
+           * bug but it's harmless on systems that are not broken, so...
+***************
+*** 2143,2148 ****
+--- 2146,2152 ----
+          setsockopt(qsp->s_rfd, SOL_SOCKET, SO_LINGER,
+                     (char *)&ll, sizeof ll);
+          close(qsp->s_rfd);
++ #endif
+  #endif
+          _exit(0);
+          /* NOTREACHED */
+diff -r -w -c 494p1/named/pathnames.h os2-494p1/named/pathnames.h
+*** 494p1/named/pathnames.h	Wed Dec 14 22:24:22 1994
+--- os2-494p1/named/pathnames.h	Thu Aug 08 12:51:50 1996
+***************
+*** 62,67 ****
+--- 62,92 ----
+  # define _PATH_XFER_PREDEFINED  /* probably from Makefile */
+  #endif
+  
++ #ifdef __EMX__
++ #define _PATH_BOOT      "/tcpip/etc/namedb/named.boot"
++ #define _PATH_BOOTF     "/namedb/named.boot"
++ #define _PATH_DEVNULL   "nul"
++ #define _PATH_TTY       "con"
++ #ifndef _PATH_XFER
++ # define _PATH_XFER     "/tcpip/bin/named-xfer"
++ #endif
++ #define _PATH_DEBUG     "/tmp/named.run"
++ #define _PATH_DEBUGF    "/named.run"
++ #define _PATH_DUMPFILE  "/tmp/named_dump.db"
++ #define _PATH_DUMPFILEF  "/named_dump.db"
++ #define _PATH_PIDFILE  "/tcpip/etc/named.pid"
++ #define _PATH_PIDFILEF "/named.pid"
++ #define _PATH_STATS     "/tmp/named.stats"
++ #define _PATH_STATSF    "/named.stats"
++ #define _PATH_XFERTRACE "/tmp/xfer.trace"
++ #define _PATH_XFERTRACEF "/xfer.trace"
++ #define _PATH_XFERDDT   "/tmp/xfer.ddt"
++ #define _PATH_XFERDDTF  "/xfer.ddt"
++ #define _PATH_TMPXFER   "/tmp/xfer.ddt.XXXXXX"
++ #define _PATH_TMPXFERF  "/xfer.ddt.XXXXXX"
++ #define _PATH_TMPDIR    "/tmp"
++ 
++ #else
+  #if defined (__sgi) && !defined(_SYSTYPE_SVR4) && !defined(__SYSTYPE_SVR4)
+  #define _PATH_BOOT      "/usr/etc/named.d/named.boot"
+  #else
+***************
+*** 120,122 ****
+--- 145,149 ----
+  #else
+  # undef _PATH_XFER_PREDEFINED
+  #endif /*_PATH_XFER_PREDEFINED*/
++ 
++ #endif /* __EMX__ */
+diff -r -w -c 494p1/res/getnetent.c os2-494p1/res/getnetent.c
+*** 494p1/res/getnetent.c	Mon Aug 05 01:31:35 1996
+--- os2-494p1/res/getnetent.c	Tue Sep 03 22:06:38 1996
+***************
+*** 59,65 ****
+--- 59,69 ----
+  #include <string.h>
+  
+  #ifndef _PATH_NETWORKS
++ #ifdef __EMX__
++ #define _PATH_NETWORKS  "/tcpip/etc/networks"
++ #else
+  #define _PATH_NETWORKS  "/etc/networks"
++ #endif
+  #endif
+  
+  #define MAXALIASES      35
+diff -r -w -c 494p1/res/res_init.c os2-494p1/res/res_init.c
+*** 494p1/res/res_init.c	Mon Aug 05 01:31:37 1996
+--- os2-494p1/res/res_init.c	Tue Sep 03 22:08:38 1996
+***************
+*** 156,161 ****
+--- 156,164 ----
+          register char *cp, **pp;
+          register int n;
+          char buf[BUFSIZ];
++ #ifdef __EMX__
++         char path_resconf[_MAX_PATH];
++ #endif
+          int nserv = 0;    /* number of nameserver records read from file */
+          int haveenv = 0;
+          int havesearch = 0;
+***************
+*** 253,259 ****
+--- 256,273 ----
+  #ifdef  NeXT
+          if (netinfo_res_init(&haveenv, &havesearch) == 0)
+  #endif
++ #ifdef __EMX__
++         if ((cp = getenv("ETC")) != NULL) {
++             /* ETC points to the OS/2 version of the /etc directory */
++             strcpy(path_resconf, cp);
++             strcat(path_resconf, "\\resolv");
++         }
++         else
++             strcpy(path_resconf, _PATH_RESCONF);
++         if ((fp = fopen(path_resconf, "r")) != NULL) {
++ #else
+          if ((fp = fopen(_PATH_RESCONF, "r")) != NULL) {
++ #endif
+              /* read the config file */
+              while (fgets(buf, sizeof(buf), fp) != NULL) {
+                  /* skip comments */
+diff -r -w -c 494p1/tools/nslookup/main.c os2-494p1/tools/nslookup/main.c
+*** 494p1/tools/nslookup/main.c	Sun Jun 02 01:20:41 1996
+--- os2-494p1/tools/nslookup/main.c	Wed Sep 04 00:47:16 1996
+***************
+*** 153,158 ****
+--- 153,163 ----
+   */
+  char            *pager;
+  
++ #ifdef __EMX__
++     char        *helpfile;
++     char        helpfilepath[_MAX_PATH];
++ #endif
++ 
+  static void CvtAddrToPtr();
+  static void ReadRC();
+  
+***************
+*** 323,328 ****
+--- 328,344 ----
+              pager = _PATH_PAGERCMD;
+          }
+  
++ #ifdef __EMX__
++         helpfile = getenv("NSLOOKUP_HELP");
++         if (helpfile == NULL) {
++             _searchenv(_PATH_HELPFILEF, "HELP", helpfilepath);
++             if (helpfilepath == "") {
++               helpfile = helpfilepath;
++             } else
++               helpfile = _PATH_HELPFILE;
++         }
++ #endif
++ 
+          /*
+           * Setup the environment to allow the interrupt handler to return here.
+           */
+***************
+*** 1051,1057 ****
+--- 1067,1077 ----
+  {
+          char cmd[PATH_MAX];
+  
++ #ifdef __EMX__
++         sprintf(cmd, "%s %s", pager, helpfile);
++ #else
+          sprintf(cmd, "%s %s", pager, _PATH_HELPFILE);
++ #endif
+          system(cmd);
+  }
+  
+diff -r -w -c 494p1/tools/nslookup/pathnames.h os2-494p1/tools/nslookup/pathnames.h
+*** 494p1/tools/nslookup/pathnames.h	Wed Dec 14 22:24:32 1994
+--- os2-494p1/tools/nslookup/pathnames.h	Tue Sep 03 23:41:48 1996
+***************
+*** 62,71 ****
+--- 62,81 ----
+  #define _PATH_PAGERCMD          "more"
+  
+  #ifndef _PATH_HELPFILE
++ #ifdef __EMX__
++ #define _PATH_HELPFILE          "/tcpip/help/nslookup.help"
++ #else
+  #if defined(BSD) && BSD >= 198810
+  #define _PATH_HELPFILE          "/usr/share/misc/nslookup.help"
+  #else
+  #define _PATH_HELPFILE          "/usr/lib/nslookup.help"
++ #endif
++ #endif
++ #endif
++ 
++ #ifndef _PATH_HELPFILEF
++ #ifdef __EMX__
++ #define _PATH_HELPFILEF         "nslookup.help"
+  #endif
+  #endif
+  

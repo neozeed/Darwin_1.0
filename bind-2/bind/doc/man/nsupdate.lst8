@@ -1,0 +1,123 @@
+NSUPDATE(8)               BSD System Manager's Manual              NSUPDATE(8)
+
+NNAAMMEE
+     nnssuuppddaattee - update Internet name servers interactively
+
+SSYYNNOOPPSSIISS
+     nnssuuppddaattee [--_d] [--_v] [_f_i_l_e_n_a_m_e]
+
+DDEESSCCRRIIPPTTIIOONN
+     NNssuuppddaattee is a program to update Internet domain name servers supporting
+     dynamic update.  NNssuuppddaattee uses the DNS resolver library to pass messages
+     to a DNS server requesting the additional or deletion of DNS resource
+     records (RRs).  NNssuuppddaattee reads input from _f_i_l_e_n_a_m_e or standard input.
+
+AARRGGUUMMEENNTTSS
+     --dd          Debug mode.
+
+     --vv          Virtual circuit - use TCP to communication with server.  De-
+                 fault is UDP.
+
+IINNPPUUTT FFOORRMMAATT
+     NNssuuppddaattee reads input records, one per line, each line contributing a re-
+     source record to an update request.  All domain names used in a single
+     update request must belong to the same DNS zone.  A blank line causes the
+     accumulated records to be formated into a single update request and
+     transmitted to the zone's authoritative name servers.  Additional records
+     may follow, which are formed into additional, completely independent up-
+     date requests.  For the last request to be transmitted, a blank line must
+     end the input.
+
+     Records take one of two general forms.  _P_r_e_r_e_q_u_i_s_i_t_e records specify con-
+     ditions that must be satisfied before the request will be processed.
+     _U_p_d_a_t_e records specify changes to be made to the DNS database.  A update
+     request consists of zero or more prerequisites and one or more updates.
+     Each update request is processed atomically - all prerequisites must be
+     satisfied, then all updates will be performed.
+
+     NNssuuppddaattee understands the following input record formats:
+
+     pprreerreeqq nnxxddoommaaiinn _d_o_m_a_i_n_-_n_a_m_e
+     Requires that no RR of any type exists with name _d_o_m_a_i_n_-_n_a_m_e.
+
+
+     pprreerreeqq yyxxddoommaaiinn _d_o_m_a_i_n_-_n_a_m_e
+     Requires that at least one RR named _d_o_m_a_i_n_-_n_a_m_e must exist.
+
+
+     pprreerreeqq nnxxrrrrsseett _d_o_m_a_i_n_-_n_a_m_e [class] _t_y_p_e
+     Requires that no RR exists of the specified _t_y_p_e and _d_o_m_a_i_n_-_n_a_m_e.
+
+
+     pprreerreeqq yyxxrrrrsseett _d_o_m_a_i_n_-_n_a_m_e [class] _t_y_p_e [data...]
+     Requires that a RR exists of the specified _t_y_p_e and _d_o_m_a_i_n_-_n_a_m_e. If _d_a_t_a
+     is specified, it must match exactly.
+
+
+     uuppddaattee ddeelleettee _d_o_m_a_i_n_-_n_a_m_e [class] [type [data...]]
+     Deletes RRs named _d_o_m_a_i_n_-_n_a_m_e. If _t_y_p_e (and possibly _d_a_t_a) is specified,
+     only matching records will be deleted.
+
+
+     uuppddaattee aadddd _d_o_m_a_i_n_-_n_a_m_e _t_t_l [class] _t_y_p_e _d_a_t_a_._._.
+     Adds a new RR with specified _t_t_l, _t_y_p_e, and _d_a_t_a.
+
+
+
+EEXXAAMMPPLLEESS
+     The following example illustrates the interactive use of nnssuuppddaattee to
+     change an IP address by deleting any existing A records for a domain name
+     and then inserting a new one.  Since no prerequisites are specified, the
+     new record will be added even if there were no existing records to
+     delete.  Note the trailing blank line, required to process the request.
+
+           $ nsupdate
+           > update delete test.test.com A
+           > update add test.test.com 3600 A 10.1.1.1
+           >
+
+
+     In this example, a CNAME alias is added to the database only if there are
+     no existing A or CNAME records for the domain name.
+
+           $ nsupdate
+           > prereq nxrrset www.test.com A
+           > prereq nxrrset www.test.com CNAME
+           > update add www.test.com 3600 CNAME test.test.com
+           >
+
+
+
+DDIIAAGGNNOOSSTTIICCSS
+     Qq send error
+     Typically indicates that the authoritative nameservers could not be
+     reached
+
+
+     Qq failed update packet
+     Typically indicates that the nameserver has rejected the update, either
+     because the nameserver doesn't support dynamic update, or due to an au-
+     thentication failure
+
+
+     Qq res_mkupdate: packet size = _s_i_z_e
+     (and no other messages) The update was successfully received and authen-
+     ticated by the nameserver.  The prerequisites, however, may have prevent-
+     ed the update from actually being performed.  The only way to determine
+     if the update was performed is to use debug mode (--dd) and examine the
+     status field in the nameserver's reply.
+
+
+FFIILLEESS
+     /etc/resolv.conf
+     initial domain name and name server addresses
+
+SSEEEE AALLSSOO
+     named(8),  resolver(3),  resolver(5);  RFC-1034, ``Domain Names -
+     Concepts and Facilities''; RFC-1035, ``Domain Names - Implementation and
+     Specification''; RFC-2136, Dynamic Updates in the Domain Name System.
+
+AAUUTTHHOORR
+     Brent Baccala
+
+4th Berkeley Distribution        March 5, 1999                               2

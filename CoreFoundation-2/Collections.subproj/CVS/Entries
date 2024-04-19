@@ -1,0 +1,14 @@
+/CFArray.c/1.1.1.4/Wed Mar 15 17:02:54 2000//TCoreFoundation-2
+/CFArray.h/1.1.1.2/Fri Jan 28 23:12:11 2000//TCoreFoundation-2
+/CFBag.h/1.1.1.2/Fri Jan 28 23:12:11 2000//TCoreFoundation-2
+/CFData.c/1.1.1.3/Wed Mar 15 17:02:54 2000//TCoreFoundation-2
+/CFData.h/1.1.1.2/Fri Jan 28 23:12:12 2000//TCoreFoundation-2
+/CFDictionary.h/1.1.1.2/Fri Jan 28 23:12:12 2000//TCoreFoundation-2
+/CFHashing.c/1.1.1.4/Wed Mar 15 17:02:55 2000//TCoreFoundation-2
+/CFSet.h/1.1.1.2/Fri Jan 28 23:12:12 2000//TCoreFoundation-2
+/CFStorage.c/1.1.1.4/Wed Mar 15 17:02:55 2000//TCoreFoundation-2
+/CFStorage.h/1.1.1.2/Fri Jan 28 23:12:12 2000//TCoreFoundation-2
+/CFTree.c/1.1.1.3/Wed Mar 15 17:02:55 2000//TCoreFoundation-2
+/CFTree.h/1.1.1.2/Fri Jan 28 23:12:12 2000//TCoreFoundation-2
+/Makefile/1.1.1.1/Wed Jan 12 00:32:23 2000//TCoreFoundation-2
+D

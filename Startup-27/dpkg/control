@@ -1,0 +1,4 @@
+Package: startup
+Maintainer: Wilfredo Sanchez <wsanchez@apple.com>
+Description: System Startup
+Build-Depends: build-base, corefoundation

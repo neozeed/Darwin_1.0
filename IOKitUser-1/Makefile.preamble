@@ -1,0 +1,18 @@
+OTHER_PROJECT_HEADERS = iokitmig.h
+OTHER_PUBLIC_HEADERS = iokitmig.h
+OTHER_OFILES =  iokitmigUser.o
+
+ALL_MIGFLAGS = -DIOKIT -user $*User.c -header $*.h
+
+# Always generate a version file.
+VERSIONING_SYSTEM = next-sgs
+OTHER_GENERATED_OFILES += $(VERS_OFILE)
+
+PROJECT_HEADER_DIR_SUFFIX = /IOKit
+
+CFPLUGIN_H = /System/Library/Frameworks/CoreFoundation.framework/Headers/CFPlugIn.h
+ifeq ($(wildcard $(CFPLUGIN_H)),)
+NEXTSTEP_PB_CFLAGS += -DNO_CFPLUGIN
+else
+NEXTSTEP_PB_CFLAGS += -DHAVE_CFPLUGIN
+endif

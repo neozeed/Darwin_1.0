@@ -1,0 +1,17 @@
+/.cvsignore/1.1.1.1/Mon Oct  4 22:24:47 1999//Tbind-2
+/Makefile/1.2/Tue Oct  5 00:07:51 1999//Tbind-2
+/inet_addr.c/1.1.1.1/Mon Oct  4 22:24:47 1999//Tbind-2
+/inet_cidr_ntop.c/1.1.1.1/Mon Oct  4 22:24:47 1999//Tbind-2
+/inet_cidr_pton.c/1.1.1.1/Mon Oct  4 22:24:47 1999//Tbind-2
+/inet_lnaof.c/1.1.1.1/Mon Oct  4 22:24:48 1999//Tbind-2
+/inet_makeaddr.c/1.1.1.1/Mon Oct  4 22:24:48 1999//Tbind-2
+/inet_net_ntop.c/1.1.1.1/Mon Oct  4 22:24:48 1999//Tbind-2
+/inet_net_pton.c/1.1.1.1/Mon Oct  4 22:24:48 1999//Tbind-2
+/inet_neta.c/1.1.1.1/Mon Oct  4 22:24:48 1999//Tbind-2
+/inet_netof.c/1.1.1.1/Mon Oct  4 22:24:48 1999//Tbind-2
+/inet_network.c/1.1.1.1/Mon Oct  4 22:24:48 1999//Tbind-2
+/inet_ntoa.c/1.1.1.1/Mon Oct  4 22:24:48 1999//Tbind-2
+/inet_ntop.c/1.1.1.1/Mon Oct  4 22:24:48 1999//Tbind-2
+/inet_pton.c/1.1.1.1/Mon Oct  4 22:24:48 1999//Tbind-2
+/nsap_addr.c/1.1.1.1/Mon Oct  4 22:24:48 1999//Tbind-2
+D

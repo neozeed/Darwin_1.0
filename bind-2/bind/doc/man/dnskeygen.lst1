@@ -1,0 +1,69 @@
+DNSKEYGEN(1)                 BSD Reference Manual                 DNSKEYGEN(1)
+
+NNAAMMEE
+     ddnnsskkeeyyggeenn - generate public, private, and shared secret keys for DNS
+
+SSYYNNOOPPSSIISS
+     ddnnsskkeeyyggeenn [--[DDHHRR] _s_i_z_e] [--FF] --[zzhhuu] [--aa] [--cc] [--pp _n_u_m] [--ss _n_u_m] --nn _n_a_m_e
+
+DDEESSCCRRIIPPTTIIOONN
+     DDnnsskkeeyyggeenn (DNS Key Generator) is a tool to generate and maintain keys for
+     DNS Security within the DNS (Domain Name System).  DDnnsskkeeyyggeenn can generate
+     public and private keys to authenticate zone data, and shared secret keys
+     to be used for Request/Transaction signatures.
+
+     --DD          Dnskeygen will generate a DDSSAA//DDSSSS key.  ``size'' must be one
+                 of [512, 576, 640, 704, 768, 832, 896, 960, 1024].
+
+     --HH          Dnskeygen will generate an HHMMAACC--MMDD55 key.  ``size'' must be
+                 between 128 and 504.
+
+     --RR          Dnskeygen will generate an RRSSAA key.  ``size'' must be between
+                 512 and 4096.
+
+     --FF          ((RRSSAA oonnllyy)) Use a large exponent for key generation.
+
+     --zz --hh --uu    These flags define the type of key being generated: Zone (DNS
+                 validation) key, Host (host or service) key or User (e.g.
+                 email) key, respectively.  Each key is only allowed to be one
+                 of these.
+
+     --aa          Indicates that the key CCAANNNNOOTT be used for authentication.
+
+     --cc          Indicates that the key CCAANNNNOOTT be used for encryption.
+
+     --pp _n_u_m      Sets the key's protocol field to _n_u_m ; the default is 33
+                 (DNSSEC) if ``--zz'' or ``--hh'' is specified and 22 (EMAIL) oth-
+                 erwise.  Other accepted values are 11 (TLS), 44 (IPSEC), and
+                 225555 (ANY).
+
+     --ss _n_u_m      Sets the key's strength field to _n_u_m_; the default is 00..
+
+     --nn _n_a_m_e     Sets the key's name to _n_a_m_e_.
+
+   DDEETTAAIILLSS
+     DDnnsskkeeyyggeenn stores each key in two files: _K_<_n_a_m_e_>_+_<_a_l_g_>_+_<_f_o_o_t_p_r_i_n_t_>_._p_r_i_v_a_t_e
+     and _K_<_n_a_m_e_>_+_<_a_l_g_>_+_<_f_o_o_t_p_r_i_n_t_>_._k_e_y The file
+     _K_<_n_a_m_e_>_+_<_a_l_g_>_+_<_f_o_o_t_p_r_i_n_t_>_._p_r_i_v_a_t_e contains the private key in a portable
+     format.  The file _K_<_n_a_m_e_>_+_<_a_l_g_>_+_<_f_o_o_t_p_r_i_n_t_>_._k_e_y contains the public key
+     in the DNS zone file format:
+
+           _<_n_a_m_e_> _I_N _K_E_Y _<_f_l_a_g_s_> _<_a_l_g_o_r_i_t_h_m_> _<_p_r_o_t_o_c_o_l_> _<_e_x_p_o_n_e_n_t_|_m_o_d_u_l_u_s_>
+
+EENNVVIIRROONNMMEENNTT
+     No environmental variables are used.
+
+SSEEEE AALLSSOO
+     _R_F_C _2_0_6_5 on secure DNS and the _T_S_I_G Internet Draft.
+
+AAUUTTHHOORR
+     Olafur Gudmundsson (ogud@tis.com).
+
+AACCKKNNOOWWLLEEDDGGMMEENNTTSS
+     The underlying cryptographic math is done by the DNSSAFE and/or Founda-
+     tion Toolkit libraries.
+
+BBUUGGSS
+     None are known at this time
+
+4th Berkeley Distribution      December 2, 1998                              2

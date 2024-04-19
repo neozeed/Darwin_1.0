@@ -1,0 +1,26 @@
+/COPYRIGHT/1.1.1.1/Wed Apr 14 19:20:59 1999//Tapache-640
+/Makefile.tmpl/1.1.1.2/Fri Mar 31 01:45:41 2000//Tapache-640
+/README/1.1.1.1/Wed Apr 14 19:21:00 1999//Tapache-640
+/WHATSNEW/1.1.1.1/Wed Apr 14 19:21:00 1999//Tapache-640
+/cclass.h/1.1.1.1/Wed Apr 14 19:21:00 1999//Tapache-640
+/cname.h/1.1.1.1/Wed Apr 14 19:21:00 1999//Tapache-640
+/debug.c/1.1.1.2/Thu Sep 30 02:00:46 1999//Tapache-640
+/engine.c/1.1.1.1/Wed Apr 14 19:21:00 1999//Tapache-640
+/engine.ih/1.1.1.1/Wed Apr 14 19:21:00 1999//Tapache-640
+/main.c/1.1.1.3/Fri Mar 31 01:45:42 2000//Tapache-640
+/mkh/1.1.1.1/Wed Apr 14 19:21:00 1999//Tapache-640
+/regcomp.c/1.1.1.2/Fri Mar 31 01:45:42 2000//Tapache-640
+/regcomp.ih/1.1.1.1/Wed Apr 14 19:21:00 1999//Tapache-640
+/regerror.c/1.1.1.1/Wed Apr 14 19:21:00 1999//Tapache-640
+/regerror.ih/1.1.1.1/Wed Apr 14 19:21:00 1999//Tapache-640
+/regex.3/1.1.1.1/Wed Apr 14 19:21:00 1999//Tapache-640
+/regex.7/1.1.1.1/Wed Apr 14 19:21:00 1999//Tapache-640
+/regex.dsp/1.1.1.1/Wed Apr 14 19:21:00 1999//Tapache-640
+/regex.mak/1.1.1.1/Wed Apr 14 19:21:00 1999//Tapache-640
+/regex2.h/1.1.1.2/Fri Mar 31 01:45:42 2000//Tapache-640
+/regexec.c/1.1.1.1/Wed Apr 14 19:21:00 1999//Tapache-640
+/regfree.c/1.1.1.1/Wed Apr 14 19:21:00 1999//Tapache-640
+/split.c/1.1.1.2/Thu Sep 30 02:00:47 1999//Tapache-640
+/tests/1.1.1.1/Wed Apr 14 19:21:01 1999//Tapache-640
+/utils.h/1.1.1.1/Wed Apr 14 19:21:01 1999//Tapache-640
+D

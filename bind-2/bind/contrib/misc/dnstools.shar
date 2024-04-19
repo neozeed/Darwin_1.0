@@ -1,0 +1,316 @@
+Newsgroups: alt.sources
+Path: vixie!decwrl!lambda.msfc.nasa.gov!newsxfer.itd.umich.edu!sol.ctr.columbia.edu!howland.reston.ans.net!agate!headwall.Stanford.EDU!microunity!ericm
+From: ericm@microunity.com (Eric Murray)
+Subject: dnstools [1/1]
+Message-ID: <1994Jun2.042145.4830@microunity.com>
+Summary: tools to make life with DNS easier
+Keywords: DNS BIND named perl
+Sender: usenet@microunity.com (news id)
+Nntp-Posting-Host: angst.microunity.com
+Organization: MicroUnity Systems Engineering, Inc., Sunnyvale, CA
+References: <1994Jun2.022231.10570@ida.liu.se>
+Date: Thu, 2 Jun 1994 04:21:45 GMT
+Lines: 302
+
+
+This set of scripts is designed to make life a little
+easier for DNS adminitrators.
+
+When you need to add delete or change hosts's information, you
+will only have to edit one file (the master name->IP addr database file
+often called named.hosts) and type 'make'.  The scripts
+will generate the reverse-lookup domain files, a new copy of
+/etc/hosts, run a consistency check to make sure that /etc/hosts and
+named.hosts match, signal bind to re-read the data files, and
+rdist the new /etc/hosts file to your client workstations.
+
+# This is a shell archive.
+# Remove anything above and including the cut line.
+# Then run the rest of the file through 'sh'.
+# Unpacked files will be owned by you and have default permissions.
+# Packed by ericm using uupack v1.3
+#----cut here-----cut here-----cut here-----cut here----#
+#!/bin/sh
+# shar: SHell ARchive
+# Run the following text through 'sh' to create:
+# Size		File
+#	503	Makefile
+#	3459	README
+#	1717	checkhosts
+#	992	findip
+#	2291	hosts-to-rev
+#	825	named-to-hosts
+#
+# This archive created Wed Jun  1 21:10:40 PDT 1994
+echo "extracting Makefile"
+if [ -f Makefile ]
+then
+echo "Oops! Makefile already exists- I wont overwrite it."
+else
+sed 's@^X@@' << \GNARLY_EOF > Makefile.Z.uue
+Xbegin 644 Makefile.Z
+XM'YV0"A0T"3*%2A$I2)X4!-%#@10B218V?!B1"I4@4HXP=`BQ($0I#$$$#,.&
+XMC0X0<>JD*4,G8,J5=$ZB>3.'SAP0<]"@$:F`S9LQ)&72M!EP9LTY)]V$:5.&
+XMC`NC-D$H9>I4S)LW+1/(:0.BA1D04.<H2.#B1=@6=-ZTD%/&SM@6+\2D<?-B
+XM39J276.```.4#H@7+,>\F-K4!9PT9,",+4N8#%JU84'X`$&G#9RPBU^,05-F
+XMS)K(+796OCQ4;((V=BA;CHPYH,\Z9(0>'2MG#!RPI4&00#&PX,&$!5/H`$Q'
+XM,.8$*.3DU,V;H$&$"JFD`"%B#!GF%#TFD9)B!_:.TK]7O)@QA0@0)E($S(E&
+XM-E&MMG$?9=[[.7#IPP.;+3TV^?+=]?T6W7357;=;=E1\U)UXP3%H$49'F"?9
+X/"V2T-5@=>,G@@PEZI1<0
+X`
+Xend
+GNARLY_EOF
+echo "uudecodeing Makefile.Z.uue"
+uudecode Makefile.Z.uue && rm Makefile.Z.uue
+echo "uncompressing Makefile"
+uncompress Makefile
+s=`wc -c Makefile | sed -e 's@[ ]*@@' -e 's@ .*@@'`
+if [ "${s}" -ne 503 ]
+then
+echo "Makefile: size mismatch (${s} != 503)"
+rm -f Makefile
+fi
+fi
+echo "extracting README"
+if [ -f README ]
+then
+echo "Oops! README already exists- I wont overwrite it."
+else
+sed 's@^X@@' << \GNARLY_EOF > README.Z.uue
+Xbegin 644 README.Z
+XM'YV0"A1009-F#H@Y9>B`>&/FX!@Y:>#0,5@0!)DR<]*<<5.&#`@Z;T"T";.F
+XM#`@V:<R8#',R#1TZ;,HH*!,F8QDY(,R\P4G$R1008<BT2>/&I9PP(.7,<1'P
+XM"IHR;D#D>5,'!,>.'T,&]7@Q)AV3.T&,01/&S1F3:-[,F7B"HAN=<D;22?/&
+XM#0NI5!7<2<.&S4(W;/*`(&O')$@0'5W^-6F&KTD4=)Z*K/D5IYLP;<JT\)$$
+XM"E`R9'"201I&3$W&CA4P_!IU3)B^6"]G)N,B[=HY*8"Z\4@G#QR3)T:6/.$"
+XM!(B!)N<\C#A1+U^_9SD>_?I1LIPRA95J9O/FS9HZ<"R^&4DTI^,Y=UERO"/V
+XM#1S!#!6\2#CFA>V)=^74B<IR3-V,:T$UAF!CE3'&&EE-5M)!=5Q7'5(@S$='
+XM??<95!89"LC646UJ3339A&C<E=%&KX$@!E&\A71="]<%59U)H]'!4F,QH:<;
+XMAG*049!"D9FT7H3TV=>A030:%M)4#8J%$E0*W;'3&FLA19<;2P4T!5%C&/:4
+XM@Q7-&$8:.&%&E1L*,7024G/14<=%()27%GM(BE66`@@I!!X(0B3A!!$6D5:D
+XMC5NNY&"/0,TQ1QUM2#2E04DL]-MT6.UWD1QZ/175'1#-9=:+"#D$D41SZ!!0
+XM#,5I2%N%[9'Y)95X)3G%$T&`<)U_.=X(5%\O@G`"7'>$D>,)"G0F:QDJ7>=&
+XME@:AH&&"PFXE1VYPW>H7DC@=*@9'$S&E@`S%$7I==@BUP)UW=Q*E$P@HN$"4
+XMLR[X"D<8N554DD1M1O6G:AR!\"B#UR:D[11'4H53GGN:V!T=1:)KJ@MB')S;
+XM4&>@H="X",XQ7D($;8K2@I$5Q!0*-1TZU*9Q^FJ2&&S(808;+OC7AJV$:7F=
+XM26.P$3((0_"+[1PM*!"###BXP.T,,%2G'P@_!SVT#"D$!`=$(\DAF'%44XVR
+XMRBR[7/765F&V884*/)U&U%-S#0+10KN0M+INM,"NNRR9O?"W:@.=-M%A0^UK
+XMV5S/0"JW:Q/E-FARM"O'NV9W/9L+=*\]=`QYC[UWXF=S"[C=@K]]>-Q<SXU=
+XMW4J[,(,,`96.G'DUUEM=1>\>&,99HC9!$K&.Z6!<'0B948=?*;5JT8X0B5$'
+XM=1)2."0(=J3!4HX[WN7&&PI9K$`"N!.[>YL-Q4E&72?0H:VI+8#40H6V/T33
+XM5Q9&5;R0M^4DQWB*?SUD<2!(448<=8")T>]G3'\'06-I4_KJ93X=H4PPU=.=
+XM7T#RA@6212'/`T%/?A*4D1TD+;OSB!A,LI?(4,5[TR."1@0(%#M\R68H6XE"
+XM1N(&P1B!"I[)"/K2TX:ZG.%%;1!5`BHS,J3LA'%+<0EM$)6&L;B@(W70P0OV
+XMDP8\O(`,5'HBE<35G>_`H05/>\,9CM*&.3Q1(],S(1O(TI<P'+$,C'M#@0)4
+XM."0J$0YU$,,+YB"'^NBH?PHHT('()Y:G',@@"T/5ZU:U%B!-B'WXL=5UX+"3
+XMYB2@+(+!TG]V)*`T8*0%@SE>>>J"FIB8:'A6@5ZNH+>EN^QD>JCJ(!H(N)-9
+XM*:19A*N2`BH4OC>P"#OE:Q'ZA@6N[53Q3G]"%]LT]RYHG<=]XYD>H0)YO")I
+XMJS&[B8@.$@!-'86G160`I-=.=;P+#4M-<F#5,LN`!SNUK7H>@65H,#*'Z:F.
+XM4#6[6<ZLA2W?S>$W8TA)'K05+"K)J(QSJ8NH^ADE7!%*.9_R4'FH)4&?_,Z5
+XM.Q$,"E8#%4/69V$>"4OQ4L"4)U@&>O0K@HX40I,`<O(N/;I.6PYRL51%B4P&
+XMB=-><!6S!-6I7C,)@Q&-<SK_^+,L'C(94'@D&9"$QTPE725"F:,M(Z#H+L+C
+XMBT>\292"^N6.V//=]MS0O<&$H3!M`J%(%4,HV94D88>YZ9W*(BL=%=),A%H?
+XMJA+6.R3I!:@)VM[JS&*0R$"H5_LT3A(:8K&[-&I6X\G,;MJZ(QNX``_I`0$4
+XMB*``YA7RJR<LC2>3-R,ZA,<,[WL9[L9P1#(D\05PE*-EZ?""U;I`1H73`E,&
+XM4I'5DO!0CZ(+3@YS4!GMQE<>66UZ%JL`>#;(6`H!UY30Y5BF>76`8V.D''P;
+XM/0,UR"6":0P>^%F%.;RN#`.E@E9``Q2KE($]]]&A4Q?+UOV@$P3JQ$EYX-E*
+XM`T4OCMC2H0M>4,V(@(`'49HN46[H+';Z("`)*`$(]MO?\#A.=#!0FPU@,+T'
+XMHRT&-J`!@I,0E8X9Q#4(N8N%(XSAHD7F:".6\`Q`<(>;K"1E-"&#8&14$KNP
+XM='H-_F:#..*1%&.8!OQ,P%@AN$T.W28]Y&5KK!!;*Y`M=@A."$(3BF`K).C)
+XM"$_(ZD4R<ATR-(V:8?%QAK65`+.BD6IF9O%S9+6?3-ZFEK>T@ZU&=!F_$(Q/
+XMAUD1-I4IF1_%:$;GH1]RHJ*8F?I%/U$!G_@J--S@[F=Z>EP#JNJ2J^L<B@V:
+XMNN%<'4._P8957R'#R%T*O69$3X^MMCV,6^D0O.%I"2W-=,RHLT<5KX(5*IK%
+XMRFJG-U_)F-F9I@O)6,IR%MT@!@\[&K";Z:`A'0Z!+&9Y];*7U6N:+8E,*Y7K
+XMD!J-R@YIR`4Q*5I8[I<_,3*I.`A^-K&E3>U$%[E"9$XS"A"RDH85AJ/&";9%
+X<RN"5E42%G,G>5'I#R.^$F$0QH(4?,V\3[]GQ$[E"
+X`
+Xend
+GNARLY_EOF
+echo "uudecodeing README.Z.uue"
+uudecode README.Z.uue && rm README.Z.uue
+echo "uncompressing README"
+uncompress README
+s=`wc -c README | sed -e 's@[ ]*@@' -e 's@ .*@@'`
+if [ "${s}" -ne 3459 ]
+then
+echo "README: size mismatch (${s} != 3459)"
+rm -f README
+fi
+fi
+echo "extracting checkhosts"
+if [ -f checkhosts ]
+then
+echo "Oops! checkhosts already exists- I wont overwrite it."
+else
+sed 's@^X@@' << \GNARLY_EOF > checkhosts.Z.uue
+Xbegin 644 checkhosts.Z
+XM'YV0(T*\J#-'S@LV;\:$8?-"3!HW+^"4D<-&P0@0<.2\.2,G3!L0=-Z`&(.F
+XMS)@U(%Z4H3/F!9HW<^C,`6%GC@L0;CR6(>/B9<PY%BV"*"(GS1@03>K(Z9@'
+XM1`P9+V3D>)%CAM")1ML`:6-48QTW:>CD<3'F31L%:.?4$0."8)@S94#L49`@
+XMXT,Z($2XA:L#!`D8(+:T0`/"ITP09M*P*=,E<`LW.'7R-#PS\>(N7-R(V$&W
+XM#)ZP3CGW04N",H@>>56R=`E3YF8%)'*VV7DZ]<J6LG>Z(/,B]^36<UXKN(-&
+XM<5P4)()(.6)E"XPN*>3236,&!'+ES)TW[N$GI9?!+Z+O`3&GN!DZ._R:1IU\
+XM>?/GZ4<G*,-F#G7K[;,_/]W]Q7>(XI%G'GI^^59;?N]U$5]G]=UWG7O:\>==
+XM"VF$)Q<(?J4!QQMNL)''"BLLF$!YU*&GP&@*O"&1&R@8@00+(I0&G`C1\<$'
+XM"&2D$9<("KEQ`EXJE@&9C#_U14((F;U&G'$H\."B#^+119**G(WXP@@NJ$#"
+XM"R]4Z89G>#GHWY8I5(F00FP@IR$+L>D4'6ISP,%&6%4224=N<^Q!@H9]')A;
+XMG89IF&>;L_7)GH8@W!<"&64D]B49&6[881ZB*3`&0G.4T2(29:(5)(LNPDCH
+XM3C2"8"...N;5XX\@?%J@9$8BJ1EG2R[6Y)-1)C`E'%7.T6666W9)UY=XA%D=
+XM"F.&YR68B1Y+PA<@A-`?%W.L$`2U*W!!Q@K*)G#1'&L@NA`;((A1!UY!@""'
+XM26_(0090"9RY$'*YL1D&FQJ^29Z<=-)%`AENS(&GGGSZJ5.=`-L'QZ"Y&1II
+XML]$RZBAM>TKJ8:67PJ2IDTA`R9E0;KQQQTAFP1'&NB"80+(;='04DPYHV<6R
+XMJB6=]-`9Z@%'DTVOSD:&#DER9D:[981!TL,HS-$N'2BL448>,Y5@&)XIY.K@
+XMHHT^1''"`U?<1ZX)7(UCUH_ZE;"@>DZMTZ!\?BU=`G#+C%>,:L_&-AQ]J@E'
+XM=`_E_%.YY^+T1IA#^A:T7V*$L6V(="4@WWSUQ347W!@5-;,(24`!@N)DR`$"
+XM5W.TT$88+!$VM.=V=LVGD:;-$0;4('`1HX:RL]`S;:[#+ON_`:.=^MH$X]V'
+XM[$&3D/CB528`@GSRT6>?LUP#[S5.<?UN=_!N3UZ7Y7/7'1?HHI-^].F1]M7Z
+XMZS/M[OW=PXM@^ZB0YIY^C-%?[S7QLQJO.(C)C_"5Q&8+F.KPEI[_-<IO=Y(>
+XMGZHT&A3)C68F"9<;<`:_G=W$3G,`VJP4<+JB'<U.UE&:')CF--B5X&P+J]K;
+XKQ"8QK4'*3KXS3/8:]T"ZM291A9,,X/`2,L(A<`Z'TQ_RZ-)`M'@&-$+D#-K;
+X`
+Xend
+GNARLY_EOF
+echo "uudecodeing checkhosts.Z.uue"
+uudecode checkhosts.Z.uue && rm checkhosts.Z.uue
+echo "uncompressing checkhosts"
+uncompress checkhosts
+s=`wc -c checkhosts | sed -e 's@[ ]*@@' -e 's@ .*@@'`
+if [ "${s}" -ne 1717 ]
+then
+echo "checkhosts: size mismatch (${s} != 1717)"
+rm -f checkhosts
+fi
+fi
+echo "extracting findip"
+if [ -f findip ]
+then
+echo "Oops! findip already exists- I wont overwrite it."
+else
+sed 's@^X@@' << \GNARLY_EOF > findip.Z.uue
+Xbegin 644 findip.Z
+XM'YV0(T*\J#-'S@LV;\:$8?-"3!HW+^"4D<-&P0@0<.2\.2,G3!L0=-Z`,/.0
+XM#$@T94"X*8.'#H@Z;A8B5$BGC,DD4$"$(4-&3IDY<T`\U&D1Q!`V88`:55F&
+XMSITW<M:`$),'A,^=#\^<3!FSC4T7:-[,H1.4))LR+$"<26.GC)NM1I$J'5)T
+XMI5.H4L.X,4D')8BQ8>30R:J3IT^@+BP6+2(GS1@03>K(Z5@UQ@L9EG/,*#K1
+XM<1L@;1QKA)F&3AX78]ZT4<!Z3ATQ+^>$.9-RCX($&1^Z%$%P=AD=($C``!%#
+XM!@X7,ES,@.$BA@T87-R(V'$[MYO=ULDR;3G29TJ<A7O^#/KF;=^4KL7836M&
+XMX\>N7\..G1-]^FV6I:GW86VB-VVA9H"``@DC!"'%$5:`$$(/(,"0`G5`B%%'
+XM@`S.`0<;I:%P`A<NG,`""08BN`4,73S(VD5V/145"&/(%10994BTEUMTZ%!4
+XM7VD$E>-(4,655%!#)$:"77`$YA*#(I`@H1DC=N&"DA-N$8.34#(I0Q?VD2`?
+XM'44*!@*256XQ`Y;4*?"&C"@8@00+(L!'!EABD25""B#PP0<(9*21D@@*N7&"
+XM2V>ZI9)'\<4Y!W`DA%`?=7>@D<99*/"@I@]TVI;`&&'!05T"<[RP@PLJD/""
+XMI[>MQ%T:`:+P@A>BFIB`J2ZA*B`)7RCH!P@O<#''"D'HN@(79*SPPH,)7#3'
+XM&FG`H1,;;$Q5ATM!6%5&:G*0,<=ML@Y8:P^WOC!D4UW2,2P(EG*Z*JB][CKJ
+XMIL4*1<<)09WW%Z%_O6;7;0EH&>>7P7VQ0W!;?GEKIZP2:22'Z^(+*X"S!LP#
+XMP'&&ZVJ^;M31QAQ;Z#M6%RNLL$,"[;81F%1DO'&'&XDEL-]^9D!51AB8-ARQ
+XMD2"XX`((,M100Z78IAH"C"2M9-*0%F-,:XGD8M38=2`D:;!@3WZQ*`CXT?'O
+X8R@IDU[0;(H&WDWA`_03"66;0L2B^"2@`
+X`
+Xend
+GNARLY_EOF
+echo "uudecodeing findip.Z.uue"
+uudecode findip.Z.uue && rm findip.Z.uue
+echo "uncompressing findip"
+uncompress findip
+s=`wc -c findip | sed -e 's@[ ]*@@' -e 's@ .*@@'`
+if [ "${s}" -ne 992 ]
+then
+echo "findip: size mismatch (${s} != 992)"
+rm -f findip
+fi
+fi
+echo "extracting hosts-to-rev"
+if [ -f hosts-to-rev ]
+then
+echo "Oops! hosts-to-rev already exists- I wont overwrite it."
+else
+sed 's@^X@@' << \GNARLY_EOF > hosts-to-rev.Z.uue
+Xbegin 644 hosts-to-rev.Z
+XM'YV0(T*\J#-'S@LV;\:$8?-"3!HW+^"4D<-&P0B+(*#(>7-&3I@V(.B\`2&G
+XM3!@R(!Z&1%,&A)N/9<BX0/-F#ITY(,RD85.&!8@P;E">*>-F8A@Z93".>5-R
+XM#IPW01^>(5G&SL0Y95H@?+.F#IR<.\O@1.'BX4DR<ER$D0,G3`J?4%M*E`-B
+XM3ATQ1>FXL(BQB)PT8T`TJ2/'8QX0-5[(F/$BQPR,$P&W`=(&\,8Z;M+0R>-B
+XM:1L%H$G0M(FS!P@1+]O$G%GSIH@=H$>`8)/&)H@W9D`,81-F#LXA(,B\:1/F
+XMX=@[FFG6H;.RY1C>OG6#:"N'3@J,=-`<!7&GY1V@S$6"&%K4(U*J5N5@!4$<
+XM#DXS3$%3#G,&,`C3*$['R"'#A8P8-HC`0@JP872'=G2<@-,;A`4W7'%N^`04
+XM2@>^H2!53D$U1QIB\)034RO5QIY8<_R@``G"$:>2:2)4-L9EF6W6V7`NO'8B
+XM<39-=-]ID8W1AEING&&3C:"](9$;*!B!!`NBM39'"B#PP4=P:;0D@D)NG,"<
+XMD42!T"1I-AX8%@@H\*"D#U#NH4`"8]`$!VP)S/'"#BZH0,(+<X*60%%X,)=&
+XM;B]X<2><:\JFDWIT^+35&A_2E5U+4SP11%TC=0<"EN.5X2=S\#G*$@@NE&0'
+XM6#S-X<)>"?Q)Y@N1!O$""&EZ^=`7<[P1Q@HK[.!2&7WNT,>:P*::&PHDS%JK
+XM6R"HF4"<+W`!!)ZZ@B";37]]]2@(0*PI+)DD?'&?'R`TF\(+:6J;@&Q$H80;
+XM"*V:6ZP;M-JZ(PQP+DO"L:"RR(4;(H#JI;<NG+:OC<ONR2L=]?ZZ;!ELK*>L
+XMO?BZH"^__G9;K\&]:JOPKX6FE%MW)Y0$`DLE^62I=E8UQZZDJ*Z)D$)L$&L7
+XM7IH2N"808>SH%&T(KZDJL6%L$4,7WX;K11!WPIJLMK(!]1,9:)'(-`AB+%?7
+XM&FE\]?)"H]&A@[9\^@FH%UNST76>R_YLPD/$U3<&T%O(T$4*Y1:,,]1TF;:S
+XM9B@TZ\(+3`8MM\T%D^!&'2"91L)9<L3=Q<6&P[3CXEO`\+BYLCW7VV\AN#MS
+XM7CN*L#C>E7?APNAH"6TZZHW+37#:PX;@Y>>:SK''O7?EU4?=!<M6U!VW%85J
+XMX;3?='OQ?>!Z\;FXT\R<XH>W<;'"RX[`.HFWIU9&'Y,SOL4,E_<>N6JV-Z][
+XMOEYJ[V^_1!:N??G%KU]CQ=Z#SSWT,$$>O1A7'9^[IMR3F)?J1[2`L2]A:_H5
+XMQSIEDC;-[G_,0<$:RI`'G)2@>$]:VK9D!D'>D4`G'F*1]F0BJM,5[W5<0I*2
+XM6"`"'WPP+"*`DI2H9"4L:>DV1_(2",L0@H'5"PY_<0,=S)`D))QF!_M"HANB
+XMU80@#`$)27!"$4!PA")(40I!H$(1B``"(R2!"47H(;\(EP`@/F2(13PB"(CP
+XM!!`XX0E4`,$6DT`%,2IQ8&0THQ")J*337+`L;F@!X]3"EC"X@`MTB"(B6X7(
+XM"S9R+`("@0E$Q4'GO<5<7DH1A)B$(Z30Q8#S"QB*'O20/`81C7T4P04%="];
+XMF?*,?#2B"/:%QWH!H7C1*PVEJH,"(>3!"8BK"QQXUK=P,6E__3,?`.E6+P:&
+XMP8&&"R8*;@G!7*;@864\Y;!260(R(!*1BJ0#%*@@A4>ZP)'\.B;BC@D3^$%0
+XM?OT29?3ZP"1-EO)B>APBF5)92XTE<$W/J4D9BF@SCLT,!+X$)DB451(Z$,8-
+XM`P1!"[PD!M@8]"XI<4/;[*.LL@$-:E`R#1"^4*`$.-.!T]SH&'C7T(>"(`8>
+XMX]99BA:H;I$+3@IKJ1P@2B\%<$P!!Q65!CWZKI!BBZ0N2\A"B-50PLE&5%=I
+XMB=,81Z*O)15FTT26WH;)MQ-PP04G8-(]UW12-)`)9QYL:.BZ=;J&$DQA)%!K
+X1#\`EIZ_>"6TZ15)<:V91!0!P
+X`
+Xend
+GNARLY_EOF
+echo "uudecodeing hosts-to-rev.Z.uue"
+uudecode hosts-to-rev.Z.uue && rm hosts-to-rev.Z.uue
+echo "uncompressing hosts-to-rev"
+uncompress hosts-to-rev
+s=`wc -c hosts-to-rev | sed -e 's@[ ]*@@' -e 's@ .*@@'`
+if [ "${s}" -ne 2291 ]
+then
+echo "hosts-to-rev: size mismatch (${s} != 2291)"
+rm -f hosts-to-rev
+fi
+fi
+echo "extracting named-to-hosts"
+if [ -f named-to-hosts ]
+then
+echo "Oops! named-to-hosts already exists- I wont overwrite it."
+else
+sed 's@^X@@' << \GNARLY_EOF > named-to-hosts.Z.uue
+Xbegin 644 named-to-hosts.Z
+XM'YV0(T*\J#-'S@LV;\:$8?-"3!HW+^"4D<-&P0B+(.:,D9,&#AT0=-Z`D%,F
+XM#!D0;L*T*4/FQ!R4*EFZ0/-F#IV7;<+8G`C"3!HV94"$<7,2CIPW9.J,"3H4
+XMQ(LR=,:\H&ESCD6,13B.`=&DCAPY8?*``"'C1=D<,S!.3#.F#9`V;(_6<9.&
+XM3AX78]ZTN3H"!!4D2::`F#)$2A(H5$`0*0*EB!,B@I\X49SD2(@05Q60(*,W
+XMS$,0/4"(@+OQS=RZ=_.V$;$#1%_..1^Z4*"93)HSH$6[>&$;=Q@\9N2`V-SY
+XM(6L0M-](=(."2&46(C;?!L%'1`KJ?$#8#BI"H9L3'^7,'=Y;Q_`07-RP5G`'
+XMS<\R*'@X/^+C^AX%"5YPF;,"11`^0S@11!-%I+#?"B]@AU(9>-"Q`WYSZ.<"
+XM<;&YP<5N+]SV8`)CT`3'AD"$(5QH<\#!1ET/XI>&&2"@0(*(6\C0!0AEQ`'"
+XM"0$.6,0)]N&7P(LGZE3&''N\*,<6,W31!P@NA';"C4P.!R,,76S8!WYEL#%'
+XM4/<ED$!?.LU1QTI"N0%"$".5D9<<)Z$Q41DZ^$A"1R:1(0>11FY!Y9*AY9GD
+XMA@G`01`:*`"1TDISL)`GE2FTYAH(:9S0!@ALA*&'6"&1$19^5UXY!D);-E=9
+XMH[09]=!'(HR0GJIT-!'$$(`Y400(1SA6A!1!4%$$$2`@\<045`AF1!),%(&>
+XM&ZP2\00(3CR1V*Y)4'&LJLBFMQY&1B&E%%-LP(%&&&)`Q=9";.31PAQOR$$'
+XM2R!0]9%/0/64+DANEKE0"ZH).D<:=C#5QAMNX$90G&:D6U*'PQT:%`KHJMNB
+XMH3'-D4*/@7+D!JISPE'GG44JW`<7=)"@,,@BQS0A;)Y9&/)":0B)I\?6/GBE
+X!`C'-
+X`
+Xend
+GNARLY_EOF
+echo "uudecodeing named-to-hosts.Z.uue"
+uudecode named-to-hosts.Z.uue && rm named-to-hosts.Z.uue
+echo "uncompressing named-to-hosts"
+uncompress named-to-hosts
+s=`wc -c named-to-hosts | sed -e 's@[ ]*@@' -e 's@ .*@@'`
+if [ "${s}" -ne 825 ]
+then
+echo "named-to-hosts: size mismatch (${s} != 825)"
+rm -f named-to-hosts
+fi
+fi
+exit 0
+--
+            Eric Murray                 ericm@microunity.com
+In this game, the winner is also the loser, and the judge's decisions are final

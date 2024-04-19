@@ -1,0 +1,22 @@
+/ChangeLog/1.1.1.2/Thu Sep  2 06:05:27 1999//Tgawk-7
+/PB.project/1.1.1.1/Fri Apr 23 00:50:26 1999//Tgawk-7
+/descrip.mms/1.1.1.2/Thu Sep  2 06:05:27 1999//Tgawk-7
+/fcntl.h/1.1.1.1/Fri Apr 23 00:49:01 1999//Tgawk-7
+/gawk.cld/1.1.1.1/Fri Apr 23 00:49:01 1999//Tgawk-7
+/gawk.hlp/1.1.1.2/Thu Sep  2 06:05:27 1999//Tgawk-7
+/gawkmisc.vms/1.1.1.1/Fri Apr 23 00:49:01 1999//Tgawk-7
+/posix-cc.sh/1.1.1.1/Fri Apr 23 00:49:01 1999//Tgawk-7
+/redirect.h/1.1.1.1/Fri Apr 23 00:49:01 1999//Tgawk-7
+/unixlib.h/1.1.1.1/Fri Apr 23 00:49:01 1999//Tgawk-7
+/varargs.h/1.1.1.1/Fri Apr 23 00:49:01 1999//Tgawk-7
+/vms-conf.h/1.1.1.2/Thu Sep  2 06:05:27 1999//Tgawk-7
+/vms.h/1.1.1.1/Fri Apr 23 00:49:01 1999//Tgawk-7
+/vms_args.c/1.1.1.1/Fri Apr 23 00:49:01 1999//Tgawk-7
+/vms_cli.c/1.1.1.1/Fri Apr 23 00:49:01 1999//Tgawk-7
+/vms_fwrite.c/1.1.1.1/Fri Apr 23 00:49:01 1999//Tgawk-7
+/vms_gawk.c/1.1.1.1/Fri Apr 23 00:49:01 1999//Tgawk-7
+/vms_misc.c/1.1.1.1/Fri Apr 23 00:49:01 1999//Tgawk-7
+/vms_popen.c/1.1.1.1/Fri Apr 23 00:49:01 1999//Tgawk-7
+/vmsbuild.com/1.1.1.2/Thu Sep  2 06:05:28 1999//Tgawk-7
+/vmstest.com/1.1.1.2/Thu Sep  2 06:05:28 1999//Tgawk-7
+D

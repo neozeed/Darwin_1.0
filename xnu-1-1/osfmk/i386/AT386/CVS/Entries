@@ -1,0 +1,16 @@
+/asm_startup.h/1.1.1.1/Sat Mar 25 21:02:56 2000//Txnu-1-1
+/autoconf.c/1.1.1.1/Sat Mar 25 21:02:56 2000//Txnu-1-1
+/bbclock.c/1.1.1.1/Sat Mar 25 21:02:56 2000//Txnu-1-1
+/bbclock_entries.h/1.1.1.1/Sat Mar 25 21:02:56 2000//Txnu-1-1
+/conf.c/1.1.1.1/Sat Mar 25 21:02:56 2000//Txnu-1-1
+/config.h/1.1.1.1/Sat Mar 25 21:02:56 2000//Txnu-1-1
+/cram.h/1.1.1.1/Sat Mar 25 21:02:56 2000//Txnu-1-1
+/himem.c/1.1.1.1/Sat Mar 25 21:02:56 2000//Txnu-1-1
+/himem.h/1.1.1.1/Sat Mar 25 21:02:56 2000//Txnu-1-1
+/kernBootStruct.h/1.1.1.1/Sat Mar 25 21:02:56 2000//Txnu-1-1
+/machdep.mk/1.1.1.1/Sat Mar 25 21:02:56 2000//Txnu-1-1
+/misc_protos.h/1.1.1.1/Sat Mar 25 21:02:56 2000//Txnu-1-1
+/model_dep.c/1.1.1.1/Sat Mar 25 21:02:56 2000//Txnu-1-1
+/physmem_entries.h/1.1.1.1/Sat Mar 25 21:02:56 2000//Txnu-1-1
+/rtc.h/1.1.1.1/Sat Mar 25 21:02:56 2000//Txnu-1-1
+D/mp////

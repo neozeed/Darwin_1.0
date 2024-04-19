@@ -1,0 +1,163 @@
+1. What this is:
+
+The goal was to control the name service configuration for a
+collection of networks in one domain [probably with one or more
+sub-domains] from a single file.
+
+Example:
+
+we have a domain: foo.com.  Contained in foo.com are bar.foo.com and
+baz.foo.com - private networks, as per RFC 1918.  foo.com contains a
+bunch of hosts visible to the network, but the private networks are
+not supposed to be.
+
+We create a master configuration file:
+
+# start of config file
+domain foo.com fooserver postmaster
+domain bar.foo.com barserver postmaster private
+domain baz.foo.com bazserver postmaster private
+network 192.168.0.0/18 foo.com
+network 198.168.1.0/18 bar.foo.com
+network 198.168.2.0/18 baz.foo.com
+allowed-hosts 198.168.0.0/18 198.168.1.0/18 198.168.2.0/18
+
+# hosts in foo.com
+198.160.0.2/18	fooserver
+etc
+
+# hosts in bar.foo.com
+198.160.1.2/18	barserver
+etc
+
+# hosts in baz.foo.com
+198.160.2.2/18	bazserver
+etc
+# end of config file
+
+We then do `sh cider2named.sh <name of config file>'.
+
+This creates a bunch of BIND 8.1.2 configuration files, some file
+transfer scripts, a cleanup script, a hosts file, and a funky script
+which is supposed to edit all the .rhosts on any system.
+
+This cuts down on the manual work, but doesn't eliminate it.
+
+2. Structure and assumptions:
+
+ - you are running BIND 8.1.2+
+ - your named configuration file is: /etc/named.conf
+ - your named zone files are in /etc/named.d/
+ - you can do `rsh -l root <nameserver> <cmd>' from where you run the
+   scripts for all name servers
+ - your zone is set up as a tree.  The nameserver for the whole domain
+   talks to the Internet [or at least has access to the root name
+   servers], and all the subdomain servers are `forward only' servers
+   who (a) answer queries about their own zone or (b) forward queries
+   to the root of your tree.  The root of your tree is the server with
+   the shortest domain name.  Thus:
+    fooserver - talks to the Internet and to barserver and bazserver.
+    barserver talks only to fooserver [and is a forward only server]
+    bazserver talks only to fooserver [and is a forward only server]
+
+3. Procedure:
+
+ - create the configuration file.  Syntax is defined below and in
+   `cider2named.sh'.
+ - /bin/sh cider2named.sh <config file>
+ - transfer the named config files to the servers
+   for x in xfer*.sh ; do
+     /bin/sh $x
+   done
+ - for each UNIX-ish machine, as root, `/bin/sh rhosts-fixup.sh'
+   You pretty much have to do this by hand - including copying the
+   script on to the target machines.
+ - If you are running NIS, then install `hosts' on the NIS server
+   and rebuild the maps.  Rebuild all NIS slave servers.
+
+4. Resolver issues:
+
+If you create a new domain, you need to modify the name resolver
+search lists.  Why?  Host names are only guaranteed to be unique
+within the zone in which they are defined.  Thus `bear.foo.com' and
+`bear.bar.foo.com' is legal and denotes two different hosts.
+Resolving the name `bear' doesn't work unless the resolver software
+adds a domain to it.  The domain name used will either be the default
+domain name - generally the name of the domain the query originates
+from or will be taken from a search list.
+
+Similarly, if a query originates in `baz.foo.com' and there is no
+`bear.baz.foo.com', the name will not resolve unless a search list is
+defined which contains: foo.com or bar.foo.com.
+
+You will [probably] want to resolve all names in the domain and
+subdomains from every host, so you will need to setup search lists on
+all hosts.
+
+ - UNIX-ish hosts: anything running later releases of BIND - the book
+says 4.8.3 and later versions of BIND support the `search' directive
+in /etc/resolv.conf.  Simply put, add a line to /etc/resolv.conf of
+the form: `search foo.com bar.foo.com baz.foo.com'.  The maximum
+number of entries is six [6].  Gory details in `DNS & BIND by Albitz &
+Liu, O'Reilly & Associates, Inc, 2nd Ed, 1997', pages 95-98.
+
+ - Windows NT hosts: as administrator, go to
+  Settings->Control Panel->Network->Protocols->TCP/IP->Properties->DNS
+  and then fill in the `Domain Suffix Search Order' box
+
+ - Windows 95 Hosts: as anyone, go to
+  Settings->Control Panel->Network->TCP/IP->Properties->DNS Configuration
+  and then fill in the `Domain Suffix Search Order' box
+
+5. Customization:
+
+There are two customization files, in addition to the configuration
+file.  These are:
+
+ - soa_file - the template for the start of authority entry for the
+zone files.  The values were cribbed from `DNS & BIND', page 55.
+Change if you want to.
+ - named.ca - the root server cache file.  This is current as of
+5/1999, so shouldn't require mucking with.
+
+6. Configuration File Syntax:
+
+config file lines are:
+
+ comments - start with a '#'
+
+ blank - don't put anything in them
+
+ domain - define a domain
+   domain <name> <server> <who> [private]
+      <name> is domain name
+      <server> is the host name of the server - presumably a member of the
+                domain
+      <who> gets mail from named [user name - NOT a fully qualified e-mail
+            address]
+      [private] marks zone as private
+
+ network - define a network
+   network <address> <domain>
+      <address> is network address in CIDER format: X.X.X.X/BITS
+      <domain> is the domain the network is in
+ <address> <host> [aliases] [comment] - define a host address
+      <address> is the host address in CIDER format
+      <host> is the host name - w/o domain, that is figured out
+      [aliases] are literal aliases for the host - CNAME records
+      [comment] is an in-line comment - signaled by the leading '#'
+
+ allowed-hosts - defines list of hosts allowed to query private networks
+   allowed-hosts <address> [more addresses]
+       <address> a host address in CIDER format
+       [more addresses] 0 or more blank separated host addresses
+
+NOTE:
+   host addresses in CIDER format are not X.Y.Z.W/32, but X.Y.Z.W/BITS,
+   where BITS is the number of bits which are the network part of the
+   address in the subnet to which the host belongs
+
+7. Bugs, comments, etc.
+
+Mike Howard <mike@clove.com>
+1999

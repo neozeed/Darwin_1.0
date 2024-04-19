@@ -1,0 +1,321 @@
+.\" @(#) gendns.1 1.3 99/01/04 @(#)
+.TH GENDNS 1 "99/01/04"
+.UC 4
+.SH NAME
+gendns \- update the DNS zone files from flat relational tables
+.SH SYNOPSIS
+.B gendns
+[
+.B -d dbdirectory
+]
+[
+-l dhcp_lease_file
+[
+.B -v
+]
+.SH DESCRIPTION
+Updates the DNS zone files.
+.PP
+.B gendns
+is a back end to the
+.B updatehosts
+command.
+It should normally only be invoked from the
+.B updatehosts
+command.
+.PP
+.B gendns
+converts a set of flat (relational) files into the standard DNS zone file
+format.
+All input files are kept in the
+.B dbdirectory
+which can be specified by the -d command line option.
+All output is placed in the current directory.
+When run under
+.B updatehosts
+the current directory is normally
+.B /var/named
+and the input directory is normally
+.B /var/named/db.
+However, these defaults may be overridden.
+See the
+.B updatehosts(1)
+manual page for details.
+.PP
+The -l option specifies the location of the dhcp_lease file.  It defaults
+to /etc/dhcpd.leases.
+.B gendns
+has the capability of reading the lease file information and generating
+name to IP address mappings when the IP address of a host is set to
+"dynamic".
+.PP
+The -v option generates additional output on the progress of the zone
+file generation.
+.SH
+Input File Formats
+.PP
+.B gendns
+uses
+.B readinfo
+(see readinfo(1))
+to preprocess the input files.
+The format of each file consists of a set of records separated into fields.
+Care should be taken to insure the field names are not altered.  Otherwise
+.B gendns will complain.
+Each fields attributes should be examined carefully when editing the input
+files.
+Usually, default suffixes and prefixes are added so domain names and IP
+addresses can be written in a shorthand fashion.
+However, the output from
+.B readinfo
+read by
+.B gendns
+is expected to have fully qualified domain names and full dotted quad IP
+addresses.
+Each file's record structure is described as follows:
+.TP
+main:
+Contains information about each host.  The fields in this file are as
+follows:
+.RS
+.TP
+host:
+The domain name of the host.
+.TP
+ip:
+The IP address of the host.  May be set to "dynamic" when the dynamic
+addressing of DHCP is in use.
+.TP
+ether:
+The hardware MAC address of the host.
+.TP
+hard:
+The hardware type of the host.
+.TP
+os:
+The operating system of the host.
+.TP
+contact:
+The name of a contact person or user of the host.
+.TP
+ptr:
+Either "yes" or "no". Tells gendns whether to generate the reverse zone
+entry for the host (e.g.the IP address to domain mapping zone). The default
+(empty) value is "yes".
+.TP
+ttl:
+Specifies the time to live field for both the address (A record type) and
+the reverse PTR record if generated.  Time is specified in seconds.
+If this field is empty the default ttl for the zone (specified in the SOA
+record) is used.
+.RE
+.PP
+.B gendns
+only needs entries for the
+.B domain
+and
+.B ip
+fields.
+The other fields may be empty.
+.TP
+cname:
+Species information about hosts and their aliases.
+The fields are:
+.RS
+.TP
+host:
+The domain name of a host
+.TP
+alias:
+The alias for the host
+.TP
+ttl:
+The time to live for this record
+.RE
+.TP
+mx:
+Specifies information about MX (mail exchanger) records.
+.RS
+.TP
+domain:
+The mail domain name
+.TP
+priority:
+The MX record priority
+.TP
+host:
+The domain name of the mail forwarder
+.TP
+ttl:
+The time to live for this record
+.RE
+.TP
+ns:
+Specifies information about nameserver records.
+.RS
+.TP
+domain:
+The nameserver domain
+.TP
+server:
+The domain name of the server for each domain
+.TP
+ttl:
+The time to live for this record
+.SH
+.RE
+.TP
+soa:
+The SOA (start of authority)  record information for each domain served.
+.RS
+.TP
+domain:
+The domain (zone) this server is authoritative for
+.TP
+server:
+The domain name of the primary server for this domain
+.TP
+contact:
+Email address of domain contact.  Per DNS format rules the '@' in the
+address is specified as a ".".
+.TP
+refresh:
+The refresh interval for this zone in seconds
+.TP
+retry:
+The retry interval for this zone in seconds
+.TP
+expire:
+The authoritative expiration time in seconds for secondary servers
+which have not been refreshed within the interval specified.
+.TP
+min:
+The minimum time to live for resource records within this zone without a
+ttl.
+.TP
+checknames:
+Specifies how illegal domain names are treated within this zone. Only works
+with version 8 of bind.  The 3 legal values of this field are:
+.RS
+.TP
+warn:
+Warns about illegal names, but allows the names within a zone. Emits an
+error message about the name.
+.TP
+ignore:
+Ignores illegal names within the zone.
+.TP
+fail:
+Emits error messages about illegal names and does not load the zone.
+.RE
+.TP
+notify:
+If this filed is "yes", all secondary servers are notified about updates.
+Only works with Version 8 of bind.
+.RE
+.TP
+secondary
+Specifies zones this server will act as a secondary server for.  In bind version
+8 a secondary server is known as a slave server.
+.RS
+.TP
+domain:
+The name of the domain being served.
+.TP
+ip:
+The IP address of an authoritative server for this zone. Multiple servers
+may be specified by separating the IP address with commas.
+.TP
+checknames:
+Same values as the
+.B checknames
+field in the soa records.
+.RE
+.TP
+global:
+Contains global parameters applicable to all zones.
+.RS
+.TP
+directory:
+The name of the directory containing the generated zone files.
+.TP
+cache:
+Name of the root cache file
+.TP
+forwarders:
+list of optional forwarders for this server. This field is usually empty
+.TP
+checknames:
+Same as the
+.B checknames
+field found in each zone, but applies to all zones.
+Individual zones may override this value.
+.TP
+slave:
+Sets up this server as a slave server (stub in bind version 8 parlance).
+Can be either "yes" or "no". The default is "no".
+.SH
+.RE
+.SH
+Zone File Generation
+.PP
+Zone file generation is driven off of the
+.B soa
+file.
+Each domain specified in the
+.B soa
+file generates a separate DNS zone file.
+The name of the zone file is the same as the name of the domain field for
+forward zones.
+For a zone under
+.B in-addr.arpa
+(e.g. IP address to name mapping),
+the name of the zone file is the IP network address of the zone with an
+"f." prefix.
+For classless in-addr.arpa delegation of Class C addresses, the assumption
+is the delegation is done per RFC2317.  The zone file name replaces the "/"
+in the delegation reference with a "-".  For example delegating the subnet
+of 199.10.2.0/28 means delegating the zone 2/28.0.10.199.in-addr.arpa.
+The zone file in this case would be named f.199.10.2.0-28.
+A zone file is only generated if it appears in the
+.B soa file.
+Records in the other input files which are not members of a generated zone
+are silently ignored.
+.PP
+The program scans all the input files for domain records within each zone
+and generates all the records for the zone.
+.PP
+The serial number field is updated automatically for each new zone.
+The serial number is encoded from the real time clock value as yyyymmddxx,
+where yyyy is the 4 digit year, mm is the 2 digit month, dd is the 2 digit
+day, and xx is a 2 digit number between 00 and 99.
+This gives a granularity between updates of about 15 minutes.
+.SH
+Bootstrap File Generation
+.PP
+.B gendns
+also generates the bootstrap file for either version 4 or version 8 of the
+.B bind
+nameserver.
+The generated bootstrap file is put in the current directory (usually
+/var/named).
+To allow the nameserver to use the newly generated bootstrap file it is
+customary to link it to either
+.B /etc/named.boot
+for a version 4 nameserver or
+.B /etc/named.conf
+for a version 8 namesever.
+.SH
+Error Handling
+.PP
+An error message is issued for any CNAME (alias) record which is illegal.
+A CNAME record must only appear at a leaf node in the DNS hierarchy. Any
+record which violates this rule is dropped.
+A warning message is issued for any duplicate IP address or duplicate A
+records.
+These are warnings only, since duplication of domain names or IP addressed
+may be desirable.
+.SH
+See also
+.PP
+.B updatehosts(1)

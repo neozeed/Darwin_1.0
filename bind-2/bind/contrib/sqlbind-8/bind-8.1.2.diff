@@ -1,0 +1,957 @@
+--- /home/mitchell/src/bind-8.1.2/clean/src/bin/named/db_load.c	Fri Feb 13 15:02:28 1998
++++ /home/mitchell/src/bind-8.1.2/working/src/bin/named/db_load.c	Sun Mar 21 09:44:48 1999
+@@ -181,6 +181,11 @@
+ #define ORIGIN	6
+ #define ERROR	7
+ 
++#ifndef TRUE
++# define TRUE 1
++# define FALSE 0
++#endif
++
+ #define MAKENAME_OK(N) \
+ 	do { \
+ 		if (!makename_ok(N, origin, class, zp, \
+@@ -265,15 +270,20 @@
+ 		clev = nlabels(in_origin);
+ 	}
+ 
++    if(zp->z_sql == FALSE){
+ 	ns_debug(ns_log_load, 1, "db_load(%s, %s, %d, %s)",
+ 		 filename, in_origin, zp - zones,
+-		 def_domain ? def_domain : "Nil");
+-
++		 def_domain ? def_domain : "Nil"); 
++    }
+ 	strcpy(origin, in_origin);
++
++    if(zp->z_sql == FALSE){ 
+ 	if ((fp = fopen(filename, "r")) == NULL) {
+ 		ns_warning(ns_log_load, "%s: %s", filename, strerror(errno));
+ 		return (-1);
+ 	}
++    } 
++
+ 	if (zp->z_type == Z_CACHE) {
+ 		dbflags = DB_NODATA | DB_NOHINTS;
+ 		dataflags = DB_F_HINT;
+@@ -287,10 +297,14 @@
+ 		dataflags = 0;
+ 	}
+ 	gettime(&tt);
++
++/* SQL stuff  */
++   if(zp->z_sql == FALSE){ 
+ 	if (fstat(fileno(fp), &sb) < 0) {
+ 		ns_warning(ns_log_load, "%s: %s", filename, strerror(errno));
+ 		sb.st_mtime = (int)tt.tv_sec;
+ 	}
++   } 
+ 	slineno = lineno;
+ 	lineno = 1;
+ 	if (def_domain)
+@@ -299,6 +313,9 @@
+ 		domain[0] = '\0';
+ 	class = zp->z_class;
+ 	zp->z_flags &= ~(Z_INCLUDE|Z_DB_BAD);
++
++/* SQL stuff */
++   if(zp->z_sql == FALSE){ 
+  	while ((c = gettoken(fp, filename)) != EOF) {
+ 		switch (c) {
+ 		case INCLUDE:
+@@ -1250,6 +1267,16 @@
+ 			endline(fp);
+ 	}
+ 	(void) my_fclose(fp);
++/* SQL stuff */
++   }else{
++	if(sql_init_db(zp, clev) == 1){
++		ns_warning(ns_log_default, "Error loading sql db");	
++	}else{
++		read_soa++;
++		read_ns++;
++		rrcount++;
++	} 
++   } 
+ 	lineno = slineno;
+ 	if (!def_domain) {
+ 		if (didinclude) {
+--- /home/mitchell/src/bind-8.1.2/clean/src/bin/named/ns_parser.y	Thu Dec  4 02:03:05 1997
++++ /home/mitchell/src/bind-8.1.2/working/src/bin/named/ns_parser.y	Sun Mar 21 09:44:48 1999
+@@ -172,6 +172,19 @@
+ %token			T_MASTERS T_TRANSFER_SOURCE
+ %token			T_ALSO_NOTIFY
+ 
++/* SQL stuff */
++%type	<cp>		sql_options
++%token			T_SQL
++%token			T_SQL_HOST
++%token			T_SQL_USER
++%token			T_SQL_PASS
++%token			T_SQL_MBOX
++%token			T_SQL_REFRESH
++%token			T_SQL_RETRY
++%token			T_SQL_EXPIRE
++%token			T_SQL_MINTTL
++%token			T_SQL_SERIAL
++
+ /* Items used for access control lists and "allow" clauses: */
+ %token			T_ACL 
+ %token	 		T_ALLOW_UPDATE T_ALLOW_QUERY T_ALLOW_TRANSFER
+@@ -470,6 +483,7 @@
+ 	}
+ 	;
+ 
++
+ check_names_type: T_MASTER
+ 	{
+ 		$$ = primary_trans;
+@@ -1088,7 +1102,56 @@
+ /*
+  * Zones
+  */
++
++sql_list: sql_options L_EOS
++	{
++		/* Nothing */
++	}
++	| sql_list sql_options L_EOS
++	{
++		/* Nothing */
++	}
++	;
+ 	
++sql_options: T_SQL_HOST L_QSTRING
++	{
++		set_zone_infochar(current_zone, 0, $2);
++	}
++	| T_SQL_USER L_QSTRING
++	{
++		set_zone_infochar(current_zone, 1, $2);
++	}
++	| T_SQL_PASS L_QSTRING
++	{
++		set_zone_infochar(current_zone, 2, $2);
++	}
++	| T_SQL_MBOX L_QSTRING
++	{
++		set_zone_infochar(current_zone, 3, $2);
++	}
++	| T_SQL_REFRESH L_NUMBER
++	{
++		set_zone_infoint(current_zone, 4, $2);
++	}
++	| T_SQL_RETRY L_NUMBER
++	{
++		set_zone_infoint(current_zone, 5, $2);
++	}
++	| T_SQL_EXPIRE L_NUMBER
++	{
++		set_zone_infoint(current_zone, 6, $2);
++	}
++	| T_SQL_MINTTL L_NUMBER
++	{
++		set_zone_infoint(current_zone, 7, $2);
++	}
++	| T_SQL_SERIAL L_NUMBER
++	{
++		set_zone_infoint(current_zone, 8, $2);
++	}
++	;
++
++
+ zone_stmt: T_ZONE L_QSTRING optional_class
+ 	{
+ 		int sym_type;
+@@ -1172,6 +1235,10 @@
+ 	{
+ 		if (!set_zone_type(current_zone, $2))
+ 			parser_warning(0, "zone type already set; skipping");
++	}
++	| T_SQL  '{' sql_list '}'
++	{
++		set_zone_infoint(current_zone, 9, 1);
+ 	}
+ 	| T_FILE L_QSTRING
+ 	{
+--- /home/mitchell/src/bind-8.1.2/clean/src/bin/named/ns_config.c	Tue May  5 14:44:48 1998
++++ /home/mitchell/src/bind-8.1.2/working/src/bin/named/ns_config.c	Sun Mar 21 09:44:48 1999
+@@ -72,6 +72,11 @@
+ #define ZONE_SYM_TABLE_SIZE 4973
+ static symbol_table zone_symbol_table;
+ 
++#ifndef TRUE
++# define TRUE 1
++# define FALSE 0
++#endif
++
+ /* Zones */
+ 
+ void
+@@ -110,6 +115,17 @@
+ 		free_ip_match_list(zp->z_query_acl);
+ 	if (zp->z_transfer_acl != NULL)
+ 		free_ip_match_list(zp->z_transfer_acl);
++
++/* SQL stuff  */
++if(zp->z_dbhost != NULL)
++	freestr(zp->z_dbhost);
++if(zp->z_dbuser != NULL)
++	freestr(zp->z_dbuser);
++if(zp->z_dbpass != NULL)
++	freestr(zp->z_dbpass);
++if(zp->z_mbox != NULL)
++	freestr(zp->z_mbox);
++
+ #ifdef BIND_UPDATE
+ 	if (zp->z_updatelog != NULL)
+ 		freestr(zp->z_updatelog);
+@@ -212,7 +228,7 @@
+ 	}
+ 
+ 	/* Check filename. */
+-	if (zp->z_type == z_master && zp->z_source == NULL) {
++	if (zp->z_type == z_master && zp->z_source == NULL && zp->z_sql == FALSE) {
+ 		ns_error(ns_log_config,
+ 			 "'file' statement missing for master zone %s",
+ 			 zp->z_origin);
+@@ -257,6 +273,7 @@
+ 		}
+ 	}
+ 
++
+ #ifdef BIND_UPDATE
+ 	/* XXX need more checking here */
+ 	if (zp->z_type == z_master) {
+@@ -268,12 +285,15 @@
+ 			zp->z_deferupdcnt = DEFERUPDCNT;
+ 		if (!zp->z_updatelog) {
+ 			/* XXX OS-specific filename validation here */
+-			if ((strlen(zp->z_source) + (sizeof ".log" - 1)) >
+-			    MAXPATHLEN) {
+-				ns_error(ns_log_config,
+-				  "filename too long for dynamic zone '%s'",
++			/* if it's an sql zone, dont mess with it */
++			if(zp->z_sql == FALSE){
++			   if ((strlen(zp->z_source) + (sizeof ".log" - 1)) >
++			       MAXPATHLEN) {
++			   	  ns_error(ns_log_config,
++				     "filename too long for dynamic zone '%s'",
+ 					 zp->z_origin);
+-				return (0);
++				  return (0);
++			   }
+ 			}
+ 			/* this sprintf() is now safe */
+ 			sprintf(filename, "%s.log", zp->z_source);
+@@ -309,6 +329,7 @@
+ 	zp->z_class = class;
+ 	zp->z_checknames = not_set;
+ 	zh.opaque = zp;
++
+ 	return (zh);
+ }
+ 
+@@ -374,6 +395,21 @@
+ 		zp->z_also_notify[i] = new_zp->z_also_notify[i];
+ 	zp->z_notify_count = new_zp->z_notify_count;
+ 
++/* SQL stuff */
++if(new_zp->z_sql == TRUE){
++	zp->z_sql = new_zp->z_sql;
++	zp->z_dbhost = new_zp->z_dbhost;
++	zp->z_dbuser = new_zp->z_dbuser;
++	zp->z_dbpass = new_zp->z_dbpass;
++	zp->z_mbox = new_zp->z_mbox;
++
++	zp->z_refresh = new_zp->z_refresh;
++	zp->z_retry = new_zp->z_retry;
++	zp->z_expire = new_zp->z_expire;
++	zp->z_minimum = new_zp->z_minimum;
++	zp->z_serial = new_zp->z_serial;
++}
++
+ #ifdef BIND_UPDATE
+ 	if (new_zp->z_flags & Z_DYNAMIC)
+ 		zp->z_flags |= Z_DYNAMIC;
+@@ -561,6 +597,7 @@
+ 		 zp-zones, zp->z_type,
+ 		 *(zp->z_origin) == '\0' ? "." : zp->z_origin,
+ 		 (u_long)zp->z_time, zp->z_refresh);
++
+ }
+ 
+ /*
+@@ -577,6 +614,7 @@
+ 	new_zp = zh.opaque;
+ 	INSIST(new_zp != NULL);
+ 
++
+ 	zname = (new_zp->z_origin[0] == '\0') ? "." : new_zp->z_origin;
+ 	ns_debug(ns_log_config, 3, "end_zone('%s', %d)", zname,
+ 		 should_install);
+@@ -615,6 +653,7 @@
+ 	}
+ 
+ 	update_zone_info(zp, new_zp);
++
+ 	free_zone(new_zp);
+ 	zh.opaque = NULL;
+ }
+--- /home/mitchell/src/bind-8.1.2/clean/src/bin/named/ns_defs.h	Mon Apr 13 19:35:09 1998
++++ /home/mitchell/src/bind-8.1.2/working/src/bin/named/ns_defs.h	Sun Mar 21 09:44:48 1999
+@@ -292,6 +292,11 @@
+ 	evTimerID	z_timer;	/* maintenance timer */
+ 	ztimer_info	z_timerinfo;	/* UAP associated with timer */
+ 	time_t		z_nextmaint;	/* time of next maintenance */
++	int 		z_sql;
++	char		*z_dbhost;
++	char		*z_dbuser;
++	char		*z_dbpass;
++	char		*z_mbox;
+ };
+ 
+ 	/* zone types (z_type) */
+--- /home/mitchell/src/bind-8.1.2/clean/src/bin/named/ns_lexer.c	Thu Dec  4 03:11:52 1997
++++ /home/mitchell/src/bind-8.1.2/working/src/bin/named/ns_lexer.c	Sun Mar 21 09:44:48 1999
+@@ -299,6 +299,16 @@
+ 	{"warn", T_WARN},
+ 	{"yes", T_YES}, 
+ 	{"zone", T_ZONE},
++	{"sql", T_SQL},
++	{"db-host", T_SQL_HOST},
++	{"db-user", T_SQL_USER},
++	{"db-pass", T_SQL_PASS},
++	{"db-mbox", T_SQL_MBOX},
++	{"db-refresh", T_SQL_REFRESH},
++	{"db-retry", T_SQL_RETRY},
++	{"db-expire", T_SQL_EXPIRE},
++	{"db-minttl", T_SQL_MINTTL},
++	{"db-serial", T_SQL_SERIAL},
+ 	{(char *) NULL, 0},
+ };
+ 
+--- /home/mitchell/src/bind-8.1.2/clean/src/bin/named/Makefile	Thu Mar 19 19:49:46 1998
++++ /home/mitchell/src/bind-8.1.2/working/src/bin/named/Makefile	Sun Mar 21 09:44:48 1999
+@@ -24,9 +24,9 @@
+ #(net2 and its descendents)
+ SYSTYPE = bsdos
+ TOP = ../..
+-INCL =  ${TOP}/include
++INCL =  ${TOP}/include 
+ PORTINCL = ${TOP}/port/${SYSTYPE}/include
+-LIBBIND = ${TOP}/lib/libbind.a
++LIBBIND = ${TOP}/lib/libbind.a 
+ A=a
+ O=o
+ LEX = lex -I
+@@ -42,9 +42,13 @@
+ INSTALL= install
+ STRIP=-s
+ 
++SQLINC = /usr/include/mysql
++SQLLIB = -lmysqlclient
++SQLLIBDIR = -L/usr/lib/mysql
++
+ PS=ps
+ LDFLAGS=
+-CFLAGS=	${CDEBUG} -I${PORTINCL} -I${INCL} ${DEFS}
++CFLAGS=	${CDEBUG} -I${PORTINCL} -I${INCL} ${DEFS} -I${SQLINC}
+ 
+ VER= LOCAL-`date +%y%m%d.%H%M%S`
+ HOSTNAMECMD= hostname || uname -n
+@@ -56,19 +60,19 @@
+ 	ns_parser.c ns_lexer.c ns_parseutil.c \
+ 	ns_forw.c ns_init.c ns_main.c ns_maint.c ns_req.c \
+ 	ns_resp.c ns_stats.c ns_ncache.c ns_xfr.c ns_glue.c \
+-	ns_udp.c ns_config.c ns_update.c
++	ns_udp.c ns_config.c ns_update.c db_sql.c
+ OBJS=	db_dump.${O} db_load.${O} db_lookup.${O} db_save.${O} db_update.${O} \
+ 	db_glue.${O} \
+ 	ns_parser.${O} ns_lexer.${O} ns_parseutil.${O} \
+ 	ns_forw.${O} ns_init.${O} ns_main.${O} ns_maint.${O} ns_req.${O} \
+ 	ns_resp.${O} ns_stats.${O} ns_ncache.${O} ns_xfr.${O} ns_glue.${O} \
+-	ns_udp.${O} ns_config.${O} ns_update.${O}
++	ns_udp.${O} ns_config.${O} ns_update.${O} db_sql.${O} 
+ 
+ all: ${PROG} pathnames
+ 
+ ${PROG}: pathnames.h ${OBJS} ${LIBBIND} Makefile tmp_version.${O}
+ 	${CC} ${CDEBUG} ${LDFLAGS} -o ${PROG} ${OBJS} tmp_version.${O} \
+-		${LIBBIND} ${SYSLIBS}
++		${LIBBIND} ${SYSLIBS} ${SQLLIBDIR} ${SQLLIB} -lm
+ 
+ ns_parser.c ns_parser.h: ns_parser.y
+ 	${YACC} ns_parser.y
+@@ -106,7 +110,7 @@
+ 	rm -f y.tab.h y.tab.c
+ 
+ depend: ${SRCS} pathnames.h
+-	mkdep ${CPPFLAGS} -I${INCL} -I${PORTINCL} ${DEFS} ${SRCS}
++	mkdep ${CPPFLAGS} -I${INCL} -I${PORTINCL} ${DEFS} ${SRCS} -I${SQLINC}
+ 
+ ${DESTDIR}${DESTSBIN}:
+ 	mkdir -p ${DESTDIR}${DESTSBIN}
+
+--- clean/src/bin/named/db_sql.c	Sat Jun  5 23:34:42 1999
++++ working/src/bin/named/db_sql.c	Sat Jun  5 22:27:43 1999
+@@ -0,0 +1,558 @@
++/*
++ * Created by: 	Mitchell Broome mitchell@linuxos.net
++ * 		http://bind.linuxos.net
++ * 		3/17/1999
++ */
++
++/*
++ * Buffer allocation and deallocation routines.
++ */
++
++#include "port_before.h"
++
++#include <sys/types.h>
++#include <sys/param.h>
++#include <sys/stat.h>
++#include <sys/socket.h>
++
++#include <netinet/in.h>
++#include <arpa/nameser.h>
++#include <arpa/inet.h>
++
++#include <ctype.h>
++#include <errno.h>
++#include <netdb.h>
++#include <resolv.h>
++#include <errno.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <syslog.h>
++#include <time.h>
++
++#include <isc/eventlib.h>
++#include <isc/logging.h>
++#include <isc/memcluster.h>
++
++#include "port_after.h"
++
++#include <mysql.h>
++#include "named.h"
++
++/* Done with the #including */
++
++#define DBHOST 0
++#define DBUSER 1
++#define DBPASS 2
++#define DBMBOX 3
++#define DBREFRESH 4
++#define DBRETRY 5
++#define DBEXPIRE 6
++#define DBMIN 7
++#define DBSERIAL 8
++#define DBTYPE 9
++
++struct SQL_REC {
++   char *sqlOrigin;
++   char *sqlOwner;
++   char *sqlClass;
++   char *sqlType;
++   char *sqlData;
++   char *sqlTime;
++   int sqlTTL;
++   char *sqlPref;
++}; 
++
++
++/* a few declerations */
++char tmpbuf[MAXDATA];
++char *fixname(char[MAXDATA]);
++
++/* The name of the database */
++const char dbname[]="bind";
++
++/* pass a record and zoneinfo to be loaded into the cache */
++int sql_load_rec(struct SQL_REC *, struct zoneinfo *);
++
++/* 
++ * Pass a zoneinfo to load the zone in from the db server
++ * This is the start of the real sql code
++ */
++int sql_init_db(struct zoneinfo *zp){
++
++  char sql_query[150]="select sqlOrigin,sqlOwner,sqlClass,sqlType,sqlData,sqlTime,sqlTTL,sqlPref from ";
++  char sql_query_order[]=" order by sqlID";
++  char stuff[100];
++  int count, num, j;
++  MYSQL mysql, *sql_sock;
++  MYSQL_RES *sql_res;
++  MYSQL_ROW sql_row;
++  struct SQL_REC rec; 
++  int soa_count=0, ns_count=0;
++
++  zp->z_source = zp->z_origin;
++ 
++  strcat(sql_query, fixname(zp->z_origin));
++  strcat(sql_query, sql_query_order);
++
++  /* Error checking time */
++   if(zp->z_dbhost == NULL){
++      zp->z_dbhost = savestr("localhost", 1);
++      ns_notice(ns_log_default, "Using default dbhost. (%s)", zp->z_origin);
++   }
++   if(zp->z_dbuser == NULL){
++      zp->z_dbuser = savestr("bind", 1);
++      ns_notice(ns_log_default, "Using default dbuser. (%s)", zp->z_origin);
++   }
++   if(zp->z_dbpass == NULL){
++      zp->z_dbpass = savestr("bindpass", 1);
++      ns_notice(ns_log_default, "Using default dbpass. (%s)", zp->z_origin);
++   }
++   if(zp->z_mbox == NULL){
++      zp->z_mbox = savestr("bind.localhost", 1);
++      ns_notice(ns_log_default, "Using default mbox. (%s)", zp->z_origin);
++   }
++
++
++  /* 
++   * Connect to the db and query it.
++   * Complain about any errors and return.
++   */
++  if (!(sql_sock = mysql_connect(&mysql, zp->z_dbhost, zp->z_dbuser, zp->z_dbpass))){
++    ns_notice(ns_log_default ,"Couldn't connect to database server!");
++    perror("");
++    return 1;
++  }
++
++  if(mysql_select_db(sql_sock, dbname) < 0){
++    ns_notice(ns_log_default, "Can not select the database");
++    return 1;
++  } 
++
++  if(mysql_query(sql_sock, sql_query) < 0 || !(sql_res=mysql_store_result(sql_sock))){
++    ns_notice(ns_log_default,"Query failed");
++    return 1;
++  }
++
++  /* Loop through the record set handing off the fields to sql_load_rec() */
++  while (sql_row=mysql_fetch_row(sql_res)) {
++      rec.sqlOrigin = savestr(sql_row[0], 1); 
++      rec.sqlOwner = savestr(sql_row[1], 1);
++      rec.sqlClass = savestr(sql_row[2], 1);
++      rec.sqlType = savestr(sql_row[3], 1);
++      rec.sqlData = savestr(sql_row[4], 1);
++      rec.sqlTime = savestr(sql_row[5], 1); 
++
++      rec.sqlTTL = atoi(sql_row[6]); 
++      rec.sqlPref = savestr(sql_row[7], 1);
++
++      sql_load_rec(&rec, zp); 
++   } 
++
++  /* Clean up after our self */
++  mysql_free_result(sql_res);
++  mysql_close(sql_sock);
++
++  return 0;
++}
++
++/* char types to put into the zone */
++int
++set_zone_infochar(zone_config zh, int type, char *input){
++   struct zoneinfo *zp;
++   zp=zh.opaque;
++   INSIST(zp != NULL);
++
++   switch(type){
++	case DBHOST:
++              zp->z_dbhost = savestr(input, 1); 
++	   break;
++
++	case DBUSER:
++              zp->z_dbuser = savestr(input, 1); 
++	   break;
++
++	case DBPASS:
++              zp->z_dbpass = savestr(input, 1);
++	   break;
++	
++	case DBMBOX:
++	      zp->z_mbox = savestr(input, 1);
++	   break;
++   }
++   return 0;
++}
++
++/* integer types to put into the zone */
++int
++set_zone_infoint(zone_config zh, int type, int i){
++   struct zoneinfo *zp;
++   zp=zh.opaque;
++   INSIST(zp != NULL);
++
++   switch(type){
++	case DBREFRESH:
++	   zp->z_refresh = i;
++	   break;
++
++	case DBRETRY:
++	   zp->z_retry = i;
++	   break;
++
++	case DBEXPIRE:
++	   zp->z_expire = i;
++	   break;
++
++	case DBMIN:
++	   zp->z_minimum = i;
++	   break;
++
++	case DBSERIAL:
++	   zp->z_serial = i;
++	   break;
++
++	case DBTYPE:
++	   zp->z_sql = i;
++	   break;
++   }
++   return 0;
++}
++
++/* 
++ * Return a table name to be used to load a zone from the db 
++ * This changes . to _ and - to __ to make the db server happy
++ */
++char * 
++fixname(char c[MAXDATA]){
++   int i=0, y=0;
++
++   while(c[i]!='\0'){
++      if(c[i]=='.'){
++         tmpbuf[y] = '_';
++      }else if(c[i]=='-'){
++         tmpbuf[y]='_';
++         tmpbuf[y+1]='_';
++         ++y;
++      }else{
++         tmpbuf[y] = c[i];
++      }
++      ++i;
++      ++y;
++   }
++   tmpbuf[y]='\0';
++
++   return tmpbuf;      
++}
++
++
++/* 
++ * sql_load_rec(rec, zp)
++ *	rec is a record pulled from the db.
++ *	zp is a zoneinfo the rec belongs to.
++ */
++int sql_load_rec(struct SQL_REC *rec, struct zoneinfo *zp){
++
++/* a copy of the stuff from the db_load.c file */
++
++   char *cp;
++   char buf[MAXDATA];
++   u_char data[MAXDATA];
++   int c, someclass, class, type, dbflags, dataflags;
++   int i, success, clev;
++   u_int32_t ttl, n, serial;
++   struct databuf *dp;
++   FILE *fp;
++   struct stat sb;
++   struct in_addr ina;
++   enum transport transport;
++   enum context context;
++   struct sockaddr_in empty_from;
++   char domain[MAXDNAME];
++
++   empty_from.sin_family = AF_INET;
++   empty_from.sin_addr.s_addr = htonl(INADDR_ANY);
++   empty_from.sin_port = htons(0);
++
++/* end of the copy of the stuff from db_load.c */
++
++/* Build up the domain to later pass as part of the dp */
++   if(strcmp("", rec->sqlOwner)!=0){
++      strcpy(domain, rec->sqlOwner);
++      strcat(domain, ".");
++      strcat(domain, rec->sqlOrigin);
++   }else{
++      strcpy(domain, rec->sqlOrigin);
++   }
++
++	/* set the clev for the record */
++	clev=nlabels(rec->sqlOrigin);
++
++	transport = primary_trans;
++
++	/* set buf to the data from the record 
++	   this is a temporary thing left over from the original code */
++	strcpy(buf, rec->sqlData);
++
++	/* Set the ttl */
++	if(ttl > MAXIMUM_TTL){
++	   ns_notice(ns_log_default, "TTL to large.  Setting to 0");
++	   ttl=0;
++	}else{
++	   ttl = rec->sqlTTL;
++	}
++
++	/* we only handle master zones currently */
++	zp->z_type=z_master;
++
++	/* Parse class (IN, etc) */ 
++	someclass = sym_ston(__p_class_syms, rec->sqlClass, &success);
++	if (success && someclass != C_ANY) {
++		class = someclass;
++	}
++
++	/* Parse RR type (A, MX, etc) */ 
++	type = sym_ston(__p_type_syms, rec->sqlType, &success);
++	if (success == 0 || type == ns_t_any) {
++		/* debugging stuff that uses the file name */
++		ns_info(ns_log_load, "%s: Line %d: Unknown type: %s.",
++			domain, lineno, buf); 
++	}
++
++	context = ns_ownercontext(type, transport);
++	if (!ns_nameok(domain, class, zp, transport, context,
++		       domain, inaddr_any)) {
++	}  
++
++   context = domain_ctx;
++
++   /*
++    * Convert the ascii data 'buf' to the proper format
++    * based on the type and pack into 'data'.
++   */ 
++
++   dont_get_word:
++	switch (type) {
++	case ns_t_a:
++		if (!inet_aton(buf, &ina)){
++			/* commented out for debugging */
++			ns_notice(ns_log_default, "IP Address"); 
++		}
++		(void) ina_put(ina, data);
++		n = NS_INT32SZ;
++		break;
++
++	case ns_t_soa:
++		context = hostname_ctx;
++		goto soa_rp_minfo;  
++	case ns_t_rp:
++	case ns_t_minfo:
++		context = mailname_ctx;
++		/* FALLTHROUGH */ 
++	
++
++	soa_rp_minfo:
++		/* Stick the data field into domain for the soa */
++		strcpy(domain, rec->sqlData); 
++		(void) strcpy((char *)data, rec->sqlData);
++	        
++		cp = (char *)(data + strlen((char *)data) + 1);
++		if (type == ns_t_rp)
++			context = domain_ctx;
++		else
++			context = mailname_ctx;
++
++		/* Stick the mail address in */
++		strcpy(cp, zp->z_mbox);
++
++		cp += strlen((char *)cp) + 1;
++		if (type != ns_t_soa) {
++			n = cp - (char *)data;
++			break;
++		}
++		if (class != zp->z_class) {
++			/* error check */			
++		}
++		if (strcasecmp(zp->z_origin, domain) != 0) {
++			/* error check */
++		}
++
++		if (getnum_error){
++			/* error check */
++		}
++		n = (u_int32_t) zp->z_serial;
++
++		/* put the serial number in place */
++		PUTLONG(n, cp);
++		if (serial != 0 && SEQ_GT(serial, zp->z_serial)) {
++			ns_notice(ns_log_load,
++	 "%s:%d: WARNING: new serial number < old (%lu < %lu)",
++				  domain , lineno,
++				  zp->z_serial, serial); 
++		} 
++
++		/* put the refresh in place */
++		n = zp->z_refresh;
++		PUTLONG(n, cp); 
++		zp->z_refresh = MAX(n, MIN_REFRESH);
++		if (zp->z_type == Z_SECONDARY) {
++			ns_refreshtime(zp, MIN(sb.st_mtime, tt.tv_sec));
++			sched_zone_maint(zp);
++		}
++
++		/* put the retry in place */ 
++		n = zp->z_retry;
++		PUTLONG(n, cp);
++		zp->z_retry = MAX(n, MIN_RETRY);
++
++		/* put the expire in place */
++		n = zp->z_expire;
++		PUTLONG(n, cp);
++
++		/* put the ttl in place */
++		n = zp->z_minimum;
++		PUTLONG(n, cp); 
++		if (n > MAXIMUM_TTL) {
++			ns_info(ns_log_load,
++	   "%s: Line %d: SOA minimum TTL > %u; converted to 0",
++				domain, lineno, MAXIMUM_TTL); 
++			zp->z_minimum = 0;
++		} else 
++			zp->z_minimum = n;
++		n = cp - (char *)data;
++		/* increment the soa counter */
++		break;
++
++
++	case ns_t_ns:
++		if (strcasecmp(zp->z_origin, domain) == 0){
++			/* increment the ns counter */	
++		}
++		context = hostname_ctx;
++		goto cname_etc;
++	case ns_t_cname:
++	case ns_t_mb:
++	case ns_t_mg:
++	case ns_t_mr:
++		context = domain_ctx;
++		goto cname_etc;
++	case ns_t_ptr:
++		context = ns_ptrcontext(domain);
++	cname_etc:
++		(void) strcpy((char *)data, buf);
++		n = strlen((char *)data) + 1;
++		break;
++
++
++	case ns_t_mx:
++	case ns_t_afsdb:
++	case ns_t_rt:
++	case ns_t_srv:
++		strcpy(buf, rec->sqlPref);
++		n = 0;
++		cp = buf;
++		while (isdigit(*cp))
++			n = n * 10 + (*cp++ - '0');
++		/* catch bad values */ 
++		if ((cp == buf) || (n > 65535)){
++			/* commented out for the errto */
++			ns_notice(ns_log_default, "Priority"); 
++		}
++		cp = (char *)data;
++		PUTSHORT((u_int16_t)n, cp);
++
++/* commented out for now
++		if (type == ns_t_srv) {
++			n = getnum(fp, filename, GETNUM_NONE);
++			if (getnum_error || n > 65536)
++				ns_warning(ns_log_default, "SRV RR");
++			PUTSHORT((u_int16_t)n, cp);
++
++			n = getnum(fp, filename, GETNUM_NONE);
++			if (getnum_error || n > 65536)
++				ERRTO("SRV RR");
++			PUTSHORT((u_int16_t)n, cp); 
++		} */ 
++	
++		context = hostname_ctx;
++
++		strcpy(cp, rec->sqlData);
++		/* advance pointer to end of data */ 
++		cp += strlen((char *)cp) +1;
++
++		/* now save length */ 
++		n = (cp - (char *)data);
++		break;
++
++	case ns_t_px:
++		context = domain_ctx;
++		n = 0;
++		data[0] = '\0';
++		cp = buf;
++		while (isdigit(*cp))
++			n = n * 10 + (*cp++ - '0');
++		/* catch bad values */ 
++		if ((cp == buf) || (n > 65535)){
++			ns_notice(ns_log_default, "PX Priority"); 
++		}
++		cp = (char *)data;
++		PUTSHORT((u_int16_t)n, cp);
++
++		if (!getword(buf, sizeof buf, fp, 0)){
++			ns_notice(ns_log_default, "PX Domain1"); 
++		}
++		(void) strcpy((char *)cp, buf);
++
++		/* advance pointer to next field */ 
++		cp += strlen((char *)cp) + 1;
++		if (!getword(buf, sizeof buf, fp, 0)){
++			ns_notice(ns_log_default, "PX Domain2"); 
++		}
++		(void) strcpy((char *)cp, buf);
++
++		/* advance pointer to end of data */ 
++		cp += strlen((char *)cp) + 1;
++
++		/* now save length */ 
++		n = (cp - (char *)data);
++		break;
++
++	case ns_t_txt:
++		strcpy(data, rec->sqlData);
++		n = strlen(rec->sqlData);		
++		if (n == 0)
++			ns_notice(ns_log_default, "TXT RR");
++		break; 
++
++
++/* Don't touch this bracket.  It closes the case */
++	} /* end of the big case */
++
++	/*
++	 * Ignore data outside the zone.
++	 */ 
++	if (zp->z_type != Z_CACHE && !samedomain(domain, zp->z_origin)){
++		ns_info(ns_log_load,
++	    "%s:%d: data \"%s\" outside zone \"%s\" (ignored)",
++			domain, lineno, domain,
++			zp->z_origin);  
++	}
++
++	dp = savedata(class, type, (u_int32_t)ttl,
++		      (u_char *)data, (int)n);
++	dp->d_zone = zp - zones;
++	dp->d_flags = dataflags;
++	dp->d_cred = DB_C_ZONE;
++	dp->d_clev = clev;
++	if ((c = db_update(domain, dp, dp, NULL, dbflags,
++	   (dataflags & DB_F_HINT) ? fcachetab : hashtab, empty_from)) != OK) {
++		if (c != DATAEXISTS)
++			ns_debug(ns_log_load, 1, "update failed %s %d", 
++				 domain, type);
++		db_freedata(dp);
++	} else {
++		/* increment the rr counter */	
++	}
++
++   return 0;
++}
++  

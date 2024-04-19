@@ -1,0 +1,257 @@
+%!PS-Adobe-3.0
+%%Creator: groff version 1.10
+%%CreationDate: Mon Jun 21 14:22:02 1999
+%%DocumentNeededResources: font Times-Roman
+%%DocumentSuppliedResources: procset grops 1.10 0
+%%Pages: 1
+%%PageOrder: Ascend
+%%Orientation: Portrait
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset grops 1.10 0
+/setpacking where{
+pop
+currentpacking
+true setpacking
+}if
+/grops 120 dict dup begin
+/SC 32 def
+/A/show load def
+/B{0 SC 3 -1 roll widthshow}bind def
+/C{0 exch ashow}bind def
+/D{0 exch 0 SC 5 2 roll awidthshow}bind def
+/E{0 rmoveto show}bind def
+/F{0 rmoveto 0 SC 3 -1 roll widthshow}bind def
+/G{0 rmoveto 0 exch ashow}bind def
+/H{0 rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/I{0 exch rmoveto show}bind def
+/J{0 exch rmoveto 0 SC 3 -1 roll widthshow}bind def
+/K{0 exch rmoveto 0 exch ashow}bind def
+/L{0 exch rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/M{rmoveto show}bind def
+/N{rmoveto 0 SC 3 -1 roll widthshow}bind def
+/O{rmoveto 0 exch ashow}bind def
+/P{rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/Q{moveto show}bind def
+/R{moveto 0 SC 3 -1 roll widthshow}bind def
+/S{moveto 0 exch ashow}bind def
+/T{moveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/SF{
+findfont exch
+[exch dup 0 exch 0 exch neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/MF{
+findfont
+[5 2 roll
+0 3 1 roll
+neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/level0 0 def
+/RES 0 def
+/PL 0 def
+/LS 0 def
+/MANUAL{
+statusdict begin/manualfeed true store end
+}bind def
+/PLG{
+gsave newpath clippath pathbbox grestore
+exch pop add exch pop
+}bind def
+/BP{
+/level0 save def
+1 setlinecap
+1 setlinejoin
+72 RES div dup scale
+LS{
+90 rotate
+}{
+0 PL translate
+}ifelse
+1 -1 scale
+}bind def
+/EP{
+level0 restore
+showpage
+}bind def
+/DA{
+newpath arcn stroke
+}bind def
+/SN{
+transform
+.25 sub exch .25 sub exch
+round .25 add exch round .25 add exch
+itransform
+}bind def
+/DL{
+SN
+moveto
+SN
+lineto stroke
+}bind def
+/DC{
+newpath 0 360 arc closepath
+}bind def
+/TM matrix def
+/DE{
+TM currentmatrix pop
+translate scale newpath 0 0 .5 0 360 arc closepath
+TM setmatrix
+}bind def
+/RC/rcurveto load def
+/RL/rlineto load def
+/ST/stroke load def
+/MT/moveto load def
+/CL/closepath load def
+/FL{
+currentgray exch setgray fill setgray
+}bind def
+/BL/fill load def
+/LW/setlinewidth load def
+/RE{
+findfont
+dup maxlength 1 index/FontName known not{1 add}if dict begin
+{
+1 index/FID ne{def}{pop pop}ifelse
+}forall
+/Encoding exch def
+dup/FontName exch def
+currentdict end definefont pop
+}bind def
+/DEFS 0 def
+/EBEGIN{
+moveto
+DEFS begin
+}bind def
+/EEND/end load def
+/CNT 0 def
+/level1 0 def
+/PBEGIN{
+/level1 save def
+translate
+div 3 1 roll div exch scale
+neg exch neg exch translate
+0 setgray
+0 setlinecap
+1 setlinewidth
+0 setlinejoin
+10 setmiterlimit
+[]0 setdash
+/setstrokeadjust where{
+pop
+false setstrokeadjust
+}if
+/setoverprint where{
+pop
+false setoverprint
+}if
+newpath
+/CNT countdictstack def
+userdict begin
+/showpage{}def
+}bind def
+/PEND{
+clear
+countdictstack CNT sub{end}repeat
+level1 restore
+}bind def
+end def
+/setpacking where{
+pop
+setpacking
+}if
+%%EndResource
+%%IncludeResource: font Times-Roman
+grops begin/DEFS 1 dict def DEFS begin/u{.001 mul}bind def end/RES 72
+def/PL 792 def/LS false def/ENC0[/asciicircum/asciitilde/Scaron/Zcaron
+/scaron/zcaron/Ydieresis/trademark/quotesingle/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/space/exclam/quotedbl/numbersign/dollar/percent
+/ampersand/quoteright/parenleft/parenright/asterisk/plus/comma/hyphen
+/period/slash/zero/one/two/three/four/five/six/seven/eight/nine/colon
+/semicolon/less/equal/greater/question/at/A/B/C/D/E/F/G/H/I/J/K/L/M/N/O
+/P/Q/R/S/T/U/V/W/X/Y/Z/bracketleft/backslash/bracketright/circumflex
+/underscore/quoteleft/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y
+/z/braceleft/bar/braceright/tilde/.notdef/quotesinglbase/guillemotleft
+/guillemotright/bullet/florin/fraction/perthousand/dagger/daggerdbl
+/endash/emdash/ff/fi/fl/ffi/ffl/dotlessi/dotlessj/grave/hungarumlaut
+/dotaccent/breve/caron/ring/ogonek/quotedblleft/quotedblright/oe/lslash
+/quotedblbase/OE/Lslash/.notdef/exclamdown/cent/sterling/currency/yen
+/brokenbar/section/dieresis/copyright/ordfeminine/guilsinglleft
+/logicalnot/minus/registered/macron/degree/plusminus/twosuperior
+/threesuperior/acute/mu/paragraph/periodcentered/cedilla/onesuperior
+/ordmasculine/guilsinglright/onequarter/onehalf/threequarters
+/questiondown/Agrave/Aacute/Acircumflex/Atilde/Adieresis/Aring/AE
+/Ccedilla/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute/Icircumflex
+/Idieresis/Eth/Ntilde/Ograve/Oacute/Ocircumflex/Otilde/Odieresis
+/multiply/Oslash/Ugrave/Uacute/Ucircumflex/Udieresis/Yacute/Thorn
+/germandbls/agrave/aacute/acircumflex/atilde/adieresis/aring/ae/ccedilla
+/egrave/eacute/ecircumflex/edieresis/igrave/iacute/icircumflex/idieresis
+/eth/ntilde/ograve/oacute/ocircumflex/otilde/odieresis/divide/oslash
+/ugrave/uacute/ucircumflex/udieresis/yacute/thorn/ydieresis]def
+/Times-Roman@0 ENC0/Times-Roman RE
+%%EndProlog
+%%Page: 1 1
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF .28(The TSIG routines are used to implement transaction/request security of DNS messages.)
+72 12 R .279(and are the basic routines.)5.279 F .246
+(and are used to sign/v)72 24 R .247
+(erify TCP messages that may be split into multiple pack)-.15 F .247
+(ets, such as zone transfers, and initial-)-.1 F .225
+(ize the state structure necessary for TCP operations.)72 36 R .224
+(locates the TSIG record in a message, if one is present.)5.225 F .224
+(the in-)5.224 F .679(coming DNS message, which will be modi\214ed the length of the DNS message, on input and output the size of the)
+72 48 R -.2(bu)72 60 S -.25(ff).2 G .167
+(er containing the DNS message on input the v).25 F .166
+(alue to be placed in the TSIG error \214eld the \(DST_KEY *\) to sign)
+-.25 F .909(the data for a response, the signature contained in the query the length of the query signature a b)
+72 72 R(uf)-.2 E .91(fer to be \214lled)-.25 F .365
+(with the generated signature the length of the signature b)72 84 R(uf)
+-.2 E .364(fer on input, the signature length on output the incoming)
+-.25 F .98(DNS message, which will be modi\214ed the length of the DNS message, on input and output the size of the b)
+72 96 R(uf)-.2 E(fer)-.25 E .04
+(containing the DNS message on input the v)72 108 R .039(alue to be placed in the TSIG error \214eld the state of the operation non-ze-)
+-.25 F .056(ro v)72 120 R .056
+(alue signi\214es that this is the last pack)-.25 F .057(et the \(DST_KEY *\) to sign the data for a response, the signature contained)
+-.1 F 1.125(in the query the length of the query signature the state of the operation, which this initializes the incoming DNS)
+72 132 R .346(message, which will be modi\214ed the length of the DNS message, on input and output the \(DST_KEY *\) to sign the)
+72 144 R .645(data for a response, the signature contained in the query the length of the query signature a b)
+72 156 R(uf)-.2 E .644(fer to be \214lled with)-.25 F 1.169
+(the signature contained the length of the signature b)72 168 R(uf)-.2 E
+1.17(fer on input, the signature length on output non-zero v)-.25 F
+(alue)-.25 E .61(means that the TSIG is left intact the incoming DNS message, which will be modi\214ed the length of the DNS mes-)
+72 180 R .791
+(sage, on input and output the state of the operation non-zero v)72 192
+R .791(alue signi\214es that a TSIG record must be present at)-.25 F
+.683(this step the \(DST_KEY *\) to v)72 204 R .683(erify the data for a response, the signature contained in the query the length of the)
+-.15 F .709(query signature the state of the operation, which this initializes the incoming DNS message the length of the DNS)
+72 216 R .668(message returns a pointer to the TSIG record if one is found, and NULL otherwise.)
+72 228 R .668(All other routines return 0 on)5.668 F .357
+(success, modifying ar)72 240 R .357(guments when necessary)-.18 F 5.357
+(.a)-.65 G .357(nd return the follo)-5.357 F .358
+(wing errors: bad input data The k)-.25 F .658 -.15(ey w)-.1 H .358
+(as in).05 F -.25(va)-.4 G(lid,).25 E .305(or the signing f)72 252 R
+.305(ailed the message b)-.1 F(uf)-.2 E .305(fer is too small.)-.25 F
+.304(and return the follo)5.305 F .304
+(wing errors: bad input data The message is)-.25 F .265(malformed The message does not contain a TSIG record The TSIG original ID \214eld does not match the message ID)
+72 264 R -1.11(Ve)72 276 S .069(ri\214cation f)1.11 F .069
+(ailed due to an in)-.1 F -.25(va)-.4 G .069(lid k).25 F .369 -.15(ey V)
+-.1 H .069(eri\214cation f)-.96 F .069(ailed due to an in)-.1 F -.25(va)
+-.4 G .069(lid signature V).25 F .069(eri\214cation f)-1.11 F .069
+(ailed due to an in-)-.1 F -.25(va)72 288 S 1.143(lid timestamp V).25 F
+1.143(eri\214cation succeeded b)-1.11 F 1.143
+(ut the message had an error of B)-.2 F 1.144(ADKEY V)-.35 F 1.144
+(eri\214cation succeeded b)-1.11 F 1.144(ut the)-.2 F .169
+(message had an error of B)72 300 R .169(ADSIG V)-.35 F .169
+(eri\214cation succeeded b)-1.11 F .169
+(ut the message had an error of B)-.2 F .168(ADTIME Brian W)-.35 F
+(elling-)-.8 E(ton, TISLabs at Netw)72 312 Q(ork Associates)-.1 E EP
+%%Trailer
+end
+%%EOF

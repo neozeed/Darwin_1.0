@@ -1,0 +1,78 @@
+Path: vixie!pa.dec.com!bind-redist-request
+From: fred@lightside.net (Fred Condo)
+Newsgroups: local.mail.dns.bind
+Subject: Re: Server Name Mismatch
+Date: 2 Jun 1995 11:29:27 -0700
+Organization: Vixie Enterprises
+Lines: 49
+Sender: daemon@vix.com
+Distribution: local
+Message-ID: <v02120d02abf4fe5c80e3@[198.81.209.42]>
+NNTP-Posting-Host: gw.home.vix.com
+X-Received: by gw.home.vix.com id AA10851; Fri, 2 Jun 95 11:29:26 -0700
+X-Received: from pobox1.pa.dec.com by inet-gw-1.pa.dec.com (5.65/24Feb95)
+	id AA14118; Fri, 2 Jun 95 11:10:49 -0700
+X-Received: by pobox1.pa.dec.com; id AA17213; Fri, 2 Jun 95 11:10:38 -0700
+X-Received: by pobox1.pa.dec.com; id AA17209; Fri, 2 Jun 95 11:10:37 -0700
+X-Received: from relay3.UU.NET by inet-gw-3.pa.dec.com (5.65/24Feb95)
+	id AA01344; Fri, 2 Jun 95 11:07:11 -0700
+X-Received: by relay3.UU.NET 
+	id QQyskl16276; Fri, 2 Jun 1995 13:46:58 -0400
+X-Received: from zeppelin.lightside.com by relay3.UU.NET with SMTP 
+	id QQyskl16264; Fri, 2 Jun 1995 13:46:57 -0400
+X-Received: from [198.81.209.42] by zeppelin.lightside.com with smtp
+	(Smail3.1.28.1 #7) id m0sHao6-0008DCC; Fri, 2 Jun 95 10:46 PDT
+X-Sender: fred@covina.lightside.com
+X-Mime-Version: 1.0
+X-Content-Type: text/plain; charset="us-ascii"
+X-To: bind@uunet.uu.net
+
+-----BEGIN PGP SIGNED MESSAGE-----
+
+>> Does anyone know how to fetch the freshest list of root nameservers?
+>> I think this might help to solve this problem ...
+>
+>dig @ns.internic.net . ns >root.cache
+
+Here's a safer way to do this:
+
+#!/bin/sh
+ROOT=terp.umd.edu
+TMPFILE=/tmp/ns.$$
+DIG=/etc/dig
+DBCACHE=/usr/local/dns/root.cache
+#
+# Look up root server information and store it in a temporary file.
+#
+$DIG @$ROOT . ns >$TMPFILE
+
+#
+# Move the new cache in place if it is not empty.
+#
+if test -s $TMPFILE
+then
+        mv $TMPFILE $DBCACHE
+        #
+        # Reload the nameserver
+        #
+        kill -HUP `/bin/cat /etc/named.pid`
+else
+        rm $TMPFILE
+fi
+
+-----BEGIN PGP SIGNATURE-----
+Version: 2.6.2
+
+iQCVAwUBL89OQwRvu4f5glrJAQFixgP/cjYJozxjvKw0aTmIsgGbtCwz0txynKMn
+f7NggSAM2Txop6sq4XevU57UC8DKPgcMqx9WmjncmQ5eHxNjiTDUOtg3EZcKiHa+
+V+VpLGyCniI/n1rLbEUVfmiE5XYassS6bBNbSF0d6Rx6vS0nPrOsUK06RP8XbegJ
+qwxAGUpWWcM=
+=uIbC
+-----END PGP SIGNATURE-----
+
+--
+Fred Condo + fred@lightside.com   + http://www.lightside.com/~fred/
+Lightside, Inc. + Internet access + http://www.lightside.com/
+PGP public key: finger fred@lightside.com
+
+

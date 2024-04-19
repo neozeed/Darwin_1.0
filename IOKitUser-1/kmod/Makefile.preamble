@@ -1,0 +1,7 @@
+LIBRARY_STYLE = STATIC
+
+i386_PROJTYPE_CFLAGS = 
+ppc_PROJTYPE_CFLAGS = -finline -fno-keep-inline-functions \
+		      -force_cpusubtype_ALL \
+		      -msoft-float -mcpu=604 -mlong-branch 
+PROJTYPE_CFLAGS = $($(CURRENT_ARCH)_PROJTYPE_CFLAGS)

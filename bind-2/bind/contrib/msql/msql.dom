@@ -1,0 +1,6 @@
+;
+; msql-aware bind test file
+;
+; (Blank tab) (class) (type) (msqlserver) (db) (dns_table) (dns_zone)(update) (reload)
+	msql	msql	127.0.0.1	bind	msql_dns	msql_zones	60	3600
+

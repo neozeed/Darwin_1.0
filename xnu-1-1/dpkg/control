@@ -1,0 +1,6 @@
+Package: xnu
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Vendor: Apple Computer, Inc.
+Version: 68.4
+Build-Depends: cctools, libsystem, files, zsh, tcsh, gnumake, cc, egcs, file-cmds, text-cmds, shell-cmds, developer-cmds, awk, gnutar, bootstrap-cmds, system-cmds, adv-cmds
+Description: Darwin kernel

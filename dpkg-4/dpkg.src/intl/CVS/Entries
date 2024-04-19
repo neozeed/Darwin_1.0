@@ -1,0 +1,24 @@
+/ChangeLog/1.1.1.1/Mon May 10 02:22:32 1999//Tdpkg-4
+/Makefile.in/1.1.1.1/Mon May 10 02:22:32 1999//Tdpkg-4
+/VERSION/1.1.1.1/Mon May 10 02:22:32 1999//Tdpkg-4
+/bindtextdom.c/1.1.1.1/Mon May 10 02:22:32 1999//Tdpkg-4
+/cat-compat.c/1.1.1.1/Mon May 10 02:22:32 1999//Tdpkg-4
+/dcgettext.c/1.1.1.1/Mon May 10 02:22:32 1999//Tdpkg-4
+/dgettext.c/1.1.1.1/Mon May 10 02:22:32 1999//Tdpkg-4
+/explodename.c/1.1.1.1/Mon May 10 02:22:32 1999//Tdpkg-4
+/finddomain.c/1.1.1.1/Mon May 10 02:22:32 1999//Tdpkg-4
+/gettext.c/1.1.1.1/Mon May 10 02:22:32 1999//Tdpkg-4
+/gettext.h/1.1.1.1/Mon May 10 02:22:32 1999//Tdpkg-4
+/gettextP.h/1.1.1.1/Mon May 10 02:22:32 1999//Tdpkg-4
+/hash-string.h/1.1.1.1/Mon May 10 02:22:32 1999//Tdpkg-4
+/intl-compat.c/1.1.1.1/Mon May 10 02:22:32 1999//Tdpkg-4
+/l10nflist.c/1.1.1.1/Mon May 10 02:22:32 1999//Tdpkg-4
+/libgettext.h/1.1.1.1/Mon May 10 02:22:33 1999//Tdpkg-4
+/linux-msg.sed/1.1.1.1/Mon May 10 02:22:33 1999//Tdpkg-4
+/loadinfo.h/1.1.1.1/Mon May 10 02:22:33 1999//Tdpkg-4
+/loadmsgcat.c/1.1.1.1/Mon May 10 02:22:33 1999//Tdpkg-4
+/localealias.c/1.1.1.1/Mon May 10 02:22:33 1999//Tdpkg-4
+/po2tbl.sed.in/1.1.1.1/Mon May 10 02:22:33 1999//Tdpkg-4
+/textdomain.c/1.1.1.1/Mon May 10 02:22:33 1999//Tdpkg-4
+/xopen-msg.sed/1.1.1.1/Mon May 10 02:22:33 1999//Tdpkg-4
+D

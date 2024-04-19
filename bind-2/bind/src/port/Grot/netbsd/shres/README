@@ -1,0 +1,73 @@
+BIND 4.9.3 resolver support for SunOS 4.x compatible shared libraries
+=====================================================================
+
+This directory contains the makefile and scripts necessary to install
+the new 4.9.3 resolver into your existing SunOS-4.x compatible libc.so
+shared library binary.
+
+These procedures have been tested on SunOS-4.1.1_U1 (sun-3),
+SunOS-4.1.4, NetBSD-1.0, and NetBSD-1.1.  They are very likely to work
+on OpenBSD, and may work on FreeBSD-2.x.  Since BSDI's BSD/386 1.1 does
+not support shared libraries, don't try this there, but you may have
+some luck with BSDI's BSD/386 2.x.
+
+You should read through this whole file, *and* the relevant INSTALL
+file, BEFORE BEGINNING.  I mean it.  I really mean it.  The shared
+library is the second most important part of a functional operating
+system (right next in line to the kernel itself).  If you screw it up
+you will be very very unhappy and so will your users.  As always you
+should have regular backups of everything.
+
+WARNING:  For SunOS-4.x see README.SunOS before beginning.
+
+[Disclaimer: 
+THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGE.]
+
+
+NOTES about this new release:
+
+1. makeshlib can now rebuild shared libraries for either SunOS-4.x or
+   4.4BSDs that use the SunOS-4.x shared libraries.
+
+2. makeshlib determines the system type automatically by what 'uname'
+   returns.  Make sure that 'uname' is in your path.  (This shouldn't be
+   a problem since it's in /usr/bin on both systems)
+
+3. If the script can't find your shared library object files or you haven't
+   built libresolv_pic.a, it will exit immediately, instead of failing on
+   later commands.
+
+4. The shared libraries are rebuilt in the current directory (and
+   temporary directories underneath it), instead of in SHLIBDIR.  NetBSD
+   and other 4.4bsd's use /usr/lib for SHLIBDIR, and rebuilding them
+   under /usr/lib did not seem like the appropriate place for this
+   operation.
+
+5. You have the option (by setting USELORDER at the top of the script)
+   to dynamically generate an lorder-sparc file using lorder on a SunOS
+   machine.  Using Sun's lorder-sparc file may arguably reduce the
+   amount of paging of the shared library code, and doesn't take as
+   long.  On the other hand, since it is generated from the list of
+   object files that are actually present, you don't have to worry too
+   much about the file getting out of order somehow.  NetBSD and other
+   4.4bsds will always dynamically generate this list, as this is the
+   method it uses when the system shared libraries are built, so
+   unsetting this variable on a NetBSD machine has no effect.
+
+6. Larry Wall's patch program is no longer require to make the
+   modifications to the lorder-sparc file under SunOS if you use it or
+   to the Makefile in /usr/lib/shlib.etc.  A sed script will modify the
+   lorder-sparc file, and the Makefile is no longer used.
+
+
+#ident	   "@(#)bind/shres/netbsd:$Name: bind-2 $:$Id: README,v 1.1.1.1 1999/10/04 22:24:51 wsanchez Exp $"

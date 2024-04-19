@@ -1,0 +1,12 @@
+Use resolv.pl instead of dig  (This fixes a whole host of problems,
+not the least of which is speed, but puts more trust in Perl's resolver)
+
+Compare serial numbers of all NS servers and report differences.
+(a la doc)
+
+Check for illegal all-numeric components.  (excepting PTR, where
+the reverse check is made)
+
+Check SOA contact and master fields for illegal addresses
+
+Check RP records that they point to a TXT record.

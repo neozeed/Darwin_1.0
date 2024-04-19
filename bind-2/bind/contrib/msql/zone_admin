@@ -1,0 +1,149 @@
+#!/usr/local/bin/perl
+#
+# RCS Id:	$Id: zone_admin,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+#
+# Name:		zone_admin
+# Purpose:	Perform administrative tasks on msql_zones db
+# Author:	Christopher L Seawood
+# Date:		070795
+#
+# Usage:	zone_admin [msql-host]
+# Description:	Add, remove, edit, and list dns zones
+#
+# Tables Used:	msql_zones (read/write) & control
+# References:	model
+#
+# Change History:
+#
+# Date     Who  Changes Made
+# -------  ---  ------------------------------------------------------------
+# 07Jul95  cls  Original Version.
+# 21Jul95  cls  Redesigned with commandline args and fits latest model
+
+{
+use Msql;
+
+$host = "";
+
+if ( @ARGV < 1 ) {
+    print "usage: zone_admin databasename [-hhost]\n";
+    exit(1);
+};
+
+$dbname = shift;
+
+while (@ARGV) {
+    $ack = shift;
+    if ( $ack =~ m/^-h\S+/ ) {
+	($host = $ack ) =~ s/^-h//;
+    };
+};
+
+($dbh = Connect Msql $host, $dbname)
+    or die("Can't connect: $Msql::db_errstr\n");
+
+do
+{
+    print <<EOD;
+
+1. List msql_zones entries
+2. Add msql_zones entry
+3. Delete msql_zones entry
+4. Edit msql_zones entry (Not implemented.)
+5. EXIT
+
+EOD
+    do
+    {
+	print "Choice? (1-5) ";
+	chop ($choice = <STDIN>);
+    }
+    while ($choice !~ m/^[1-5]$/);
+
+    if    ($choice == 1) { &list_msql_zones; }
+    elsif ($choice == 2) { &add_msql_zones; }
+    elsif ($choice == 3) { &delete_msql_zones; }
+    elsif ($choice == 4) { 
+	print "\nThis option is not implemented.\n";
+#	&edit_msql_zones; 
+    };
+} until ($choice == 5);
+	
+}
+
+sub list_msql_zones {
+    local ($luck, $stmt,@row);
+    print "Enter search condition ('where' clause): ";
+    chop ($luck = <STDIN>);
+    $luck = "where $luck" if ($luck ne "");
+    $luck =~ tr/A-Z/a-z/;
+    $stmt = "select zoneid, name from msql_zones $luck order by zoneid";
+    ($luck = Query $dbh $stmt) or warn "Error $Msql::db_errstr\n$stmt\n";
+    print "\n";
+    if ($luck) {
+	$luck->DataSeek(0);
+	while (@row = $luck->FetchRow()){
+	    printf("%3d, %s\n",$row[0],$row[1]);
+	};
+    };
+    return;
+};
+
+sub add_msql_zones {
+    local ($last,  $stmt, $name, $id, $domain, $currip, $revip, $asstime, $sub1, $sub2, $ack, $num, @row, @row2, $lestime);
+
+    $stmt = "select zoneid from control where one_row = 'A'";
+    ($last = Query $dbh $stmt) or warn "Error $Msql::db_errstr\n$stmt\n";
+    $id = $row[0] if (@row = $last->FetchRow());
+    
+    print "\nEnter name the zone to be added: ";
+    chop($name = <STDIN>);
+
+    while ($name ne ""){
+	$stmt = "select name from msql_zones where name = '$name'";
+	($last = Query $dbh $stmt) or warn "Error $Msql::db_errstr\n$stmt\n";
+	if (!($last->FetchRow())){
+	    print "Enter zoneid: ";
+	    chop($zoneid=<STDIN>);
+	    printf("\n\nZone origin: %s\n",$name);
+	    printf("Zone id:     %d\n",$zoneid);
+	    print "\n\nDo you accept these values? (Y/N) ";
+	    chop($ack = <STDIN>);
+	    if ($ack =~ /[Yy]/){
+		$id++;
+		$stmt = "insert into msql_zones (name, zoneid) values ('$name', $zoneid)";
+		Query $dbh $stmt or warn "Error $Msql::db_errstr\n$stmt\n";
+		print "MSQL_ZONES entry $name with zoneid $zoneid added to Mondo.\n";
+		$id = $zoneid if ($zoneid > $id);
+	    };
+	};
+	print "\nEnter name the zone to be added: ";
+	chop($name = <STDIN>);
+    };
+    return;
+}
+
+sub delete_msql_zones {
+    local ($last,  @row, $stmt, $name, $zoneid, $ack, $num, $lestime);
+    do {
+	print "Enter name of msql_zones entry to be deleted: ";
+	chop($name = <STDIN>);
+	$stmt = "select name, zoneid from msql_zones where name = '$name'";
+	($last = Query $dbh $stmt) or warn "Error $Msql::db_errstr\n$stmt\n";
+	$ack = $row[0] if (@row=$last->FetchRow());
+    } while ($ack ne $name);
+
+    printf("\n\nZone name: %s\n",$row[0]);
+    printf("Zone id:   %d\n",$row[1]); 
+    print "\n\nDo you really want to remove this msql_zones entry? (Y/N) ";
+    chop($ack = <STDIN>);
+    if ($ack =~ /[Yy]/){
+	$stmt = "delete from msql_zones where name = '$row[0]'";
+	Query $dbh $stmt or warn "Error $Msql::db_errstr\n$stmt\n";
+	print "MSQL_ZONES entry $row[0] with zoneid $row[1] removed from Mondo.\n";
+    };
+    return;
+}
+
+
+

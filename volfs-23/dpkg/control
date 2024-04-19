@@ -1,0 +1,4 @@
+Package: volfs
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Description: volfs commands
+Build-Depends: build-base

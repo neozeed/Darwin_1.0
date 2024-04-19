@@ -1,0 +1,44 @@
+PUBLIC_HDR_INSTALL_DIR = $(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework/Versions/B/Headers
+PRIVATE_HDR_INSTALL_DIR = $(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework/Versions/B/PrivateHeaders
+PUBLIC_HEADER_DIR_SUFFIX = /mach
+PRIVATE_HEADER_DIR_SUFFIX = /mach
+OTHER_PUBLIC_HEADERS =	bootstrap.h \
+		       	clock.h \
+			clock_priv.h \
+			mach_host.h \
+			host_priv.h \
+			host_security.h \
+			ledger.h \
+			lock_set.h \
+			memory_object_control.h \
+			memory_object_name.h \
+			processor.h \
+			processor_set.h \
+			semaphore.h \
+			task.h \
+			thread_act.h \
+			vm_task.h \
+			mach_port.h
+OTHER_PROJECT_HEADERS = semaphore.h lock_set.h
+OTHER_OFILES =  excUser.o \
+		excServer.o \
+		ledgerUser.o \
+		notifyUser.o \
+		profUser.o  \
+		semaphoreUser.o \
+		memory_objectUser.o \
+		memory_object_controlUser.o \
+		memory_object_nameUser.o \
+		processorUser.o \
+		processor_setUser.o \
+		taskUser.o \
+		thread_actUser.o \
+		vm_taskUser.o \
+		bootstrapUser.o \
+		lock_setUser.o \
+		mach_portUser.o \
+		clockUser.o \
+		clock_privUser.o \
+		mach_hostUser.o \
+		host_privUser.o \
+		host_securityUser.o

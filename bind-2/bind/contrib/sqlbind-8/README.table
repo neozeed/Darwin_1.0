@@ -1,0 +1,31 @@
+Here is the rundown on what the fields are for:
+
+For a normal record like this is the test.org domain:
+www	IN	A	123.123.123.123
+
+sqlID: An auto numbered field (the db server will handle this)
+sqlOrigin: test.org
+sqlOwner: www
+sqlClass: IN
+sqlTTL: 
+sqlType: A
+sqlPref: 
+sqlData: 123.123.123.123
+sqlTime: A timestamp (the db server will handle this)
+sqlComment:  Text field to be used for whatever you want
+
+For the SOA in test.org:
+
+sqlID: 
+sqlOrigin: test.org
+sqlOwner: @
+sqlClass: SOA
+sqlTTL:
+sqlType: IN
+sqlPref: 
+sqlData: test.org (the domain name)
+sqlTime:
+sqlComment: The SOA for test.org
+
+The rest of the data for the SOA is pulled from the named.conf.
+

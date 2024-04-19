@@ -1,0 +1,812 @@
+Received: by gw.home.vix.com id AA18014; Tue, 1 Nov 94 23:05:34 -0800
+Received: from mimas.ccs.deakin.edu.au (mimas.ccs.deakin.edu.au [128.184.19.3]) by hestia.ccs.deakin.edu.au (8.6.9/8.6.9) with ESMTP id SAA13248 for <vixie@vix.com>; Wed, 2 Nov 1994 18:05:29 +1100
+From: Tim Cook <tim@deakin.edu.au>
+Received: (tim@localhost) by mimas.ccs.deakin.edu.au (8.6.8.1/8.6.9) id SAA01549 for vixie@vix.com; Wed, 2 Nov 1994 18:05:24 +1100
+Date: Wed, 2 Nov 1994 18:05:24 +1100
+Message-Id: <199411020705.SAA01549@mimas.ccs.deakin.edu.au>
+To: paul@vix.com
+Subject: dnsfind.shar
+
+#!/bin/sh
+# This is a shell archive (shar 3.32)
+# made 11/02/1994 05:56 UTC by tim@mimas.ccs.deakin.edu.au
+# Source directory /tmp_mnt/home/tim/tim/src/dnsfind
+#
+# existing files WILL be overwritten
+#
+# This shar contains:
+# length  mode       name
+# ------ ---------- ------------------------------------------
+#   1788 -rw-r----- README
+#   6680 -rw-r----- dnsfind.pl
+#   2900 -rwxr-x--- find-mx
+#   4913 -rwxr-x--- makehosts
+#
+if touch 2>&1 | fgrep 'amc' > /dev/null
+ then TOUCH=touch
+ else TOUCH=true
+fi
+# ============= README ==============
+echo "x - extracting README (Text)"
+sed 's/^X//' << 'SHAR_EOF' > README &&
+XContained herein is a Perl library, "dnsfind.pl", and two utilities
+Xthat use the library, "makehosts" and "find-mx".
+X
+XThe Perl routine "dnsfind" is like the Perl "find" routine (found in
+Xfind.pl in your Perl "lib" directory), except it is for DNS zones
+Xinstead of your file system.  "dnsfind" calls a user-supplied routine,
+X"dnswanted" (just like "find" calls "wanted"), with values from all
+XDNS resource records found supplied in global variables.  See
+Xdnsfind.pl for more info.
+X
+XYou will need two pieces of software to use dnsfind:
+X
+X    - Perl.  Version 4 or higher should be good enough.
+X    - dig.  Version 2.0 or higher should be good enough.
+X
+XThe two utilities would serve as good examples of how dnsfind can be
+Xused, but we actually do use them locally.  "makehosts" generates
+Xour /etc/hosts and "find-mx" generates our /etc/mail/sendmail.cw.
+X
+X/etc/hosts is well understood, and should be generated from DNS if you
+Xhave DNS.  There are a number of other utilities in the BIND "contrib"
+Xdirectory that will do basically the same thing as "makehosts".
+X
+X/etc/mail/sendmail.cw is a file used by SendMail (if you have it
+Xconfigured that way) to match domains or host names that it considers
+Xequivalent to the local host.  This is turn makes SendMail route mail
+Xaddressed to any such domain or host name to the "local" mailer, which
+Xdelivers the mail to a local user.  Because we have a centralised mail
+Xhub which accepts mail for a large number of systems, we just use
+X"find-mx" to locate all "highest preference" MX records which match
+Xour hub as the MX, and put them in /etc/mail/sendmail.cw.  There are
+Xother ways to get SendMail to do what you want, but this was the
+Xneatest way for us.
+X
+X--
+XTim Cook
+XSystems Engineer
+XComputing & Communications Services
+XDeakin University
+X2 Nov 1994
+SHAR_EOF
+$TOUCH -am 1102165594 README &&
+chmod 0640 README ||
+echo "restore of README failed"
+set `wc -c README`;Wc_c=$1
+if test "$Wc_c" != "1788"; then
+	echo original size 1788, current size $Wc_c
+fi
+# ============= dnsfind.pl ==============
+echo "x - extracting dnsfind.pl (Text)"
+sed 's/^X//' << 'SHAR_EOF' > dnsfind.pl &&
+X# dnsfind - like find(1), but for DNS data
+X#
+X# $Id: dnsfind.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X# $Source: /cvs/Darwin/Services/bind/bind/contrib/misc/dnsfind.shar,v $
+X#
+X# SYNOPSIS
+X#	#!/usr/local/bin/perl
+X#	require 'dnsfind.pl';
+X#	&dnsfind ('my.domain.com', '1.128.in-addr.arpa');
+X#	sub dnswanted {
+X#	    printf ("%40s %10s %s\n", $zone, $type, $value);
+X#	}
+X#
+X# DESCRIPTION
+X#	Recursively seaches DNS zones, and calls the user-defined
+X#	subroutine "dnswanted" for each record found.  Fields from the
+X#	record are put in the following global variables:
+X#
+X#	    $parent_zone	The parent zone which is being
+X#				examined via a "dig axfr" (zone
+X#				transfer) command.
+X#	    $server		The canonical name of the primary
+X#				server for this (parent) zone.  From
+X#				the SOA record.
+X#	    $zone		Fully-qualified domain-name.
+X#	    $timeout		Seconds before record is out of date.
+X#	    $type		Record type (A, MX, CNAME, NS, etc).
+X#	    $value		Value of the record.
+X
+X#
+X# Safe return from "require"
+X#
+X1;
+X
+X##############################################################################
+X# dnsfind
+X#
+Xsub dnsfind {
+X    local (@zones) = @_;
+X#   GLOBAL ($parent_zone)
+X#   GLOBAL ($server)
+X#   GLOBAL ($zone)
+X#   GLOBAL ($timeout)
+X#   GLOBAL ($type)
+X#   GLOBAL ($value)
+X#   GLOBAL (%_zones_searched)
+X
+X    local ($parent_zone_l);
+X    local ($server_l);
+X    local ($zone_l);
+X    local ($timeout_l);
+X    local ($type_l);
+X    local ($value_l);
+X    local (@sub_zones);
+X    local (@data);
+X    local ($record);
+X    local ($tmp);
+X
+X    foreach $parent_zone_l (@zones) {
+X	#
+X	# Find primary
+X	#
+X	if (substr ($parent_zone_l, -1) ne '.') {
+X	    $parent_zone_l .= '.';
+X	}
+X	@data = &dig ($parent_zone_l, 'soa');
+X	if (! @data) {
+X	    return undef;
+X	}
+X	@data = split (/\s+/, shift (@data));
+X	$server_l = shift (@data);
+X
+X	#
+X	# Avoid this zone if we have already searched it
+X	#
+X	$tmp = $parent_zone_l;
+X	$tmp =~ tr/[A-Z]/[a-z]/;
+X	next if ($_zones_searched{$tmp});
+X
+X	#
+X	# Transfer zone
+X	#
+X	###print ("[AXFR] $parent_zone_l\n");
+X	@data = &axfr ($parent_zone_l, $server_l);
+X	if (! @data) {
+X	    return undef;
+X	}
+X
+X	#
+X	# Note this zone as having been searched
+X	#
+X	$tmp = $parent_zone_l;
+X	$tmp =~ tr/[A-Z]/[a-z]/;
+X	$_zones_searched{$tmp} = 1;
+X
+X	#
+X	# Process each record
+X	#
+X	foreach $record (@data) {
+X	    ($zone_l, $timeout_l, $type_l, $value_l) = split ('\s+', $record,
+X							      4);
+X	    #
+X	    # We only want data in this zone
+X	    #
+X	    next if (&strcasecmp ($parent_zone_l,
+X				  substr ($zone_l, 0 - length ($parent_zone_l)))
+X		     != 0);
+X
+X	    #
+X	    # Call the user-supplied subroutine
+X	    #
+X	    $parent_zone = $parent_zone_l;
+X	    $server = $server_l;
+X	    $zone = $zone_l;
+X	    $timeout = $timeout_l;
+X	    $type = $type_l;
+X	    $value = $value_l;
+X
+X	    &dnswanted ();
+X
+X	    #
+X	    # Is it a sub-zone, and have we not searched it?
+X	    #
+X	    next if (&strcasecmp ($type_l, 'NS') != 0);
+X	    next if (! &is_sub_zone ($zone_l, $parent_zone_l));
+X	    next if (grep ($_ eq $zone_l, @sub_zones));
+X	    #
+X	    # Save it to search later
+X	    #
+X	    push (@sub_zones, $zone_l);
+X	}
+X
+X	#
+X	# Recurse (depth-first) for sub-zones
+X	#
+X	&dnsfind (sort (@sub_zones))
+X    }
+X    return 1;
+X}
+X
+X
+X##############################################################################
+X# is_sub_zone
+X#
+Xsub is_sub_zone {
+X    local ($zone) = shift (@_);
+X    local ($parent_zone) = shift (@_);
+X
+X    #
+X    # To be a sub-zone, you should have a dot, then the parent zone as
+X    # a suffix.
+X    #
+X
+X    $parent_zone = '.' . $parent_zone;
+X
+X    if (length ($zone) <= length ($parent_zone)) {
+X	return 0;
+X    }
+X
+X    $parent_zone =~ tr/[A-Z]/[a-z]/;
+X    $zone =~ tr/[A-Z]/[a-z]/;
+X
+X    if (substr ($zone, 0 - length ($parent_zone)) ne $parent_zone) {
+X	return 0;
+X    }
+X
+X    return 1;
+X}
+X
+X
+X##############################################################################
+X#
+Xsub axfr {
+X    local ($zone) = shift (@_);
+X    local ($server) = shift (@_);
+X
+X    local (@output);
+X    local (@temp);
+X    local ($_);
+X    local ($cont);
+X
+X    @output = split (/\n/, `dig @$server axfr $zone`);
+X
+X    if (! &dig_check ($?, @output)) {
+X	return ();
+X    }
+X
+X    #
+X    # Remove comments and newlines
+X    #
+X    @temp = ();
+X    foreach (@output) {
+X	s/\s*\n$//;
+X	s/\s*;.*$//;
+X	if (! /^\s*$/) {
+X	    push (@temp, $_);
+X	}
+X    }
+X
+X    #
+X    # Collapse continuations
+X    #
+X    @output = ();
+X    while (1) {
+X	last if (! @temp);
+X	$_ = shift (@temp);
+X	while (/\s\($/ && @temp) {
+X	    s/\s*\($//;
+X	    $cont = shift (@temp);
+X	    if ($cont =~ /\)$/) {
+X		$cont =~ s/\s*\)$//;
+X		$_ = $_ . ' ' . $cont;
+X	    } else {
+X		$_ = $_ . ' ' . $cont . ' (';
+X	    }
+X	}
+X	push (@output, $_);
+X    }
+X
+X    return (@output);
+X}
+X
+X
+X##############################################################################
+X# dig -	Simple DNS lookup, using dig(1).
+X#
+Xsub dig {
+X    local ($key) = shift (@_);
+X    local ($type) = shift (@_);
+X    local ($server) = shift (@_);
+X
+X    local (@output);
+X    local ($_);
+X    local (%values);
+X    local ($value);
+X    local (@F);
+X    local (@ret);
+X    local ($status);
+X
+X    #
+X    # Key must be relative to root
+X    #
+X    if (substr ($key, -1) ne '.') {
+X	$key .= '.';
+X    }
+X
+X    if (length ($server)) {
+X        @output = split (/\n/, `dig @$server $key $type`);
+X    } else {
+X	@output = split (/\n/, `dig $key $type`);
+X    }
+X
+X    if (! &dig_check ($?, @output)) {
+X	return ();
+X    }
+X
+X    #
+X    # Find matching data
+X    #
+X    undef %values;
+X    foreach (@output) {
+X	next if (/^;/);
+X	next if (/^\s*$/);
+X	@F = split;
+X	next if (&strcasecmp ($type, $F[2]) != 0);
+X	next if (&strcasecmp ($key, $F[0]) != 0);
+X	shift (@F); shift (@F); shift (@F);
+X	$value = join (' ', @F);
+X	next if ($values{$value});
+X	$values{$value} = 1;
+X	push (@ret, $value);
+X    }
+X    return @ret;
+X}
+X
+X
+X##############################################################################
+X# dig_check -	Check how dig(1) went
+X#
+Xsub dig_check {
+X    local ($status) = shift (@_);
+X
+X    local (@F);
+X    local ($status_text);
+X
+X    if (! @_) {
+X	#
+X	# dig has probably not executed
+X	#
+X	$ERROR_STR = "problem running dig?";
+X	return ();
+X    }
+X
+X    #
+X    # Get status text, regardless of return value
+X    #
+X    @F = grep (/;; ->>HEADER<<-/, @_);
+X    if (@F) {
+X	if ($F[0] =~ /status: ([^,]*),/) {
+X	    $status_text = $1;
+X	}
+X    }
+X    if (($status_text eq "REFUSED") || ($status_text eq "SERVFAIL")) {
+X	$ERROR_STR = "dig: status: $1";
+X	return ();
+X    }
+X    if ($? != 0) {
+X	$ERROR_STR = "dig: error, ret = " . ($? >> 8) . ", status = $status";
+X	return ();
+X    }
+X
+X    return 1;
+X}
+X
+X
+X##############################################################################
+X# strcasecmp -	Compare strings while ignoring case
+X#
+Xsub strcasecmp {
+X    local ($s1) = shift (@_);
+X    local ($s2) = shift (@_);
+X
+X    $s1 =~ tr/[A-Z]/[a-z]/;
+X    $s2 =~ tr/[A-Z]/[a-z]/;
+X
+X    return ($s1 cmp $s2);
+X}
+SHAR_EOF
+$TOUCH -am 1102161894 dnsfind.pl &&
+chmod 0640 dnsfind.pl ||
+echo "restore of dnsfind.pl failed"
+set `wc -c dnsfind.pl`;Wc_c=$1
+if test "$Wc_c" != "6680"; then
+	echo original size 6680, current size $Wc_c
+fi
+# ============= find-mx ==============
+echo "x - extracting find-mx (Text)"
+sed 's/^X//' << 'SHAR_EOF' > find-mx &&
+X#!/usr/local/bin/perl
+X# find-mx -	Find all names which list a host as "best-MX"
+X#
+X# $Id: dnsfind.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X# $Source: /cvs/Darwin/Services/bind/bind/contrib/misc/dnsfind.shar,v $
+X#
+X# SYNOPSIS
+X#	find-mx hub domain [...]
+X#
+X
+Xpush (@INC, '/src/util/perl');
+Xrequire 'dnsfind.pl';
+X
+X$Prog = "find-mx";
+X
+Xif ($#ARGV <= 0) {
+X    die "usage: $Prog hub domain [...]\n";
+X}
+X
+Xif (! &main (@ARGV)) {
+X    exit 1;
+X}
+X
+X
+X#############################################################################
+X# Main Program
+X#
+Xsub main {
+X    local ($hub) = shift (@_);
+X    local (@domains) = @_;
+X 
+X    &dnsfind (@domains);
+X
+X    undef %mx;
+X    foreach $zone (keys (%Exchangers)) {
+X	@exchangers = split ('\|', $Exchangers{$zone});
+X
+X	#
+X	# If hub is one of the most preferred MX for this zone, then
+X	# save it
+X	#
+X	if (grep ($_ eq $hub, @exchangers)) {
+X	    $mx{$zone} = 1;
+X	}
+X    }
+X
+X    #
+X    # Check if any CNAMEs point to an MX we have selected
+X    #
+X    while (1) {
+X	($key, $value) = each (%Cnames);
+X	last if (! length ($key));
+X
+X	if ($mx{$value}) {
+X	    $mx{$key} = 1;
+X	}
+X    }
+X    
+X
+X    #
+X    # Custom sort our output
+X    #
+X    @mx = sort (custom_sort keys (%mx));
+X
+X    #
+X    # Print it
+X    #
+X    foreach $zone (@mx) {
+X	print ($zone, "\n");
+X    }
+X
+X    return 1;
+X}
+X
+X
+X#############################################################################
+X# dnswanted -	Called for each record found by dnsfind
+X#
+Xsub dnswanted {
+X    local ($pref, $exchanger);
+X    local ($zone_c);
+X
+X    $type =~ tr/[a-z]/[A-Z]/;
+X
+X    if ($type eq 'MX') {
+X	local ($pref);
+X	local ($exchanger);
+X
+X	($pref, $exchanger) = split ('\s+', $value);
+X	$zone = &cleanhost ($zone);
+X	$exchanger = &cleanhost ($exchanger);
+X
+X	if (defined ($Lowest_pref{$zone})) {
+X	    if ($pref == $Lowest_pref{$zone}) {
+X		$Exchangers{$zone} = $Exchangers{$zone} . '|' .
+X		    $exchanger;
+X	    } else {
+X		if ($pref < $Lowest_pref{$zone}) {
+X		    $Lowest_pref{$zone} = $pref;
+X		    $Exchangers{$zone} = $exchanger;
+X		}
+X	    }
+X	} else {
+X	    $Lowest_pref{$zone} = $pref;
+X	    $Exchangers{$zone} = $exchanger;
+X	}
+X    } elsif ($type eq 'CNAME') {
+X    	#
+X    	# Save this, in case it points to a selected MX
+X    	#
+X    	$zone_c = &cleanhost ($zone);
+X    	$Cnames{$zone_c} = &cleanhost ($value);
+X    }
+X}
+X
+X
+X#############################################################################
+X# custom_sort -	Sorts domain names by number of parts in name then alphanum
+X#
+Xsub custom_sort {
+X    local ($dots_a);
+X    local ($dots_b);
+X    local ($cmp);
+X
+X    $dots_a = $a; $dots_a =~ tr/.//dc;
+X    $dots_b = $b; $dots_b =~ tr/.//dc;
+X
+X    $cmp = $dots_a cmp $dots_b;
+X    if ($cmp == 0) {
+X	$cmp = $a cmp $b;
+X    }
+X    return $cmp;
+X}
+X
+X#############################################################################
+X# cleanhost -	Fold case to lower and remove trailing dot if present
+X#
+Xsub cleanhost {
+X    local ($host) = shift (@_);
+X
+X    $host =~ tr/[A-Z]/[a-z]/;
+X    $host =~ s/\.$//;
+X    return ($host);
+X}
+SHAR_EOF
+$TOUCH -am 1102163594 find-mx &&
+chmod 0750 find-mx ||
+echo "restore of find-mx failed"
+set `wc -c find-mx`;Wc_c=$1
+if test "$Wc_c" != "2900"; then
+	echo original size 2900, current size $Wc_c
+fi
+# ============= makehosts ==============
+echo "x - extracting makehosts (Text)"
+sed 's/^X//' << 'SHAR_EOF' > makehosts &&
+X#!/usr/local/bin/perl
+X# makehosts -	Make a /etc/hosts file by searching DNS records
+X#
+X# $Id: dnsfind.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X#
+X# SYNOPSIS
+X#	makehosts domain ...
+X#
+X# DESCRIPTION
+X#	This program works by using dnsfind() to recursively search
+X#	the desired domain(s) for all A, CNAME and PTR records.
+X#	The output is sorted by IP-number, and it is ensured that any
+X#	IP address will be translated to the name mentioned by its PTR
+X#	record, if more than one name corresponds to the same address.
+X#
+X#	Note that the necessary PTR records must be provided by making
+X#	makehosts search in the appropriate "IN-ADDR.ARPA" subdomains.
+X#
+X#	For example, if you want a hosts file for the domain
+X#	"deakin.edu.au", you need to specify that domain, plus the
+X#	reverse domains for any addresses corresponding to hosts in
+X#	"deakin.edu.au".  You would need to say:
+X#
+X#	   makehosts \
+X#		deakin.edu.au \
+X#		184.128.in-addr.arpa \
+X#		132.139.in-addr.arpa
+X
+X
+Xpush (@INC, '/src/config/util/perl');
+X
+Xrequire 'dnsfind.pl';
+X
+X$Prog = substr ($0, rindex ($0, '/') + 1);
+X
+X$Version = '$Revision: 1.1.1.1 $';
+X@F = split (/\s+/, $Version);
+X$Version = $F[1];
+Xundef @F;
+X
+X#
+X# Set the PATH, so we have a chance of finding "dig"
+X#
+X$ENV{'PATH'} = '/bin:/usr/bin:/usr/ucb:/usr/local/bin';
+X
+X&main (@ARGV);
+X
+Xexit (0);
+X
+X
+X##############################################################################
+X#
+Xsub main {
+X    local (@domains);
+X    local ($key, $value);
+X    local ($not_canonical);
+X    local (%done);
+X    local (@addr);
+X    local ($_);
+X
+X    foreach (@_) {
+X	tr/A-Z/a-z/;
+X	push (@domains, $_);
+X    }
+X
+X    #
+X    # Everybody needs localhost
+X    #
+X    $IN_A{'localhost.'} = '127.0.0.1';
+X
+X    &dnsfind (@domains);
+X
+X    #
+X    # A records
+X    #
+X    warn "- Checking A records\n";
+X
+X    while (($key, $value) = each (%IN_A)) {
+X	undef %done;
+X	@addr = split (/:/, $value);
+X	foreach (@addr) {
+X	    next if ($done{$_});
+X	    $done{$_} = 1;
+X	    $not_canonical = 1;
+X	    #
+X	    # Check for matching PTR record
+X	    #
+X	    if (length ($IN_PTR{$_})) {
+X		#
+X		# A boolean that says this name is not the canonical
+X		# name
+X		#
+X		$not_canonical =
+X		    (&strcasecmp ($key,
+X				  substr($IN_PTR{$_}, 0, length ($key)))
+X		     != 0);
+X	    } else {
+X		#
+X		# Explicit lookup
+X		#
+X		if (! &dig (join ('.', reverse (split (/\./, $_)),
+X				  'in-addr.arpa.'), "PTR")) {
+X		    warn "WARNING - no PTR for \"$_\" ($key A)\n";
+X		}
+X	    }
+X	    push (@hosts, sprintf ("%03d.%03d.%03d.%03d %1d %s",
+X				  split (/\./, $_), $not_canonical, $key));
+X	}
+X    }
+X
+X    #
+X    # CNAME records
+X    #
+X    while (($key, $value) = each (%IN_CNAME)) {
+X	#
+X	# Check that there is an A record
+X	#
+X	if (defined ($IN_A{$value})) {
+X	    @addr = split (/:/, $IN_A{$value});
+X	} else {
+X	    #
+X	    # Explicit lookup
+X	    #
+X	    @addr = &dig ($value, 'A');
+X	    if (! @addr) {
+X		warn "WARNING - no A record \"$value\" ($key CNAME)\n";
+X		next;
+X	    }
+X	}
+X	undef %done;
+X	foreach (@addr) {
+X	    next if ($done{$_});
+X	    $done{$_} = 1;
+X	    push (@hosts, sprintf ("%03d.%03d.%03d.%03d 2 %s",
+X				   split (/\./, $_), $key));
+X	}
+X    }
+X
+X    #
+X    # PTR records
+X    #
+X    while (($key, $value) = each (%IN_PTR)) {
+X	@h = split (/:/, $value);
+X	foreach (@h) {
+X	    if (! defined ($IN_A{$_})) {
+X		#
+X		# Explicit lookup
+X		#
+X		if (! &dig ($_, "A")) {
+X		    warn "WARNING - no A record \"$_\" ($key PTR)\n";
+X		}
+X	    }
+X	}
+X    }
+X
+X    #
+X    # Sort @hosts
+X    #
+X    @hosts = sort (@hosts);
+X
+X    #
+X    # Output hosts
+X    #
+X    $date_time = `date`; chop ($date_time);
+X    print (
+X'# hosts -	host-name/IP-address data base
+X#
+X# $Source: /cvs/Darwin/Services/bind/bind/contrib/misc/dnsfind.shar,v $
+X#
+X# This file generated by ' . "\"$Prog\" $Version, on $date_time" . '
+X# Domains searched:
+X#	' . join ("\n#\t", @domains) . '
+X#
+X');
+X
+X    foreach (@hosts) {
+X	($address, $dummy, $name) = split;
+X	$address = sprintf ("%d.%d.%d.%d", split (/\./, $address));
+X
+X	#
+X	# Trim the trailing dot
+X	#
+X	$name =~ s/\.$//;
+X
+X	#
+X	# Due to the edu.au, zone being officially known as EDU.AU, all
+X	# data for all domains under this zone is returned with EDU.AU,
+X	# in all uppercase, by DNS.  We don't like this in /etc/hosts,
+X	# so we will endeavour to fold to lowercase here.
+X	#
+X	$name =~ s/EDU.AU$/edu.au/i;
+X
+X	$short = $name;
+X	$short =~ s/\..*$//;
+X
+X	print ($address, "\t");
+X	if (length ($address) < 8) {
+X	    print ("\t");
+X	}
+X	print ($name, "\t");
+X	if (length ($name) < 24) {
+X	    print ("\t");
+X	}
+X	print ($short, "\n");
+X    }
+X    return 0;
+X}
+X
+X
+X##############################################################################
+X#
+Xsub dnswanted {
+X    if ($Parent ne $parent_zone) {
+X	warn "- Searching $parent_zone, from $server\n";
+X	$Parent = $parent_zone;
+X    }
+X
+X    if ($type eq 'A') {
+X	$IN_A{$zone} .= $value . ':';
+X    } elsif ($type eq 'CNAME') {
+X	$IN_CNAME{$zone} = $value;
+X    } elsif ($type eq 'PTR') {
+X	$address = $zone;
+X	$address =~ s/\.in-addr\.arpa\.?$//i;
+X	$address = join ('.', reverse (split (/\./, $address)));
+X	$IN_PTR{$address} .= $value . ':';
+X    }
+X}
+SHAR_EOF
+$TOUCH -am 1102163294 makehosts &&
+chmod 0750 makehosts ||
+echo "restore of makehosts failed"
+set `wc -c makehosts`;Wc_c=$1
+if test "$Wc_c" != "4913"; then
+	echo original size 4913, current size $Wc_c
+fi
+exit 0

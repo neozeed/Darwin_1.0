@@ -1,0 +1,7 @@
+This is the port of BIND 8.2 patch 1 for Mac OS X Server.
+
+There is no support for netinfo yet, so you will have to create an
+/etc/resolv.conf file yourself, with the resolver info in it, like:
+search yourdomain.com
+nameserver your.name.server.address
+

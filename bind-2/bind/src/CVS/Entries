@@ -1,0 +1,18 @@
+/.cvsignore/1.1.1.1/Mon Oct  4 22:24:37 1999//Tbind-2
+/CHANGES/1.1.1.1/Mon Oct  4 22:24:37 1999//Tbind-2
+/FLAWS/1.1.1.1/Mon Oct  4 22:24:37 1999//Tbind-2
+/INSTALL/1.2/Fri Feb 25 20:45:38 2000//Tbind-2
+/LICENSE/1.1.1.1/Mon Oct  4 22:24:37 1999//Tbind-2
+/LICENSE_RSA/1.1.1.1/Mon Oct  4 22:24:37 1999//Tbind-2
+/Makefile/1.2/Tue Oct  5 00:07:49 1999//Tbind-2
+/README/1.1.1.1/Mon Oct  4 22:24:37 1999//Tbind-2
+/SUPPORT/1.1.1.1/Mon Oct  4 22:24:37 1999//Tbind-2
+/TODO/1.1.1.1/Mon Oct  4 22:24:37 1999//Tbind-2
+/Version/1.1.1.1/Mon Oct  4 22:24:37 1999//Tbind-2
+D/OLD////
+D/bin////
+D/conf////
+D/include////
+D/lib////
+D/port////
+D/tests////

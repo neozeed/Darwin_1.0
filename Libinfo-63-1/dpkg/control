@@ -1,0 +1,4 @@
+Package: libinfo
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Description: NetInfo library
+Build-Depends: build-base, librpcsvc-hdrs, libinfo-hdrs, project-makefiles

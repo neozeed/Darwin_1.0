@@ -1,0 +1,275 @@
+#!/usr/bin/env python
+# -*-python-*-
+#
+# Perform some simple regression tests. DEFINITELY not exhaustive.
+#
+
+#######################################################################
+#
+# CONFIGURE
+#
+
+HOST = 'kurgan.lyra.org'
+PORT = 8080
+
+# END
+#######################################################################
+
+import davlib
+import string
+import sys
+import getopt
+
+BASE = 'http://%s:%s' % (HOST, PORT)
+
+class mydav(davlib.DAV):
+  def __init__(self, verbose=0):
+    davlib.DAV.__init__(self, HOST, PORT)
+    self.verbose = verbose
+
+  def _request(self, method, url, *args, **kw):
+    response = apply(davlib.DAV._request, (self, method, url) + args, kw)
+    response.method = method
+    response.url = url
+    if self.verbose:
+      print 'EXEC: %s{%s}. status: %d' % (method, url, response.errcode)
+    if response.errcode == 207:
+      response.parse_multistatus()
+    elif method == 'LOCK' and response.errcode == 200:
+      response.parse_lock_response()
+    return response
+
+  def _one_request(self, name, args, kw):
+    response = apply(getattr(davlib.DAV, name), (self,) + args, kw)
+    response.read()
+    return response
+
+  def delete_x(self, *args, **kw):
+    return self._one_request('delete', args, kw)
+
+  def mkcol_x(self, *args, **kw):
+    return self._one_request('mkcol', args, kw)
+
+  def put_x(self, *args, **kw):
+    return self._one_request('put', args, kw)
+
+  def smart_props(self, url, depth=0, props=(), ns=''):
+    "Get some properties and preprocess the response."
+    if props:
+      if ns:
+        xmlns = ' xmlns:NS="%s"' % ns
+        prefix = 'NS:'
+      else:
+        xmlns = prefix = ''
+      body = davlib.XML_DOC_HEADER + \
+             '<DAV:propfind xmlns:DAV="DAV:"%s>' \
+             '<DAV:prop><%s%s/></DAV:prop></DAV:propfind>' % \
+             (xmlns, prefix, string.join(props, '/><' + prefix))
+    else:
+      body = None
+    response = self.propfind(url, body, depth)
+    if not is207(response):
+      return { }
+
+    propset = { }	# { url: { (uri, localname) : value_elem } }
+
+    for resp in response.msr.responses:
+      if resp.status and resp.status[0] != 200:
+        print 'ERROR: PROPFIND{%s} had a <DAV:response> status of %d.' % \
+              (url, resp.status[0])
+        continue
+
+      props = { }
+      for ps in resp.propstat:
+        if ps.status and ps.status[0] != 200:
+          print 'ERROR: PROPFIND{%s} had a <DAV:propstat> status of %d.' % \
+                (url, resp.status[0])
+          break
+        for key, value in ps.prop.items():
+          if props.has_key(key):
+            print 'WARNING: PROPFIND{%s} returned a duplicate property.' % url
+          props[key] = value
+
+      if len(resp.href) != 1:
+        print 'ERROR: PROPFIND{%s} returned multiple <DAV:href> elems in a response.' % url
+        continue
+      href = resp.href[0]
+      if propset.has_key(href):
+        print 'ERROR: PROPFIND{%s} returned a duplicate <DAV:href>.' % url
+        continue
+      propset[href] = props
+
+    return propset
+
+  def smart_delete(self, url):
+    "Delete a URL, unlocking resources if necessary."
+    while 1:
+      response = self.delete(url)
+      if is204(response):
+        return
+      if not is207(response):
+        print 'ERROR: smart DELETE{%s} failed.' % url
+        return
+
+      # gather URLs which failed due to locks
+      urls = { }
+      for resp in response.msr.responses:
+        if len(resp.href) != 1:
+          print 'ERROR: DELETE{%s} returned multiple <DAV:href> elems in a response.' % url
+          continue
+        href = resp.href[0]
+
+        if resp.status:
+          s = resp.status[0]
+          if s == 200:
+            continue
+          if s != 423:
+            print 'ERROR: smart DELETE{%s} returned expected status %d.' % \
+                  (url, s)
+            continue
+          if urls.has_key(href):
+            print 'ERROR: smart DELETE{%s} returned duplicate <DAV:href>.' % \
+                  url
+            continue
+          urls[href] = None
+        # else what?
+
+      urls = urls.keys()
+      if len(urls) > 1:
+        urls.sort()
+        prev = urls[0]
+        i = 1
+        while i < len(urls):
+          if prev == urls[i][:len(prev)]:
+            # previous is a prefix; torch the internal member
+            del urls[i]
+          else:
+            # move on to the next URL
+            prev = urls[i]
+            i = i + 1
+
+      unlocked_one = 0
+
+      # get the lock information at each URL, then UNLOCK them
+      for sub_url in urls:
+        propset = self.smart_props(sub_url,
+                                   props=('lockdiscovery',), ns='DAV:')
+        if len(propset) != 1:
+          print 'ERROR: smart PROPFIND{%s} returned props for multiple URLs.' % sub_url
+          continue
+        # assume returned URL matches sub_url
+        props = propset.values()[0]
+        if len(props) != 1:
+          print 'ERROR: smart PROPFIND{%s} returned multiple props.' % url
+          continue
+        ld = props.get(('DAV:', 'lockdiscovery'))
+        if not ld:
+          print 'ERROR: smart PROPFIND{%s} returned incorrect prop.' % url
+          continue
+        tokens = gather_tokens(ld)
+
+        for token in tokens:
+          r = self.unlock(sub_url, token)
+          if is204(r):
+            unlocked_one = 1
+
+      if not unlocked_one:
+        print 'ERROR: nothing was unlocked; cannot DELETE.'
+        return
+
+def gather_tokens(ld):
+  tokens = []
+  for active in ld.children:
+    if active.ns != 'DAV:' or active.name != 'activelock':
+      continue
+    locktoken = active.find('locktoken', 'DAV:')
+
+    if locktoken:
+      for href in locktoken.children:
+        if href.ns == 'DAV:' and href.name == 'href':
+          tokens.append(href.textof())
+  return tokens
+
+def test_response(r, expected):
+  if r.errcode != expected:
+    print 'ERROR: %s{%s} returned %d. Expected %d.' % \
+          (r.method, r.url, r.errcode, expected)
+    return 0
+  return 1
+
+def is200(r):
+  "Is it a 200 (OK) ?"
+  return test_response(r, 200)
+
+def is201(r):
+  "Is it a 201 (Created) ?"
+  return test_response(r, 201)
+
+def is204(r):
+  "Is it a 204 (No Content) ?"
+  return test_response(r, 204)
+
+def is207(r):
+  "Is it a 207 (Multistatus) ?"
+  return test_response(r, 207)
+
+def is423(r):
+  "Is it a 423 (Locked) ?"
+  return test_response(r, 423)
+    
+def locktest(verbose=0):
+  conn = mydav(verbose)
+  conn.smart_delete('/dav/locktest')
+  conn.mkcol_x('/dav/locktest')
+  conn.mkcol_x('/dav/locktest/sub')
+
+  tokens = { }
+
+  # locknull test
+  r = conn.lock('/dav/locktest/locknull')
+  if is200(r):
+    tokens['/dav/locktest/locknull'] = r.locktoken
+
+    if_hdr = '(<' + r.locktoken + '>)'
+
+    # try a PUT to the locknull
+    r = conn.put_x('/dav/locktest/locknull', 'the body')
+    if is423(r):
+      # try again with the right If: header
+      r = conn._request('PUT', '/dav/locktest/locknull', 'the body',
+                      extra_hdrs={'If': if_hdr})
+      r.read()
+      if is201(r):
+        # do it one more time!
+        r = conn._request('PUT', '/dav/locktest/locknull', 'the new body',
+                          extra_hdrs={'If': if_hdr})
+        r.read()
+        is204(r)
+  else:
+    r.read()
+
+  # Joe Orton's LOCK and PUT test
+  r = conn.lock('/dav/locktest/sub')
+  if is200(r):
+    tokens['/dav/locktest/sub'] = r.locktoken
+    if_hdr = '</dav/locktest/sub/>(<' + r.locktoken + '>)'
+
+    r = conn._request('PUT', '/dav/locktest/sub/file', 'the body',
+                      extra_hdrs={'If': if_hdr})
+    r.read()
+    if is201(r):
+      propset = conn.smart_props('/dav/locktest/sub', 1,)
+  else:
+    r.read()
+
+  ### add some code to do a PROPFIND for <DAV:lockdiscovery> and ensure
+  ### that all URLS/tokens match our expections in the "tokens" structure
+
+
+def main():
+  opts, args = getopt.getopt(sys.argv[1:], 'v')
+  verbose = ('-v', '') in opts
+  locktest(verbose)
+
+if __name__ == '__main__':
+  main()

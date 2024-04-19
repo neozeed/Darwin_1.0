@@ -1,0 +1,81 @@
+.\" %Z% %M% %I% %E% %Z%
+.TH POKE_DHCP 1 "%E%
+.UC 4
+.SH NAME
+poke_ns \- restarts a running DHCP server
+.SH SYNOPSIS
+.B poke_dhcp
+poke_dhcp
+[
+restart | reload | debug | nodebug | dump | terminate
+]
+.SH DESCRIPTION
+.PP
+.B poke_ns
+sends process control signals to a running bind nameserver.
+Without any options
+.B poke-ns
+emits a help message.
+.SH OPTIONS
+.TP
+restart:
+Terminates the running nameserver by the sending the TERM signal and
+restarts the nameserver. 
+.TP
+reload:
+Send the HUP signal to the running nameserver which instructs it to reload
+all its zone files.
+.TP
+debug:
+Sends the USR1 signal to the nameserver which causes it to write
+debugging output to the
+.B named_run
+file.
+The
+.B named_run
+file is created in the 
+.B /var/tmp
+directory with a version 4 nameserver or in current directory with a
+version 8 nameserver.
+Sending another USR1 signal increases the level of debugging output.
+.TP
+nodebug:
+Turn off debugging output by sending the SIGUSR2 signal to the running
+nameserver.
+.TP
+dump:
+Sends the INT signal which causes the nameserver to dump a copy of its
+internal database files to the
+.B named_dump.db
+file.
+.TP
+terminate:
+Sends the TERM signal which causes the running nameserver to terminate.
+.SH Configuration File
+.PP
+.B poke_ns
+uses a simple environment file which sets various default parameters.
+Parameters are set using a parameter=value syntax.
+The environment file is normally located in
+.B /usr/local/etc/poke_ns.env.
+Parameters settable in this file are:
+.TP
+DB_DUMP:
+Pathname of the database dump file.
+DEBUG:
+Pathname of the debug output file.
+.TP
+NAMED:
+Pathname of the nameserver executable to use when restarting the server.
+.TP
+PIDFILE:
+Pathname of the file which contains the process id of the running nameserver.
+.PP
+The environment file is checked to be sure it is only writable by root,
+since poke_ns is normally setuid root and only executable by a
+group responsible for nameserver maintenance.
+.SH SEE ALSO
+.PP
+.BR gendns(1),
+.BR genstatic(1),
+.BR updatehosts(1)

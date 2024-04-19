@@ -1,0 +1,25 @@
+/Language.table/1.1.1.1/Thu Apr 15 18:36:04 1999//Tboot-68
+/Makefile/1.2/Tue Mar  7 06:10:56 2000//Tboot-68
+/bitmap_list.h/1.1.1.2/Wed Aug  4 21:16:50 1999//Tboot-68
+/bitmaps.c/1.1.1.2/Wed Aug  4 21:16:50 1999//Tboot-68
+/boot.c/1.2/Tue Mar  7 06:10:56 2000//Tboot-68
+/boot.h/1.1.1.2/Wed Aug  4 21:16:50 1999//Tboot-68
+/boot2.s/1.1.1.2/Wed Aug  4 21:16:50 1999//Tboot-68
+/browser.c/1.1.1.2/Wed Aug  4 21:16:50 1999//Tboot-68
+/browser.h/1.1.1.2/Wed Aug  4 21:16:51 1999//Tboot-68
+/button.c/1.1.1.2/Wed Aug  4 21:16:51 1999//Tboot-68
+/button.h/1.1.1.2/Wed Aug  4 21:16:51 1999//Tboot-68
+/graphics.c/1.1.1.2/Wed Aug  4 21:16:51 1999//Tboot-68
+/graphics.h/1.1.1.2/Wed Aug  4 21:16:51 1999//Tboot-68
+/module.c/1.1.1.2/Wed Aug  4 21:16:51 1999//Tboot-68
+/prompt.c/1.1.1.2/Wed Aug  4 21:16:51 1999//Tboot-68
+/questionbox.c/1.1.1.2/Wed Aug  4 21:16:52 1999//Tboot-68
+/scanmemory.c/1.1.1.2/Wed Aug  4 21:16:52 1999//Tboot-68
+/scanmemory.sed/1.1.1.1/Thu Apr 15 18:36:05 1999//Tboot-68
+/scrollbar.c/1.1.1.2/Wed Aug  4 21:16:52 1999//Tboot-68
+/scrollbar.h/1.1.1.2/Wed Aug  4 21:16:52 1999//Tboot-68
+/sizememory.c/1.1.1.2/Wed Aug  4 21:16:52 1999//Tboot-68
+/start.s/1.1.1.2/Wed Aug  4 21:16:52 1999//Tboot-68
+/test/1.1.1.1/Thu Apr 15 18:36:05 1999//Tboot-68
+/test.c/1.1.1.2/Wed Aug  4 21:16:53 1999//Tboot-68
+D

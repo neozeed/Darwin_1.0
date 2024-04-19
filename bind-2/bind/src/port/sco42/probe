@@ -1,0 +1,13 @@
+#!/bin/sh
+
+uname=/bin/uname
+grep=/bin/grep
+
+if [ -f $uname -a -f $grep ]; then
+	REL=`uname -X 2> /dev/null | grep "Release = "`
+	case "$REL" in
+	"Release = 3.2v4.2") exit 0 ;;
+	esac
+fi
+
+exit 1

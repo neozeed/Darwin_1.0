@@ -1,0 +1,13 @@
+/Makefile.ssl/1.2/Sun Mar  5 03:45:47 2000//TOpenSSL-2
+/Makefile.uni/1.1.1.1/Sun Mar  5 02:30:56 2000//TOpenSSL-2
+/i_cbc.c/1.1.1.1/Sun Mar  5 02:30:56 2000//TOpenSSL-2
+/i_cfb64.c/1.1.1.1/Sun Mar  5 02:30:56 2000//TOpenSSL-2
+/i_ecb.c/1.1.1.1/Sun Mar  5 02:30:56 2000//TOpenSSL-2
+/i_ofb64.c/1.1.1.1/Sun Mar  5 02:30:56 2000//TOpenSSL-2
+/i_skey.c/1.1.1.1/Sun Mar  5 02:30:56 2000//TOpenSSL-2
+/idea.h/1.1.1.1/Sun Mar  5 02:30:56 2000//TOpenSSL-2
+/idea_lcl.h/1.1.1.1/Sun Mar  5 02:30:56 2000//TOpenSSL-2
+/idea_spd.c/1.1.1.1/Sun Mar  5 02:30:56 2000//TOpenSSL-2
+/ideatest.c/1.1.1.1/Sun Mar  5 02:30:56 2000//TOpenSSL-2
+/version/1.1.1.1/Sun Mar  5 02:30:56 2000//TOpenSSL-2
+D

@@ -1,0 +1,13 @@
+#if !defined(BSD)
+int
+getdtablesize()
+{
+#if defined(USE_POSIX)
+	int j = (int) sysconf(_SC_OPEN_MAX);
+ 
+	if (j >= 0)
+		return (j);
+#endif /* POSIX */
+	return (FD_SETSIZE);
+}
+#endif /* BSD */

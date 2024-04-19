@@ -1,0 +1,366 @@
+*** b493b9/conf/options.h	Fri Jul 22 04:42:30 1994
+--- b493b9m/conf/options.h	Sun Jul 24 17:53:36 1994
+***************
+*** 111,116 ****
+--- 111,117 ----
+  #define CLEANCACHE	/* useful and necessary in the face of NCACHE */
+  #define STATS		/* keep nameserver statistics; uses more memory */
+  /*#define RENICE  	/* named-xfer should run at normal priority */
++ #define MULTIZDB    /* allow Multizone Database files */
+  
+  /*--------------------------------------------*
+   * no user-servicable parts beyond this point *
+*** b493b9/named/db_func.h	Sat Jul 23 02:32:12 1994
+--- b493b9m/named/db_func.h	Sat Jul 23 18:01:28 1994
+***************
+*** 48,54 ****
+--- 48,58 ----
+  			free_netlist __P((struct netinfo **));
+  extern int		getword __P((char *, int, FILE *)),
+  			getnum __P((FILE *, char *, int)),
++ #ifdef MULTIZDB
++ 			db_load __P((char *, char *, struct zoneinfo *, int, FILE *)),
++ #else
+  			db_load __P((char *, char *, struct zoneinfo *, int)),
++ #endif
+  			position_on_netlist __P((struct in_addr,
+  						 struct netinfo *));
+  extern struct netinfo	*addr_on_netlist __P((struct in_addr,
+*** b493b9/named/ns_defs.h	Sat Jul 23 02:32:12 1994
+--- b493b9m/named/ns_defs.h	Sun Jul 24 17:22:05 1994
+***************
+*** 117,122 ****
+--- 117,125 ----
+  	u_int32_t	z_minimum;	/* minimum TTL value */
+  	u_int32_t	z_serial;	/* changes if zone modified */
+  	char		*z_source;	/* source location of data */
++ #ifdef MULTIZDB
++ 	char		*z_msource;	/* multizone source file */
++ #endif /* MULITZDB */
+  	time_t		z_ftime;	/* modification time of source file */
+  	struct in_addr	z_xaddr;	/* override server for next xfer */
+  	struct in_addr	z_addr[NSMAX];	/* list of master servers for zone */
+*** b493b9/named/ns_func.h	Fri Jul 22 04:42:46 1994
+--- b493b9m/named/ns_func.h	Sat Jul 23 18:05:13 1994
+***************
+*** 108,113 ****
+--- 108,118 ----
+  
+  /* ++from ns_init.c++ */
+  extern void		ns_init __P((char *));
++ #ifdef MULTIZDB
++ extern void		process_zone_line __P((int, char *, FILE *, FILE *));
++ #else
++ extern void		process_zone_line __P((int, char *, FILE *));
++ #endif
+  /* --from ns_init.c-- */
+  
+  /* ++from ns_ncache.c++ */
+*** b493b9/named/ns_maint.c	Sat Jun 11 18:04:56 1994
+--- b493b9m/named/ns_maint.c	Tue Jul 19 20:13:39 1994
+***************
+*** 756,762 ****
+--- 756,766 ----
+  #else
+  			remove_zone(hashtab, zp - zones);
+  #endif
++ #ifdef MULTIZDB
++ 			if (db_load(zp->z_source, zp->z_origin, zp, 0, 0) == 0)
++ #else
+  			if (db_load(zp->z_source, zp->z_origin, zp, 0) == 0)
++ #endif
+  				zp->z_flags |= Z_AUTH;
+  			if (zp->z_flags & Z_TMP_FILE)
+  				(void) unlink(zp->z_source);
+*** b493b9/named/db_load.c	Sat Jul 23 03:20:35 1994
+--- b493b9m/named/db_load.c	Sun Jul 24 17:46:35 1994
+***************
+*** 142,147 ****
+--- 142,155 ----
+  #define INCLUDE	5
+  #define ORIGIN	6
+  #define ERROR	7
++ #ifdef MULTIZDB
++ #define PRIMARY 8
++ #define SECONDARY 9
++ #define CACHE 10
++ #ifdef STUBS
++ #define STUB 11
++ #endif /* STUBS */
++ #endif /* MULTIZDB */
+  
+  static int clev;	/* a zone deeper in a heirachy has more credability */
+  
+***************
+*** 156,162 ****
+--- 164,175 ----
+   *	>0 = number of errors encountered
+   */
+  int
++ #ifdef MULTIZDB
++ db_load(filename, in_origin, zp, doinginclude, mzfp)
++ 	FILE *mzfp;  /* multizone database file already open */
++ #else
+  db_load(filename, in_origin, zp, doinginclude)
++ #endif /* MULTIZDB */
+  	char *filename, *in_origin;
+  	struct zoneinfo *zp;
+  	int doinginclude;
+***************
+*** 179,193 ****
+  	struct stat sb;
+  	struct in_addr ina;
+  
+  	if (!doinginclude) {
+  	    read_soa = 0;
+  	    clev = db_getclev(in_origin);
+  	}
+  
+! 	dprintf(1, (ddt,"db_load(%s, %s, %d, %d)\n",
+! 		    filename, in_origin, zp - zones, doinginclude));
+! 
+! 	(void) strcpy(origin, in_origin);
+  	if ((fp = fopen(filename, "r")) == NULL) {
+  		syslog(LOG_ERR, "%s: %m", filename);
+  		dprintf(1, (ddt, "db_load: error opening file %s\n",
+--- 192,215 ----
+  	struct stat sb;
+  	struct in_addr ina;
+  
++ #ifdef MULTIZDB
++ 	if (!doinginclude  &&  zp) {
++ #else
+  	if (!doinginclude) {
++ #endif /* MULTIZDB */
+  	    read_soa = 0;
+  	    clev = db_getclev(in_origin);
+  	}
+  
+! #ifdef MULTIZDB
+! 	if (mzfp)
+! 	{
+! 		fp = mzfp;
+! 		filename = "--multizone file--";
+! 	}
+! 	else
+! 	{
+! #endif /* MULTIZDB */
+  	if ((fp = fopen(filename, "r")) == NULL) {
+  		syslog(LOG_ERR, "%s: %m", filename);
+  		dprintf(1, (ddt, "db_load: error opening file %s\n",
+***************
+*** 194,199 ****
+--- 216,229 ----
+  			    filename));
+  		return (-1);
+  	}
++ #ifdef MULTIZDB
++ 	}
++ 	(void) strcpy(origin, in_origin);
++ 	dprintf(1, (ddt,"db_load(%s, %s, %d, %d)\n",
++ 		    filename, in_origin?in_origin:"--", zp?(zp - zones):-1, doinginclude));
++ 	if (zp)
++ 	{
++ #endif /* MULTIZDB */
+  	if (zp->z_type == Z_CACHE) {
+  		dbflags = DB_NODATA | DB_NOHINTS;
+  		dataflags = DB_F_HINT;
+***************
+*** 211,219 ****
+--- 241,261 ----
+  	domain[0] = '\0';
+  	class = zp->z_class;
+  	zp->z_flags &= ~(Z_INCLUDE|Z_DB_BAD);
++ #ifdef MULTIZDB
++ 	}
++ #endif /* MULTIZDB */
+   	while ((c = gettoken(fp, filename)) != EOF) {
+  		switch (c) {
+  		case INCLUDE:
++ #ifdef MULTIZDB
++ 			if (!zp)
++ 			{
++ 				syslog(LOG_ERR, "%s: ignoring $INCLUDE inside multizone file\n", filename);
++ 				endline(fp);
++ 				++errs;
++ 				continue;
++ 			}
++ #endif /* MULTIZDB */
+  			if (!getword((char *)buf, sizeof(buf), fp))
+  				/* file name*/
+  				break;
+***************
+*** 224,230 ****
+--- 266,276 ----
+  				endline(fp);
+  			}
+  			didinclude = 1;
++ #ifdef MULTIZDB
++ 			errs += db_load((char *)buf, tmporigin, zp, 1, 0);
++ #else
+  			errs += db_load((char *)buf, tmporigin, zp, 1);
++ #endif
+  			continue;
+  
+  		case ORIGIN:
+***************
+*** 237,242 ****
+--- 283,344 ----
+  			dprintf(3, (ddt, "db_load: origin now %s\n", origin));
+  			continue;
+  
++ #ifdef MULTIZDB
++ 		case PRIMARY:
++ 			if (mzfp)
++ 			{
++ 				process_zone_line(Z_PRIMARY, buf, fp, mzfp);
++ 			}
++ 			else
++ 			{
++ 				syslog(LOG_ERR, "%s: $PRIMARY only valid inside multizone file\n", filename);
++ 				endline(fp);
++ 				++errs;
++ 			}
++ 			continue;
++ 			
++ 		case SECONDARY:
++ 			if (mzfp)
++ 			{
++ 				process_zone_line(Z_SECONDARY, buf, fp, mzfp);
++ 			}
++ 			else
++ 			{
++ 				syslog(LOG_ERR, "%s: $SECONDARY only valid inside multizone file\n", filename);
++ 				endline(fp);
++ 				++errs;
++ 			}
++ 			continue;
++ 			
++ 		case CACHE:
++ 			if (mzfp)
++ 			{
++ 				process_zone_line(Z_CACHE, buf, fp, mzfp);
++ 			}
++ 			else
++ 			{
++ 				syslog(LOG_ERR, "%s: $CACHE only valid inside multizone file\n", filename);
++ 				endline(fp);
++ 				++errs;
++ 			}
++ 			continue;
++ 			
++ #ifdef STUBS
++ 		case STUB:
++ 			if (mzfp)
++ 			{
++ 				process_zone_line(Z_STUB, buf, fp, mzfp);
++ 			}
++ 			else
++ 			{
++ 				syslog(LOG_ERR, "%s: $STUB only valid inside multizone file\n", filename);
++ 				endline(fp);
++ 				++errs;
++ 			}
++ 			continue;
++ 			
++ #endif /* STUBS */
++ #endif /* MULTIZDB */
+  		case DNAME:
+  			if (!getword(domain, sizeof(domain), fp))
+  				break;
+***************
+*** 608,613 ****
+--- 710,718 ----
+  			if (type == T_SOA && zp->z_type == Z_STUB)
+  				continue;
+  #endif
++ #ifdef ATTELS
++ #undef NO_GLUE
++ #endif
+  #ifdef NO_GLUE
+  			/*
+  			 * Ignore data outside the zone.
+***************
+*** 658,664 ****
+  		if (c == '\n')
+  			lineno++;
+  	}
+! 	(void) my_fclose(fp);
+  	lineno = slineno;
+  	if (doinginclude == 0) {
+  		if (didinclude) {
+--- 763,780 ----
+  		if (c == '\n')
+  			lineno++;
+  	}
+! #ifdef MULTIZDB
+! 	if (!mzfp)
+! 	{
+! #endif /* MULTIZDB */
+! 		(void) my_fclose(fp);
+! #ifdef MULTIZDB
+! 	}
+! #endif /* MULTIZDB */
+! #ifdef MULTIZDB
+! 	if (zp)
+! 	{
+! #endif /* MULTIZDB */
+  	lineno = slineno;
+  	if (doinginclude == 0) {
+  		if (didinclude) {
+***************
+*** 670,679 ****
+  		if (zp->z_type != Z_CACHE && read_soa != 1) {
+  			errs++;
+  			if (read_soa == 0)
+! 				syslog(LOG_ERR, "%s: no SOA record", filename);
+  			else
+! 				syslog(LOG_ERR, "%s: multiple SOA records",
+! 				    filename);
+  		}
+  	}
+  #ifdef SECURE_ZONES
+--- 786,795 ----
+  		if (zp->z_type != Z_CACHE && read_soa != 1) {
+  			errs++;
+  			if (read_soa == 0)
+! 				syslog(LOG_ERR, "%s: no SOA record for %s\n", filename, zp->z_origin);
+  			else
+! 				syslog(LOG_ERR, "%s: multiple SOA records for %s\n",
+! 					   filename, zp->z_origin);
+  		}
+  	}
+  #ifdef SECURE_ZONES
+***************
+*** 681,686 ****
+--- 797,805 ----
+  #endif
+  	if (errs)
+  		zp->z_flags |= Z_DB_BAD;
++ #ifdef MULTIZDB
++ 	}
++ #endif /* MULTIZDB */
+  	return (errs);
+  }
+  
+***************
+*** 705,710 ****
+--- 824,841 ----
+  					return (INCLUDE);
+  				if (!strcasecmp("origin", op))
+  					return (ORIGIN);
++ #ifdef MULTIZDB
++ 				if (!strncasecmp("primary", op, 7))
++ 					return (PRIMARY);
++ 				if (!strncasecmp("secondary", op, 9))
++ 					return (SECONDARY);
++ 				if (!strncasecmp("cache", op, 5))
++ 					return (CACHE);
++ #ifdef STUBS
++ 				if (!strncasecmp("stub", op, 4))
++ 					return (STUB);
++ #endif /* STUBS */
++ #endif /* MULTIZDB */
+  			}
+  			dprintf(1, (ddt,
+  				    "%s: line %d: Unknown $ option: $%s\n", 

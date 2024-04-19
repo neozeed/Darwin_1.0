@@ -1,0 +1,137 @@
+	getkeybyname() library release notes
+	Very Preliminary Release
+	John Gilmore, gnu@toad.com
+	September 3, 1996
+
+This code is provided so you can try fitting it into your programs
+and see how well it integrates.  The interface may change before final
+release.
+
+We provide a library routine, getkeybyname(), which permits cryptographic
+keys to be obtained from the Domain Name System from wherever people have
+published them.  This library routine is designed to be portable to
+many environments that include a domain resolver library (please send
+any changes that you have to make, back to me at gnu@toad.com).  You
+link this routine into your application, and it calls the resolver
+to do DNS queries.  It processes the results of the queries and returns
+the keys to your application in a convenient form.
+
+Usage:
+
+	count = getkeybyname(dnskeys, maxcount, options);
+
+	dnskeys is a "struct dnskey *" which points to one or more
+	structures in which keys will be returned.  Maxcount is the
+	number of "struct dnskey"s pointed to by dnskeys.  Options
+	is a set of option flags; DNSKEYS_NO_OPTIONS is the default
+	value to pass.
+
+	The first dnskey structure must have its dname, flags, protocol,
+	and algorithm fields set before the call:
+
+		dname is a char * which points to a domain name,
+		e.g. "dnssec.toad.com".
+
+		flags contains any DNS key flag bits which your
+		application requires to be on.  Only keys in which
+		these bits are set will be returned.  Zero is the
+		default value.  See the DNS Security RFC for details.
+
+		protocol specifies what DNS protocol field values 
+		your application requires.  Zero is the default
+		value, permitting any protocol.  See the DNS Security
+		RFC for details.
+
+		algorithm specifies what DNS algorithm type your
+		application requires.  Zero is the default value,
+		permitting any algorithm.  See the DNS Security
+		RFC for details.
+
+	ALL of the dnskey structures must have their keylen (and, if
+	nonzero, key) fields initialized.  If keylen is nonzero, key is
+	assumed to point to pre-allocated memory of that length, where
+	a key will be returned (and keylen will be set to its actual
+	length).  If keylen is zero, memory will be allocated with
+	malloc() for any key returned in that structure, and its length
+	will be stored into keylen.  It is the caller's responsibility
+	to free this memory.
+
+	The returned value, count, is negative if an error occurs, and
+	an error code is returned in h_errno (as is usual for DNS
+	resolver subroutines).  The returned value is zero if no keys
+	were published at that domain name (which match your specified
+	criteria).  If the return value is positive, it says how many
+	dnskey structures have been filled in with valid key
+	information.  The dnskey structures beyond the count have not
+	been altered.
+
+	The getkeybyname() routine contains an internal select() loop
+	and may result in significant delay -- seconds or minutes --
+	particularly when the domain being queried is not reachable on
+	the Internet at that moment.  A suggestion for your user
+	interface is that you let your user know before you call it,
+	and when it returns, so that they will understand what the
+	problem is if there is a significant hang.  In a text-based
+	interface, a message like "Getting key for dnssec.toad.com..."
+	then "OK.\n" would be great.
+
+	In the future I hope to have an asynchronous interface to 
+	it, which would permit you to include it in your own select()
+	loop so that your application remains interactive during the
+	potentially lengthy lookup process.  If your application needs
+	this, please let me know what kind of interface you would
+	like to see.
+
+******
+
+The "getkey" program
+
+Getkey.c is a very simple program for testing the getkeybyname() interface.
+If you run `getkey dnssec.toad.com' you will get and print all the keys
+for that domain address.  Run it against "frodo.dnssec.toad.com" to see
+several keys with different protocol and algorithm numbers.
+
+
+******
+
+In order to use DNS keying in your applications, you will need to:
+
+  (0)  Define how to map the entities that your application cares about
+(e.g. users or hosts) into Domain Name System names.  Hosts are
+straightforward.  User email addresses have a proposed mapping in the
+Secure DNS RFC, such that e.g. "gnu@toad.com" becomes "gnu.toad.com".
+
+  (1)  Define a format for storing the public keys used by your
+application in DNS Resource Records, if an existing published format is
+not already suitable.  Be sure to require key flag bit #5 to be set if
+your mapping is for a user name, or bit #6 if your mapping is for a
+host or similar entity.  Publish this format (and the name
+mapping above) as an Internet-Draft, and get an algorithm number
+assigned for it by the Internet Assigned Numbers Authority
+(IANA@usc-isi.edu).  Today, the two existing published formats are for
+raw RSA public key values, and for X.500 Objects with an Object ID
+number.
+
+  (2)  Write code as part of your application that permits public keys
+to be output as textual DNS Resource Records in the format defined above.
+Document for your users how to give these resource records to their
+system administrator to be inserted into their domain's published
+DNS records.  An example output resource record might be:
+
+    dnssec.toad.com.	10000	KEY	0x0140 255 1 (
+	    AQPAdr+bHGqBNfAQEvGLepslJQbt9Qu4iyAZ6FQIEjFtxcfv5GjSLY8/kLTEBGbC
+	    p3xQsSK1jdbcevovOcEB5qnNF3C6IjNxs/HlVW9IS7/SMQ== )
+
+  (3)  Write code as part of your application that permits public keys
+to be retrieved as DNS Resource Records in the format defined above.
+
+You're done -- you have a worldwide global replicated high-availability
+cached high-performance distributed database for your keys.  Congratulations!
+
+
+References:
+
+Domain Name System Security Extensions, Internet-Draft
+draft-ietf-dnssec-secext-10.txt, included in this distribution.
+Also available wherever Internet-Drafts are found.  This will
+become the DNS Security RFC when the RFC Editor is done with it.

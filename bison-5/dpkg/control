@@ -1,0 +1,7 @@
+Package: bison
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Vendor: GNU Project
+Version: 1.28
+URL: ftp://prep.ai.mit.edu/pub/gnu/bison/
+Description: Bison parser generator
+Build-Depends: build-base, perl

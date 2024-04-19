@@ -1,0 +1,4 @@
+Package: sounds
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Description: System sounds
+Build-Depends: build-base

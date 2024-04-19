@@ -1,0 +1,116 @@
+		dnswalk 1.8.3 - Nov 1994
+
+Author: David Barr <barr@pop.psu.edu>
+$Id: README,v 1.1.1.1 1999/10/04 22:25:53 wsanchez Exp $
+
+INTRO
+
+dnswalk is a DNS debugger.  It performs zone transfers of specified
+domains, and checks the database in numerous ways for internal
+consistency, as well as accuracy.
+
+dnswalk requires perl and dig.  (Tested under perl-4.036, dig 2.0, and
+the dig shipped with BIND 4.9.x) If you do not have these tools, get
+them.  (perl is assumed to be in /usr/local/bin, edit the first line of
+dnswalk if it is not)
+
+They can be found by anonymous ftp at:
+ftp.uu.net:/networking/ip/dns/dig.2.0.tar.Z
+ftp.uu.net:/systems/gnu/perl-*.tar.Z
+gatekeeper.dec.com:/pub/BSD/bind/4.9/4.9.*.tar.Z
+
+	dnswalk works much better if you use the dig that is packaged
+with the BIND 4.9.x distribution.  (It is much less buggy than its
+predecessor)
+
+	dnswalk is not for the faint of heart.  It should NOT be
+used without a firm knowledge of the DNS RFC's.  If you use this
+tool for cracking or otherwise evil purposes, the author hereby
+considers you a slime-ball.  See the end of this README file for
+a list of good reading material.
+
+	dnswalk is not the be-all end-all tool for checking the
+integrity of your DNS database.  I would suggest it be used after
+using 'doc', written by Steve Hotz (hotz@isi.edu) and Paul Mockapetris
+(pvm@isi.edu).  It can be found via FTP from:
+ftp.uu.net:/networking/ip/dns/doc.2.0.tar.Z
+
+	dnswalk is not a replacement for doc.  This was written to
+check individual database entries, while 'doc' ensures that the overall
+database structure and authority records are consistent.  dnswalk may
+not even function correctly if authority records are missing or
+incorrect.
+
+	This program may be freely distributed, as long as this notice
+and documentation are distributed with the program.  This program is
+released as-is, with no warranty expressed or implied.  Some assembly
+required, contents may settle during shipment.  This program can be
+found in:
+ftp.pop.psu.edu:/pub/src/dnswalk/  or the mirrors:
+ftp.uu.net:/networking/ip/dns/dnswalk/*
+ftp.edu.tw:/UNIX/networking/dns/dnswalk/*
+ftp.univ-lyon1.fr:/pub/unix/network/tcpip/dns/dnswalk/*
+
+
+	dnswalk tends to produce lots of output, so I'd suggest
+redirecting this into a file of your choice.  I debated using doc's
+strategy of automatically putting it in a logfile, but decided not
+to.  (The author reserves the right to change his mind)  For small,
+mostly-correct domains it is pretty manageable, however.  For larger
+domains, use the included 'do-dnswalk' script as a guide.
+
+If you use the recursive option, you will get a directory tree
+corresponding exactly to the DNS hierarchy.  I must stress that
+you use the recursive option with care, and the author calls you a
+slime-ball again if you use this for evil purposes.
+
+Please refer to the man page on what dnswalk checks for, and
+the format of the output.
+
+*** NOTICE ***
+	I fully realize that while some of the rules are not in
+violation of an RFC, it might be wise to reconsider their usage
+anyway.  dnswalk was written to be a tool to let the hostmaster decide
+what are troublesome areas, not as a program that has all the answers.
+*** NOTICE ***
+
+This program was tested with data from the psu.edu domain.  If your
+site does things differently than the way we do things, then you
+may see it report things as errors, when in fact they are "okay".
+If you notice something not being reported, or something reported that
+is not an error, please send me output!  I fully admit that I'm not
+an expert in DNS and the requirements.  My rules tend to be skewed to
+my personal feelings about what "nice" DNS databases look like.  Others
+are free to differ.  (and tell me so)
+
+Author:
+David Barr - System Administrator
+The Pennsylvania State University Population Research Institute
+<barr@pop.psu.edu>
+
+Thanks:
+
+Bill Fenner - tips with perl
+
+BUGS FIXED
+
+added equal() routine and changed all string comparisons to use it
+instead.  equal() does case-insensitive comparisons.  This was causing
+several problems with mixed case host and domain names in various
+places.
+
+checks for invalid PTR records now skip addresses ending in ".0".
+
+shortened error messages so they are more likely to fit in 80 columns
+
+handles failed zone transfers better.  You can't trust dig to return
+a non-zero return code if the transfer fails, so I parse the output
+myself to see if it contains an SOA record to prove that it is 'valid'.
+
+sorts output by zone.  Also displays server of authority and the
+contact for the zone.  (So you know who to bug :-) )
+
+produced erroneous warnings regarding having only one authoratative
+nameserver for a zone.  It now warns correctly.
+
+[ BUGS now moved to CHANGES file ]

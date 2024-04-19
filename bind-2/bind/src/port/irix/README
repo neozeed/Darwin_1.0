@@ -1,0 +1,57 @@
+IRIX port by David Lindes, originally based on the solaris port:
+
+NOTE: The latest information on the IRIX port of BIND can be
+found on the web at:
+
+http://www.daveltd.com/bind-irix-port/
+
+Please check there for relevant notes, but I'll try to duplicate
+things here.  (Just be warned that you may have an old copy of
+this file.)
+
+
+Current status for various versions of IRIX:
+
+	builds without any warnings on IRIX 5.3
+	builds with ld warnings only on IRIX 6.2
+	builds with numerous warnings on IRIX 6.4
+	builds with ld and uopt warnings on IRIX 6.5
+
+
+Other known issues:
+
+-	the 'install' command in IRIX is not compatible with
+	other 'install' programs.  If you have the x_dev.sw.binaries
+	inst(1M) image (from the IDO) installed, there is a
+	'bsdinst' command that is compatible, and which this
+	distribution will attempt to use.
+	
+
+	Otherwise, you will need to get a version of 'install'
+	that is compatible, and update the file
+	port/irix/Makefile.set to point to the right place.
+
+	(Install comes from the X11 distribution, and is also
+	available from the 'sh-utils' GNU package as install-sh,
+	among other places.)
+
+-       If you use the environment variable 'CDPATH', it will
+	cause first round makes to fail.  Try unsetting this
+	variable, or setting it to null.
+
+	(i.e. use: `make CDPATH=""`).
+
+-	At least in IRIX 5.3 and 6.2, 'make' won't work with a
+	a shell that's not bourne-shell compatible as your
+	"SHELL" environment variable.  Try running make with
+	SHELL set to /bin/sh (e.g. `make SHELL=/bin/sh`).
+
+-	BIND will not listen on IP aliased IP addresses in IRIX.
+	I've got ideas for a fix on this, but I haven't had the
+	time to make it happen.
+
+
+If you find bugs with, or improvements that can be made to, this
+portion of the software, please copy bind-irix-port-bugs@daveltd.com
+on your mail to the standard address for reporting bugs in bind.
+

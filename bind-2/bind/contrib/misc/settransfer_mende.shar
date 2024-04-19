@@ -1,0 +1,740 @@
+#!/bin/sh
+# This is a shell archive (produced by GNU sharutils 4.1).
+# To extract the files from this archive, save it to some FILE, remove
+# everything before the `!/bin/sh' line above, then type `sh FILE'.
+#
+# Made on 1995-08-28 17:58 PDT by <mende@tahoe>.
+# Source directory was `/usr/people/mende/bind.4.9.3.b26/PATCH/NEW'.
+#
+# Existing files will *not* be overwritten unless `-c' is specified.
+#
+# This shar contains:
+# length mode       name
+# ------ ---------- ------------------------------------------
+#   1331 -rw-r--r-- Makefile-DIFF
+#   4518 -rw-r--r-- README.TRANSFER
+#   1999 -rw-r--r-- SETTRANSFER_CHANGES
+#    505 -rw-r--r-- db_glob.h-DIFF
+#   1677 -rw-r--r-- named.8-DIFFS
+#    539 -rw-r--r-- ns_glob.h-DIFF
+#    747 -rw-r--r-- ns_init.c-DIFF
+#   2881 -rw-r--r-- ns_maint.c-DIFF
+#    502 -rw-r--r-- ns_req.c-DIFF
+#    515 -rw-r--r-- ns_resp.c-DIFF
+#   2503 -rw-r--r-- ns_xfr.c-NEW
+#   1795 -rw-r--r-- options.h-DIFF
+#
+touch -am 1231235999 $$.touch >/dev/null 2>&1
+if test ! -f 1231235999 && test -f $$.touch; then
+  shar_touch=touch
+else
+  shar_touch=:
+  echo
+  echo 'WARNING: not restoring timestamps.  Consider getting and'
+  echo "installing GNU \`touch', distributed in GNU File Utilities..."
+  echo
+fi
+rm -f 1231235999 $$.touch
+#
+# ============= Makefile-DIFF ==============
+if test -f 'Makefile-DIFF' && test X"$1" != X"-c"; then
+  echo 'x - skipping Makefile-DIFF (file already exists)'
+else
+  echo 'x - extracting Makefile-DIFF (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'Makefile-DIFF' &&
+*** Makefile.orig	Mon Aug 28 11:16:16 1995
+--- Makefile	Mon Aug 28 11:16:51 1995
+***************
+*** 99,110 ****
+X  SRCS=	db_dump.c db_load.c db_lookup.c db_reload.c db_save.c db_update.c \
+X  	db_secure.c db_glue.c \
+X  	ns_forw.c ns_init.c ns_main.c ns_maint.c ns_req.c ns_resp.c \
+! 	ns_sort.c ns_stats.c ns_validate.c ns_ncache.c \
+X  	storage.c dmalloc.c tree.c
+X  OBJS=	db_dump.o db_load.o db_lookup.o db_reload.o db_save.o db_update.o \
+X  	db_secure.o db_glue.o \
+X  	ns_forw.o ns_init.o ns_main.o ns_maint.o ns_req.o ns_resp.o \
+! 	ns_sort.o ns_stats.o ns_validate.o ns_ncache.o \
+X  	storage.o dmalloc.o tree.o
+X  XFERSRCS=  named-xfer.c
+X  XFEROBJ=   named-xfer.o db_glue.o storage.o dmalloc.o version.o
+--- 99,110 ----
+X  SRCS=	db_dump.c db_load.c db_lookup.c db_reload.c db_save.c db_update.c \
+X  	db_secure.c db_glue.c \
+X  	ns_forw.c ns_init.c ns_main.c ns_maint.c ns_req.c ns_resp.c \
+! 	ns_sort.c ns_stats.c ns_validate.c ns_ncache.c ns_xfr.c \
+X  	storage.c dmalloc.c tree.c
+X  OBJS=	db_dump.o db_load.o db_lookup.o db_reload.o db_save.o db_update.o \
+X  	db_secure.o db_glue.o \
+X  	ns_forw.o ns_init.o ns_main.o ns_maint.o ns_req.o ns_resp.o \
+! 	ns_sort.o ns_stats.o ns_validate.o ns_ncache.o ns_xfr.o \
+X  	storage.o dmalloc.o tree.o
+X  XFERSRCS=  named-xfer.c
+X  XFEROBJ=   named-xfer.o db_glue.o storage.o dmalloc.o version.o
+SHAR_EOF
+  $shar_touch -am 0828112295 'Makefile-DIFF' &&
+  chmod 0644 'Makefile-DIFF' ||
+  echo 'restore of Makefile-DIFF failed'
+  shar_count="`wc -c < 'Makefile-DIFF'`"
+  test 1331 -eq "$shar_count" ||
+    echo "Makefile-DIFF: original size 1331, current size $shar_count"
+fi
+# ============= README.TRANSFER ==============
+if test -f 'README.TRANSFER' && test X"$1" != X"-c"; then
+  echo 'x - skipping README.TRANSFER (file already exists)'
+else
+  echo 'x - extracting README.TRANSFER (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'README.TRANSFER' &&
+[ this is too big to put into 4.9.3 and still get it out on time;
+X  therefore i am putting it here in contrib/misc for now.  i feel
+X  rather strongly that settransfer is the wrong approach to the
+X  problem it solves, but given that the code is clean and that there
+X  is an FYI out for it, i do plan to put it in as a default-"off"
+X  option as soon as possible.				--vix ]
+X
+Date: Thu, 1 Dec 94 20:04:14 EST
+XFrom: brisco@hercules.rutgers.edu (Thomas P. Brisco)
+Message-Id: <9412020104.AA19390@hercules.rutgers.edu>
+To: paul@vix.com
+Subject: ``SETTRANSFER'' mods to 4.9.3.b10
+Cc: brisco@hercules.rutgers.edu
+X
+X
+X    Paul; included below (in shar format) are a set of diffs to
+implement the "transfer" keyword in BIND.  These changes also include
+modifications to a few other areas -- you may want to look over
+README.TRANSFER and SETTRANSFER_CHANGES (the latter is aimed mostly
+at you).  The changes file details as closely as I could the
+modifications I made to make the dynamics of subzones work as
+intended.
+X
+X    You'll obviously want to look over the code rather closely, as
+there are changes in a few non-intuitive places.  The #ifdef's also
+seek to make sure that ROUND_ROBIN and SETTRANSFER are mutually
+exclusive options - since ROUND_ROBIN tends to mess with the ordering
+of RRs, while SETTRANSFER needs them left in order.  Similarly; all
+calls to sort_response() are ifdef'd out - as they also modify the
+ordering of the RRs.  For "fast" subzones, I've also turned down
+maint_interval to 60 seconds (from 15 minutes) and min_cache_ttl to
+60 seconds (from 5 minutes).  I've actually ran subzones with 60
+second TTLs with no horrific side effects (other than increased CPU
+utiliziation :-).
+X
+X    I've not included diffs for (a) the Makefile (ns_xfr.[co]
+needs to be added), and for (b) the conf.h file (though a
+"conf.h-additions" is included).  In both of these, I thought
+you might have a preferable style, and since the changes are
+minimal, it's a bit briefer this way ...
+X
+X    I'll be at the San Jose' IETF next week - are you going to be
+there?  If so, I'll keep my eye open to say "hi".  I'm hoping that
+the draft FYI will (finally) make it through, so I can lay this to
+rest.  Though, if I do "get it to bed", I'll probably lend a hand
+with some of the other current activities for DNS (BTW: Thanks for
+putting me on the developer's list).  Ah!  Before I forget, this
+**does not** include the very latest change from Simon Leinen
+(re: BOGUSNS modifications).
+X
+X								Tp.
+X
+========================================================================
+X    Any questions -> brisco@pilot.njin.net
+X
+X    This is the PRODUCTION distribution of the SETTRANSFER code.  The
+SETTRANSFER code permits the use of the keyword "transfer" to specify
+alternate programs to do the zone transfer if the current named is a
+secondary nameserver for a zone.
+X
+X    The details on using alternative zone transfer mechanisms as a
+means for achieving load balancing is described in an internet rfc
+number 1794.   This rfc is available from ds.internic.net via anonymous 
+ftp, or via www (http://www.ineternic.net/
+X
+X    Primarily the code changes adds enough syntax to do a database
+style lookup based on the zone name (nothing fancy, just an array),
+and to execute that program.  Some necessary other changes were done
+in order to support ordered, quickly changing address records -
+primarily this had to do with lowering the value of static variables
+putting rather high minimum values in for the minimum zone refresh
+period, and minimum TTL associated with records.  Additionally, in
+order to preserve the ordering of the records, all references to RR
+ordering are ifdef'd out.  Also note that this, and Round Robin
+ordering are mutually exclusive.   Code has been added to conf/options.h to
+ensure this.
+X
+X    Specific changes are detailed in the file SETTRANSFER_CHANGES.
+X
+X    Example configurations (and diffs to older versions of BIND) are
+available via anonymous ftp from pilot.njin.net:pub/TRANSFER.
+X
+X    Currently (as of 8/28/95) there are two "fast" subdomains running at
+Rutgers University.  One is eden.rutgers.edu running on the NS for
+eden.rutgers.edu ("eden" is a subzone of rutgers.edu).  It uses the code
+from the LOADSAMP.shar to balance the load amongst seven SparcCenter 1000s.
+This is in active use in the Rutgers University domain. 
+X
+X    This version of the changes has been compiled by Robert Mende of
+Silicon Graphics Inc.  Changes are primarly to keep the SETTRANSFER patches
+in sync with newer versios of named.
+X
+SHAR_EOF
+  $shar_touch -am 0828175895 'README.TRANSFER' &&
+  chmod 0644 'README.TRANSFER' ||
+  echo 'restore of README.TRANSFER failed'
+  shar_count="`wc -c < 'README.TRANSFER'`"
+  test 4518 -eq "$shar_count" ||
+    echo "README.TRANSFER: original size 4518, current size $shar_count"
+fi
+# ============= SETTRANSFER_CHANGES ==============
+if test -f 'SETTRANSFER_CHANGES' && test X"$1" != X"-c"; then
+  echo 'x - skipping SETTRANSFER_CHANGES (file already exists)'
+else
+  echo 'x - extracting SETTRANSFER_CHANGES (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'SETTRANSFER_CHANGES' &&
+NOTE:		Some of the line numbers may be off due to evolution of
+X		bind source code.
+X
+XFrom directory named
+X
+db_glob.h       line 71
+X                Set a realistic hard-coded minimum_cache_ttl
+X                (60 seconds, not 5 minutes)
+X
+ns_glob.h       line 103
+X                Set a realistic hard-coded maint_interval
+X                (60 seconds, not 15 minutes)
+X
+ns_init.c       line 226
+X                Define ``transfer'' keyword, and make
+X                entries into the database of transfer programs
+X
+ns_maint.c      line 406
+X                Transfering a zone from ourselves is ok -- if
+X                we've got a ``different'' zone transfer program.
+X
+X                line 449
+X                Before starting zone transfer, look up to see
+X                if there is a "different" program to run.  If
+X                so, run that instead.  If not, run the default
+X                _PATH_XFER program.
+X
+X                line 271
+X                line 227
+X                Add code that bypasses serial number checking for
+X                a zone _if and only if_ our own address is in the
+X                list of addresses as authoritative for that zone.
+X                (i.e. there's a good chance that we're handling a
+X                dynamic zone.  Later checks ensure that there is
+X                a ``different'' program to do that zone transfer).
+X
+ns_req.c        line 705
+X                Disable sort_response() call.  (This messes
+X                up the prioritization of the responses).
+X
+ns_resp.c       line 745
+X                Disable sort_response() call.
+X
+X
+ns_xfr.c        new file
+X                ``transfer'' programs database manipulation routines.
+X
+Makefile	Line 105
+X		Add support of ns_xfr.c
+X
+X
+XFrom directgory conf
+X
+options.h	Line 106
+X		Add define for SETTRANSFER and disable ROUND_ROBIN
+X
+X		Line 129
+X		Add code to ensure SETTRANSFER and ROUND_ROBIN are exclusive
+X
+XFrom directory man
+X
+named.8		Line 137
+X		Example of transfer keyword
+X
+X		Line 185
+X		Description of transfer keyword
+SHAR_EOF
+  $shar_touch -am 0828173395 'SETTRANSFER_CHANGES' &&
+  chmod 0644 'SETTRANSFER_CHANGES' ||
+  echo 'restore of SETTRANSFER_CHANGES failed'
+  shar_count="`wc -c < 'SETTRANSFER_CHANGES'`"
+  test 1999 -eq "$shar_count" ||
+    echo "SETTRANSFER_CHANGES: original size 1999, current size $shar_count"
+fi
+# ============= db_glob.h-DIFF ==============
+if test -f 'db_glob.h-DIFF' && test X"$1" != X"-c"; then
+  echo 'x - skipping db_glob.h-DIFF (file already exists)'
+else
+  echo 'x - extracting db_glob.h-DIFF (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'db_glob.h-DIFF' &&
+*** db_glob.h.orig	Tue Jun 20 16:58:50 1995
+--- db_glob.h	Mon Aug 28 11:08:45 1995
+***************
+*** 65,72 ****
+--- 65,80 ----
+X  	/* ONE_WEEK maximum ttl */
+X  DECL	int		max_cache_ttl INIT(7*24*60*60);
+X  
++ #if defined(SETTRANSFER) && !defined(ROUND_ROBIN)
++ 
++ 	/* 1 minute minimum ttl */
++ DECL	int		min_cache_ttl INIT(60);
++ 
++ #else 
+X  	/* 5 minute minimum ttl */
+X  DECL	int		min_cache_ttl INIT(5*60);
++ 
++ #endif /* SETTRANSFER && !ROUND_ROBIN */
+X  
+X  	/* current line number */
+X  DECL	int		lineno;
+SHAR_EOF
+  $shar_touch -am 0828112195 'db_glob.h-DIFF' &&
+  chmod 0644 'db_glob.h-DIFF' ||
+  echo 'restore of db_glob.h-DIFF failed'
+  shar_count="`wc -c < 'db_glob.h-DIFF'`"
+  test 505 -eq "$shar_count" ||
+    echo "db_glob.h-DIFF: original size 505, current size $shar_count"
+fi
+# ============= named.8-DIFFS ==============
+if test -f 'named.8-DIFFS' && test X"$1" != X"-c"; then
+  echo 'x - skipping named.8-DIFFS (file already exists)'
+else
+  echo 'x - extracting named.8-DIFFS (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'named.8-DIFFS' &&
+*** ../../man/named.8	Mon Jul  3 00:16:22 1995
+--- named.8	Mon Aug 28 17:29:34 1995
+***************
+*** 137,142 ****
+--- 137,144 ----
+X  secondary	CC.Berkeley.EDU	128.32.137.8 128.32.137.3	cc.zone.bak
+X  secondary	6.32.128.IN-ADDR.ARPA	128.32.137.8 128.32.137.3	cc.rev.bak
+X  primary	0.0.127.IN-ADDR.ARPA					localhost.rev
++ transfer 	dynamic.Berkeley.EDU	/usr/local/adm/named/volitile.transfer.dynamic.Berkeley.EDU
++ secondary	dynamic.Berkeley.EDU	127.0.0.1	/usr/local/adm/named/volatile.zone.dynamic.Berkeley.EDU
+X  forwarders	10.0.0.78 10.2.0.78
+X  limit	max-xfers 10
+X  limit	datasize 64M
+***************
+*** 183,188 ****
+--- 185,201 ----
+X  since it is a needless waste of bandwidth.  The second example ``secondary''
+X  line states that the address-to-hostname mapping for the subnet 128.32.136
+X  should be obtained from the same list of master servers as the previous zone.
++ .LP
++ The ``transfer'' line specifies an alternate zone-transfer mechanism for
++ date under ``dynamic.Berkeley.EDU''.  The next ``secondary'' line tells
++ named to load data for ``dynamic.Berkeley.EDU'' from the listed file which
++ is updated by the program specified on the matching ``transfer'' statment.
++ In this case /usr/local/adm/named/volitile.transfer.dynamic.Berkeley.EDU is
++ run to generate the file
++ /usr/local/adm/named/volatile.zome.dyamic.Berkeley.EDU.  The ``transfer''
++ command, and the ability to perform a zone transfer from host 127.0.0.1 is
++ a compile time option to named and may not be available in all versions of
++ named.
+X  .LP
+X  The ``forwarders'' line specifies the addresses of sitewide servers that
+X  will accept recursive queries from other servers.  If the boot file
+SHAR_EOF
+  $shar_touch -am 0828173095 'named.8-DIFFS' &&
+  chmod 0644 'named.8-DIFFS' ||
+  echo 'restore of named.8-DIFFS failed'
+  shar_count="`wc -c < 'named.8-DIFFS'`"
+  test 1677 -eq "$shar_count" ||
+    echo "named.8-DIFFS: original size 1677, current size $shar_count"
+fi
+# ============= ns_glob.h-DIFF ==============
+if test -f 'ns_glob.h-DIFF' && test X"$1" != X"-c"; then
+  echo 'x - skipping ns_glob.h-DIFF (file already exists)'
+else
+  echo 'x - extracting ns_glob.h-DIFF (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'ns_glob.h-DIFF' &&
+*** ns_glob.h.orig	Sun Aug 20 18:27:18 1995
+--- ns_glob.h	Mon Aug 28 11:09:02 1995
+***************
+*** 96,102 ****
+--- 96,106 ----
+X  
+X  	/* how often does ns_maint() need to be called, in seconds? */
+X  	/* (beware: this is also the upper bound on named_xfer real time) */
++ #if defined(SETTRANSFER) && !defined(ROUND_ROBIN)
++ DECL	int			maint_interval	INIT(60);
++ #else
+X  DECL	int			maint_interval	INIT(15*60);
++ #endif /* SETTRANSFER && !ROUND_ROBIN */
+X  
+X  #ifdef CLEANCACHE
+X  	/* What's the minimum interval between cache cleanings? */
+SHAR_EOF
+  $shar_touch -am 0828112295 'ns_glob.h-DIFF' &&
+  chmod 0644 'ns_glob.h-DIFF' ||
+  echo 'restore of ns_glob.h-DIFF failed'
+  shar_count="`wc -c < 'ns_glob.h-DIFF'`"
+  test 539 -eq "$shar_count" ||
+    echo "ns_glob.h-DIFF: original size 539, current size $shar_count"
+fi
+# ============= ns_init.c-DIFF ==============
+if test -f 'ns_init.c-DIFF' && test X"$1" != X"-c"; then
+  echo 'x - skipping ns_init.c-DIFF (file already exists)'
+else
+  echo 'x - extracting ns_init.c-DIFF (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'ns_init.c-DIFF' &&
+*** ns_init.c.orig	Sun Aug 20 18:27:18 1995
+--- ns_init.c	Mon Aug 28 11:11:34 1995
+***************
+*** 261,266 ****
+--- 261,279 ----
+X  				exit(1);
+X  			}
+X  			continue;
++ #if defined(SETTRANSFER) && !defined(ROUND_ROBIN)
++                 } else if (strcasecmp(buf, "transfer") == 0) {
++ 		        char tzone[128];
++ 			char txfr[128];
++ 			(void) getword(buf, sizeof(buf), fp);
++ 			strcpy(tzone, buf);
++ 			(void) getword(buf, sizeof(buf), fp);
++ 			strcpy(txfr, buf);
++ 			if (debug)
++ 			  fprintf(ddt,"Zone: %s transfer by %s\n",tzone,txfr);
++ 			setXfer(tzone, txfr);
++ 			continue;
++ #endif /* SETTRANSFER && !ROUND_ROBIN */
+X  		} else if (strcasecmp(buf, "sortlist") == 0) {
+X  			get_netlist(fp, enettab, ALLOW_NETS, buf);
+X  			continue;
+SHAR_EOF
+  $shar_touch -am 0828112295 'ns_init.c-DIFF' &&
+  chmod 0644 'ns_init.c-DIFF' ||
+  echo 'restore of ns_init.c-DIFF failed'
+  shar_count="`wc -c < 'ns_init.c-DIFF'`"
+  test 747 -eq "$shar_count" ||
+    echo "ns_init.c-DIFF: original size 747, current size $shar_count"
+fi
+# ============= ns_maint.c-DIFF ==============
+if test -f 'ns_maint.c-DIFF' && test X"$1" != X"-c"; then
+  echo 'x - skipping ns_maint.c-DIFF (file already exists)'
+else
+  echo 'x - extracting ns_maint.c-DIFF (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'ns_maint.c-DIFF' &&
+*** ns_maint.c.orig	Sun Aug 20 18:27:20 1995
+--- ns_maint.c	Mon Aug 28 11:13:23 1995
+***************
+*** 90,95 ****
+--- 90,99 ----
+X  
+X  #define	qserial_qfull()	(qserials_running == MAXQSERIAL)
+X  
++ #if defined(SETTRANSFER) && !defined(ROUND_ROBIN)
++ extern char * getXfer();
++ #endif /* SETTRANSFER && !ROUND_ROBIN */
++ 
+X  #ifdef CLEANCACHE
+X  static time_t cache_time;
+X  #endif
+***************
+*** 282,290 ****
+--- 286,323 ----
+X  	struct zoneinfo *zp;
+X  {
+X  	struct qinfo *qp;
++ #if defined(SETTRANSFER) && !defined(ROUND_ROBIN)
++ 	int mcntr; /* looping variable */
++ #endif /* SETTRANSFER && !ROUND_ROBIN */
+X  
+X  	dprintf(1, (ddt, "qserial_query(%s)\n", zp->z_origin));
+X  
++ #if defined(SETTRANSFER) && !defined(ROUND_ROBIN)
++        /* if zp->z_xaddr or zp->z_addr has our own address in it,
++ 	* then we may be dealing with a ``dynamic'' zone - i.e.
++ 	* calculating this information via an external program
++ 	* (e.g. for load balancing benefits).  The serial number
++ 	* won't change until _after_ we call the zone transfer
++ 	* program.
++ 	*/
++ 	dprintf(1, (ddt, "qserial: checking myself\n"));
++ 
++ 	if (zp->z_xaddr.s_addr == netloop.my_addr.s_addr) {
++ 	    dprintf(1, (ddt, "qserial_query(%s) found me.\n",zp->z_origin));
++ 	    addxfer(zp);
++ 	    return;
++ 	}
++ 	for (mcntr=0; mcntr < NSMAX; mcntr++) {
++ 	    dprintf(1, (ddt, "qserial_query - checking [%s]\n",
++ 			inet_ntoa(zp->z_addr[mcntr])));
++ 	    if (zp->z_addr[mcntr].s_addr == netloop.addr) {
++ 		dprintf(1, (ddt, "qserial_query(%s) found me.\n",zp->z_origin));
++ 		addxfer(zp);
++ 		return;
++ 	    }
++ 	}
++ #endif /* SETTRANSFER && !ROUND_ROBIN */
++ 
+X  	if (qserial_qfull())
+X  		return;
+X  
+***************
+*** 419,425 ****
+X  			a = zp->z_addr[cnt];
+X  			if (aIsUs(a)
+X  			    && !haveComplained(zp->z_origin,
+! 					       (char*)startxfer)) {
+X  				syslog(LOG_NOTICE,
+X  				   "attempted to fetch zone %s from self (%s)",
+X  				       zp->z_origin, inet_ntoa(a));
+--- 452,462 ----
+X  			a = zp->z_addr[cnt];
+X  			if (aIsUs(a)
+X  			    && !haveComplained(zp->z_origin,
+! 					       (char*)startxfer)
+! #if defined(SETTRANSFER) && !defined(ROUND_ROBIN)
+! 			    && (!getXfer(zp->z_origin))
+! #endif /* SETTRANSFER && !ROUND_ROBIN */
+!  			    ) {
+X  				syslog(LOG_NOTICE,
+X  				   "attempted to fetch zone %s from self (%s)",
+X  				       zp->z_origin, inet_ntoa(a));
+***************
+*** 467,473 ****
+--- 504,519 ----
+X  
+X  	if (pid == 0) {
+X  		/* child */
++ #if defined(SETTRANSFER) && !defined(ROUND_ROBIN)
++ 	        char * pathXfer;
++ 		pathXfer = getXfer(zp->z_origin);
++ 		if (pathXfer != (char *)NULL)
++ 		  execv(pathXfer, argv);
++ 		else 
++ 		  execv(_PATH_XFER, argv);
++ #else /* SETTRANSFER && !ROUND_ROBIN */
+X  		execv(_PATH_XFER, argv);
++ #endif /* SETTRANSFER && !ROUND_ROBIN */
+X  		syslog(LOG_ERR, "can't exec %s: %m", _PATH_XFER);
+X  		_exit(XFER_FAIL);	/* avoid duplicate buffer flushes */
+X  	}
+SHAR_EOF
+  $shar_touch -am 0828112295 'ns_maint.c-DIFF' &&
+  chmod 0644 'ns_maint.c-DIFF' ||
+  echo 'restore of ns_maint.c-DIFF failed'
+  shar_count="`wc -c < 'ns_maint.c-DIFF'`"
+  test 2881 -eq "$shar_count" ||
+    echo "ns_maint.c-DIFF: original size 2881, current size $shar_count"
+fi
+# ============= ns_req.c-DIFF ==============
+if test -f 'ns_req.c-DIFF' && test X"$1" != X"-c"; then
+  echo 'x - skipping ns_req.c-DIFF (file already exists)'
+else
+  echo 'x - extracting ns_req.c-DIFF (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'ns_req.c-DIFF' &&
+*** ns_req.c.orig	Mon Aug 21 22:01:46 1995
+--- ns_req.c	Mon Aug 28 11:13:36 1995
+***************
+*** 703,710 ****
+--- 703,712 ----
+X  		    "req: foundname=%d, count=%d, founddata=%d, cname=%d\n",
+X  		    foundname, count, founddata, cname));
+X  
++ #if !defined(SETTRANSFER) || defined(ROUND_ROBIN)
+X  	if ((lp = local(from)) != NULL) 
+X  		sort_response(answers, count, lp, *cpp);
++ #endif /* !SETTRANSFER || ROUND_ROBIN */
+X  #ifdef BIND_NOTIFY
+X  	if (type == T_SOA &&
+X  	    from->sin_port == ns_port &&
+SHAR_EOF
+  $shar_touch -am 0828112295 'ns_req.c-DIFF' &&
+  chmod 0644 'ns_req.c-DIFF' ||
+  echo 'restore of ns_req.c-DIFF failed'
+  shar_count="`wc -c < 'ns_req.c-DIFF'`"
+  test 502 -eq "$shar_count" ||
+    echo "ns_req.c-DIFF: original size 502, current size $shar_count"
+fi
+# ============= ns_resp.c-DIFF ==============
+if test -f 'ns_resp.c-DIFF' && test X"$1" != X"-c"; then
+  echo 'x - skipping ns_resp.c-DIFF (file already exists)'
+else
+  echo 'x - extracting ns_resp.c-DIFF (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'ns_resp.c-DIFF' &&
+*** ns_resp.c.orig	Sun Aug 20 18:27:21 1995
+--- ns_resp.c	Mon Aug 28 11:13:44 1995
+***************
+*** 862,869 ****
+--- 862,871 ----
+X  	 *  If there are addresses and this is a local query,
+X  	 *  sort them appropriately for the local context.
+X  	 */
++ #if !defined(SETTRANSFER) || defined(ROUND_ROBIN)
+X  	if (ancount > 1 && (lp = local(&qp->q_from)) != NULL) 
+X  		sort_response(tp, ancount, lp, eom);
++ #endif /* !SETTRANSFER || ROUND_ROBIN */
+X  
+X  	/*
+X  	 * An answer to a T_ANY query or a successful answer to a
+SHAR_EOF
+  $shar_touch -am 0828112295 'ns_resp.c-DIFF' &&
+  chmod 0644 'ns_resp.c-DIFF' ||
+  echo 'restore of ns_resp.c-DIFF failed'
+  shar_count="`wc -c < 'ns_resp.c-DIFF'`"
+  test 515 -eq "$shar_count" ||
+    echo "ns_resp.c-DIFF: original size 515, current size $shar_count"
+fi
+# ============= ns_xfr.c-NEW ==============
+if test -f 'ns_xfr.c-NEW' && test X"$1" != X"-c"; then
+  echo 'x - skipping ns_xfr.c-NEW (file already exists)'
+else
+  echo 'x - extracting ns_xfr.c-NEW (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'ns_xfr.c-NEW' &&
+#if !defined(line) && !defined(SABER)
+static char sccsid[] = "@(#)ns_xfr.c	1.1 (Rutgers) 7/16/93";
+static char rcsid[] = "$Id:";
+#endif /* not lint */
+/*
+X *
+X * ns_xfr.c - support for specifying the program to be used to do
+X * zone transfers.  This isn't obvious, but this is actually support
+X * for shuffling address records, cnames, etc - anything you want.
+X *
+X * Note that if this code is turned on, then the sorting of responses
+X * is actively turned off -- since these are order dependent - then
+X * such things as sorting responses tends to bung things up a bit.
+X *
+X * This codes enables the "transfer" keyword in the named.boot
+X * file.  There you may use the syntax:
+X *	    transfer	    <zone-name>	    <program name>
+X *
+X * Of course, inside of that program, you can do *anything* you
+X * want to do.  Currently I'm actually using a shell script that
+X * does a "round robin" ordering of addresses.  With the right
+X * ancillary programs - you could even have it page you everytime
+X * it does a zone transfer.
+X *
+X * This is the result of a long and arduous trek through the IETF,
+X * a working group, and a lot of frustration.  All of this for
+X * load-balancing. - TpB (brisco@noc.rutgers.edu)
+X */
+X
+#include <sys/param.h>
+#include <sys/socket.h>
+#include <sys/time.h>
+#include <sys/stat.h>
+#include <netinet/in.h>
+#include <arpa/nameser.h>
+#include <syslog.h>
+#include <signal.h>
+#include <resolv.h>
+#include <stdio.h>
+#include <errno.h>
+#include <ctype.h>
+#include "named.h"
+X
+#ifdef SETTRANSFER
+#define MAXTRANDEFS 128
+struct xfr_element {
+X    char * domain;
+X    char * prog;
+};
+static struct xfr_element xfr_table[MAXTRANDEFS];
+static int no_xfrs;
+X
+setXfer(dname, progname)
+char * dname;
+char * progname;
+{
+X    char *d, *p;
+X    extern int debug;
+X    if (no_xfrs >= MAXTRANDEFS) {
+X	if (debug)
+X	    dprintf(1, (ddt,"Set Transfer:  max# exceeded.  Dropping.\n"));
+X	return;
+X    }
+X    d = xfr_table[no_xfrs].domain = malloc(strlen(dname)+1);
+X    p = xfr_table[no_xfrs].prog = malloc(strlen(progname)+1);
+X    strcpy(d, dname);
+X    strcpy(p, progname);
+X    if (debug) fprintf(ddt,"Set transfer[%d] for domain %s to %s\n",
+X		    no_xfrs,d,p);
+X    no_xfrs++;
+}
+X
+char *
+getXfer(dname)
+char * dname;
+{
+X    char * p;
+X    int i;
+X    p = (char *)NULL;
+X    for (i=0; i<no_xfrs && p==(char*)NULL; i++) {
+X	if (!strcasecmp(xfr_table[i].domain,dname))
+X	    p = xfr_table[i].prog;
+X    }
+X    if (debug) fprintf(ddt,"Transfer for domain %s is %s\n",
+X		    dname,p?p:_PATH_XFER);
+X    return(p);
+}
+#endif /* SETTRANSFER */
+SHAR_EOF
+  $shar_touch -am 0828112395 'ns_xfr.c-NEW' &&
+  chmod 0644 'ns_xfr.c-NEW' ||
+  echo 'restore of ns_xfr.c-NEW failed'
+  shar_count="`wc -c < 'ns_xfr.c-NEW'`"
+  test 2503 -eq "$shar_count" ||
+    echo "ns_xfr.c-NEW: original size 2503, current size $shar_count"
+fi
+# ============= options.h-DIFF ==============
+if test -f 'options.h-DIFF' && test X"$1" != X"-c"; then
+  echo 'x - skipping options.h-DIFF (file already exists)'
+else
+  echo 'x - extracting options.h-DIFF (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'options.h-DIFF' &&
+*** options.h.orig	Thu Jun 29 02:25:56 1995
+--- options.h	Mon Aug 28 11:06:55 1995
+***************
+*** 103,109 ****
+X  #define	LOGFAC LOG_DAEMON /* what syslog facility should named use? */
+X  #endif
+X  #define SECURE_ZONES	/* if you want to inhibit world access to zones (gns)*/
+! #define ROUND_ROBIN	/* rotate databuf list after each access (mtr) */
+X  #define ADDAUTH 	/* return NS and glue w/ authorative answers (mpa) */
+X  #define RFC1535		/* use RFC 1535 default for "search" list (vix) */
+X  #define GEN_AXFR	/* distinct zones within each class */
+--- 103,110 ----
+X  #define	LOGFAC LOG_DAEMON /* what syslog facility should named use? */
+X  #endif
+X  #define SECURE_ZONES	/* if you want to inhibit world access to zones (gns)*/
+! /* #define ROUND_ROBIN	/* rotate databuf list after each access (mtr) */
+! #define SETTRANSFER   /* permit alternative zone transfer mechanisms (tpb) */
+X  #define ADDAUTH 	/* return NS and glue w/ authorative answers (mpa) */
+X  #define RFC1535		/* use RFC 1535 default for "search" list (vix) */
+X  #define GEN_AXFR	/* distinct zones within each class */
+***************
+*** 120,128 ****
+--- 121,135 ----
+X  /*#define BIND_NOTIFY	/* experimental - do not enable in customer products */
+X  /*#define LOC_RR	/* support for (draft) LOC record parsing (ckd) */
+X  
++ 
+X  /*--------------------------------------------*
+X   * no user-servicable parts beyond this point *
+X   *--------------------------------------------*/
++ 
++ /* This will cause an error if mutually exclusive options have been chosen*/
++ #if defined(SETTRANSFER) && defined(ROUND_ROBIN)
++ Warning options "ROUND_ROBIN" and "SETTRANSFER" and mutually exclusive;
++ #endif 
+X  
+X  /* if DSTORAGE is defined, we need to disable DMALLOC and remap
+X   * malloc and free to storage.o's exported names.  storage.o also
+SHAR_EOF
+  $shar_touch -am 0828112095 'options.h-DIFF' &&
+  chmod 0644 'options.h-DIFF' ||
+  echo 'restore of options.h-DIFF failed'
+  shar_count="`wc -c < 'options.h-DIFF'`"
+  test 1795 -eq "$shar_count" ||
+    echo "options.h-DIFF: original size 1795, current size $shar_count"
+fi
+exit 0

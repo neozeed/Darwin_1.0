@@ -1,0 +1,27 @@
+DEBUG_BINARY = $(subst $(PRODUCT_DIR),$(DSTROOT)$(INSTALLDIR),$(PRODUCT))/Versions/$(VERSION_NAME)/$(NAME)$(DEBUG_SUFFIX)$(DLL_EXT)
+
+corefoundation-strip-debug-binary:
+	-$(SILENT) if [ -f $(DEBUG_BINARY) ] ; then \
+		cmd="$(STRIP) $(ALL_STRIPFLAGS) $(DEBUG_BINARY)" ; \
+		$(ECHO) $$cmd ; eval $$cmd ; \
+	fi
+
+corefoundation-copy-characterset-resources:
+	$(SILENT) $(RM) -rf $(DSTROOT)$(SYSTEM_LIBRARY_DIR)/CoreServices/CharacterSets
+	$(SILENT) $(MKDIRS) $(DSTROOT)$(SYSTEM_LIBRARY_DIR)/CoreServices
+	$(SILENT) $(CHMOD) 755 $(DSTROOT)$(SYSTEM_LIBRARY_DIR)/CoreServices
+	$(SILENT) $(CP) -r CharacterSets.wrapdir $(DSTROOT)$(SYSTEM_LIBRARY_DIR)/CoreServices/CharacterSets
+	-$(SILENT) $(CHOWN) -R $(INSTALL_AS_USER) $(DSTROOT)$(SYSTEM_LIBRARY_DIR)/CoreServices/CharacterSets
+	-$(SILENT) $(CHGRP) -R $(INSTALL_AS_GROUP) $(DSTROOT)$(SYSTEM_LIBRARY_DIR)/CoreServices/CharacterSets
+	$(SILENT) $(CHMOD) 444 $(DSTROOT)$(SYSTEM_LIBRARY_DIR)/CoreServices/CharacterSets/*
+	$(SILENT) $(CHMOD) 755 $(DSTROOT)$(SYSTEM_LIBRARY_DIR)/CoreServices/CharacterSets
+	$(SILENT) $(ECHO) "Copied CharacterSets"
+
+install-special-makefiles:
+	$(MKDIRS) $(DSTROOT)/$(SYSTEM_DEVELOPER_DIR)/Makefiles/VersioningSystems
+	$(CP) $(SRCROOT)/apple-generic.make $(DSTROOT)/$(SYSTEM_DEVELOPER_DIR)/Makefiles/VersioningSystems
+	$(MKDIRS) $(DSTROOT)/$(LOCAL_DEVELOPER_DIR)/Makefiles/VersioningSystems
+	$(CP) $(SRCROOT)/apple-generic-local.make $(DSTROOT)/$(LOCAL_DEVELOPER_DIR)/Makefiles/VersioningSystems/apple-generic.make
+	$(MKDIRS) $(DSTROOT)/$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework/Versions/B/Headers
+	$(CP) $(SRCROOT)/MacTypes.h $(SRCROOT)/ConditionalMacros.h $(DSTROOT)/$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework/Versions/B/Headers
+

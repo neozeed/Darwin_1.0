@@ -1,0 +1,16 @@
+/Makefile/1.1.1.1/Sat Mar 25 21:02:32 2000//Txnu-1-1
+/vfs_bio.c/1.1.1.1/Sat Mar 25 21:02:32 2000//Txnu-1-1
+/vfs_cache.c/1.1.1.1/Sat Mar 25 21:02:32 2000//Txnu-1-1
+/vfs_cluster.c/1.1.1.1/Sat Mar 25 21:02:32 2000//Txnu-1-1
+/vfs_conf.c/1.1.1.1/Sat Mar 25 21:02:32 2000//Txnu-1-1
+/vfs_init.c/1.1.1.1/Sat Mar 25 21:02:32 2000//Txnu-1-1
+/vfs_lookup.c/1.1.1.1/Sat Mar 25 21:02:32 2000//Txnu-1-1
+/vfs_subr.c/1.1.1.1/Sat Mar 25 21:02:32 2000//Txnu-1-1
+/vfs_support.c/1.1.1.1/Sat Mar 25 21:02:32 2000//Txnu-1-1
+/vfs_support.h/1.1.1.1/Sat Mar 25 21:02:32 2000//Txnu-1-1
+/vfs_syscalls.c/1.1.1.1/Sat Mar 25 21:02:32 2000//Txnu-1-1
+/vfs_vnops.c/1.1.1.1/Sat Mar 25 21:02:32 2000//Txnu-1-1
+/vnode_if.c/1.1.1.1/Sat Mar 25 21:02:32 2000//Txnu-1-1
+/vnode_if.sh/1.1.1.1/Sat Mar 25 21:02:32 2000//Txnu-1-1
+/vnode_if.src/1.1.1.1/Sat Mar 25 21:02:32 2000//Txnu-1-1
+D

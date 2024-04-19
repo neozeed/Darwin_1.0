@@ -1,0 +1,5 @@
+; $ORIGIN localhost.
+@	IN	SOA	@ root ( 1000 1000 1000 1000 1000 )
+		NS	localhost.
+		A	127.0.0.1
+test		txt	foo

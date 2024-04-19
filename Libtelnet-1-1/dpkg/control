@@ -1,0 +1,4 @@
+Package: libtelnet
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Description: Telnet library
+Build-Depends: build-base

@@ -1,0 +1,7 @@
+Type 'make'.
+
+Warning: it requires a recent libresolv, with loc_ntoa. If you don't have
+one, see RFC 1876 or BIND's sources and send me the patches :-)
+
+Tested only on Linux.
+

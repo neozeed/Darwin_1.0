@@ -1,0 +1,83 @@
+@(#) INSTALL 1.1 98/12/21 @(#)
+
+Installing the Updathosts System
+
+After unpacking the system run the configure script in the directory.
+This will try and determine some systewm defaults and the location of
+various programs.  You must have perl5 installed for this package to
+work.  The configure script will complain if it is not installed.
+
+Then type
+
+make
+
+to make the binaries followed by
+
+make install
+
+to install the executable files.
+
+At this point you will need to create two configuration files -
+updatehosts.env and poke_ns.env.  Templates of these files are found in
+the source directory.  Modify them as needed for your particular system
+configuration.
+
+poke_ns.env sets a few system specific parameters for the poke_ns
+utility.  poke_ns needs the pathname to the named binary
+plus the location of the named.pid file and the location of the debug
+output and the dump file for named.  poke_ns is installed setuid to
+root, but only executable by its group.  The default group is staff.
+This can be changed to suit your local requirements.  The group execute
+privilege lets the nameserver system be administered by any user in the
+specific group without needing root privilege.
+
+updatehosts.env sets system parameters which drive the zone file and
+bootstrap file creation process.  See the example in this directory
+for typical setting.
+
+You should also create a symlink from /etc/named.boot for V4 BIND or
+/etc/named.conf for V8 bind to the boot file by the same name in the zone
+file directory (shown as /var/named in the example).
+
+The zone file directory should be group writable.  This allows users
+in the group to manage the nameserver files.  You may also have the
+input relations kept under SCCS or RCS control by setting the
+appropriate parameter in the updatehosts.env file to "yes".  The
+initial zone files should be created under the appropriate source
+control system first.  Also the SCCS or RCS commands must be in the DNS
+administrators path.
+
+Both poke_ns.env and updatehosts.env are installed in the binary
+installation directory set during the configuration process.  The
+default is /usr/local/bin.  They should be only writable by root.
+poke_ns checks to insure the poke_ns.env file is only writable by root
+to prevent unauthorized users from gaining root access by altering the
+environment file.
+
+If you do not wish to enable group access, you can, of course,
+disable it and manage the DNS files under the root user or under an
+alternate userid.
+
+The script
+
+installb.pl
+
+will install empty template files for the system in the database
+directory (default is /var/named/db).  If you have existing zone files
+you can use the cvtzone.pl script to convert the zone files to
+relational format.  This script should do most of the necessary work,
+but it has not been extensively tested, so the output may need to be
+edited.  If you have a static host table in /etc/hosts format, the
+cvtstatic.pl script may be useful in converting existing host data.
+
+Once you have the relational files installed, you can test the system
+by running:
+
+updatehosts -v
+
+The -v option will give you extra debugging output.  Besides it is fun
+to watch the system do its work.  At this point you can then start the
+nameserver.  Once you install the initial zone files, the updatehosts
+script will automatically restart the nameserver.
+
+See the file OVERVIEW for a tutorial on the use of the system.

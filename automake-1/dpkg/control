@@ -1,0 +1,11 @@
+Package: automake
+Maintainer: Wilfredo Sanchez <wsanchez@apple.com>
+Vendor: GNU Project
+Version: 1.4
+Build-Depends: cctools, libsystem, files, zsh, gnumake, coreosmakefiles, file-cmds, gnutar, shell-cmds, text-cmds, grep, gnudiff, perl
+Description: Makefile generator
+ Automake is a tool for automatically generating Makefile.in files
+ (used, in turn by autoconf to generate Makefiles) from Makefile.am
+ files.  Each Makefile.am is basically a series of make macro
+ definitions (with rules being thrown in occasionally).  The generated
+ Makefile.in files are compliant with the GNU Makefile standards.

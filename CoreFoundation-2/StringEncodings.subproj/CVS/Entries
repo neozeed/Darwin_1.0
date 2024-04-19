@@ -1,0 +1,12 @@
+/CFBuiltinConverters.c/1.1.1.2/Fri Jan 28 23:12:18 2000//TCoreFoundation-2
+/CFStringEncodingConverter.c/1.1.1.2/Fri Jan 28 23:12:17 2000//TCoreFoundation-2
+/CFStringEncodingConverter.h/1.1.1.2/Fri Jan 28 23:12:17 2000//TCoreFoundation-2
+/CFStringEncodingConverterExt.h/1.1.1.2/Fri Jan 28 23:12:17 2000//TCoreFoundation-2
+/CFStringEncodingConverterPriv.h/1.1.1.2/Fri Jan 28 23:12:17 2000//TCoreFoundation-2
+/CFUniChar.h/1.1.1.2/Fri Jan 28 23:12:17 2000//TCoreFoundation-2
+/CFUniCharPriv.h/1.1.1.2/Fri Jan 28 23:12:17 2000//TCoreFoundation-2
+/CFUnicodeDecomposition.c/1.1.1.2/Fri Jan 28 23:12:18 2000//TCoreFoundation-2
+/Makefile/1.1.1.1/Wed Jan 12 00:32:22 2000//TCoreFoundation-2
+/ucharset.c/1.1.1.2/Fri Jan 28 23:12:18 2000//TCoreFoundation-2
+/ucharset_data.c/1.1.1.2/Fri Jan 28 23:12:18 2000//TCoreFoundation-2
+D/CharacterSets.wrapdir////

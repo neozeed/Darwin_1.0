@@ -1,0 +1,10 @@
+/usr/etc/local/named/conf/zone.ogi,ogi.edu
+/usr/etc/local/named/conf/zone.ogi.admin,admin.ogi.edu
+/usr/etc/local/named/conf/zone.ogi.atmos,atmos.ogi.edu
+/usr/etc/local/named/conf/zone.ogi.cbs,cbs.ogi.edu
+/usr/etc/local/named/conf/zone.ogi.ccalmr,ccalmr.ogi.edu
+/usr/etc/local/named/conf/zone.ogi.conted,conted.ogi.edu
+/usr/etc/local/named/conf/zone.ogi.cse,cse.ogi.edu
+/usr/etc/local/named/conf/zone.ogi.eeap,eeap.ogi.edu
+/usr/etc/local/named/conf/zone.ogi.ese,ese.ogi.edu
+/usr/etc/local/named/conf/zone.ogi.mse,mse.ogi.edu

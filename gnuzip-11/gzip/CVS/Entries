@@ -1,0 +1,58 @@
+/COPYING/1.1.1.1/Fri Apr 23 01:05:55 1999//Tgnuzip-11
+/ChangeLog/1.1.1.1/Fri Apr 23 01:05:55 1999//Tgnuzip-11
+/INSTALL/1.1.1.1/Fri Apr 23 01:05:55 1999//Tgnuzip-11
+/Makefile.in/1.2/Fri Feb  4 19:21:27 2000//Tgnuzip-11
+/NEWS/1.1.1.1/Fri Apr 23 01:05:56 1999//Tgnuzip-11
+/README/1.1.1.1/Fri Apr 23 01:05:56 1999//Tgnuzip-11
+/THANKS/1.1.1.1/Fri Apr 23 01:05:56 1999//Tgnuzip-11
+/TODO/1.1.1.1/Fri Apr 23 01:05:56 1999//Tgnuzip-11
+/algorithm.doc/1.1.1.1/Fri Apr 23 01:05:56 1999/-kb/Tgnuzip-11
+/bits.c/1.1.1.1/Fri Apr 23 01:05:56 1999//Tgnuzip-11
+/configure/1.1.1.2/Fri Apr 23 01:06:10 1999//Tgnuzip-11
+/configure.in/1.1.1.1/Fri Apr 23 01:05:56 1999//Tgnuzip-11
+/crypt.c/1.1.1.1/Fri Apr 23 01:05:56 1999//Tgnuzip-11
+/crypt.h/1.1.1.1/Fri Apr 23 01:05:56 1999//Tgnuzip-11
+/deflate.c/1.1.1.1/Fri Apr 23 01:05:56 1999//Tgnuzip-11
+/getopt.c/1.1.1.1/Fri Apr 23 01:05:56 1999//Tgnuzip-11
+/getopt.h/1.1.1.1/Fri Apr 23 01:05:56 1999//Tgnuzip-11
+/gpl.texinfo/1.1.1.1/Fri Apr 23 01:05:56 1999//Tgnuzip-11
+/gzexe.1/1.1.1.1/Fri Apr 23 01:05:57 1999//Tgnuzip-11
+/gzexe.in/1.1.1.1/Fri Apr 23 01:05:57 1999//Tgnuzip-11
+/gzip.1/1.1.1.1/Fri Apr 23 01:05:57 1999//Tgnuzip-11
+/gzip.c/1.1.1.1/Fri Apr 23 01:05:57 1999//Tgnuzip-11
+/gzip.doc/1.1.1.1/Fri Apr 23 01:05:57 1999/-kb/Tgnuzip-11
+/gzip.h/1.1.1.1/Fri Apr 23 01:05:57 1999//Tgnuzip-11
+/gzip.info/1.1.1.1/Fri Apr 23 01:05:57 1999//Tgnuzip-11
+/gzip.texi/1.1.1.1/Fri Apr 23 01:05:57 1999//Tgnuzip-11
+/inflate.c/1.1.1.1/Fri Apr 23 01:05:57 1999//Tgnuzip-11
+/lzw.c/1.1.1.1/Fri Apr 23 01:05:57 1999//Tgnuzip-11
+/lzw.h/1.1.1.1/Fri Apr 23 01:05:57 1999//Tgnuzip-11
+/match.S/1.1.1.1/Fri Apr 23 01:05:57 1999//Tgnuzip-11
+/revision.h/1.1.1.1/Fri Apr 23 01:05:57 1999//Tgnuzip-11
+/tailor.h/1.1.1.1/Fri Apr 23 01:05:57 1999//Tgnuzip-11
+/texinfo.tex/1.1.1.1/Fri Apr 23 01:05:57 1999//Tgnuzip-11
+/trees.c/1.1.1.1/Fri Apr 23 01:05:58 1999//Tgnuzip-11
+/unlzh.c/1.1.1.1/Fri Apr 23 01:05:58 1999//Tgnuzip-11
+/unlzw.c/1.1.1.1/Fri Apr 23 01:05:58 1999//Tgnuzip-11
+/unpack.c/1.1.1.1/Fri Apr 23 01:05:58 1999//Tgnuzip-11
+/unzip.c/1.1.1.1/Fri Apr 23 01:05:58 1999//Tgnuzip-11
+/util.c/1.1.1.2/Fri Apr 23 01:06:13 1999//Tgnuzip-11
+/zdiff.1/1.1.1.1/Fri Apr 23 01:05:58 1999//Tgnuzip-11
+/zdiff.in/1.1.1.1/Fri Apr 23 01:05:58 1999//Tgnuzip-11
+/zforce.1/1.1.1.1/Fri Apr 23 01:05:58 1999//Tgnuzip-11
+/zforce.in/1.1.1.1/Fri Apr 23 01:05:58 1999//Tgnuzip-11
+/zgrep.1/1.1.1.1/Fri Apr 23 01:05:58 1999//Tgnuzip-11
+/zgrep.in/1.1.1.1/Fri Apr 23 01:05:58 1999//Tgnuzip-11
+/zip.c/1.1.1.1/Fri Apr 23 01:05:58 1999//Tgnuzip-11
+/zmore.1/1.1.1.1/Fri Apr 23 01:05:58 1999//Tgnuzip-11
+/zmore.in/1.1.1.1/Fri Apr 23 01:05:58 1999//Tgnuzip-11
+/znew.1/1.1.1.1/Fri Apr 23 01:05:58 1999//Tgnuzip-11
+/znew.in/1.1.1.1/Fri Apr 23 01:05:58 1999//Tgnuzip-11
+D/amiga////
+D/atari////
+D/msdos////
+D/nt////
+D/os2////
+D/primos////
+D/sample////
+D/vms////

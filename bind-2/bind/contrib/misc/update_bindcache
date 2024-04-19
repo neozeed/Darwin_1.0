@@ -1,0 +1,96 @@
+Path: vixie!news1.digital.com!nntp-hub2.barrnet.net!news.Stanford.EDU!bloom-beacon.mit.edu!news.kei.com!news.mathworks.com!tank.news.pipex.net!pipex!howland.reston.ans.net!xlink.net!noris.net!jat!not-4-mail
+From: Joachim Astel <achim@astel.com>
+Newsgroups: alt.sources
+Subject: Automate update of root.cache with dig/perl
+Date: 28 Aug 1995 06:07:42 +0200
+Lines: 86
+Message-ID: <41rfeeW6c7@astel.com>
+NNTP-Posting-Host: wiese.astel.com
+X-Newsreader: NN version 6.5.0
+
+This perl script fetches the latest root name server entry from
+ns.internic.net, does a compare with the root.cache on your local
+system, refuses the internic entry in some suspicious cases, or
+otherwise it will check-in the old root.cache (with RCS's "ci"),
+and overwrite "root.cache" with new root nameserver information.
+
+This perl script could be started by cron once every year or so.
+
+System requirements:  "/usr/bin/dig", "ci".
+
+
+#!/usr/bin/perl
+# update_bindcache - written 1995 by Joachim Astel <achim@astel.com>
+
+# Last updated: Sun Aug 27 23:04:07 MET DST 1995
+
+$CACHEDIR = "/var/named";
+$CACHEFILE = "root.cache";
+
+$DIG = "/usr/bin/dig";
+$MAXSTAMP = 1000000;
+$MINSTAMP = 50000;
+
+open (CACHE, "$CACHEDIR/$CACHEFILE") || die "Cannot open $CACHEFILE: $!\n";
+while (<CACHE>) {
+	next if /^;/; next if /^$/; chop;
+	($host, $stamp, $type, $data) = split(/\t/, $_, 4);
+	$type =~ tr/a-z/A-Z/;
+	if ($host eq "." && $type eq "NS") {
+		push (@origns, $data);
+	} elsif ($type eq "A") {
+		$host =~ tr/a-z/A-Z/;
+		$orighostip{$host} = $data;
+	}
+}
+close CACHE;
+open (DIG, "$DIG \@ns.internic.net ns .|") || die "Cannot dig: $!\n";
+while (<DIG>) {
+	next if /^;;/; next if /^$/;
+	push (@dig, $_);
+	next if /^;/; chop;
+	($host, $stamp, $type, $data) = split(/\t/, $_, 4);
+	$type =~ tr/a-z/A-Z/;
+	die "Internic's timestamp is suspicious to me ($_)\n"
+		if ($stamp > $MAXSTAMP || $stamp < $MINSTAMP);
+	if ($host eq "." && $type eq "NS") {
+		push (@ns, $data);
+	} elsif ($type eq "A") {
+		$host =~ tr/a-z/A-Z/;
+		$hostip{$host} = $data;
+	} else {
+		chop;
+		die "Internic's output is suspicious to me ($_)\n";
+	}
+}
+close DIG;
+$missing = 0;
+foreach (sort @origns) {
+	if ($hostip{$_} eq "") {
+		warn "Remove $_ [", $orighostip{$_}, "]\n";
+		$missing++;
+	}
+}
+$changes = 0;
+foreach (sort @ns) {
+	if ($orighostip{$_} eq "") {
+		warn "Create $_ [", $hostip{$_}, "]\n";
+		$changes++;
+	} elsif ($orighostip{$_} ne $hostip{$_}) {
+		warn "Change $_ [", $orighostip{$_},
+		"] -> [", $hostip{$_}, "]\n";
+		$changes++;
+	}
+}
+if ($missing) {
+	die "-- Please update your $CACHEFILE file manually.\n";
+}
+exit 0 unless $changes;
+
+chdir ($CACHEDIR);
+system("yes . | ci -q -l $CACHEFILE");
+open(CACHE, ">$CACHEDIR/$CACHEFILE") || die "Can't write $CACHEFILE: $_\n";
+foreach (@dig) {
+	print CACHE $_;
+}
+close CACHE;

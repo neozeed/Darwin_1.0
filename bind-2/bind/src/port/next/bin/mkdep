@@ -1,0 +1,5 @@
+#!/bin/sh
+
+exec echo "mkdep is not supported for NeXT"
+
+exit 0

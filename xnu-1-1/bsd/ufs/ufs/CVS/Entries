@@ -1,0 +1,20 @@
+/Makefile/1.1.1.1/Sat Mar 25 21:02:31 2000//Txnu-1-1
+/dinode.h/1.1.1.1/Sat Mar 25 21:02:31 2000//Txnu-1-1
+/dir.h/1.1.1.1/Sat Mar 25 21:02:31 2000//Txnu-1-1
+/inode.h/1.1.1.1/Sat Mar 25 21:02:31 2000//Txnu-1-1
+/lockf.h/1.1.1.1/Sat Mar 25 21:02:31 2000//Txnu-1-1
+/quota.h/1.1.1.1/Sat Mar 25 21:02:31 2000//Txnu-1-1
+/ufs_bmap.c/1.1.1.1/Sat Mar 25 21:02:31 2000//Txnu-1-1
+/ufs_byte_order.c/1.1.1.1/Sat Mar 25 21:02:31 2000//Txnu-1-1
+/ufs_byte_order.h/1.1.1.1/Sat Mar 25 21:02:31 2000//Txnu-1-1
+/ufs_extern.h/1.1.1.1/Sat Mar 25 21:02:31 2000//Txnu-1-1
+/ufs_ihash.c/1.1.1.1/Sat Mar 25 21:02:31 2000//Txnu-1-1
+/ufs_inode.c/1.1.1.1/Sat Mar 25 21:02:31 2000//Txnu-1-1
+/ufs_lockf.c/1.1.1.1/Sat Mar 25 21:02:31 2000//Txnu-1-1
+/ufs_lookup.c/1.1.1.1/Sat Mar 25 21:02:31 2000//Txnu-1-1
+/ufs_quota.c/1.1.1.1/Sat Mar 25 21:02:31 2000//Txnu-1-1
+/ufs_readwrite.c/1.1.1.1/Sat Mar 25 21:02:31 2000//Txnu-1-1
+/ufs_vfsops.c/1.1.1.1/Sat Mar 25 21:02:31 2000//Txnu-1-1
+/ufs_vnops.c/1.1.1.1/Sat Mar 25 21:02:31 2000//Txnu-1-1
+/ufsmount.h/1.1.1.1/Sat Mar 25 21:02:31 2000//Txnu-1-1
+D

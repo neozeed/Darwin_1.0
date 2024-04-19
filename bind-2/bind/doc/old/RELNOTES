@@ -1,0 +1,14 @@
+Release Notes
+BIND 4.9.4-T1A
+February 23, 1996
+Paul Vixie, ISC
+
+Shared library resolvers are currently broken.  I've changed the way system
+specific libraries are handled, but it's not finished yet and does not work.
+Note that I'm not sure the current SYSTYPE's are at the right granularity.
+Talk to me before you go in and start fixing things, please!
+
+There's a new directive in named.boot called "listen-on".  It takes a list
+of interface addresses.  Multiple directives aggregate naturally.  If any of
+these directives are specified, the resulting list limits the list of
+interfaces to which BIND will bind() sockets at startup.

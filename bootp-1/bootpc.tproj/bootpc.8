@@ -1,0 +1,121 @@
+.\"
+.\"
+.\"
+.\"
+.TH BOOTPC 8 "February 12, 1999" "Apple Computer, Inc."
+.SH NAME
+bootpc \- Internet BOOTP Protocol Client
+.SH "SYNOPSIS"
+.B bootpc interface [options]
+.br
+.B bootpc ethernet_address [options]
+.fi
+.SH "DESCRIPTION"
+\fIbootpc\fR implements an Internet Bootstrap Protocol (BOOTP) client as
+defined in RFC951, RFC1542, and RFC2132.
+.PP
+The program can be invoked by specifying either the network interface or
+the ethernet address. The network interface is specified as the ifname
+e.g. "en0".  The ethernet_address is specified in colon-hex format
+e.g. "0:5:2:ab:23:42".  \fIbootpc\fR must be run as superuser.
+.PP
+\fIbootpc\fR is used during system startup to retrieve IP configuration
+parameters for a network interface.  This program broadcasts BOOTP requests
+and waits for BOOTP responses.  The client retries 3 times by
+default.  Wait times back off exponentially and are randomized.  The
+first wait interval is approximately 4 seconds.
+.PP
+The client favors responses that specify at least the following
+vendor extensions: hostname, subnet mask, and router(s).
+The client waits up to "gather_time" ticks (tenths of a
+second) for a preferred response to arrive.  The default "gather time" is 2
+seconds, or 20 ticks.  The "gather time" is the period beginning with the
+arrival of the first BOOTP response.  
+.PP
+After the client finds its chosen response, it dumps
+the results to standard output and exits.  If no responses are received,
+the program will exit with an error code indicating that it timed out.
+.PP
+The format of the output is described below.
+.SH "OPTIONS"
+.TP
+.B \-g gather_time
+The time in tenths of a second (ticks) to "gather" responses.  This is the time
+period beginning with the arrival of the first BOOTP response.  The default
+value is 20 ticks, or 2 seconds.
+.TP
+.B \-r retry_count
+The number of times to retry sending a BOOTP request.  The default is 3.
+.TP
+.B \-T
+Send one request and display all of the responses.  Intended to be used
+for debugging.
+.SH "OUTPUT FORMAT"
+The program dumps information from the BOOTP response in a list of
+variable_name=value pairs.  The variable names used are:
+.TP
+.B ip_address
+client's IP address
+.TP
+.B host_name
+client's host name
+.TP
+.B subnet_mask
+subnet mask IP address
+.TP
+.B router_count
+the number of router values in the output
+.TP
+.B router, router2, router3, ...
+Router IP address(es) that the client should use.  The first
+router appears in variable named "router", subsequent router
+values appear in variable "router2", "router3", etc..
+.TP
+.B domain_name_server_count
+Number of domain_name_server values in the output.
+.TP
+.B domain_name_server, domain_name_server2, domain_name_server3, ...
+Domain name server IP address(es) to use.
+.TP
+.B domain_name
+Domain name.
+.TP
+.B server_ip_address
+TFTP server IP address
+.TP
+.B server_name
+TFTP server name
+.SH "SAMPLE OUTPUT"
+.nf
+ip_address=17.202.42.110
+host_name=siegdi4
+subnet_mask=255.255.252.0
+router_count=1
+router=17.202.40.1
+domain_name_server_count=3
+domain_name_server=17.128.100.12
+domain_name_server2=17.128.100.10
+domain_name_server3=17.128.100.9
+domain_name=apple.com
+server_ip_address=17.202.40.61
+server_name=waria
+.fi
+.SH "EXIT CODES"
+If a valid response was received, the program exits with error code 0.
+Standard output will contain details of the response (see OUTPUT FORMAT).
+Otherwise, the exit code will be non-zero, error messages may be
+logged to standard error.
+.PP
+The defined error codes are:
+.TP
+.BI 1
+User error
+.TP
+.BI 2
+Unexpected error
+.TP
+.BI 3
+Timed out, no BOOTP responses received.
+.SH "SEE ALSO"
+.LP
+bootpd(8)

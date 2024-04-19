@@ -1,0 +1,6 @@
+Package: egcs
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Vendor: Apple Computer, Inc.
+Version: 814.1
+Description: C++ compiler
+Build-Depends: build-base, gnudiff, bison

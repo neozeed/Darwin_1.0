@@ -1,0 +1,18 @@
+/APPLE_LICENSE/1.1.1.1/Wed Jan 12 00:32:22 2000//TCoreFoundation-2
+/ConditionalMacros.h/1.1.1.1/Fri Feb 11 00:25:49 2000//TCoreFoundation-2
+/MacTypes.h/1.1.1.1/Fri Feb 11 00:25:49 2000//TCoreFoundation-2
+/Makefile/1.1.1.2/Wed Mar 15 17:02:53 2000//TCoreFoundation-2
+/Makefile.postamble/1.1.1.2/Fri Feb 11 00:25:49 2000//TCoreFoundation-2
+/Makefile.preamble/1.1.1.2/Fri Feb 11 00:25:49 2000//TCoreFoundation-2
+/PB.project/1.3/Fri Mar 17 18:50:38 2000//TCoreFoundation-2
+/apple-generic-local.make/1.1.1.1/Fri Feb 11 00:25:49 2000//TCoreFoundation-2
+/apple-generic.make/1.1.1.1/Fri Feb 11 00:25:49 2000//TCoreFoundation-2
+D/Base.subproj////
+D/Collections.subproj////
+D/NumberDate.subproj////
+D/Parsing.subproj////
+D/RunLoop.subproj////
+D/String.subproj////
+D/StringEncodings.subproj////
+D/URL.subproj////
+D/dpkg////

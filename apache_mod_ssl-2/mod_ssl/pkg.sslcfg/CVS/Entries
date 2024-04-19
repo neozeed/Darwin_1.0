@@ -1,0 +1,23 @@
+/Makefile.crl/1.1.1.2/Fri Mar 31 02:25:25 2000//Tapache_mod_ssl-2
+/Makefile.crt/1.1.1.2/Fri Mar 31 02:25:25 2000//Tapache_mod_ssl-2
+/README.CRL/1.1.1.1/Tue Nov 23 02:33:48 1999//Tapache_mod_ssl-2
+/README.CRT/1.1.1.1/Tue Nov 23 02:33:48 1999//Tapache_mod_ssl-2
+/README.CSR/1.1.1.1/Tue Nov 23 02:33:48 1999//Tapache_mod_ssl-2
+/README.KEY/1.1.1.1/Tue Nov 23 02:33:48 1999//Tapache_mod_ssl-2
+/README.PRM/1.1.1.1/Tue Nov 23 02:33:48 1999//Tapache_mod_ssl-2
+/ca-bundle.crt/1.1.1.2/Fri Mar 31 02:25:26 2000//Tapache_mod_ssl-2
+/server.crt/1.1.1.1/Tue Nov 23 02:33:48 1999//Tapache_mod_ssl-2
+/server.csr/1.1.1.1/Tue Nov 23 02:33:48 1999//Tapache_mod_ssl-2
+/server.key/1.1.1.1/Tue Nov 23 02:33:48 1999//Tapache_mod_ssl-2
+/snakeoil-ca-dsa.crt/1.1.1.1/Tue Nov 23 02:33:48 1999//Tapache_mod_ssl-2
+/snakeoil-ca-dsa.key/1.1.1.1/Tue Nov 23 02:33:48 1999//Tapache_mod_ssl-2
+/snakeoil-ca-dsa.prm/1.1.1.1/Tue Nov 23 02:33:48 1999//Tapache_mod_ssl-2
+/snakeoil-ca-rsa.crt/1.1.1.1/Tue Nov 23 02:33:48 1999//Tapache_mod_ssl-2
+/snakeoil-ca-rsa.key/1.1.1.1/Tue Nov 23 02:33:48 1999//Tapache_mod_ssl-2
+/snakeoil-dsa.crt/1.1.1.1/Tue Nov 23 02:33:48 1999//Tapache_mod_ssl-2
+/snakeoil-dsa.key/1.1.1.1/Tue Nov 23 02:33:48 1999//Tapache_mod_ssl-2
+/snakeoil-dsa.prm/1.1.1.1/Tue Nov 23 02:33:48 1999//Tapache_mod_ssl-2
+/snakeoil-rsa.crt/1.1.1.1/Tue Nov 23 02:33:48 1999//Tapache_mod_ssl-2
+/snakeoil-rsa.key/1.1.1.1/Tue Nov 23 02:33:48 1999//Tapache_mod_ssl-2
+/sslcfg.patch/1.1.1.2/Fri Mar 31 02:25:27 2000//Tapache_mod_ssl-2
+D

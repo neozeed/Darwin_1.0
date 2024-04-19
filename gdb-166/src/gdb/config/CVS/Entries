@@ -1,0 +1,59 @@
+/nm-empty.h/1.1.1.1/Thu Mar 16 19:56:08 2000//Tgdb-166
+/nm-gnu.h/1.1.1.1/Thu Mar 16 19:56:08 2000//Tgdb-166
+/nm-linux.h/1.1.1.1/Thu Mar 16 19:56:08 2000//Tgdb-166
+/nm-lynx.h/1.1.1.1/Thu Mar 16 19:56:08 2000//Tgdb-166
+/nm-m3.h/1.1.1.1/Thu Mar 16 19:56:08 2000//Tgdb-166
+/nm-nbsd.h/1.1.1.1/Thu Mar 16 19:56:08 2000//Tgdb-166
+/nm-nextstep.h/1.2/Sat Apr  1 01:49:14 2000//Tgdb-166
+/nm-sysv4.h/1.1.1.1/Thu Mar 16 19:56:08 2000//Tgdb-166
+/tm-linux.h/1.1.1.1/Thu Mar 16 19:56:08 2000//Tgdb-166
+/tm-lynx.h/1.1.1.1/Thu Mar 16 19:56:08 2000//Tgdb-166
+/tm-nbsd.h/1.1.1.2/Wed Mar 22 06:02:52 2000//Tgdb-166
+/tm-nextstep.h/1.1/Thu Mar 16 20:39:46 2000//Tgdb-166
+/tm-sunos.h/1.1.1.1/Thu Mar 16 19:56:08 2000//Tgdb-166
+/tm-sysv4.h/1.1.1.1/Thu Mar 16 19:56:08 2000//Tgdb-166
+/tm-vxworks.h/1.1.1.1/Thu Mar 16 19:56:08 2000//Tgdb-166
+/xm-aix4.h/1.1.1.1/Thu Mar 16 19:56:08 2000//Tgdb-166
+/xm-lynx.h/1.1.1.1/Thu Mar 16 19:56:08 2000//Tgdb-166
+/xm-macosx.h/1.1/Thu Mar 16 20:39:46 2000//Tgdb-166
+/xm-mpw.h/1.1.1.1/Thu Mar 16 19:56:08 2000//Tgdb-166
+/xm-nbsd.h/1.1.1.1/Thu Mar 16 19:56:08 2000//Tgdb-166
+/xm-nextstep.h/1.1/Thu Mar 16 20:39:46 2000//Tgdb-166
+/xm-sysv4.h/1.1.1.1/Thu Mar 16 19:56:08 2000//Tgdb-166
+D/a29k////
+D/alpha////
+D/arc////
+D/arm////
+D/convex////
+D/d10v////
+D/d30v////
+D/djgpp////
+D/fr30////
+D/gould////
+D/h8300////
+D/h8500////
+D/i386////
+D/i960////
+D/ia64////
+D/m32r////
+D/m68k////
+D/m88k////
+D/mcore////
+D/mips////
+D/mn10200////
+D/mn10300////
+D/none////
+D/ns32k////
+D/pa////
+D/powerpc////
+D/pyr////
+D/romp////
+D/rs6000////
+D/sh////
+D/sparc////
+D/tahoe////
+D/tic80////
+D/v850////
+D/vax////
+D/w65////
+D/z8k////

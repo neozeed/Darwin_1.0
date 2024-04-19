@@ -1,0 +1,4 @@
+Package: dpkg-scriptlib
+Maintainer: Klee Dienes <kdienes@apple.com>
+Description: Perl and Python interfaces to dpkg
+Build-Depends: libsystem, cctools, zsh, gnumake, file-cmds, shell-cmds, perl, gnutar, gnuzip

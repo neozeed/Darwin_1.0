@@ -1,0 +1,24 @@
+/ChangeLog/1.1.1.1/Thu Sep  2 04:37:41 1999//Tbison-5
+/Makefile.in/1.1.1.1/Thu Sep  2 04:37:41 1999//Tbison-5
+/VERSION/1.1.1.1/Thu Sep  2 04:37:41 1999//Tbison-5
+/bindtextdom.c/1.1.1.1/Thu Sep  2 04:37:41 1999//Tbison-5
+/cat-compat.c/1.1.1.1/Thu Sep  2 04:37:42 1999//Tbison-5
+/dcgettext.c/1.1.1.1/Thu Sep  2 04:37:42 1999//Tbison-5
+/dgettext.c/1.1.1.1/Thu Sep  2 04:37:42 1999//Tbison-5
+/explodename.c/1.1.1.1/Thu Sep  2 04:37:42 1999//Tbison-5
+/finddomain.c/1.1.1.1/Thu Sep  2 04:37:42 1999//Tbison-5
+/gettext.c/1.1.1.1/Thu Sep  2 04:37:42 1999//Tbison-5
+/gettext.h/1.1.1.1/Thu Sep  2 04:37:42 1999//Tbison-5
+/gettextP.h/1.1.1.1/Thu Sep  2 04:37:42 1999//Tbison-5
+/hash-string.h/1.1.1.1/Thu Sep  2 04:37:42 1999//Tbison-5
+/intl-compat.c/1.1.1.1/Thu Sep  2 04:37:42 1999//Tbison-5
+/l10nflist.c/1.1.1.1/Thu Sep  2 04:37:42 1999//Tbison-5
+/libgettext.h/1.1.1.1/Thu Sep  2 04:37:42 1999//Tbison-5
+/linux-msg.sed/1.1.1.1/Thu Sep  2 04:37:42 1999//Tbison-5
+/loadinfo.h/1.1.1.1/Thu Sep  2 04:37:42 1999//Tbison-5
+/loadmsgcat.c/1.1.1.1/Thu Sep  2 04:37:42 1999//Tbison-5
+/localealias.c/1.1.1.1/Thu Sep  2 04:37:42 1999//Tbison-5
+/po2tbl.sed.in/1.1.1.1/Thu Sep  2 04:37:42 1999//Tbison-5
+/textdomain.c/1.1.1.1/Thu Sep  2 04:37:42 1999//Tbison-5
+/xopen-msg.sed/1.1.1.1/Thu Sep  2 04:37:42 1999//Tbison-5
+D

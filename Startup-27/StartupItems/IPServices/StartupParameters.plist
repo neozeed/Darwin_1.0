@@ -1,0 +1,14 @@
+{
+  Description     = "Internet services";
+  Provides        = ("SuperServer",
+		     "ConfigServer",
+	             "ManagementServer");
+  Requires        = ("Resolver");
+  Uses            = ("NetworkTime");
+  OrderPreference = "None";
+  Messages =
+  {
+    start = "Starting internet services.";
+    stop  = "Stopping internet services.";
+  };
+}

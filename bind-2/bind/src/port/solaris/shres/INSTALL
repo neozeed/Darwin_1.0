@@ -1,0 +1,151 @@
+Installing BIND 4.9.3 resolver code in Solaris 2.x shared libraries
+===================================================================
+
+$Id: INSTALL,v 1.1.1.1 1999/10/04 22:25:00 wsanchez Exp $
+
+by Alexander Dupuy <dupuy@smarts.com>
+
+Note that if you wish to modify this process, you should read and understand
+all of the file shres/solaris/ISSUES.  In any case, you should read the first
+six items in shres/solaris/ISSUES.
+
+* The Solaris name service switch
+
+  This explains why you might not need to install the resolver shared
+  library at all.
+
+* Solaris resolver shared library versions
+
+  Solaris provides a resolver shared library based on BIND 4.8.3; this explains
+  the compatibility issues between that shared library and the one installed
+  by BIND 4.9.3.
+
+* getXXXbyYYY vs. res_getXXXbyYYY
+
+  Because the Solaris name service switch provides more flexibility, simply
+  linking with -lresolv doesn't force DNS lookups for getXXXbyYYY.  This shows
+  how to force DNS lookups and attempts to justify Sun's design decision.
+
+* What about SUNSECURITY?
+
+  This explains why defining SUNSECURITY isn't required under Solaris.
+
+* RFC 1101 network names vs. /etc/networks
+
+  This explains how to set up your network names in the DNS so that programs
+  such as netstat -r will display names, not numbers, by using the DNS.
+
+* Having named and tools linked with a shared vs. static libresolv.
+
+  Describes tradeoffs on shared vs. static linking and explains how to select
+  either one in the top-level Makefile.
+
+[Disclaimer: 
+THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGE.]
+
+1.  Get and unpack a copy of BIND 4.9.3.  (This document is from that
+    distribution, as shres/solaris/INSTALL.)  See <URL:http://www.isc.org/isc/>
+    for more information, including a pointer to the latest version.
+
+    In the remainder of this document, $BINDSRC represents the directory
+    you unpacked the BIND distribution into, and $BINDBUILD represents the
+    directory you actually built BIND in (they will be different if you
+    use "make links").
+
+2.  (Optional) Use "make DST=sol2sparc.b links" to create a shadow source
+    tree for the Sun4 architecture (see $BINDSRC/README for details).  This
+    is particularly useful if you are building for more than one
+    architecture or operating system (like, say, Solaris/SPARC and
+    Solaris/x86).  If you do this, cd into the new build directory ("cd
+    sol2sparc.b", for example); this will be referred to hereafter as
+    $BINDBUILD.
+
+3.  Configure it to your tastes by editing $BINDSRC/conf/options.h, using
+    $BINDSRC/OPTIONS as a guide to the available choices.  (You may want to
+    delete the symbolic link in $BINDBUILD/conf and replace it with a copy of
+    options.h; this is primarily useful if you want to build different BIND
+    configurations on different system architectures.)  Not all of the options
+    affect the resolver library, but you probably want the new named as well
+    (the one Sun supplies with Solaris 2.4 is based on BIND 4.8.3).
+
+4.  Uncomment the appropriate lines in $BINDBUILD/Makefile (or
+    $BINDSRC/Makefile if you didn't do step 2) for Solaris 2.  To build
+    resolver code to install in the shared library, uncomment the SHRES
+    line, as well as the appropriate SHCC and PIC lines.  If you have gcc,
+    you can use it for SHCC, as it shares the read-only data by default (see
+    $BINDSRC/shres/solaris/ISSUES for more details).  The SunPro cc can also do
+    this if you give it the -xstrconst flag.  If you want to use the shared
+    resolver library for BIND executables, make sure you uncomment the line
+    which defines RES as $(SHRES)/libresolv.so, and make sure you have
+    uncommented the SOLCOMPAT definition as well; if you don't, BIND
+    programs won't get the BIND versions of getXXXbyYYY, which may lead to
+    surprising (and incorrect) results.
+
+5.  (Optional) Add $BINDSRC/bin to your path, and "make depend".
+
+6.  Type "make" to build named, the tools, and the static and shared libresolv.
+
+	*** NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE ***
+
+	The next step (#7) may burn down files which were supplied with
+	your operating system.  You should run the suggested "-n" first
+	and make sure you have saved any files you want to save.
+
+	*** NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE ***
+
+7.  As root, type "make install" to install everything.  You might first do
+    "make -n install" to see what commands would be executed by "make install"
+    to make sure you understand where everything is about to be installed.
+    In particular, the BIND netdb.h does not define values for MAXHOSTNAMELEN,
+    MAXALIASES or MAXADDRS.  Programs that have been properly ported to Solaris
+    should not depend on these #defines, but unfortunately, many do.  Also
+    missing from the BIND netdb.h are function declarations for the reentrant
+    getXXX{byYYY,ent}_r interfaces and the rcmd, rexec, rresvport and ruserok
+    functions.
+
+8.  At this point, you have installed the resolver shared library, and
+    applications can be linked with it (indeed, the BIND executables already
+    have).  In order to get the name service switch to use the new library,
+    you need first to make sure that the name service switch is configured
+    to use the resolver, and second to modify the nss_dns.so.1 switch module
+    to use the new version of the resolver.
+
+    This is done by editing the /etc/nsswitch.conf file so that the hosts:
+    entry has "dns" as the first option.  Then you need to update the
+    dynamic library dependencies of /usr/lib/nss_dns.so.1 so it uses
+    libresolv.so.2 instead of libresolv.so.1.  This can be done with emacs
+    or any other program capable of editing binary files.  Be sure to keep a
+    copy of the original file in case something goes wrong, and don't let
+    the editor append a newline at the end of the file (emacs can be told
+    not to do this).
+
+    Once you have made these changes, you can test them as follows:
+
+     In csh or tcsh:
+       setenv RES_OPTIONS debug
+       telnet localhost
+       unsetenv LD_LIBRARY_PATH
+
+     In sh, ksh or bash:
+       RES_OPTIONS=debug telnet localhost.columbia.edu
+
+    If you get a whole mess of debugging output and a login prompt, then
+    you've done it.  If you don't, it's possible that the name switch cache
+    has simply eliminated the need to invoke the resolver.  Try the telnet
+    with another hostname or two to make sure that the updated resolver isn't
+    being used.  If it isn't, try the command again with LD_DEBUG=libs to see
+    if you can determine why.
+
+9.  Once you are fully confident of your new library, reboot your
+    machine.  Until you do, running processes will continue to use the
+    old /etc/nsswitch.conf and resolver shared library.

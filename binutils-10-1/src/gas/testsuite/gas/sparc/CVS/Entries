@@ -1,0 +1,26 @@
+/asi.d/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/asi.s/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/membar.d/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/membar.s/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/mism-1.s/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/mismatch.exp/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/prefetch.d/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/prefetch.s/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/rdpr.d/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/rdpr.s/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/reloc64.d/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/reloc64.s/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/set64.d/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/set64.s/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/sparc.exp/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/splet-2.d/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/splet-2.s/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/splet.d/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/splet.s/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/synth.d/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/synth.s/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/synth64.d/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/synth64.s/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/wrpr.d/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+/wrpr.s/1.1.1.1/Thu Mar 16 19:56:00 2000//Tbinutils-10-1
+D

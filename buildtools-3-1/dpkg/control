@@ -1,0 +1,4 @@
+Package: buildtools
+Maintainer: Klee Dienes <kdienes@apple.com>
+Description: Build tools
+Build-Depends: libsystem, cctools, zsh, gnumake, files, file-cmds, shell-cmds, gnuzip

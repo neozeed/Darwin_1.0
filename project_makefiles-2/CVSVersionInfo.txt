@@ -1,0 +1,5 @@
+# Created and modified by checkpoint; do not edit
+# $Id: CVSVersionInfo.txt,v 1.1.1.2 2000/02/01 22:29:44 wsanchez Exp $
+# $Name: project_makefiles-2 $
+ProjectName: project_makefiles
+ProjectVersion: 122.1

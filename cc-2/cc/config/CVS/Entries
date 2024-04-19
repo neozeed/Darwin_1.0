@@ -1,0 +1,33 @@
+/README/1.1.1.1/Sun May  2 02:12:37 1999//Tcc-2
+/aoutos.h/1.1.1.1/Sun May  2 02:12:37 1999//Tcc-2
+/fp-bit.c/1.1.1.1/Sun May  2 02:12:37 1999//Tcc-2
+/gnu.h/1.1.1.1/Sun May  2 02:12:37 1999//Tcc-2
+/gofast.h/1.1.1.1/Sun May  2 02:12:37 1999//Tcc-2
+/linux-aout.h/1.1.1.1/Sun May  2 02:12:38 1999//Tcc-2
+/linux.h/1.1.1.1/Sun May  2 02:12:38 1999//Tcc-2
+/lynx-ng.h/1.1.1.1/Sun May  2 02:12:38 1999//Tcc-2
+/lynx.h/1.1.1.1/Sun May  2 02:12:38 1999//Tcc-2
+/netbsd.h/1.1.1.1/Sun May  2 02:12:38 1999//Tcc-2
+/svr3.h/1.1.1.1/Sun May  2 02:12:38 1999//Tcc-2
+/svr4.h/1.1.1.1/Sun May  2 02:12:38 1999//Tcc-2
+/t-libc-ok/1.1.1.1/Sun May  2 02:12:38 1999//Tcc-2
+/t-svr4/1.1.1.1/Sun May  2 02:12:38 1999//Tcc-2
+/x-linux/1.1.1.1/Sun May  2 02:12:38 1999//Tcc-2
+/x-lynx/1.1.1.1/Sun May  2 02:12:38 1999//Tcc-2
+/x-netbsd/1.1.1.1/Sun May  2 02:12:38 1999//Tcc-2
+/x-svr4/1.1.1.1/Sun May  2 02:12:38 1999//Tcc-2
+/xm-freebsd.h/1.1.1.1/Sun May  2 02:12:38 1999//Tcc-2
+/xm-gnu.h/1.1.1.1/Sun May  2 02:12:38 1999//Tcc-2
+/xm-linux.h/1.1.1.1/Sun May  2 02:12:38 1999//Tcc-2
+/xm-lynx.h/1.1.1.1/Sun May  2 02:12:38 1999//Tcc-2
+/xm-netbsd.h/1.1.1.1/Sun May  2 02:12:38 1999//Tcc-2
+/xm-svr3.h/1.1.1.1/Sun May  2 02:12:38 1999//Tcc-2
+/xm-svr4.h/1.1.1.1/Sun May  2 02:12:38 1999//Tcc-2
+D/alpha////
+D/i386////
+D/m68k////
+D/next////
+D/pa////
+D/rs6000////
+D/sparc////
+D/winnt////

@@ -1,0 +1,3 @@
+#if defined (__sgi) && !defined(_SYSTYPE_SVR4) && !defined(__SYSTYPE_SVR4)
+#define	_PATH_BOOT	"/usr/etc/named.d/named.boot"
+#else

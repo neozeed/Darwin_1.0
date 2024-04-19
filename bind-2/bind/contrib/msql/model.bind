@@ -1,0 +1,68 @@
+#
+# RCS Id:	$Id: model.bind,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+#
+# Name:		model
+# Purpose:	mSQL model definition for Mondo-DB
+# Author:	Mike Allard
+# Date:		21apr95
+#
+# Usage:	/usr/local/Minerva/bin/msql mondo < model
+# Description:	This file contains mSQL statements to (re)create the model
+#		for Mondo-DB.  NOTE: FEEDING THIS SCRIPT TO THE MSQL MONITOR
+#		WILL DESTROY ALL EXISTING MONDO-DB DATA!!!!
+#
+# Tables Used:	all tables dropped and recreated
+# References:	
+#
+# Change History:
+#
+# Date     Who  Changes Made
+# -------  ---  ------------------------------------------------------------
+# 21apr95  mja	Original version.
+# 28apr95  mja  Added people_index table.
+# 31may95  mja  Added inactive_data to people_index; added has_account table.
+# 31may95  cls  Moved address, type & os from dns to machines.
+# 07jul95  cls  Mv dns to rhit_dns, created msql_dns, msql_zones. 
+# 08aug95  cls  Shortened to bind specific tables
+
+DROP   TABLE control \g
+CREATE TABLE control (
+	one_row		char(1)		primary key,
+	accountid	int		not null,
+	groupid		int		not null,
+	locationid	int		not null,
+	machineid	int		not null,
+	personid	int		not null,
+	dns_entry	int		not null,
+	zoneid		int		not null,
+	locked		int		not null
+)
+\g
+
+INSERT INTO control
+	(one_row, accountid, groupid, locationid, machineid, dns_entry, personid, zoneid, locked)
+VALUES
+	('A',     0,         0,       0,          0,         0,		0,        0,	0)
+\g
+
+DROP   TABLE msql_dns \g
+CREATE TABLE msql_dns (
+	dns_entry	int		primary key,
+	zoneid		int		not null,
+	machine		char(40)	not null,
+	class		char(10)	not null,
+	type		char(10)	not null,
+	info		char(127)	not null,
+	assigned_time	int		not null,
+	importance	int		not null,
+	dynamic		int		not null
+)
+\g
+
+DROP TABLE msql_zones \g
+CREATE TABLE msql_zones (
+	name		char(40)	primary key,
+	zoneid		int		not null
+)
+\g
+

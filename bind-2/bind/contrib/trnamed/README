@@ -1,0 +1,50 @@
+This is a quick hack I wrote to assist in tracking down broken
+DNS resolvers.  
+
+Invoke it as: trnamed < named.run > named.log
+
+The .log file is a reduced form of named.run whose output is useful for
+detecting broken resolver behavior patterns. Two additional output
+files are produced: named.byaddr, a frequency count of requests by
+source IP addresses;  named.byname, a frequency count of the name 
+being looked up.
+
+Mike Minnich
+minnich@aladdin.es.dupont.com
+
+
+
+Here is a small example of named.log, named.byaddr, and named.byname
+
+#
+# named run log summary 
+#
+# Wed May 10 21:08:35 EDT 1995
+#
+Wed May 10 21:04:05 1995	138.196.90.13	CWHPO.DUPONT.COM
+Wed May 10 21:04:06 1995	138.196.90.13	JKLVX07
+Wed May 10 21:04:06 1995	52.127.2.2	CWHPO
+Wed May 10 21:04:06 1995	52.127.2.2	ESVX14
+Wed May 10 21:04:06 1995	138.196.90.13	LLDMPC
+
+#
+# DNS lookups by client address
+#
+# Wed May 10 21:04:27 1995
+#
+#                who   count
+#
+      138.196.151.21   11
+       138.196.90.13   93
+      192.153.61.150   6
+
+#
+# DNS lookups by name
+#
+# Wed May 10 21:04:27 1995
+#
+#                                   name   count
+#
+                                     250   6
+                          250.DUPONT.COM   5
+               37.14.127.52.in-addr.arpa   5

@@ -1,0 +1,308 @@
+%!PS-Adobe-3.0
+%%Creator: groff version 1.10
+%%CreationDate: Mon Jun 21 14:22:03 1999
+%%DocumentNeededResources: font Times-Roman
+%%DocumentSuppliedResources: procset grops 1.10 0
+%%Pages: 1
+%%PageOrder: Ascend
+%%Orientation: Portrait
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset grops 1.10 0
+/setpacking where{
+pop
+currentpacking
+true setpacking
+}if
+/grops 120 dict dup begin
+/SC 32 def
+/A/show load def
+/B{0 SC 3 -1 roll widthshow}bind def
+/C{0 exch ashow}bind def
+/D{0 exch 0 SC 5 2 roll awidthshow}bind def
+/E{0 rmoveto show}bind def
+/F{0 rmoveto 0 SC 3 -1 roll widthshow}bind def
+/G{0 rmoveto 0 exch ashow}bind def
+/H{0 rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/I{0 exch rmoveto show}bind def
+/J{0 exch rmoveto 0 SC 3 -1 roll widthshow}bind def
+/K{0 exch rmoveto 0 exch ashow}bind def
+/L{0 exch rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/M{rmoveto show}bind def
+/N{rmoveto 0 SC 3 -1 roll widthshow}bind def
+/O{rmoveto 0 exch ashow}bind def
+/P{rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/Q{moveto show}bind def
+/R{moveto 0 SC 3 -1 roll widthshow}bind def
+/S{moveto 0 exch ashow}bind def
+/T{moveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/SF{
+findfont exch
+[exch dup 0 exch 0 exch neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/MF{
+findfont
+[5 2 roll
+0 3 1 roll
+neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/level0 0 def
+/RES 0 def
+/PL 0 def
+/LS 0 def
+/MANUAL{
+statusdict begin/manualfeed true store end
+}bind def
+/PLG{
+gsave newpath clippath pathbbox grestore
+exch pop add exch pop
+}bind def
+/BP{
+/level0 save def
+1 setlinecap
+1 setlinejoin
+72 RES div dup scale
+LS{
+90 rotate
+}{
+0 PL translate
+}ifelse
+1 -1 scale
+}bind def
+/EP{
+level0 restore
+showpage
+}bind def
+/DA{
+newpath arcn stroke
+}bind def
+/SN{
+transform
+.25 sub exch .25 sub exch
+round .25 add exch round .25 add exch
+itransform
+}bind def
+/DL{
+SN
+moveto
+SN
+lineto stroke
+}bind def
+/DC{
+newpath 0 360 arc closepath
+}bind def
+/TM matrix def
+/DE{
+TM currentmatrix pop
+translate scale newpath 0 0 .5 0 360 arc closepath
+TM setmatrix
+}bind def
+/RC/rcurveto load def
+/RL/rlineto load def
+/ST/stroke load def
+/MT/moveto load def
+/CL/closepath load def
+/FL{
+currentgray exch setgray fill setgray
+}bind def
+/BL/fill load def
+/LW/setlinewidth load def
+/RE{
+findfont
+dup maxlength 1 index/FontName known not{1 add}if dict begin
+{
+1 index/FID ne{def}{pop pop}ifelse
+}forall
+/Encoding exch def
+dup/FontName exch def
+currentdict end definefont pop
+}bind def
+/DEFS 0 def
+/EBEGIN{
+moveto
+DEFS begin
+}bind def
+/EEND/end load def
+/CNT 0 def
+/level1 0 def
+/PBEGIN{
+/level1 save def
+translate
+div 3 1 roll div exch scale
+neg exch neg exch translate
+0 setgray
+0 setlinecap
+1 setlinewidth
+0 setlinejoin
+10 setmiterlimit
+[]0 setdash
+/setstrokeadjust where{
+pop
+false setstrokeadjust
+}if
+/setoverprint where{
+pop
+false setoverprint
+}if
+newpath
+/CNT countdictstack def
+userdict begin
+/showpage{}def
+}bind def
+/PEND{
+clear
+countdictstack CNT sub{end}repeat
+level1 restore
+}bind def
+end def
+/setpacking where{
+pop
+setpacking
+}if
+%%EndResource
+%%IncludeResource: font Times-Roman
+grops begin/DEFS 1 dict def DEFS begin/u{.001 mul}bind def end/RES 72
+def/PL 792 def/LS false def/ENC0[/asciicircum/asciitilde/Scaron/Zcaron
+/scaron/zcaron/Ydieresis/trademark/quotesingle/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/space/exclam/quotedbl/numbersign/dollar/percent
+/ampersand/quoteright/parenleft/parenright/asterisk/plus/comma/hyphen
+/period/slash/zero/one/two/three/four/five/six/seven/eight/nine/colon
+/semicolon/less/equal/greater/question/at/A/B/C/D/E/F/G/H/I/J/K/L/M/N/O
+/P/Q/R/S/T/U/V/W/X/Y/Z/bracketleft/backslash/bracketright/circumflex
+/underscore/quoteleft/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y
+/z/braceleft/bar/braceright/tilde/.notdef/quotesinglbase/guillemotleft
+/guillemotright/bullet/florin/fraction/perthousand/dagger/daggerdbl
+/endash/emdash/ff/fi/fl/ffi/ffl/dotlessi/dotlessj/grave/hungarumlaut
+/dotaccent/breve/caron/ring/ogonek/quotedblleft/quotedblright/oe/lslash
+/quotedblbase/OE/Lslash/.notdef/exclamdown/cent/sterling/currency/yen
+/brokenbar/section/dieresis/copyright/ordfeminine/guilsinglleft
+/logicalnot/minus/registered/macron/degree/plusminus/twosuperior
+/threesuperior/acute/mu/paragraph/periodcentered/cedilla/onesuperior
+/ordmasculine/guilsinglright/onequarter/onehalf/threequarters
+/questiondown/Agrave/Aacute/Acircumflex/Atilde/Adieresis/Aring/AE
+/Ccedilla/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute/Icircumflex
+/Idieresis/Eth/Ntilde/Ograve/Oacute/Ocircumflex/Otilde/Odieresis
+/multiply/Oslash/Ugrave/Uacute/Ucircumflex/Udieresis/Yacute/Thorn
+/germandbls/agrave/aacute/acircumflex/atilde/adieresis/aring/ae/ccedilla
+/egrave/eacute/ecircumflex/edieresis/igrave/iacute/icircumflex/idieresis
+/eth/ntilde/ograve/oacute/ocircumflex/otilde/odieresis/divide/oslash
+/ugrave/uacute/ucircumflex/udieresis/yacute/thorn/ydieresis]def
+/Times-Roman@0 ENC0/Times-Roman RE
+%%EndProlog
+%%Page: 1 1
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF .244
+(The is a set of routines in the C library that pro)72 12 R .244
+(vide access to the Internet Domain Name System.)-.15 F .244
+(The con\214guration)5.244 F .119(\214le contains information that is read by the routines the \214rst time the)
+72 24 R 2.62(ya)-.15 G .12(re in)-2.62 F -.2(vo)-.4 G -.1(ke).2 G 2.62
+(db).1 G 2.62(yap)-2.62 G 2.62(rocess. The)-2.62 F .12
+(\214le is designed)2.62 F .784
+(to be human readable and contains a list of k)72 36 R -.15(ey)-.1 G -.1
+(wo).15 G .784(rds with v).1 F .784(alues that pro)-.25 F .784(vide v)
+-.15 F .784(arious types of information.)-.25 F .784(On a)5.784 F .234
+(normally con\214gured system, this \214le should not be necessary)72 48
+R 5.234(.T)-.65 G .235(he only name serv)-5.234 F .235
+(er to be queried will be on the lo-)-.15 F .031(cal machine, the domain name is determined from the host name, and the domain search path is constructed from the)
+72 60 R .311(domain name.)72 72 R .311(The dif)5.311 F .311
+(ferent con\214guration directi)-.25 F -.15(ve)-.25 G 2.811(sa).15 G
+.311(re: Internet address \(in dot notation\) of a name serv)-2.811 F
+.312(er that the)-.15 F 1.124(should query)72 84 R 6.124(.U)-.65 G 3.624
+(pt)-6.124 G 3.624(o\()-3.624 G 1.124(see name serv)-3.624 F 1.124
+(ers may be listed, one per k)-.15 F -.15(ey)-.1 G -.1(wo).15 G 3.624
+(rd. If).1 F 1.123(there are multiple serv)3.623 F 1.123
+(ers, the library)-.15 F .253(queries them in the order listed.)72 96 R
+.253(If no entries are present, the def)5.253 F .253
+(ault is to use the name serv)-.1 F .254(er on the local machine.)-.15 F
+.521(\(The algorithm used is to try a name serv)72 108 R(er)-.15 E 3.021
+(,a)-.4 G .52(nd if the query times out, try the ne)-3.021 F .52
+(xt, until out of name serv)-.15 F .52(ers, then)-.15 F .241
+(repeat trying all the name serv)72 120 R .242
+(ers until a maximum number of retries are made\).)-.15 F .242
+(Local domain name.)5.242 F .242(Most queries)5.242 F .35
+(for names within this domain can use short names relati)72 132 R .65
+-.15(ve t)-.25 H 2.85(ot).15 G .349(he local domain.)-2.85 F .349
+(If no entry is present, the domain is)5.349 F .613
+(determined from the local host name returned by the domain part is tak)
+72 144 R .614(en to be e)-.1 F -.15(ve)-.25 G .614
+(rything after the \214rst Finally).15 F 3.114(,i)-.65 G(f)-3.114 E .599
+(the host name does not contain a domain part, the root domain is assumed.)
+72 156 R .599(Search list for host-name lookup.)5.599 F(The)5.598 E .514
+(search list is normally determined from the local domain name; by def)
+72 168 R .515(ault, it contains only the local domain name.)-.1 F .081
+(This may be changed by listing the desired domain search path follo)72
+180 R .08(wing the k)-.25 F -.15(ey)-.1 G -.1(wo).15 G .08
+(rd with spaces or tabs separating).1 F .5(the names.)72 192 R .5(Most queries will be attempted using each component of the search path in turn until a match is found.)
+5.5 F .326(Note that this process may be slo)72 204 R 2.826(wa)-.25 G
+.326(nd will generate a lot of netw)-2.826 F .326(ork traf)-.1 F .326
+(\214c if the serv)-.25 F .326(ers for the listed domains are)-.15 F
+.432(not local, and that queries will time out if no serv)72 216 R .432
+(er is a)-.15 F -.25(va)-.2 G .432(ilable for one of the domains.).25 F
+.432(The search list is currently)5.432 F .431
+(limited to six domains with a total of 256 characters.)72 228 R(Allo)
+5.431 E .43(ws addresses returned by gethostbyname to be sorted.)-.25 F
+(A)5.43 E .269(is speci\214ed by IP address netmask pairs. The netmask is optional and def)
+72 240 R .269(aults to the natural netmask of the net. The)-.1 F 1.505
+(IP address and optional netw)72 252 R 1.505
+(ork pairs are separated by slashes. Up to 10 pairs may be speci\214ed.)
+-.1 F -.15(Fo)6.505 G 4.005(re).15 G(xample:)-4.155 E 1.427
+(sortlist 130.155.160.0/255.255.240.0 130.155.0.0 Allo)72 264 R 1.427
+(ws certain internal v)-.25 F 1.428(ariables to be modi\214ed.)-.25 F
+1.428(The syntax is)6.428 F .44(where is one of the follo)72 276 R .439
+(wing: sets in sets a threshold for the number of dots which must appear in a name gi)
+-.25 F -.15(ve)-.25 G 2.939(nt).15 G(o)-2.939 E .422
+(\(see before an will be made.)72 288 R .422(The def)5.422 F .423(ault for is meaning that if there are dots in a name, the name will be tried \214rst)
+-.1 F .387(as an absolute name before an)72 300 R 2.887(ye)-.15 G .387
+(lements are appended to it.)-2.887 F .386
+(sets the amount of time the resolv)5.386 F .386(er will w)-.15 F .386
+(ait for a re-)-.1 F .621(sponse from a remote name serv)72 312 R .621
+(er before retrying the query via a dif)-.15 F .621(ferent name serv)
+-.25 F(er)-.15 E 5.621(.M)-.55 G .622(easured in seconds, the)-5.621 F
+(def)72 324 Q .726(ault is \(see sets the number of times the resolv)-.1
+F .725(er will send a query to its name serv)-.15 F .725(ers before gi)
+-.15 F .725(ving up and re-)-.25 F .708
+(turning an error to the calling application.)72 336 R .708(The def)
+5.708 F .709
+(ault is \(see sets in which causes round robin selection of name-)-.1 F
+(serv)72 348 Q .134(ers from among those listed.)-.15 F .133
+(This has the ef)5.133 F .133
+(fect of spreading the query load among all listed serv)-.25 F .133
+(ers, rather than)-.15 F(ha)72 360 Q .384
+(ving all clients try the \214rst listed serv)-.2 F .384(er \214rst e)
+-.15 F -.15(ve)-.25 G .384(ry time.).15 F .385
+(sets in which disables the modern BIND checking of in-)5.385 F .461
+(coming host names and mail names for in)72 372 R -.25(va)-.4 G .46(lid characters such as underscore \(_\), non-ASCII, or control characters.)
+.25 F .518(sets in This has the ef)72 384 R .518(fect of trying a AAAA query before an A query inside the function, and of mapping IPv4 re-)
+-.25 F .376(sponses in IPv6 `)72 396 R .376(`tunnelled form')-.74 F
+2.876('i)-.74 G 2.876(fn)-2.876 G 2.876(oA)-2.876 G .376
+(AAA records are found b)-2.876 F .375(ut an A record set e)-.2 F 2.875
+(xists. The)-.15 F .375(and k)2.875 F -.15(ey)-.1 G -.1(wo).15 G .375
+(rds are).1 F .379(mutually e)72 408 R(xclusi)-.15 E -.15(ve)-.25 G
+5.379(.I).15 G 2.879(fm)-5.379 G .379(ore than one instance of these k)
+-2.879 F -.15(ey)-.1 G -.1(wo).15 G .38
+(rds is present, the last instance wins.).1 F .38(The k)5.38 F -.15(ey)
+-.1 G -.1(wo).15 G .38(rd of).1 F 2.829(as)72 420 S(ystem')-2.829 E
+2.829<738c>-.55 G .329(le can be o)-2.829 F -.15(ve)-.15 G .328
+(rridden on a per).15 F .328(-process basis by setting the en)-.2 F .328
+(vironment v)-.4 F .328(ariable to a space-separated list)-.25 F .812
+(of search domains.)72 432 R .812(The k)5.812 F -.15(ey)-.1 G -.1(wo).15
+G .812(rd of a system').1 F 3.312<738c>-.55 G .812
+(le can be amended on a per)-3.312 F .812
+(-process basis by setting the en)-.2 F(viron-)-.4 E 1.864(ment v)72 444
+R 1.864(ariable options as e)-.25 F 1.864(xplained abo)-.15 F 2.164 -.15
+(ve u)-.15 H 1.864(nder The k).15 F -.15(ey)-.1 G -.1(wo).15 G 1.864
+(rd and v).1 F 1.864(alue must appear on a single line, and the)-.25 F
+-.1(ke)72 456 S(yw)-.05 E(ord \(e.g., must start the line.)-.1 E(The v)5
+E(alue follo)-.25 E(ws the k)-.25 E -.15(ey)-.1 G -.1(wo).15 G
+(rd, separated by white space.).1 E EP
+%%Trailer
+end
+%%EOF

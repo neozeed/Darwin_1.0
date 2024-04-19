@@ -1,0 +1,24 @@
+/Makefile/1.1.1.1/Sun May  2 03:59:04 1999//Tnetwork_cmds-67
+/Makefile.postamble/1.1.1.1/Sun May  2 03:59:04 1999//Tnetwork_cmds-67
+/Makefile.preamble/1.1.1.1/Sun May  2 03:59:04 1999//Tnetwork_cmds-67
+/PB.project/1.1.1.2/Tue Jan 11 01:50:04 2000//Tnetwork_cmds-67
+/acl.c/1.1.1.1/Sun May  2 03:59:04 1999//Tnetwork_cmds-67
+/acl.h/1.1.1.1/Sun May  2 03:59:04 1999//Tnetwork_cmds-67
+/securenet/1.1.1.1/Sun May  2 03:59:04 1999//Tnetwork_cmds-67
+/securenet.5/1.1.1.1/Sun May  2 03:59:05 1999//Tnetwork_cmds-67
+/yp.h/1.1.1.1/Sun May  2 03:59:05 1999//Tnetwork_cmds-67
+/ypdb.c/1.1.1.1/Sun May  2 03:59:05 1999//Tnetwork_cmds-67
+/ypdb.h/1.1.1.1/Sun May  2 03:59:05 1999//Tnetwork_cmds-67
+/ypdef.h/1.1.1.1/Sun May  2 03:59:05 1999//Tnetwork_cmds-67
+/yplog.c/1.1.1.1/Sun May  2 03:59:05 1999//Tnetwork_cmds-67
+/yplog.h/1.1.1.1/Sun May  2 03:59:05 1999//Tnetwork_cmds-67
+/ypserv.8/1.1.1.1/Sun May  2 03:59:05 1999//Tnetwork_cmds-67
+/ypserv.acl/1.1.1.1/Sun May  2 03:59:05 1999//Tnetwork_cmds-67
+/ypserv.acl.5/1.1.1.1/Sun May  2 03:59:05 1999//Tnetwork_cmds-67
+/ypserv.c/1.1.1.1/Sun May  2 03:59:05 1999//Tnetwork_cmds-67
+/ypserv_db.c/1.1.1.1/Sun May  2 03:59:05 1999//Tnetwork_cmds-67
+/ypserv_proc.c/1.1.1.1/Sun May  2 03:59:05 1999//Tnetwork_cmds-67
+/ypserv_xdr.c/1.1.1.1/Sun May  2 03:59:05 1999//Tnetwork_cmds-67
+/ypserv_xdr_v1.c/1.1.1.1/Sun May  2 03:59:05 1999//Tnetwork_cmds-67
+/ypv1.h/1.1.1.1/Sun May  2 03:59:05 1999//Tnetwork_cmds-67
+D

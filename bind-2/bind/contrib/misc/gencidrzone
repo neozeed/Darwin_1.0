@@ -1,0 +1,286 @@
+#Date:    Wed, 26 Jun 1996 08:03:05 +0800
+#To:      paul@vix.com
+#cc:      andras@dns.net
+#From:    Mathias Koerber <mathias@venus-flytrap.singnet.com.sg>
+#Subject: new gencidrzone
+#
+#Paul. here is a new version of the gencidrzone script for your
+#next BIND distribution. I cleaned it up a lot, added support for
+#options to specify nameservers, SOA values to be put into the files etc.
+#You can now also use arbitrary names for your subdomain.
+#And it finally has a version number :-)
+#
+#rgds
+#
+#---cut here---
+#!/usr/bin/perl
+#
+#$Id: gencidrzone,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+#
+#	gencidrzone - generate zone and include files for 
+#			classless in-addr delegation
+#
+#	(C)Copyright 1996 Mathias Koerber <mathias@singnet.com.sg>
+#	Free to use for all
+#	No warranties, claims etc .. 
+#
+#	generates 2 files:
+#		1. skeleton/sample zonefile for subdomain.
+#		2. include file for parent zone. Include file
+#		   contains: delegation NS records and all CNAME records
+#
+#	see usage below
+#
+#$Log: gencidrzone,v $
+#Revision 1.1.1.1  1999/10/04 22:25:54  wsanchez
+#Import of BIND 8.2.1
+#
+#Revision 8.1  1996/10/25 17:07:57  vixie
+#BIND 4.9.5 T6B
+#
+#Revision 0.93  1996/06/25 23:56:04  mathias
+#cleaned up a bit more
+#
+#Revision 0.92  1996/06/25 23:46:31  mathias
+#more typos fixed :-(
+#
+#Revision 0.91  1996/06/25 23:44:47  mathias
+#minor typos
+#
+#Revision 0.9  1996/06/25 23:42:11  mathias
+#added optios
+#cleaned up generated files
+#now has better usage description
+#
+#
+
+require "newgetopt.pl";
+
+($secs,$min,$hour,$mday,$mon,$year) = localtime();
+$opt_serial = sprintf("%-2.2d%-2.2d%-2.2d01",$year,($mon+1),$mday);
+
+# some defaults
+$opt_primary		= "<your_primary>";
+$opt_contact		= "<zone_contact_address>";
+#@opt_secondary		= ("<your_secondary>");
+$opt_refresh		= 3600;
+$opt_retry		= 1200;
+$opt_expire		= 3600000;
+$opt_minimum		= 86400;
+
+if ((NGetOpt(
+	"subdomain=s",
+	"primary=s",
+	"contact=s",
+	"secondary=s@",
+	"serial=s",
+	"refresh=i",
+	"retry=i",
+	"expire=i",
+	"minimum=i",
+	) == 0) || ($#ARGV != 0)) {
+	print STDERR <<EOF;
+usage $0 [options] <addressblock> 
+
+where: 	<addressblock> is the block in prefix-length notation
+options include:
+	-subdomain <name>	name for the subdomain to 
+				be delegated
+		default: last byte of the first address 
+			in the block (in decimal)
+		example: aaa.bbb.ccc.128/26
+			default:
+				128.ccc.bbb.aaa.in-addr.arpa
+			-subdomain them:
+				them.ccc.bbb.aaa.in-addr.arpa
+	-primary <name>		name of the primary server
+	-secondary <name>	secondary NS (may appear mult. times)
+	-contact <email_addr>	SOA contact address
+		defaults: placeholder strings for these..
+	-serial <number>	default SOA value
+	-refresh <number>		-"-
+	-retry <number>			-"-
+	-expire <number>		-"-
+	-minimum <number>		-"-
+		default: reasonable values for these..
+EOF
+	exit 2;
+	}
+
+@opt_secondary = ("<your_secondary>") if (!@opt_secondary);
+
+#perform some courtesy translations
+$opt_contact =~ tr/\@/./;
+# and some sanity ones
+chop($opt_primary) if ($opt_primary =~ /\.$/);
+chop($opt_contact) if ($opt_contact =~ /\.$/);
+for $i (0 .. $#opt_secondary) {
+	chop($opt_secondary[$i]) if ($opt_secondary[$i] =~ /\.$/);
+	}
+	
+
+($ip,$bits) = split('/',$ARGV[0]);
+($a,$b,$c,$d) = split(/\./,$ip);
+
+if ($bits <= 24) {
+	print "gencidrzone only makes sense for prefixes > 24bits.\n Pls try ag
+ain\n";
+	exit(2);
+	}
+
+$add1 = (($a * (256**3)) + ($b * (256**2)) + ($c * (256**1)) + $d);
+$mb = (2**32)-(2**(32-$bits));
+$mb2 = 2**(32-$bits)-1;
+
+$add2 = ($add1 & $mb);
+$add3 = ($add2 | $mb2);
+
+($fa,$fb,$fc,$fd) = &unp($add2);
+($la,$lb,$lc,$ld) = &unp($add3);
+
+$subdomain = $opt_subdomain ? $opt_subdomain : $fd;
+
+open(SUB,">$subdomain.$fc.$fb.$fa.db");
+open(INC,">$fc.$b.$fa.inc.$subdomain");
+
+print SUB <<"EOF";
+;
+;	CIDRD reverse delegation
+;		for $ARGV[0]
+;		(addresses from $fa.$fb.$fc.$fd to $la.$lb.$lc.$ld)
+;
+;	This is the reverse zone file for the sub-zone 
+;		$subdomain.$fc.$fb.$fa.in-addr.arpa
+;
+;	Your site has been allocated the address range $ARGV[0]
+;		(addresses from $fa.$fb.$fc.$fd to $la.$lb.$lc.$ld)
+;
+;	Since this range is smaller than a classical Class C (/24), 
+;	you cannot be given authority over the full 
+;		$fc.$fb.$fa.in-addr.arpa reverse domain
+;	(you are sharing it with other networks).
+;
+;	For this reason we are only allocating you a subdomain of the 
+;	above reverse domain. This subdomain is called 
+;		$subdomain.$fc.$fb.$fa.in-addr.arpa.
+;
+;	To set up a primary nameserver for this (reverse) domain, you 
+;	will need to add a line
+;
+;	...
+;	primary	$subdomain.$fc.$fb.$fa.in-addr.arpa <zonefile>
+;	...
+;
+;	into your nameserver's named.boot file, where <zonefile> will 
+;	have to be replaced with the path/filename of your zonefile.
+;
+;	You may use this file you are currently reading as the zonefile 
+;	for your reverse domain. Pls remember to make the necessary 
+;	changes:
+;	 ie
+;		- replace the references to <your_primary_nameserver> 
+;		  and <your_contact_address> with the real data, and 
+;		- edit the PTR records as indicated below..
+;
+;	In it you can register the PTR records for your domain. Pls note 
+;	that you cannot use the traditional
+;		XX.$fc.$fb.$fa.in-addr.arpa.	IN PTR	<somehostname>
+;	notation (giving the full reverse domainname on the LHS), 
+;	since you will have to use the delegated subdomain. We advise 
+;	you to use the pre-listed records below, only giving the last 
+;	octet in the host address. Please do *not* change the \$ORIGIN.
+;
+;	Pls note that you can only list addresses from
+;		$fd to $ld
+;	in this file, and that the first and last addresses in your 
+;	allocated block cannot be used for hosts (they are reserved 
+;	for the network and broadcast address respectively).
+;
+;	We have (or will shortly) set up CNAME translations from the
+;		    XX.$fc.$fb.$fa.in-addr.arpa names to the
+;		XX.$subdomain.$fc.$fb.$fa.in-addr.arpa names.
+;
+;	For more information on this allocation scheme, pls see
+;	ftp://ftp.internic.net/internet-drafts/draft-degroot-classless-inaddr-0
+1.txt
+;	
+;	NOTE: pls enter your primary and secondary servers and contact 
+;	address below (don't forget the trailing '.')
+;	>>>     Replace the '\@' in the contact address with '.' !!
+;
+;	CAVEAT ADMINISTRATOR: *never* use '#' as the comment character 
+;	in files used by the nameserver (named.boot, zonefiles, etc). 
+;	The correct comment character is the semicolon (';'). 
+;	named might not work if you use '#' !!!!
+;
+;	IMPORTANT: DO NOT FORGET TO UPDATE THE SERIAL NUMBER 
+;	EACH TIME YOU CHANGE THIS FILE !!!
+;	
+\$ORIGIN $subdomain.$fc.$fb.$fa.in-addr.arpa.
+\@	IN	SOA	$opt_primary. $opt_contact. (
+			$opt_serial
+			$opt_refresh
+			$opt_retry
+			$opt_expire
+			$opt_minimum )
+	IN	NS	$opt_primary.
+EOF
+for $i (@opt_secondary) {
+	print SUB "\tIN\tNS\t$i.\n";
+	}
+print SUB <<"EOF";
+;------
+;
+;	note that you cannot use the first 
+;		($fa.$fb.$fc.$fd = network address)
+;	and last ($la.$lb.$lc.$ld = broadcast) address 
+;	for hosts (PTR).!!
+;
+;	The individual PTR records below are still commented out.
+;	fill in the correct hostnames and remove the leading ';'.
+;	We advise that you only uncomment the PTR record you 
+;	really need.
+;
+EOF
+
+print INC <<"EOF";
+;
+;	delegation for $ARGV[0]
+;		(addresses from $fa.$fb.$fc.$fd to $la.$lb.$lc.$ld)
+;
+;	this file should be "include'd" in the 
+;		$fc.$fb.$fa.in-addr.arpa zonefile
+;
+$subdomain	IN	NS	$opt_primary.
+EOF
+for $i (@opt_secondary) {
+	print INC "\tIN\tNS\t$i.\n";
+	}
+print INC "\n";
+
+for $dd (($fd+1) .. ($ld-1)) {
+	print SUB ";$dd	IN	PTR	<some_hostname_$dd>.\n";
+	print INC "$dd	IN	CNAME	$dd.$subdomain.$fc.$fb.$fa.in-addr.arpa
+.\n";
+	}
+
+close(SUB);
+close(INC);
+
+sub unp {
+	local($o) = $_[0];
+	local($r);
+	local($a,$b,$c,$d);
+
+	$d = $o & 0x000000ff;
+        $o >>= 8;
+	$c = $o & 0x000000ff;
+        $o >>= 8;
+	$b = $o & 0x000000ff;
+        $o >>= 8;
+	$a = $o & 0x000000ff;
+
+	return($a,$b,$c,$d);
+	}
+
+

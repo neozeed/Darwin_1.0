@@ -1,0 +1,60 @@
+/ACKNOWLEDGMENT/1.1.1.1/Fri Apr 23 00:48:35 1999//Tgawk-7
+/COPYING/1.1.1.1/Fri Apr 23 00:48:35 1999//Tgawk-7
+/ChangeLog/1.1.1.2/Thu Sep  2 06:04:54 1999//Tgawk-7
+/FUTURES/1.1.1.2/Thu Sep  2 06:04:54 1999//Tgawk-7
+/INSTALL/1.1.1.1/Fri Apr 23 00:48:35 1999//Tgawk-7
+/LIMITATIONS/1.1.1.1/Fri Apr 23 00:48:35 1999//Tgawk-7
+/Makefile.in/1.1.1.4/Thu Sep  2 06:06:36 1999//Tgawk-7
+/NEWS/1.1.1.2/Thu Sep  2 06:04:54 1999//Tgawk-7
+/PB.project/1.1.1.1/Fri Apr 23 00:49:38 1999//Tgawk-7
+/PORTS/1.1.1.2/Thu Sep  2 06:04:55 1999//Tgawk-7
+/POSIX.STD/1.1.1.2/Thu Sep  2 06:04:55 1999//Tgawk-7
+/PROBLEMS/1.1.1.1/Fri Apr 23 00:48:36 1999//Tgawk-7
+/README/1.1.1.2/Thu Sep  2 06:04:55 1999//Tgawk-7
+/acconfig.h/1.1.1.2/Thu Sep  2 06:04:55 1999//Tgawk-7
+/aclocal.m4/1.1.1.2/Thu Sep  2 06:04:55 1999//Tgawk-7
+/alloca.c/1.1.1.1/Fri Apr 23 00:48:36 1999//Tgawk-7
+/array.c/1.1.1.2/Thu Sep  2 06:04:55 1999//Tgawk-7
+/awk.h/1.1.1.2/Thu Sep  2 06:04:56 1999//Tgawk-7
+/awk.y/1.1.1.2/Thu Sep  2 06:04:56 1999//Tgawk-7
+/awktab.c/1.1.1.2/Thu Sep  2 06:04:56 1999//Tgawk-7
+/builtin.c/1.1.1.2/Thu Sep  2 06:04:56 1999//Tgawk-7
+/config.guess/1.2/Wed Jan 26 05:57:38 2000//Tgawk-7
+/config.sub/1.2/Wed Jan 26 05:57:38 2000//Tgawk-7
+/configh.in/1.1.1.3/Thu Sep  2 06:04:57 1999//Tgawk-7
+/configure/1.1.1.4/Thu Sep  2 06:06:38 1999//Tgawk-7
+/configure.in/1.1.1.3/Thu Sep  2 06:04:57 1999//Tgawk-7
+/custom.h/1.1.1.2/Thu Sep  2 06:04:57 1999//Tgawk-7
+/dfa.c/1.1.1.1/Fri Apr 23 00:48:37 1999//Tgawk-7
+/dfa.h/1.1.1.1/Fri Apr 23 00:48:37 1999//Tgawk-7
+/eval.c/1.1.1.2/Thu Sep  2 06:04:57 1999//Tgawk-7
+/field.c/1.1.1.2/Thu Sep  2 06:04:58 1999//Tgawk-7
+/gawkmisc.c/1.1.1.2/Thu Sep  2 06:04:58 1999//Tgawk-7
+/getopt.c/1.1.1.1/Fri Apr 23 00:48:37 1999//Tgawk-7
+/getopt.h/1.1.1.1/Fri Apr 23 00:48:37 1999//Tgawk-7
+/getopt1.c/1.1.1.1/Fri Apr 23 00:48:37 1999//Tgawk-7
+/install-sh/1.1.1.1/Fri Apr 23 00:48:37 1999//Tgawk-7
+/io.c/1.1.1.2/Thu Sep  2 06:04:58 1999//Tgawk-7
+/main.c/1.1.1.2/Thu Sep  2 06:04:58 1999//Tgawk-7
+/missing.c/1.1.1.1/Fri Apr 23 00:48:38 1999//Tgawk-7
+/mkinstalldirs/1.1.1.1/Fri Apr 23 00:48:38 1999//Tgawk-7
+/msg.c/1.1.1.2/Thu Sep  2 06:04:58 1999//Tgawk-7
+/node.c/1.1.1.2/Thu Sep  2 06:04:58 1999//Tgawk-7
+/patchlevel.h/1.1.1.2/Thu Sep  2 06:04:59 1999//Tgawk-7
+/protos.h/1.1.1.1/Fri Apr 23 00:48:38 1999//Tgawk-7
+/random.c/1.1.1.1/Fri Apr 23 00:48:38 1999//Tgawk-7
+/random.h/1.1.1.1/Fri Apr 23 00:48:38 1999//Tgawk-7
+/re.c/1.1.1.1/Fri Apr 23 00:48:38 1999//Tgawk-7
+/regex.c/1.1.1.3/Thu Sep  2 06:04:59 1999//Tgawk-7
+/regex.h/1.1.1.1/Fri Apr 23 00:48:38 1999//Tgawk-7
+/stamp-h.in/1.1.1.4/Thu Sep  2 06:06:42 1999//Tgawk-7
+/version.c/1.1.1.1/Fri Apr 23 00:48:39 1999//Tgawk-7
+D/README_d////
+D/atari////
+D/awklib////
+D/doc////
+D/missing////
+D/pc////
+D/posix////
+D/test////
+D/vms////

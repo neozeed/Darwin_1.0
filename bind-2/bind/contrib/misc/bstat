@@ -1,0 +1,493 @@
+Delivery-Date: Sun, 21 May 1995 12:16:32 -0700
+Return-Path: pma@sdd.hp.com
+Received: by gw.home.vix.com id AA14412; Sun, 21 May 95 12:16:31 -0700
+Received: from hpsdleh6.sdd.hp.com by hpsdlo.sdd.hp.com with ESMTP
+	($Revision: 1.1.1.1 $/15.5+IOS 3.21+sdd) id AA097123789; Sun, 21 May 1995 12:16:30 -0700
+Received: from localhost by hpsdleh6.sdd.hp.com with SMTP
+	(1.37.109.16/15.5+IOS 3.21+sdd) id AA189723789; Sun, 21 May 1995 12:16:29 -0700
+Message-Id: <199505211916.AA189723789@hpsdleh6.sdd.hp.com>
+To: paul@vix.com
+Subject: new stats program - ignore earlier
+Date: Sun, 21 May 1995 12:16:29 -0700
+From: Paul Albitz <pma@sdd.hp.com>
+
+
+I added -a (show all stats) to the previous one I sent you 
+and that lead to something interesting ...
+
+This is the top of the stats you sent me.
+You've probably already seen this, but the early entries
+are weird.  It looks like the IP addr for logging purposes 
+gets messed up or the IP addr really *is* messed up.
+
+0.0.0.0		
+		   748 responses we had to forward
+		    31 responses sent to them
+		  1730 responses forwarded to them
+		   829 server failure responses sent to them
+		    31 queries answered from our cache
+		     3 negative responses sent to them
+0.4.8.84	
+		     1 inverse query
+		    23 system queries sent to them
+		    19 queries forwarded to them
+		     1 response forwarded to them
+		     7 duplicate queries sent to them
+0.4.130.195	
+		     1 query forwarded to them
+		     3 duplicate queries sent to them
+2.78.83.4	
+		    10 queries forwarded to them
+3.21.4.133	
+		    11 duplicate queries sent to them
+3.21.24.103	
+		     5 queries forwarded to them
+		     4 responses forwarded to them
+		     2 duplicate queries sent to them
+3.21.24.104	
+		     1 query forwarded to them
+10.0.0.30	
+		    72 queries
+		     4 queries we had to forward
+		     1 response we had to forward
+		    68 responses sent to them
+		     4 responses forwarded to them
+		    72 queries from a resolver
+		    14 queries answered from our cache
+		     3 negative responses sent to them
+
+paul
+============
+#!/usr/bin/perl
+
+#NAME
+#
+#    bstat - BIND statistics tool
+#    $Date: 1999/10/04 22:25:54 $
+#
+#SYNOPSIS
+#
+#    bstat [-aeilnuz] -f <statistics-file> -t <threshold>
+#
+#       -a show all stats
+#       -e show any errors
+#       -f use <statistics-file> instead of 
+#          /usr/tmp/named.stats or /var/tmp/named.stats
+#       -i report who sent us an inverse query
+#       -l report who sent us lame delegations
+#       -n don't look up names for IP addresses
+#       -t only report counts above <threshold>
+#       -u report which machines use this name server
+#       -z report who requested a zone transfer
+
+require 'sys/socket.ph';
+
+# Various defaults
+$All_stats = 0;
+$By_name = 1;
+$Error_cases = 0;
+$Inverse_query = 0;
+$Lame_delegations = 0;
+$Stats_file1 = "/usr/tmp/named.stats";
+$Stats_file2 = "/var/tmp/named.stats";
+$Threshold = 0;
+$Uses_this_server = 0;
+$Requested_zone_transfer = 0;
+
+if($#ARGV < 0){
+    printf STDERR "Usage: bstat [-aeilnuz] -f <statistics-file> -t <threshold>\n";
+    printf STDERR "             -a show all stats\n";
+    printf STDERR "             -e show any errors\n";
+    printf STDERR "             -f use <statistics-file> instead of \n";
+    printf STDERR "                /usr/tmp/named.stats or /var/tmp/named.stats\n";
+    printf STDERR "             -i report who sent us an inverse query\n";
+    printf STDERR "             -l report who sent us lame delegations\n";
+    printf STDERR "             -n don't look up names for IP addresses\n";
+    printf STDERR "             -t only report counts above <threshold>\n";
+    printf STDERR "             -u report which machines use this name server\n";
+    printf STDERR "             -z report who requested a zone transfer\n";
+    exit;
+}
+
+&PARSEARGS(@ARGV);
+
+open(STATS, $Stats_file1) || open(STATS, $Stats_file2) || die "can not open $Stats_file1 or $Stats_file2";
+
+$inheader = 1;
+$globalstats = 0;
+LINE: while(<STATS>){
+
+    # Skip all lines until individual host stats
+    if (/(Global)/) {
+        $inheader = 0;
+        $globalstats = 1;
+	next LINE;
+    }
+    if ($inheader) {
+	next LINE;
+    }
+
+    if(/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/){
+        # Save IP addr
+        $Addrpacked = pack('C4', split(/\./, $1));
+        $Addrstring = $1;
+        next LINE;
+    } 
+
+    if (/^	/){
+        
+        # skip global stats line
+        if($globalstats){
+            $globalstats = 0;
+            next LINE;
+        }
+
+        # Grab stats
+        ($RQ, $RR, $RIQ, $RNXD, $RFwdQ, $RFwdR, $RDupQ, $RDupR, $RFail, $RFErr, $RErr, $RTCP, $RAXFR, $RLame, $ROpts, $SSysQ, $SAns, $SFwdQ, $SFwdR, $SDupQ, $SFail, $SFErr, $SErr, $RNotNsQ, $SNaAns, $SNXD) = split(' ', $_, 26);
+    } else {
+        # Ignore unexpected lines
+        next LINE;
+    }
+
+    # check filter criterea
+    if ($All_stats){
+        &SHOWSTATS();
+        next LINE; 
+    }
+
+    if (($Lame_delegations || $Error_cases) && ($RLame > $Threshold)){
+        &SHOWHOST();
+        if($RLame == 1){
+            printf "%6d lame delegation\n", $RLame;
+        } else {
+            printf "%6d lame delegations\n", $RLame;
+        }
+    }
+
+    if ($Error_cases && ($RFail > $Threshold)){
+        &SHOWHOST();
+        if($RFail == 1){
+            printf "%6d server failure response to a query we made\n", $RFail;
+        } else {
+            printf "%6d server failure responses to queries we made\n", $RFail;
+        }
+    }
+
+    if ($Error_cases && ($RFErr > $Threshold)){
+        &SHOWHOST();
+        if($RFErr == 1){
+            printf "%6d format error response to a query we made\n", $RFErr;
+        } else {
+            printf "%6d format error responses to queries we made\n", $RFErr;
+        }
+    }
+
+    if ($Error_cases && ($SFErr > $Threshold)){
+        &SHOWHOST();
+        if($SFErr == 1){
+            printf "%6d format error response sent to them\n", $SFErr;
+        } else {
+            printf "%6d format error responses sent to them\n", $SFErr;
+        }
+    }
+
+    if ($Error_cases && ($SErr > $Threshold)){
+        &SHOWHOST();
+        if($SErr == 1){
+            printf "%6d sendto() call failed\n", $SErr;
+        } else {
+            printf "%6d sendto() calls failed\n", $SErr;
+        }
+    }
+
+    if ($Uses_this_server && ($RNotNsQ > $Threshold)){
+        &SHOWHOST();
+        if($RNotNsQ == 1){
+            printf "%6d query from a resolver\n", $RNotNsQ;
+        } else {
+            printf "%6d queries from a resolver\n", $RNotNsQ;
+        }
+    }
+
+    if ($Inverse_query && ($RIQ > $Threshold)){
+        &SHOWHOST();
+        if($RIQ == 1){
+            printf "%6d inverse query\n", $RIQ;
+        } else {
+            printf "%6d inverse queries\n", $RIQ;
+        }
+    }
+
+    if ($Requested_zone_transfer && ($RAXFR > $Threshold)){
+        &SHOWHOST();
+        if($RAXFR == 1){
+            printf "%6d zone transfer request\n", $RAXFR;
+        } else {
+            printf "%6d zone transfer requests\n", $RAXFR;
+        }
+    }
+}
+
+sub SHOWHOST {
+    local($length);
+
+    if($By_name){
+        ($name, $rest) = gethostbyaddr($Addrpacked, &AF_INET);
+        if($name) {
+          $host = $name;
+        } else {
+          $host = $Addrstring;
+        }
+    } else {
+        $host = $Addrstring;
+    }
+
+    printf "%s\t", $host;
+
+    # length is to the first tab boundary
+    $length = 8 * (int(length($host)/8) + 1);
+
+    if($By_name){
+        $Column = 24;
+    } else {
+        $Column = 16;
+    }
+    while ($length < $Column) {
+        printf "\t";
+        $length += 8;
+    }
+}
+
+sub SHOWSTATS {
+        &SHOWHOST();
+        printf "\n";
+
+        if($Column == 24){
+            $indent = "\t\t\t";
+        } else {
+            $indent = "\t\t";
+        }
+
+        if($RQ > $Threshold){
+            if($RQ == 1){
+                printf "%s%6d query\n", $indent, $RQ;
+            } else {
+                printf "%s%6d queries\n", $indent, $RQ;
+            }
+        }
+        if($RR > $Threshold){
+            if($RR == 1){
+                printf "%s%6d answer\n", $indent, $RR;
+            } else {
+                printf "%s%6d answers\n", $indent, $RR;
+            }
+        }
+        if($RIQ > $Threshold){
+            if($RIQ == 1){
+                printf "%s%6d inverse query\n", $indent, $RIQ;
+            } else {
+                printf "%s%6d inverse queries\n", $indent, $RIQ;
+            }
+        }
+        if($RNXD > $Threshold){
+            if($RNXD == 1){
+                printf "%s%6d negative response\n", $indent, $RNXD;
+            } else {
+                printf "%s%6d negative responses\n", $indent, $RNXD;
+            }
+        }
+        if($RFwdQ > $Threshold){
+            if($RFwdQ == 1){
+                printf "%s%6d query we had to forward\n", $indent, $RFwdQ;
+            } else {
+                printf "%s%6d queries we had to forward\n", $indent, $RFwdQ;
+            }
+        }
+        if($RFwdR > $Threshold){
+            if($RFwdR == 1){
+                printf "%s%6d response we had to forward\n", $indent, $RFwdR;
+            } else {
+                printf "%s%6d responses we had to forward\n", $indent, $RFwdR;
+            }
+        }
+        if($RDupQ > $Threshold){
+            if($RDupQ == 1){
+                printf "%s%6d duplicate query\n", $indent, $RDupQ;
+            } else {
+                printf "%s%6d duplicate queries\n", $indent, $RDupQ;
+            }
+        }
+        if($RDupR > $Threshold){
+            if($RDupR == 1){
+                printf "%s%6d duplicate response\n", $indent, $RDupR;
+            } else {
+                printf "%s%6d duplicate responses\n", $indent, $RDupR;
+            }
+        }
+        if($RFail > $Threshold){
+            if($RFail == 1){
+                printf "%s%6d server failure response to a query we made\n", 
+                                                            $indent, $RFail;
+            } else {
+                printf "%s%6d server failure responses to queries we made\n", 
+                                                            $indent, $RFail;
+            }
+        }
+        if($RFErr > $Threshold){
+            if($RFErr == 1){
+                printf "%s%6d format error response to a query we made\n", 
+                                                            $indent, $RFErr;
+            } else {
+                printf "%s%6d format error responses to queries we made\n", 
+                                                            $indent, $RFErr;
+            }
+        }
+        if($RErr > $Threshold){
+            if($RErr == 1){
+                printf "%s%6d error response to a query we made\n", $indent, $RErr;
+            } else {
+                printf "%s%6d error responses to queries we made\n", $indent, $RErr;
+            }
+        }
+        if($RTCP > $Threshold){
+            if($RTCP == 1){
+                printf "%s%6d query using TCP instead of UDP\n", $indent, $RTCP;
+            } else {
+                printf "%s%6d queries using TCP instead of UDP\n", $indent, $RTCP;
+            }
+        }
+        if($RAXFR > $Threshold){
+            if($RAXFR == 1){
+                printf "%s%6d zone transfer request\n", $indent, $RAXFR;
+            } else {
+                printf "%s%6d zone transfer requests\n", $indent, $RAXFR;
+            }
+        }
+        if($RLame > $Threshold){
+            if($RLame == 1){
+                printf "%s%6d lame delegation\n", $indent, $RLame;
+            } else {
+                printf "%s%6d lame delegations\n", $indent, $RLame;
+            }
+        }
+        if($ROpts > $Threshold){
+            if($ROpts == 1){
+                printf "%s%6d response with IP options\n", $indent, $ROpts;
+            } else {
+                printf "%s%6d responses with IP options\n", $indent, $ROpts;
+            }
+        }
+        if($SSysQ > $Threshold){
+            if($SSysQ == 1){
+                printf "%s%6d system query sent to them\n", $indent, $SSysQ;
+            } else {
+                printf "%s%6d system queries sent to them\n", $indent, $SSysQ;
+            }
+        }
+        if($SAns > $Threshold){
+            if($SAns == 1){
+                printf "%s%6d response sent to them\n", $indent, $SAns;
+            } else {
+                printf "%s%6d responses sent to them\n", $indent, $SAns;
+            }
+        }
+        if($SFwdQ > $Threshold){
+            if($SFwdQ == 1){
+                printf "%s%6d query forwarded to them\n", $indent, $SFwdQ;
+            } else {
+                printf "%s%6d queries forwarded to them\n", $indent, $SFwdQ;
+            }
+        }
+        if($SFwdR > $Threshold){
+            if($SFwdR == 1){
+                printf "%s%6d response forwarded to them\n", $indent, $SFwdR;
+            } else {
+                printf "%s%6d responses forwarded to them\n", $indent, $SFwdR;
+            }
+        }
+        if($SDupQ > $Threshold){
+            if($SDupQ == 1){
+                printf "%s%6d duplicate query sent to them\n", $indent, $SDupQ;
+            } else {
+                printf "%s%6d duplicate queries sent to them\n", $indent, $SDupQ;
+            }
+        }
+        if($SFail > $Threshold){
+            if($SFail == 1){
+                printf "%s%6d server failure response sent to them\n", $indent, $SFail;
+            } else {
+                printf "%s%6d server failure responses sent to them\n", $indent, $SFail;
+            }
+        }
+        if($SFErr > $Threshold){
+            if($SFErr == 1){
+                printf "%s%6d format error response sent to them\n", $indent, $SFErr;
+            } else {
+                printf "%s%6d format error responses sent to them\n", $indent, $SFErr;
+            }
+        }
+        if($SErr > $Threshold){
+            if($SErr == 1){
+                printf "%s%6d sendto() call failed\n", $indent, $SErr;
+            } else {
+                printf "%s%6d sendto() calls failed\n", $indent, $SErr;
+            }
+        }
+        if($RNotNsQ > $Threshold){
+            if($RNotNsQ == 1){
+                printf "%s%6d query from a resolver\n", $indent, $RNotNsQ;
+            } else {
+                printf "%s%6d queries from a resolver\n", $indent, $RNotNsQ;
+            }
+        }
+        if($SNaAns > $Threshold){
+            if($SNaAns == 1){
+                printf "%s%6d query answered from our cache\n", $indent, $SNaAns;
+            } else {
+                printf "%s%6d queries answered from our cache\n", $indent, $SNaAns;
+            }
+        }
+        if($SNXD > $Threshold){
+            if($SNXD == 1){
+                printf "%s%6d negative response sent to them\n", $indent, $SNXD;
+            } else {
+                printf "%s%6d negative responses sent to them\n", $indent, $SNXD;
+            }
+        }
+}
+
+sub PARSEARGS {
+    local(@args) = @_;
+    local($i);
+
+    $i = 0;
+    while ($i <= $#args){
+	$option = $args[$i];
+	if($option eq "-f"){
+            $Stats_file1 = $args[++$i];
+        } elsif ($option eq "-a") {
+            $All_stats = 1;
+        } elsif ($option eq "-e") {
+            $Error_cases = 1;
+        } elsif ($option eq "-i") {
+            $Inverse_query = 1;
+        } elsif ($option eq "-l") {
+            $Lame_delegations = 1;
+        } elsif ($option eq "-n") {
+            $By_name = 0;
+        } elsif ($option eq "-t") {
+            $Threshold = $args[++$i];
+        } elsif ($option eq "-u") {
+            $Uses_this_server = 1;
+        } elsif ($option eq "-z") {
+            $Requested_zone_transfer = 1;
+	} else {
+	    if($option =~ /^-.*/){
+		print STDERR "Unknown option: $option ... ignored.\n";
+	    }
+	}
+	$i++;
+    }
+    
+}
+

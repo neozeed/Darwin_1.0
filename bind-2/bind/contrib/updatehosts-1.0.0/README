@@ -1,0 +1,15 @@
+@(#) README 1.4 98/12/21 @(#)
+
+Updatehosts nameserver configuration system.  Release 1.0.0.
+
+The updatehosts package enables the management of DNS tables by using a
+friendlier format than the standard zone file format. One important
+benefit of this system is all host related information can be stored in one
+place and system administrators which employ multiple nameservers such as
+DNS and NIS can maintain all host related information in a single set of
+relational files.
+
+See the file INSTALL for installation instructions.
+
+See the file OVERVIEW for an overview of the system design and
+architecture.

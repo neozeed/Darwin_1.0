@@ -1,0 +1,116 @@
+#!/usr/local/bin/perl
+{
+use Msql;
+
+$host = "";
+$dynamic = 0;
+
+@namefile = ();
+
+if ( @ARGV < 3 ) {
+    print "usage: read_dnswalk databasename domain filename [-hhost] [-sdynamic]\n";
+    exit(1);
+};
+
+$dbname = shift;
+$domain = shift;
+$namefile = shift;
+
+while (@ARGV) {
+    $ack = shift;
+    if ( $ack =~ m/^-h\S+/ ) {
+	($host = $ack ) =~ s/^-h//;
+    };
+    if ( $ack =~ m/^-s\S+/ ) {
+	($dynamic = $ack ) =~ s/^-s//;
+    };
+};
+
+#print "gettoff: $dbname $domain $namefile $host $dynamic\n";
+#exit(1);
+
+($dbh = Connect Msql $host, $dbname)
+    or die("Can't connect: $Msql::db_errstr\n");
+
+$stmt = "select dns_entry from control where one_row = 'A'";
+($last = Query $dbh $stmt) or warn "Error $Msql::db_errstr\n$stmt\n";
+$id = $row[0] if (@row=$last->FetchRow());
+
+$stmt = "select zoneid from msql_zones where name like '$domain%%'";
+($last = Query $dbh $stmt) or warn "Error $Msql::db_errstr\n$stmt\n";
+$zone = $row[0] if (@row=$last->FetchRow());
+
+$asstime = time();
+$domain =~ tr/A-Z/a-z/;
+
+open(AXFR,"cat $namefile |") || die ("cat: $!\n");
+$foundpar=0;
+$readsoa=0;
+while ($string=<AXFR>){
+    chop($string);
+    $mbad = 0;
+    $mbad++ if ($string eq "");
+    $mbad++ if ($string =~ /^;/);
+    if (! $mbad ){
+	if ($foundpar){
+	    ($junk, $num,$posspar, $junk ) = split(/\s+/,$string);
+	    $soatable .= " $num";
+	    if ("$posspar" eq ")"){
+		$foundpar = 0;
+		$soatable .= " )";
+		($fqdn,$ttl,$type,$info) = split(/\s+/,$soatable,4);
+	    };   
+	} else {
+	    ($fqdn,$ttl,$type,$info) = split(/\s+/,$string,4);
+	    if ($type =~ m/SOA/){
+		$foundpar++;
+		$soatable = "$fqdn $ttl $type $info";
+	    } elsif ($fqdn eq ""){
+		$mbad++;
+	    }
+	};
+	if (! $mbad  && !$foundpar) {
+	    $fqdn =~ tr/A-Z/a-z/;
+	    $import=0;
+	    $gbad=0;
+	    if ($type =~ m/NS/){ 
+		$gbad++ if ($fqdn !~ m/^$domain/);
+	    };
+	    if ($type =~ m/SOA/){ 
+		$gbad++ if ($readsoa);
+	    };
+	    if (! $gbad){
+		if ( $fqdn =~ m/^$domain/ ){
+		    $hostname = "@";
+		    if ($type =~ m/SOA/){ 
+			$readsoa++;
+			$import = 1;
+		    };
+		    $import = 2 if ($type =~ m/NS/);
+		    $import = 3 if (! $import);
+		} else {
+		    ($hostname, $junk) = split(/\./,$fqdn,2);
+		    while ($junk !~ m/^$domain/ ){
+			($tmp, $junk) = split(/\./,$junk,2);
+			$hostname .= ".$tmp";
+		    };
+		    $import = 4;
+		};
+		$id++;
+		$dynamic = 0 if !defined($dynamic);
+		($info1,$info2) = split(/\t/,$info);
+		if ($info2 ne ""){
+		    $info = "\"$info1\"\t\"$info2\"";
+		};
+		$stmt = "insert into msql_dns (dns_entry, zoneid, machine, class, type, info, assigned_time, importance, dynamic) values ( $id, $zone, '$hostname', 'IN', '$type', '$info',$asstime, $import, $dynamic)";
+		($last = Query $dbh $stmt) or warn "Error $Msql::db_errstr\n$stmt\n";	    
+	    };
+	};
+    };
+};
+close(AXFR);
+$stmt = "update control set dns_entry = $id where one_row = 'A'";
+($last = Query $dbh $stmt) or warn "Error $Msql::db_errstr\n$stmt\n";
+
+}
+

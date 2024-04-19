@@ -1,0 +1,23 @@
+fromkchr "kchrs/kchr.Flemish" y /sandbox/keymaps/keymappings/Belge.keymapping 5 >>/tmp/kl
+fromkchr "kchrs/kchr.Canadian French" y /sandbox/keymaps/keymappings/Canadien.keymapping 5 >>/tmp/kl
+fromkchr "kchrs/kchr.Canadian - CSA" y /sandbox/keymaps/keymappings/Canadian-CSA.keymapping 5 >>/tmp/kl
+fromkchr "kchrs/kchr.Canadian - ISO" y /sandbox/keymaps/keymappings/Canadian-ISO.keymapping 5 >>/tmp/kl
+
+fromkchr "kchrs/kchr.Danish" y /sandbox/keymaps/keymappings/Dansk.keymapping 5 >>/tmp/kl
+fromkchr "kchrs/kchr.German" y /sandbox/keymaps/keymappings/Deutsch.keymapping  5 >>/tmp/kl
+fromkchr "kchrs/kchr.Spanish" y /sandbox/keymaps/keymappings/Espanol.keymapping 5 >>/tmp/kl
+fromkchr "kchrs/kchr.French" y /sandbox/keymaps/keymappings/Francais.keymapping 5 >>/tmp/kl
+
+fromkchr "kchrs/kchr.Italian" y /sandbox/keymaps/keymappings/Italiano.keymapping 5 >>/tmp/kl
+fromkchr "kchrs/kchr.Brazilian" y /sandbox/keymaps/keymappings/LatinoAmericano.keymapping 5 >>/tmp/kl
+fromkchr "kchrs/kchr.Dutch" y /sandbox/keymaps/keymappings/Netherlands.keymapping 5 >>/tmp/kl
+fromkchr "kchrs/kchr.Norwegian" y /sandbox/keymaps/keymappings/Norsk.keymapping 5 >>/tmp/kl
+
+fromkchr "kchrs/kchr.Spanish" y /sandbox/keymaps/keymappings/Portugues.keymapping 5 >>/tmp/kl
+fromkchr "kchrs/kchr.Swiss German" y /sandbox/keymaps/keymappings/Schweizer.keymapping 5 >>/tmp/kl
+fromkchr "kchrs/kchr.Swiss French" y /sandbox/keymaps/keymappings/Suisse.keymapping 5 >>/tmp/kl
+fromkchr "kchrs/kchr.Swedish" y /sandbox/keymaps/keymappings/Svenska.keymapping 5 >> /tmp/kl
+
+fromkchr "kchrs/kchr.British" y /sandbox/keymaps/keymappings/UK.keymapping 5 >> /tmp/kl
+fromkchr "kchrs/kchr.U.S." n /sandbox/keymaps/keymappings/USA.keymapping 2 >> /tmp/kl
+

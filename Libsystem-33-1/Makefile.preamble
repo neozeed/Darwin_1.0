@@ -1,0 +1,15 @@
+override DUMMY_SYMBOL_FILE =
+override DUMMY_SYMBOL_INFO_FILE =
+BEFORE_INSTALL += profile debug
+PROFILE_BUILD_LIBS := $(foreach x, $(LIBS), ${x}_profile)
+DEBUG_BUILD_LIBS := $(foreach x, $(LIBS), ${x}_debug)
+PRODUCTS += $(PRODUCT)/$(NAME)$(PROFILE_SUFFIX)$(DLL_EXT)
+PRODUCTS += $(PRODUCT)/$(NAME)$(DEBUG_SUFFIX)$(DLL_EXT)
+
+ifeq "$(BUILD_TYPE)" "profile"
+LIBS =
+else
+ifeq "$(BUILD_TYPE)" "debug"
+LIBS =
+endif
+endif

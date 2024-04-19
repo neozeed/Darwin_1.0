@@ -1,0 +1,341 @@
+#! /bin/sh
+:
+#
+# makeshlib - installs libresolv_pic.a into SunOS 4.x or *BSD libc.so
+#
+#ident	   "@(#)bind/shres/netbsd:$Name: bind-2 $:$Id: makeshlib,v 1.1.1.1 1999/10/04 22:24:51 wsanchez Exp $"
+#
+# by Chris Davis <ckd@kei.com>
+# based on code by Piete Brooks <pb@cl.cam.ac.uk>
+#              and Dave Morrison <drmorris@mit.edu>
+# with additions by Greg A. Woods <woods@planix.com>
+# NetBSD support added by Matt Ragan <matt@ibmoto.com>
+# code cleanup and more error checking by Greg A. Woods <woods@planix.com>
+#
+# NOTE:  BIND doesn't build a profiled libresolv_p.a, but probably should.
+
+#
+# bindtree should be set to the root directory of the BIND distribution,
+# or you can have this script attempt to determine the location dynamically
+#
+#bindtree=/usr/obj/local/bind
+
+#
+# SHLIBDIR should be set to the location of your shared object file
+# (libc_pic.a and/or libcs5_pic.a).  If it is in the default location,
+# they will be found automatically.
+#
+#SHLIBDIR=/usr/lib/shlib.etc
+
+#
+# USELORDER will determine whether, under SunOS, that the lorder-sparc
+# file under SHLIBDIR will be user and modified (0), or whether the file
+# will be regenerated dynamically (1).  Purists would say that modifying the
+# lorder-sparc file will reduce paging, but regenerating the file with
+# lorder will do an adequate job of arranging the objects.  Under NetBSD,
+# this option doesn't do anything, since the shared libraries are
+# arranged using lorder when they are built, anyways.
+#
+USELORDER=0
+
+#
+# END OF USER CONFIGURABLE OPTIONS
+#
+
+extract_arch ()
+{
+	ARCHIVE=$1
+	DIRECTORY=$2
+
+	if [ ! -r $SHLIBDIR/$ARCHIVE ] ; then
+		echo "The shared object archive, $ARCHIVE, does not exist in the" >&2
+		echo "\$SHLIBDIR directory, $SHLIBDIR, or is not readable.  Please check" >&2
+		echo "the file and/or path and run this script again." >&2
+		exit 1
+	fi
+
+	if [ -r $DIRECTORY -a ! -d $DIRECTORY ] ; then
+		echo "Weird.  $DIRECTORY wasn't a directory..."
+		rm -f $DIRECTORY
+	elif [ -d $DIRECTORY ] ; then
+		echo "Cleaning up $DIRECTORY directory..."
+		rm -rf $DIRECTORY
+	fi
+
+	if mkdir $DIRECTORY; then
+		:
+	else
+		echo "Unable to create the \'$DIRECTORY\' directory under the current directory." >&2
+		exit 1
+	fi
+
+	# Extract the files to the tmp directory in a subshell
+
+	(
+		if cd $DIRECTORY ; then
+			:
+		else
+			echo "Unable to change directories to the \'$DIRECTORY\' directory." >&2
+			exit 1
+		fi
+
+		echo "Extracting object files from the shared object archive..."
+
+		ar x $SHLIBDIR/$ARCHIVE
+
+		# Patch up the files and filenames that need patching up.
+
+		case "${arch}" in
+		SunOS)
+			for i in *.; do
+				mv $i ${i}o
+			done
+			;;
+		esac
+
+		echo "Deleting old resolver files..."
+
+		rm -f $JUNKOBJS
+
+		# Extract the shared objects from the BIND distribution
+
+		echo "Unpacking new resolver files..."
+
+		if [ -f $bindtree/shres/netbsd/libresolv_pic.a ]; then
+			ar x $bindtree/shres/netbsd/libresolv_pic.a
+			rm -f __.SYMDEF
+		fi
+	)
+
+}
+
+generate_lorder ()
+{
+	case "${arch}" in
+	SunOS)
+		if [ $USELORDER -eq 0 -a -f $SHLIBDIR/lorder-sparc ]; then
+			sed -f lorder-sparc.sed /usr/lib/shlib.etc/lorder-sparc >lorder.tmp
+			$SHLIBDIR/objsort lorder.tmp $1 > lorder.$1
+			rm -f lorder.tmp
+		else
+			lorder $1/*.o | tsort > lorder.$1 2>/dev/null
+		fi
+		;;
+	NetBSD|BSD/386)
+		lorder $1/*.so $1/*.o | tsort > lorder.$1 2>/dev/null
+		;;
+	esac
+}
+
+OPATH=$PATH
+PATH=/usr/bin:/usr/etc:/usr/sbin:/sbin:/usr/ucb:${PATH} ; export PATH
+arch=`uname -s`
+PATH=$OPATH ; export PATH
+
+case "${arch}" in
+SunOS)
+	JUNKOBJS="gethostent.o"
+	PATH="/usr/bin:/usr/etc:/sbin:/usr/ucb:${PATH}" ; export PATH
+	;;
+BSD/386)
+	release=`uname -r`
+	if [ `expr "$release" - 2` -lt 0 ] ; then
+		echo "$0: can't work on $arch $release" >&2
+		exit 1
+	fi
+	# XXX: FIXME: this is may not be correct....
+	JUNKOBJS="gethostnamadr.so \
+		herror.so res_debug.so res_data.so \
+		res_comp.so res_init.so res_mkquery.so res_query.so res_send.so \
+		getnetbyaddr.so getnetbyname.so getnetent.so getnetnamadr.so \
+		gethnamaddr.so sethostent.so nsap_addr.so \
+		inet_addr.so"
+	PATH="/bin:/usr/bin:/usr/sbin:/sbin:${PATH}" ; export PATH
+	;;
+NetBSD)
+	JUNKOBJS="gethostnamadr.so \
+		herror.so res_debug.so res_data.so \
+		res_comp.so res_init.so res_mkquery.so res_query.so res_send.so \
+		getnetbyaddr.so getnetbyname.so getnetent.so getnetnamadr.so \
+		gethnamaddr.so sethostent.so nsap_addr.so \
+		inet_addr.so"
+	PATH="/bin:/usr/bin:/usr/sbin:/sbin:${PATH}" ; export PATH
+	;;
+FreeBSD)
+	echo "$0: Not yet tested on $arch `uname -r`...." >&2
+	exit 1
+	;;
+*)
+	echo "$0: cannot determine correct OS type, found '${arch}'." >&2
+	exit 1
+	;;
+esac
+
+# Try to determine where the root of the BIND tree is if $bindtree isn't
+# set.  First, see if it is one directory above wherever the script is
+# being run from, then check and see if it is around the current directory
+# somewhere
+
+thisdir=`pwd`
+
+if [ -z "${bindtree}" ]; then
+	if [ -d "${thisdir}/shres/netbsd" ]; then
+		bindtree=$thisdir
+	elif [ -d "${thisdir}/../../shres" ]; then
+		bindtree=${thisdir}/../../
+	fi
+fi
+
+if [ -z "${bindtree}" ]; then
+	echo "I can't find the bind tree, and you didn't set \$bindtree." >&2
+	echo "Please do so, and try again." >&2
+	exit 1
+fi
+
+if [ ! -d $bindtree ]; then
+	echo "Your \$bindtree variable is set incorrectly.  Please correct it" >&2
+	echo "and run this script again." >&2
+	exit 1
+fi
+
+if [ ! -f $bindtree/shres/netbsd/libresolv_pic.a ]; then
+	echo "Please build shres/netbsd/libresolv_pic.a before running this script." >&2
+	echo "See shres/INSTALL for more information." >&2
+	exit 1
+fi
+
+# Determine the directory to get the shared object archives from, if
+# $SHLIBDIR is not set
+
+case "${arch}" in
+SunOS)
+	SHLIBDIR=${SHLIBDIR-/usr/lib/shlib.etc}
+	;;
+NetBSD|BSD/386)
+	SHLIBDIR=${SHLIBDIR-/usr/lib}
+	;;
+esac
+
+# Extract the UCB libraries on both SunOS and *BSD
+
+extract_arch libc_pic.a ucbtmp
+
+# Extract the SYSV libraries on SunOS
+
+case "${arch}" in
+SunOS)
+	extract_arch libcs5_pic.a sysvtmp
+	;;
+esac
+
+# Now that we have all of the objects we're going to need, generate an
+# lorder listing of the objects that we have, or modify the current
+# lorder-sparc file.
+
+echo "Generating new lorder file for UCB libc archive..."
+
+generate_lorder ucbtmp
+
+case "${arch}" in
+SunOS)
+	echo "Generating new lorder file for SunOS SysV libc archive..."
+	generate_lorder sysvtmp
+	;;
+esac
+
+SHLIBNAME=libc.so.`/bin/ls /usr/lib/libc.so.* | awk -f shlibname.awk`
+
+echo "Generating new $SHLIBNAME shared library..."
+
+case "${arch}" in
+SunOS)
+	ld -o $SHLIBNAME -assert pure-text `cat lorder.ucbtmp` -ldl
+	if [ $? -ne 0 ] ; then
+		exit 1
+	fi
+	SH5LIBNAME=libcs5.so.`/bin/ls /usr/5lib/libc.so.* | awk -f shlibname.awk`
+	echo "Generating new $SH5LIBNAME shared library..."
+	ld -o $SH5LIBNAME -assert pure-text `cat lorder.sysvtmp` -ldl
+	if [ $? -ne 0 ] ; then
+		exit 1
+	fi
+	echo "WARNING:  not updating /usr/lib/libc.a or /usr/5lib/libc.a -- use -lresolv"
+	;;
+NetBSD|BSD/386)
+	VER=`/bin/ls /usr/lib/libresolv.so.* | awk -f shlibname.awk`
+	ld -x -o libresolv.so.$VER -Bshareable -Bforcearchive $bindtree/shres/netbsd/libresolv_pic.a
+	ld -x -o $SHLIBNAME -Bshareable -Bforcearchive `cat lorder.ucbtmp`
+	if [ $? -ne 0 ] ; then
+		exit 1
+	fi
+	echo "WARNING:  not updating /usr/lib/libc.a -- use -lresolve instead."
+	;;
+esac
+
+echo "Now we will test the new $SHLIBNAME..."
+
+# we won't bother testing the SunOS libcs5.so* -- it should be OK....
+
+LD_LIBRARY_PATH=`pwd` who am i
+
+echo -n 'Does the output of who shown above look normal? [n] '
+read answer junk
+
+case "$answer" in
+[yY]*)
+	echo "OK, we'll copy them into place!"
+	;;
+*)
+	echo "Something went wrong.  Try fixing it and re-running this script."
+	exit 1
+	;;
+esac
+
+set -x
+cp $SHLIBNAME /usr/lib
+cp $bindtree/shres/netbsd/libresolv_pic.a $SHLIBDIR
+case "${arch}" in
+SunOS)
+	cp $SH5LIBNAME /usr/5lib
+	;;
+NetBSD|BSD/386)
+	cp libresolv.so.$VER /usr/lib
+	;;
+esac
+set +x
+
+case "${arch}" in
+SunOS)
+	echo 'OK, they are in place now...  updating libc.sa*, running ranlib...'
+	VUCB=`/bin/ls /usr/lib/libc.so.* | awk -f shlibname.awk`
+	VS5=`/bin/ls /usr/5lib/libc.so.* | awk -f shlibname.awk`
+	VUCB_OLD=`echo $VUCB | awk -F. '$3 > 1 {printf("%d.%d.%d", $1, $2, $3 - 1) }
+					$3 <= 1 {printf("%d.%d", $1, $2) }'`
+	VS5_OLD=`echo $VS5 | awk -F. '$3 > 1 {printf("%d.%d.%d", $1, $2, $3 - 1) }
+					$3 <= 1 {printf("%d.%d", $1, $2) }'`
+	cp /usr/lib/libc.sa.$VUCB_OLD /usr/lib/libc.sa.$VUCB
+	cp /usr/5lib/libc.sa.$VS5_OLD /usr/5lib/libc.sa.$VS5
+	ranlib -t /usr/lib/libc.sa.*
+	ranlib -t /usr/5lib/libc.sa.*
+	;;
+esac
+
+echo 'Running ldconfig...'
+
+LD_LIBRARY_PATH="" ldconfig
+
+case "${arch}" in
+SunOS)
+	echo "For a simple test of $SHLIBNAME run 'trace /usr/bin/who'"
+	echo "and check which shared library is used."
+	echo "Run 'trace /usr/5bin/cat < /dev/null' to test $SH5LIBNAME."
+	;;
+esac
+
+echo 'You should now test a number of tools that do name resolution,'
+echo 'such as telnet, rlogin, ftp, etc.'
+echo ''
+echo 'If something breaks, remove the new shared libraries copied above and'
+echo 're-run "ldconfig".'
+
+exit 0

@@ -1,0 +1,31 @@
+Date: Thu, 4 Feb 1999 08:16:38 +0000 (GMT)
+From: James Matheson <jmrm@eng.cam.ac.uk>
+To: bind-bugs@isc.org
+Subject: Porting problems on HP-UX 10.20
+Message-ID: <Pine.LNX.3.95L.990204080502.7383A-100000@odin.eng.cam.ac.uk>
+Phone: +44 1223 332756
+Organization: University Engineering Department. Cambridge. England
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+
+I have just compiled bind-8.2-T5B on HP-UX 10.20 and encountered the
+following minor problems. Note that this is using HP's c89 ANSI compiler
+rather than the stripped down compiler supplied bundled with the OS.
+
+Changes in port/hpux/Makefile.set:
+ 'CC=c89 -D_HPUX_SOURCE -z'  # ie choose c89 compiler and adjust options
+ 'SYSLIBS=-ll'               # no libnsl but doesn't seem to be needed
+
+Somewhere (eg in port/hpux/include/sys/bitypes.h):
+#define ORD_16   /* the algorithm in lib/cylink/ctk_endian.h for setting this doesn't work */
+
+Otherwise working nicely. Thanks!
+
+--
+James M.R.Matheson
+
+Head of Computer Systems Group,         E-mail: jmrm@eng.cam.ac.uk
+University Engineering Dept,            Phone: +44-1223-332756/332711
+Trumpington Street,                     Fax: +44-1223-332662
+Cambridge  CB2 1PZ,                     WWW: http://www.eng.cam.ac.uk/~jmrm/
+England.

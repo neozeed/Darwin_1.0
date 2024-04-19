@@ -1,0 +1,206 @@
+#!/bin/sh
+#
+# makeshlib - installs a shareable libresolv_pic.a into SunOS 4.x libc.so
+#
+# by Chris Davis <ckd@kei.com> 
+# based on code  by Piete Brooks <pb@cl.cam.ac.uk>
+#               and Dave Morrison <drmorris@mit.edu>
+# with additions by Greg Woods <woods@planix.com>
+#
+# $Id: makeshlib,v 1.1.1.1 1999/10/04 22:25:01 wsanchez Exp $
+#
+# set these by hand, or as an environment var, or let script figure them out
+#bindtree=/usr/obj/local/bind
+#SHLIBDIR=/usr/lib/shlib.etc
+thisdir=`pwd`
+
+# patch should be in this path, or root's path
+PATH=/usr/bin:/usr/etc:/sbin:/usr/ucb:${PATH} ; export PATH
+
+# NOTE: not all shells have the 'type' builtin, else we could do this
+#
+#if expr "`type printf`" : '.* is .*/printf$' >/dev/null 2>&1 ; then
+#	HAVEPRINTF=true
+#	echo=printf
+#	nl='\n'
+#	n=''
+#	c='\c'
+#else
+
+echo=echo
+(echo "hi there\c" ; echo " ") >./.echotmp
+# metaconfig checks to make sure grep returns a status....
+if grep c ./.echotmp >/dev/null 2>&1 ; then
+	nl=''
+	n='-n'
+	c=''
+else
+	nl='\n'
+	n=''
+	c='\c'
+fi
+rm -f ./.echotmp
+
+# these should not need changing
+junkobjs=gethostent.o
+
+# try to find the BIND tree if it's not set
+case "x${bindtree}" in
+'x')
+	echo 'Trying to find BIND tree...'
+	if [ -d "${thisdir}/shres/sunos" ]; then
+		bindtree=$thisdir
+	elif [ -d "${thisdir}/../../shres" ]; then
+		bindtree="$thisdir/../../"
+	fi
+	;;
+esac
+
+case "x${bindtree}" in
+'x')
+	echo "I can't find the bind tree, and you didn't set \$bindtree."
+	echo "Please do so, and try again."
+	exit 1
+esac
+
+# make sure patch is available
+if patch < /dev/null > /dev/null 2>&1
+then
+	echo "Good, you have patch."
+else
+	echo "Sorry, you need Larry Wall's 'patch' program for this."
+	echo "Get it by anonymous ftp from prep.ai.mit.edu in /pub/gnu."
+	exit 1
+fi
+
+# cd into the Sun shared library build directory
+cd ${SHLIBDIR-/usr/lib/shlib.etc} || exit 1
+
+# Extract and setup the ucb libc
+echo 'Setting up the UCB universe libc.so build directory'
+if [ ! -d tmp.ucb ]; then
+	rm -f tmp.ucb
+	mkdir tmp.ucb
+fi
+cd tmp.ucb || exit 1
+rm -rf *
+ar x ../libc_pic.a || exit 1
+test -f __.SYMDEF && rm __.SYMDEF
+for f in *.; do
+	mv $f ${f}o
+done
+rm -f $junkobjs
+
+# Sun's inet_addr.o and possible getnetent.o are clobbered in this
+ar x $bindtree/shres/sunos/libresolv_pic.a
+test -f __.SYMDEF && rm __.SYMDEF
+
+cd ..
+
+# Extract and setup the sysv libc
+echo 'Setting up the SysV universe libc.so build directory'
+if [ ! -d tmp.s5 ]; then
+	rm -f tmp.s5
+	mkdir tmp.s5
+fi
+cd tmp.s5 || exit 1
+rm -rf *
+ar x ../libcs5_pic.a || exit 1
+test -f __.SYMDEF && rm __.SYMDEF
+for f in *.; do
+	mv $f ${f}o
+done
+rm -f $junkobjs
+
+# Sun's inet_addr.o and possible getnetent.o are clobbered in this
+ar x $bindtree/shres/sunos/libresolv_pic.a
+test -f __.SYMDEF && rm __.SYMDEF
+
+# Back to the make directory
+cd ..
+
+# Fix the broken SunOS awk script
+grep FCS awkfile >/dev/null 2>&1 ||
+	patch < $bindtree/shres/sunos/sun-awkfile.patches &&
+	echo 'patched awkfile'
+
+# Add the resolver objects to the lorder sparc listing (uncool hack)
+grep gethnamaddr.o lorder-sparc >/dev/null 2>&1 ||
+        patch < $bindtree/shres/sunos/sun-lorder-sparc.patches &&
+        echo 'patched lorder-sparc'
+
+# Fix the broken SunOS Makefile
+# only first half needed for 4.1.3 with patch 100890-08+ and/or 100891-10+
+# Makefile still assumes version numbers for the sys5 & ucb libc's won't clash
+grep '\./objsort' Makefile >/dev/null 2>&1 ||
+        patch < $bindtree/shres/sunos/sun-Makefile.patch1 &&
+	echo 'patched shlib Makefile with first patch'
+grep ' -ldl' Makefile >/dev/null 2>&1 ||
+        patch < $bindtree/shres/sunos/sun-Makefile.patch2 &&
+	echo 'patched shlib Makefile with second patch'
+
+### WARNING:  the SunOS shlib.etc Makefile doesn't expect any clash between
+### SysV and UCB library names, assuming the version numbers will be different.
+
+# Make the sys5 shared libc
+rm -rf tmp
+ln -s tmp.s5 tmp
+time make libcs5.so
+
+# Make the ucb shared libc
+rm -rf tmp
+ln -s tmp.ucb tmp
+time make libc.so
+
+echo 'Now we will test these libraries and copy them as appropriate:'
+
+ls -l libc.so*
+
+LD_LIBRARY_PATH=`pwd` date
+
+$echo $n "Does the output of date shown above look normal? [n] $c"
+
+read answer junk
+
+case "$answer" in
+[yY]*)
+	echo "OK, we'll copy them into place!"
+	;;
+*)
+	echo "Something went wrong.  Try fixing it and re-running this script."
+	exit 1
+	;;
+esac
+
+VUCB=`/bin/ls /usr/lib/libc.so.* | awk -f awkfile`
+VS5=`/bin/ls /usr/5lib/libc.so.* | awk -f awkfile`
+
+VUCB_OLD=`echo $VUCB | awk -F. '{printf("%d.%d.%d", $1, $2, $3 - 1) }'`
+VS5_OLD=`echo $VS5 | awk -F. '{printf("%d.%d.%d", $1, $2, $3 - 1) }'`
+
+# so we get "1.9" instead of "1.9.0"
+VUCB_OLD=`basename $VUCB_OLD .0`
+VS5_OLD=`basename $VS5_OLD .0`
+
+set -x
+cp libc.so.$VUCB /usr/lib
+cp libc.so.$VS5 /usr/5lib
+cp /usr/lib/libc.sa.$VUCB_OLD /usr/lib/libc.sa.$VUCB
+cp /usr/5lib/libc.sa.$VS5_OLD /usr/5lib/libc.sa.$VS5
+set +x
+
+echo 'OK, they are in place now...  running ranlib and ldconfig'
+
+ranlib -t /usr/lib/libc.sa.*
+ranlib -t /usr/5lib/libc.sa.*
+
+/usr/etc/ldconfig
+
+echo 'If you are really paranoid, run "trace /usr/bin/date" and check which'
+echo 'shared library is used, then run "trace /usr/5bin/cat < /dev/null" too.'
+echo 'Finally you should test a number of SunOS tools that do name resolution,'
+echo 'such as telnet, rlogin, ftp, etc.'
+echo 'If something breaks, remove the new shared libraries copied above and'
+echo 'run "ldconfig".'
+
+exit 0

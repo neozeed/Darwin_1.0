@@ -1,0 +1,4 @@
+Package: libedit
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Description: Line editing library
+Build-Depends: build-base

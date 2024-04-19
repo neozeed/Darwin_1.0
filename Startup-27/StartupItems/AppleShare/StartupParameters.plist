@@ -1,0 +1,12 @@
+{
+  Description     = "AppleShare IP File Services";
+  Provides        = ("AppleShare");
+  Requires        = ("Disks", "Resolver", "AppleTalk");
+  Uses            = ("NetworkTime");
+  OrderPreference = "None";
+  Messages =
+  {
+    start = "Starting AppleShare IP.";
+    stop  = "Stopping AppleShare IP.";
+  };
+}

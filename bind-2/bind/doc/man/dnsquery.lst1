@@ -1,0 +1,97 @@
+DNSQUERY(1)                  BSD Reference Manual                  DNSQUERY(1)
+
+NNAAMMEE
+     ddnnssqquueerryy - query domain name servers using resolver
+
+SSYYNNOOPPSSIISS
+     ddnnssqquueerryy [--nn _n_a_m_e_s_e_r_v_e_r] [--tt _t_y_p_e] [--cc _c_l_a_s_s] [--rr _r_e_t_r_y] [--pp _p_e_r_i_o_d] [--dd]
+              [--ss] [--vv] _h_o_s_t
+
+DDEESSCCRRIIPPTTIIOONN
+     The ddnnssqquueerryy program is a general interface to nameservers via BIND re-
+     solver library calls.  The program supports queries to the nameserver
+     with an opcode of QUERY.  This program is intended to be a replacement or
+     supplement to programs like nstest, nsquery and nslookup.  All arguments
+     except for _h_o_s_t and _n_a_m_e_s_e_r_v_e_r are treated without case-sensitivity.
+
+OOPPTTIIOONNSS
+     --nn _n_a_m_e_s_e_r_v_e_r
+                 The nameserver to be used in the query.  Nameservers can ap-
+                 pear as either Internet addresses of the form _w_._x_._y_._z or can
+                 appear as domain names.  (Default: as specified in
+                 _/_e_t_c_/_r_e_s_o_l_v_._c_o_n_f.)
+
+     --tt _t_y_p_e     The type of resource record of interest.  Types include:
+                       _A        address
+                       _N_S       nameserver
+                       _C_N_A_M_E    canonical name
+                       _P_T_R      domain name pointer
+                       _S_O_A      start of authority
+                       _W_K_S      well-known service
+                       _H_I_N_F_O    host information
+                       _M_I_N_F_O    mailbox information
+                       _M_X       mail exchange
+                       _R_P       responsible person
+                       _M_G       mail group member
+                       _A_F_S_D_B
+                                DCE or AFS server
+                       _A_N_Y      wildcard
+
+                 Note that any case may be used.  (Default: _A_N_Y.)
+
+     --cc _c_l_a_s_s    The class of resource records of interest.  Classes include:
+                       _I_N       Internet
+                       _H_S       Hesiod
+                       _C_H_A_O_S    Chaos
+                       _A_N_Y      wildcard
+
+                 Note that any case may be used.  (Default: _I_N.)
+
+     --rr _r_e_t_r_y    The number of times to retry if the nameserver is not re-
+                 sponding.  (Default:  4.)
+
+     --pp _p_e_r_i_o_d   Period to wait before timing out.  (Default: RES_TIMEOUT.)
+
+     --dd          Turn on debugging.  This sets the RES_DEBUG bit of the re-
+                 solver's _o_p_t_i_o_n_s field.  (Default:  no debugging.)
+
+     --ss          Use a _s_t_r_e_a_m rather than a packet.  This uses a TCP stream
+                 connection with the nameserver rather than a UDP datagram.
+                 This sets the RES_USEVC bit of the resolver's _o_p_t_i_o_n_s field.
+                 (Default:  UDP datagram.)
+
+     --vv          Synonym for the ``--ss'' flag.
+
+     _h_o_s_t        The name of the host (or domain) of interest.
+
+FFIILLEESS
+     /etc/resolv.conf    to get the default ns and search lists
+     <arpa/nameser.h>
+                         list of usable RR types and classes
+     <resolv.h>
+                         list of resolver flags
+
+DDIIAAGGNNOOSSTTIICCSS
+     If the resolver fails to answer the query and debugging has not been
+     turned on, ddnnssqquueerryy will simply print a message like:
+           Query failed (rc = 1): Unknown host
+
+     The value of the return code is supplied by _h___e_r_r_n_o _.
+
+SSEEEE AALLSSOO
+     nslookup(8),  nstest(1),  nsquery(1),  named(8),  resolver(5).
+
+AAUUTTHHOORR
+     Bryan Beecher
+
+BBUUGGSS
+     Queries of a class other than _I_N can have interesting results since ordi-
+     narily a nameserver only has a list of root nameservers for class _I_N re-
+     source records.
+
+     DDnnssqquueerryy uses a call to iinneett__aaddddrr() to determine if the argument for the
+     ``--nn'' option is a valid Internet address.  Unfortunately, iinneett__aaddddrr()
+     seems to cause a segmentation fault with some (bad) IP addresses (e.g.,
+     1.2.3.4.5).
+
+4th Berkeley Distribution       March 10, 1990                               2

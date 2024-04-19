@@ -1,0 +1,35 @@
+/ChangeLog/1.1.1.1/Mon May 10 02:22:25 1999//Tdpkg-4
+/Makefile.am/1.1.1.1/Mon May 10 02:22:25 1999//Tdpkg-4
+/Makefile.in/1.1.1.1/Mon May 10 02:22:25 1999//Tdpkg-4
+/database-structure.fig/1.1.1.1/Mon May 10 02:22:25 1999//Tdpkg-4
+/deb-control.5/1.1.1.1/Mon May 10 02:22:25 1999//Tdpkg-4
+/deb-old.5/1.1.1.1/Mon May 10 02:22:25 1999//Tdpkg-4
+/deb.5/1.1.1.1/Mon May 10 02:22:25 1999//Tdpkg-4
+/developer-keys.pgp/1.1.1.1/Mon May 10 02:22:25 1999//Tdpkg-4
+/internals.aux/1.1.1.1/Mon May 10 02:22:25 1999//Tdpkg-4
+/internals.cp/1.1.1.1/Mon May 10 02:22:25 1999//Tdpkg-4
+/internals.dvi/1.1.1.1/Mon May 10 02:22:25 1999/-kb/Tdpkg-4
+/internals.fn/1.1.1.1/Mon May 10 02:22:25 1999//Tdpkg-4
+/internals.fns/1.1.1.1/Mon May 10 02:22:25 1999//Tdpkg-4
+/internals.html-stamp/1.1.1.1/Mon May 10 02:22:25 1999//Tdpkg-4
+/internals.info/1.1.1.1/Mon May 10 02:22:25 1999//Tdpkg-4
+/internals.ky/1.1.1.1/Mon May 10 02:22:25 1999//Tdpkg-4
+/internals.log/1.1.1.1/Mon May 10 02:22:25 1999//Tdpkg-4
+/internals.pg/1.1.1.1/Mon May 10 02:22:25 1999//Tdpkg-4
+/internals.ps/1.1.1.1/Mon May 10 02:22:25 1999/-kb/Tdpkg-4
+/internals.sgml/1.1.1.1/Mon May 10 02:22:25 1999//Tdpkg-4
+/internals.sgmls/1.1.1.1/Mon May 10 02:22:25 1999//Tdpkg-4
+/internals.texi/1.1.1.1/Mon May 10 02:22:26 1999//Tdpkg-4
+/internals.toc/1.1.1.1/Mon May 10 02:22:26 1999//Tdpkg-4
+/internals.tp/1.1.1.1/Mon May 10 02:22:26 1999//Tdpkg-4
+/internals.vr/1.1.1.1/Mon May 10 02:22:26 1999//Tdpkg-4
+/manuals-version/1.1.1.1/Mon May 10 02:22:26 1999//Tdpkg-4
+/packaging.html-stamp/1.1.1.1/Mon May 10 02:22:25 1999//Tdpkg-4
+/packaging.ps/1.1.1.1/Mon May 10 02:22:26 1999/-kb/Tdpkg-4
+/packaging.sgml/1.1.1.1/Mon May 10 02:22:26 1999//Tdpkg-4
+/texinfo.debian_mapping/1.1.1.1/Mon May 10 02:22:26 1999//Tdpkg-4
+/texinfo.dtd/1.1.1.1/Mon May 10 02:22:26 1999//Tdpkg-4
+/texinfo.texi_mapping/1.1.1.1/Mon May 10 02:22:26 1999//Tdpkg-4
+D/internals.html////
+D/obsolete////
+D/packaging.html////

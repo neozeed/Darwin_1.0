@@ -1,0 +1,23 @@
+/Makefile.am/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+/Makefile.in/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+/ccstdc.m4/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+/cond.m4/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+/dmalloc.m4/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+/error.m4/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+/header.m4/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+/init.m4/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+/lex.m4/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+/lispdir.m4/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+/maintainer.m4/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+/missing.m4/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+/mktime.m4/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+/multi.m4/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+/obstack.m4/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+/protos.m4/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+/ptrdiff.m4/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+/regex.m4/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+/sanity.m4/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+/strtod.m4/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+/termios.m4/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+/winsz.m4/1.1.1.1/Sun Apr  2 05:02:33 2000//Tautomake-1
+D

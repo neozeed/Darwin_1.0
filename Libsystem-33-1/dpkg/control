@@ -1,0 +1,15 @@
+Package: libsystem
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Build-Depends: build-base, cctools, libc, libcurses, libedit, libinfo, libkvm, libm, libstreams
+Description: System framework
+ The System Framework is the core system library.  It implements the
+ Mach and BSD user-level APIs.  This includes:
+ .
+  - the dynamic linker library (libdyld)
+  - the Standard C Library (libc)
+  - the Sun RPC library (librpcsvc)
+  - the NetInfo library (libinfo)
+  - the curses screen management library (libcurses)
+  - the line editing library (libedit)
+  - the math library (libm)
+  - pthreads

@@ -1,0 +1,16 @@
+include $(CoreOSMakefiles)/ProjectBuilder/Makefile.Postamble.Common
+
+PRODUCTS = $(OTHERLINKED)
+
+$(PRODUCT): $(OTHERLINKED)
+	$(INSTALL_FILE) -c $^ $(PRODUCT_DIR)
+
+INSTALL_PERMISSIONS = 444
+
+##
+# CoreOSMakefiles was doing this for PRODUCT, not OTHERLINKED.
+# This will be fixed in CoreOSMakefiles, but in the meantime, we'll work around it here.
+##
+ifeq ($(SYMROOT),$(SRCROOT))
+OTHERLINKED =
+endif

@@ -1,0 +1,11 @@
+/Makefile.am/1.1.1.1/Mon May 10 02:22:47 1999//Tdpkg-4
+/Makefile.in/1.1.1.1/Mon May 10 02:22:47 1999//Tdpkg-4
+/dpkg-split.8/1.1.1.1/Mon May 10 02:22:47 1999//Tdpkg-4
+/dpkg-split.h/1.1.1.1/Mon May 10 02:22:47 1999//Tdpkg-4
+/info.c/1.1.1.1/Mon May 10 02:22:47 1999//Tdpkg-4
+/join.c/1.1.1.1/Mon May 10 02:22:47 1999//Tdpkg-4
+/main.c/1.1.1.1/Mon May 10 02:22:47 1999//Tdpkg-4
+/mksplit.pl/1.1.1.1/Mon May 10 02:22:48 1999//Tdpkg-4
+/queue.c/1.1.1.1/Mon May 10 02:22:48 1999//Tdpkg-4
+/split.c/1.1.1.1/Mon May 10 02:22:48 1999//Tdpkg-4
+D

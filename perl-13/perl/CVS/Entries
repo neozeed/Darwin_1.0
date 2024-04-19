@@ -1,0 +1,176 @@
+/AUTHORS/1.1.1.1/Fri Mar 31 05:10:27 2000//Tperl-13
+/Artistic/1.1.1.1/Fri Apr 23 01:27:36 1999//Tperl-13
+/Changes/1.1.1.4/Fri Mar 31 05:10:28 2000//Tperl-13
+/Changes5.000/1.1.1.1/Fri Apr 23 01:27:37 1999//Tperl-13
+/Changes5.001/1.1.1.1/Fri Apr 23 01:27:37 1999//Tperl-13
+/Changes5.002/1.1.1.1/Fri Apr 23 01:27:37 1999//Tperl-13
+/Changes5.003/1.1.1.1/Fri Apr 23 01:27:37 1999//Tperl-13
+/Changes5.004/1.1.1.1/Fri Apr 23 01:31:06 1999//Tperl-13
+/Changes5.005/1.1.1.1/Fri Mar 31 05:10:31 2000//Tperl-13
+/Configure/1.4/Sat Apr  1 01:44:58 2000//Tperl-13
+/Copying/1.1.1.2/Tue Oct  5 23:55:37 1999//Tperl-13
+/EXTERN.h/1.1.1.4/Fri Mar 31 05:10:33 2000//Tperl-13
+/INSTALL/1.1.1.4/Fri Mar 31 05:10:33 2000//Tperl-13
+/INTERN.h/1.1.1.4/Fri Mar 31 05:10:33 2000//Tperl-13
+/MAINTAIN/1.1.1.1/Fri Mar 31 05:10:33 2000//Tperl-13
+/MANIFEST/1.1.1.4/Fri Mar 31 05:10:33 2000//Tperl-13
+/Makefile.SH/1.4/Sat Apr  1 01:44:59 2000//Tperl-13
+/Policy_sh.SH/1.1.1.2/Fri Mar 31 05:10:34 2000//Tperl-13
+/README/1.1.1.4/Fri Mar 31 05:10:34 2000//Tperl-13
+/README.Y2K/1.1.1.1/Fri Mar 31 05:10:34 2000//Tperl-13
+/README.amiga/1.1.1.2/Fri Mar 31 05:10:36 2000//Tperl-13
+/README.apollo/1.1.1.1/Tue Oct  5 23:55:38 1999//Tperl-13
+/README.beos/1.1.1.2/Tue Oct  5 23:55:38 1999//Tperl-13
+/README.cygwin/1.1.1.1/Fri Mar 31 05:10:36 2000//Tperl-13
+/README.dos/1.1.1.2/Fri Mar 31 05:10:36 2000//Tperl-13
+/README.epoc/1.1.1.1/Fri Mar 31 05:10:36 2000//Tperl-13
+/README.hpux/1.1.1.1/Tue Oct  5 23:55:39 1999//Tperl-13
+/README.hurd/1.1.1.2/Fri Mar 31 05:10:36 2000//Tperl-13
+/README.machten/1.1.1.1/Fri Mar 31 05:10:36 2000//Tperl-13
+/README.mint/1.1.1.2/Fri Mar 31 05:10:37 2000//Tperl-13
+/README.mpeix/1.1.1.1/Fri Apr 23 01:31:10 1999//Tperl-13
+/README.os2/1.1.1.3/Fri Mar 31 05:10:37 2000//Tperl-13
+/README.os390/1.1.1.2/Tue Oct  5 23:55:39 1999//Tperl-13
+/README.plan9/1.1.1.1/Fri Apr 23 01:27:38 1999//Tperl-13
+/README.posix-bc/1.1.1.1/Fri Mar 31 05:10:37 2000//Tperl-13
+/README.qnx/1.1.1.1/Fri Apr 23 01:27:38 1999//Tperl-13
+/README.threads/1.1.1.3/Fri Mar 31 05:10:37 2000//Tperl-13
+/README.vmesa/1.1.1.1/Fri Mar 31 05:10:37 2000//Tperl-13
+/README.vms/1.1.1.4/Fri Mar 31 05:10:38 2000//Tperl-13
+/README.vos/1.1.1.2/Fri Mar 31 05:10:38 2000//Tperl-13
+/README.win32/1.1.1.4/Fri Mar 31 05:10:38 2000//Tperl-13
+/Todo/1.1.1.4/Fri Mar 31 05:10:38 2000//Tperl-13
+/Todo-5.6/1.1.1.1/Fri Mar 31 05:10:38 2000//Tperl-13
+/XSUB.h/1.1.1.4/Fri Mar 31 05:10:38 2000//Tperl-13
+/av.c/1.1.1.4/Fri Mar 31 05:10:39 2000//Tperl-13
+/av.h/1.1.1.4/Fri Mar 31 05:10:39 2000//Tperl-13
+/bytecode.pl/1.1.1.2/Fri Mar 31 05:10:39 2000//Tperl-13
+/cc_runtime.h/1.1.1.3/Fri Mar 31 05:10:39 2000//Tperl-13
+/cflags.SH/1.1.1.3/Fri Mar 31 05:10:39 2000//Tperl-13
+/config_h.SH/1.1.1.5/Fri Mar 31 05:10:39 2000//Tperl-13
+/configpm/1.1.1.3/Fri Mar 31 05:10:40 2000//Tperl-13
+/configure.com/1.1.1.3/Fri Mar 31 05:10:40 2000//Tperl-13
+/configure.gnu/1.1.1.5/Fri Mar 31 05:10:40 2000//Tperl-13
+/cop.h/1.1.1.4/Fri Mar 31 05:10:40 2000//Tperl-13
+/cv.h/1.1.1.4/Fri Mar 31 05:10:40 2000//Tperl-13
+/deb.c/1.1.1.4/Fri Mar 31 05:10:41 2000//Tperl-13
+/doio.c/1.1.1.4/Fri Mar 31 05:10:41 2000//Tperl-13
+/doop.c/1.1.1.4/Fri Mar 31 05:10:41 2000//Tperl-13
+/dosish.h/1.1.1.3/Fri Mar 31 05:10:41 2000//Tperl-13
+/dump.c/1.1.1.4/Fri Mar 31 05:10:41 2000//Tperl-13
+/ebcdic.c/1.1.1.2/Fri Mar 31 05:10:42 2000//Tperl-13
+/embed.h/1.1.1.4/Fri Mar 31 05:10:42 2000//Tperl-13
+/embed.pl/1.1.1.4/Fri Mar 31 05:10:42 2000//Tperl-13
+/embedvar.h/1.1.1.3/Fri Mar 31 05:10:42 2000//Tperl-13
+/fakethr.h/1.1.1.1/Fri Apr 23 01:31:16 1999//Tperl-13
+/form.h/1.1.1.3/Fri Mar 31 05:10:43 2000//Tperl-13
+/global.sym/1.1.1.4/Fri Mar 31 05:10:43 2000//Tperl-13
+/globals.c/1.1.1.3/Fri Mar 31 05:10:43 2000//Tperl-13
+/globvar.sym/1.1.1.1/Fri Mar 31 05:10:43 2000//Tperl-13
+/gv.c/1.1.1.4/Fri Mar 31 05:10:43 2000//Tperl-13
+/gv.h/1.1.1.4/Fri Mar 31 05:10:43 2000//Tperl-13
+/handy.h/1.3/Sat Apr  1 01:45:00 2000//Tperl-13
+/hv.c/1.1.1.4/Fri Mar 31 05:10:44 2000//Tperl-13
+/hv.h/1.1.1.4/Fri Mar 31 05:10:44 2000//Tperl-13
+/installhtml/1.1.1.5/Fri Mar 31 05:10:44 2000//Tperl-13
+/installman/1.1.1.4/Fri Mar 31 05:10:44 2000//Tperl-13
+/installperl/1.4/Sat Apr  1 01:45:00 2000//Tperl-13
+/intrpvar.h/1.1.1.3/Fri Mar 31 05:10:45 2000//Tperl-13
+/iperlsys.h/1.1.1.3/Fri Mar 31 05:10:45 2000//Tperl-13
+/keywords.h/1.1.1.3/Fri Mar 31 05:10:45 2000//Tperl-13
+/keywords.pl/1.1.1.3/Fri Mar 31 05:10:45 2000//Tperl-13
+/makeaperl.SH/1.1.1.2/Fri Mar 31 05:10:45 2000//Tperl-13
+/makedef.pl/1.1.1.1/Fri Mar 31 05:10:46 2000//Tperl-13
+/makedepend.SH/1.1.1.4/Fri Mar 31 05:10:46 2000//Tperl-13
+/makedir.SH/1.1.1.2/Fri Mar 31 05:10:46 2000//Tperl-13
+/malloc.c/1.1.1.4/Fri Mar 31 05:10:46 2000//Tperl-13
+/mg.c/1.1.1.4/Fri Mar 31 05:10:46 2000//Tperl-13
+/mg.h/1.1.1.4/Fri Mar 31 05:10:46 2000//Tperl-13
+/minimod.pl/1.1.1.2/Fri Mar 31 05:10:47 2000//Tperl-13
+/miniperlmain.c/1.1.1.4/Fri Mar 31 05:10:47 2000//Tperl-13
+/mv-if-diff/1.1.1.2/Fri Apr 23 01:31:22 1999//Tperl-13
+/myconfig.SH/1.1.1.1/Fri Mar 31 05:10:47 2000//Tperl-13
+/nostdio.h/1.1.1.1/Fri Apr 23 01:27:41 1999//Tperl-13
+/objXSUB.h/1.1.1.3/Fri Mar 31 05:10:47 2000//Tperl-13
+/op.c/1.1.1.4/Fri Mar 31 05:10:48 2000//Tperl-13
+/op.h/1.1.1.4/Fri Mar 31 05:10:48 2000//Tperl-13
+/opcode.h/1.1.1.4/Fri Mar 31 05:10:48 2000//Tperl-13
+/opcode.pl/1.1.1.4/Fri Mar 31 05:10:49 2000//Tperl-13
+/opnames.h/1.1.1.1/Fri Mar 31 05:10:49 2000//Tperl-13
+/patchlevel.h/1.1.1.4/Fri Mar 31 05:10:49 2000//Tperl-13
+/perl.c/1.1.1.5/Fri Mar 31 05:10:49 2000//Tperl-13
+/perl.h/1.1.1.5/Fri Mar 31 05:10:49 2000//Tperl-13
+/perlapi.c/1.1.1.1/Fri Mar 31 05:10:50 2000//Tperl-13
+/perlapi.h/1.1.1.1/Fri Mar 31 05:10:50 2000//Tperl-13
+/perlio.c/1.1.1.4/Fri Mar 31 05:10:50 2000//Tperl-13
+/perlio.h/1.1.1.2/Fri Apr 23 01:31:27 1999//Tperl-13
+/perlio.sym/1.1.1.1/Fri Apr 23 01:27:42 1999//Tperl-13
+/perlsdio.h/1.1.1.3/Fri Mar 31 05:10:50 2000//Tperl-13
+/perlsfio.h/1.1.1.2/Fri Mar 31 05:10:50 2000//Tperl-13
+/perlsh/1.1.1.1/Fri Apr 23 01:27:42 1999//Tperl-13
+/perlvars.h/1.1.1.3/Fri Mar 31 05:10:51 2000//Tperl-13
+/perly.c/1.1.1.4/Fri Mar 31 05:10:51 2000//Tperl-13
+/perly.fixer/1.1.1.3/Fri Mar 31 05:10:51 2000//Tperl-13
+/perly.h/1.1.1.3/Fri Mar 31 05:10:51 2000//Tperl-13
+/perly.y/1.1.1.4/Fri Mar 31 05:10:51 2000//Tperl-13
+/perly_c.diff/1.1.1.3/Fri Mar 31 05:10:52 2000//Tperl-13
+/pp.c/1.1.1.4/Fri Mar 31 05:10:52 2000//Tperl-13
+/pp.h/1.1.1.4/Fri Mar 31 05:10:52 2000//Tperl-13
+/pp.sym/1.1.1.1/Fri Mar 31 05:10:52 2000//Tperl-13
+/pp_ctl.c/1.1.1.4/Fri Mar 31 05:10:53 2000//Tperl-13
+/pp_hot.c/1.1.1.4/Fri Mar 31 05:10:53 2000//Tperl-13
+/pp_proto.h/1.1.1.2/Fri Mar 31 05:10:53 2000//Tperl-13
+/pp_sys.c/1.1.1.4/Fri Mar 31 05:10:54 2000//Tperl-13
+/proto.h/1.1.1.4/Fri Mar 31 05:10:54 2000//Tperl-13
+/regcomp.c/1.1.1.4/Fri Mar 31 05:10:54 2000//Tperl-13
+/regcomp.h/1.1.1.3/Fri Mar 31 05:10:55 2000//Tperl-13
+/regcomp.pl/1.1.1.2/Fri Mar 31 05:10:55 2000//Tperl-13
+/regcomp.sym/1.1.1.2/Fri Mar 31 05:10:55 2000//Tperl-13
+/regexec.c/1.1.1.4/Fri Mar 31 05:10:55 2000//Tperl-13
+/regexp.h/1.1.1.3/Fri Mar 31 05:10:56 2000//Tperl-13
+/regnodes.h/1.1.1.2/Fri Mar 31 05:10:56 2000//Tperl-13
+/run.c/1.1.1.4/Fri Mar 31 05:10:56 2000//Tperl-13
+/scope.c/1.1.1.4/Fri Mar 31 05:10:56 2000//Tperl-13
+/scope.h/1.1.1.4/Fri Mar 31 05:10:56 2000//Tperl-13
+/sv.c/1.1.1.4/Fri Mar 31 05:10:56 2000//Tperl-13
+/sv.h/1.1.1.4/Fri Mar 31 05:10:57 2000//Tperl-13
+/taint.c/1.1.1.4/Fri Mar 31 05:10:57 2000//Tperl-13
+/thrdvar.h/1.1.1.2/Fri Mar 31 05:10:57 2000//Tperl-13
+/thread.h/1.1.1.3/Fri Mar 31 05:10:57 2000//Tperl-13
+/toke.c/1.1.1.4/Fri Mar 31 05:10:58 2000//Tperl-13
+/universal.c/1.1.1.4/Fri Mar 31 05:10:58 2000//Tperl-13
+/unixish.h/1.1.1.4/Fri Mar 31 05:10:58 2000//Tperl-13
+/utf8.c/1.1.1.1/Fri Mar 31 05:10:58 2000//Tperl-13
+/utf8.h/1.1.1.1/Fri Mar 31 05:10:58 2000//Tperl-13
+/util.c/1.1.1.4/Fri Mar 31 05:10:59 2000//Tperl-13
+/util.h/1.1.1.3/Fri Mar 31 05:10:59 2000//Tperl-13
+/warnings.h/1.1.1.1/Fri Mar 31 05:10:59 2000//Tperl-13
+/warnings.pl/1.1.1.1/Fri Mar 31 05:10:59 2000//Tperl-13
+/writemain.SH/1.1.1.2/Fri Mar 31 05:10:59 2000//Tperl-13
+/xsutils.c/1.1.1.1/Fri Mar 31 05:10:59 2000//Tperl-13
+D/Porting////
+D/apollo////
+D/beos////
+D/cygwin////
+D/djgpp////
+D/eg////
+D/emacs////
+D/epoc////
+D/ext////
+D/h2pl////
+D/hints////
+D/jpl////
+D/lib////
+D/mint////
+D/mpeix////
+D/os2////
+D/plan9////
+D/pod////
+D/qnx////
+D/t////
+D/utils////
+D/vmesa////
+D/vms////
+D/vos////
+D/win32////
+D/x2p////

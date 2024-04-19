@@ -1,0 +1,39 @@
+{
+    DYNAMIC_CODE_GEN = NO; 
+    FILESTABLE = {
+        H_FILES = (
+            ttycom.h, 
+            ppp.h, 
+            opt_inet.h, 
+            opt_ipx.h, 
+            bpfilter.h, 
+            opt_ppp.h, 
+            if_pppvar.h, 
+            slcompress.h, 
+            task.h, 
+            thread.h, 
+            queue.h, 
+            vm_map.h
+        ); 
+        OTHER_LINKED = (ppp.c, if_ppp.c, ppp_tty.c, slcompress.c); 
+        OTHER_SOURCES = (Makefile.preamble, Makefile, Makefile.postamble, CustomInfo.xml); 
+        SUBPROJECTS = (); 
+    }; 
+    LANGUAGE = English; 
+    LOCALIZABLE_FILES = {}; 
+    MAKEFILEDIR = "$(MAKEFILEPATH)/pb_makefiles"; 
+    NEXTSTEP_BUILDTOOL = /bin/gnumake; 
+    NEXTSTEP_COMPILEROPTIONS = "-Wno-format"; 
+    NEXTSTEP_INSTALLDIR = /System/Library/Extensions; 
+    NEXTSTEP_JAVA_COMPILER = /usr/bin/javac; 
+    NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc; 
+    PDO_UNIX_BUILDTOOL = $NEXT_ROOT/Developer/bin/make; 
+    PDO_UNIX_JAVA_COMPILER = "$(JDKBINDIR)/javac"; 
+    PDO_UNIX_OBJCPLUS_COMPILER = "$(NEXTDEV_BIN)/gcc"; 
+    PROJECTNAME = ppp; 
+    PROJECTTYPE = "Kernel Module"; 
+    PROJECTVERSION = 2.8; 
+    WINDOWS_BUILDTOOL = $NEXT_ROOT/Developer/Executables/make; 
+    WINDOWS_JAVA_COMPILER = "$(JDKBINDIR)/javac.exe"; 
+    WINDOWS_OBJCPLUS_COMPILER = "$(DEVDIR)/gcc"; 
+}

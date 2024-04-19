@@ -1,0 +1,1168 @@
+This is Info file ../info/emacs, produced by Makeinfo version 1.68 from
+the input file emacs.texi.
+
+   This is the thirteenth edition of the `GNU Emacs Manual', updated
+for Emacs version 20.3
+
+INFO-DIR-SECTION Editors
+START-INFO-DIR-ENTRY
+* Emacs: (emacs).	The extensible self-documenting text editor.
+END-INFO-DIR-ENTRY
+
+   Published by the Free Software Foundation 59 Temple Place, Suite 330
+Boston, MA  02111-1307 USA
+
+   Copyright (C) 1985, 1986, 1987, 1993, 1994, 1995, 1996, 1997, 1998
+Free Software Foundation, Inc.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided also
+that the sections entitled "The GNU Manifesto", "Distribution" and "GNU
+General Public License" are included exactly as in the original, and
+provided that the entire resulting derived work is distributed under the
+terms of a permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that the sections entitled "The GNU Manifesto",
+"Distribution" and "GNU General Public License" may be included in a
+translation approved by the Free Software Foundation instead of in the
+original English.
+
+
+File: emacs,  Node: Balanced Editing,  Next: Symbol Completion,  Prev: Comments,  Up: Programs
+
+Editing Without Unbalanced Parentheses
+======================================
+
+`M-('
+     Put parentheses around next sexp(s) (`insert-parentheses').
+
+`M-)'
+     Move past next close parenthesis and reindent
+     (`move-past-close-and-reindent').
+
+   The commands `M-(' (`insert-parentheses') and `M-)'
+(`move-past-close-and-reindent') are designed to facilitate a style of
+editing which keeps parentheses balanced at all times.  `M-(' inserts a
+pair of parentheses, either together as in `()', or, if given an
+argument, around the next several sexps.  It leaves point after the
+open parenthesis.  The command `M-)' moves past the close parenthesis,
+deleting any indentation preceding it (in this example there is none),
+and indenting with `C-j' after it.
+
+   For example, instead of typing `( F O O )', you can type `M-( F O
+O', which has the same effect except for leaving the cursor before the
+close parenthesis.
+
+   `M-(' may insert a space before the open parenthesis, depending on
+the syntax class of the preceding character.  Set
+`parens-require-spaces' to `nil' value if you wish to inhibit this.
+
+
+File: emacs,  Node: Symbol Completion,  Next: Which Function,  Prev: Balanced Editing,  Up: Programs
+
+Completion for Symbol Names
+===========================
+
+   Usually completion happens in the minibuffer.  But one kind of
+completion is available in all buffers: completion for symbol names.
+
+   The character `M-<TAB>' runs a command to complete the partial
+symbol before point against the set of meaningful symbol names.  Any
+additional characters determined by the partial name are inserted at
+point.
+
+   If the partial name in the buffer has more than one possible
+completion and they have no additional characters in common, a list of
+all possible completions is displayed in another window.
+
+   In most programming language major modes, `M-<TAB>' runs the command
+`complete-symbol', which provides two kinds of completion.  Normally it
+does completion based on a tags table (*note Tags::.); with a numeric
+argument (regardless of the value), it does completion based on the
+names listed in the Info file indexes for your language.  Thus, to
+complete the name of a symbol defined in your own program, use
+`M-<TAB>' with no argument; to complete the name of a standard library
+function, use `C-u M-<TAB>'.  Of course, Info-based completion works
+only if there is an Info file for the standard library functions of
+your language, and only if it is installed at your site.
+
+   In Emacs-Lisp mode, the name space for completion normally consists
+of nontrivial symbols present in Emacs--those that have function
+definitions, values or properties.  However, if there is an
+open-parenthesis immediately before the beginning of the partial symbol,
+only symbols with function definitions are considered as completions.
+The command which implements this is `lisp-complete-symbol'.
+
+   In Text mode and related modes, `M-<TAB>' completes words based on
+the spell-checker's dictionary.  *Note Spelling::.
+
+
+File: emacs,  Node: Which Function,  Next: Documentation,  Prev: Symbol Completion,  Up: Programs
+
+Which Function Mode
+===================
+
+   Which Function mode is a minor mode that displays the current
+function name in the mode line, as you move around in a buffer.
+
+   To enable (or disable) Which Function mode, use the command `M-x
+which-function-mode'.  This command is global; it applies to all
+buffers, both existing ones and those yet to be created.  However, this
+only affects certain major modes, those listed in the value of
+`which-func-modes'.  (If the value is `t', then Which Function mode
+applies to all major modes that know how to support it--which are the
+major modes that support Imenu.)
+
+
+File: emacs,  Node: Documentation,  Next: Change Log,  Prev: Which Function,  Up: Programs
+
+Documentation Commands
+======================
+
+   As you edit Lisp code to be run in Emacs, the commands `C-h f'
+(`describe-function') and `C-h v' (`describe-variable') can be used to
+print documentation of functions and variables that you want to call.
+These commands use the minibuffer to read the name of a function or
+variable to document, and display the documentation in a window.
+
+   For extra convenience, these commands provide default arguments
+based on the code in the neighborhood of point.  `C-h f' sets the
+default to the function called in the innermost list containing point.
+`C-h v' uses the symbol name around or adjacent to point as its default.
+
+   For Emacs Lisp code, you can also use Eldoc mode.  This minor mode
+constantly displays in the echo area the argument list for the function
+being called at point.  (In other words, it finds the function call that
+point is contained in, and displays the argument list of that function.)
+Eldoc mode applies in Emacs Lisp and Lisp Interaction modes only.  Use
+the command `M-x eldoc-mode' to enable or disable this feature.
+
+   For C, Lisp, and other languages, you can use `C-h C-i'
+(`info-lookup-symbol') to view the Info documentation for a symbol.
+You specify the symbol with the minibuffer; by default, it uses the
+symbol that appears in the buffer at point.  The major mode determines
+where to look for documentation for the symbol--which Info files and
+which indices.  You can also use `M-x info-lookup-file' to look for
+documentation for a file name.
+
+   You can read the "man page" for an operating system command, library
+function, or system call, with the `M-x manual-entry' command.  It runs
+the `man' program to format the man page, and runs it asynchronously if
+your system permits, so that you can keep on editing while the page is
+being formatted.  (MS-DOS and MS-Windows 3 do not permit asynchronous
+subprocesses, so on these systems you cannot edit while Emacs waits for
+`man' to exit.)  The result goes in a buffer named `*Man TOPIC*'.
+These buffers use a special major mode, Man mode, that facilitates
+scrolling and examining other manual pages.  For details, type `C-h m'
+while in a man page buffer.
+
+   For a long man page, setting the faces properly can take substantial
+time.  By default, Emacs uses faces in man pages if Emacs can display
+different fonts or colors.  You can turn off use of faces in man pages
+by setting the variable `Man-fontify-manpage-flag' to `nil'.
+
+   If you insert the text of a man page into an Emacs buffer in some
+other fashion, you can use the command `M-x Man-fontify-manpage' to
+perform the same conversions that `M-x manual-entry' does.
+
+   Eventually the GNU project hopes to replace most man pages with
+better-organized manuals that you can browse with Info.  *Note Misc
+Help::.  Since this process is only partially completed, it is still
+useful to read manual pages.
+
+
+File: emacs,  Node: Change Log,  Next: Tags,  Prev: Documentation,  Up: Programs
+
+Change Logs
+===========
+
+   The Emacs command `C-x 4 a' adds a new entry to the change log file
+for the file you are editing (`add-change-log-entry-other-window').
+
+   A change log file contains a chronological record of when and why you
+have changed a program, consisting of a sequence of entries describing
+individual changes.  Normally it is kept in a file called `ChangeLog'
+in the same directory as the file you are editing, or one of its parent
+directories.  A single `ChangeLog' file can record changes for all the
+files in its directory and all its subdirectories.
+
+   A change log entry starts with a header line that contains your name,
+your email address (taken from the variable `user-mail-address'), and
+the current date and time.  Aside from these header lines, every line
+in the change log starts with a space or a tab.  The bulk of the entry
+consists of "items", each of which starts with a line starting with
+whitespace and a star.  Here are two entries, both dated in May 1993,
+each with two items:
+
+     1993-05-25  Richard Stallman  <rms@gnu.org>
+     
+             * man.el: Rename symbols `man-*' to `Man-*'.
+             (manual-entry): Make prompt string clearer.
+     
+             * simple.el (blink-matching-paren-distance):
+             Change default to 12,000.
+     
+     1993-05-24  Richard Stallman  <rms@gnu.org>
+     
+             * vc.el (minor-mode-map-alist): Don't use it if it's void.
+             (vc-cancel-version): Doc fix.
+
+(Previous Emacs versions used a different format for the date.)
+
+   One entry can describe several changes; each change should have its
+own item.  Normally there should be a blank line between items.  When
+items are related (parts of the same change, in different places), group
+them by leaving no blank line between them.  The second entry above
+contains two items grouped in this way.
+
+   `C-x 4 a' visits the change log file and creates a new entry unless
+the most recent entry is for today's date and your name.  It also
+creates a new item for the current file.  For many languages, it can
+even guess the name of the function or other object that was changed.
+
+   The change log file is visited in Change Log mode.  In this major
+mode, each bunch of grouped items counts as one paragraph, and each
+entry is considered a page.  This facilitates editing the entries.
+`C-j' and auto-fill indent each new line like the previous line; this
+is convenient for entering the contents of an entry.
+
+   Version control systems are another way to keep track of changes in
+your program and keep a change log.  *Note Log Buffer::.
+
+
+File: emacs,  Node: Tags,  Next: Emerge,  Prev: Change Log,  Up: Programs
+
+Tags Tables
+===========
+
+   A "tags table" is a description of how a multi-file program is
+broken up into files.  It lists the names of the component files and the
+names and positions of the functions (or other named subunits) in each
+file.  Grouping the related files makes it possible to search or replace
+through all the files with one command.  Recording the function names
+and positions makes possible the `M-.' command which finds the
+definition of a function by looking up which of the files it is in.
+
+   Tags tables are stored in files called "tags table files".  The
+conventional name for a tags table file is `TAGS'.
+
+   Each entry in the tags table records the name of one tag, the name
+of the file that the tag is defined in (implicitly), and the position
+in that file of the tag's definition.
+
+   Just what names from the described files are recorded in the tags
+table depends on the programming language of the described file.  They
+normally include all functions and subroutines, and may also include
+global variables, data types, and anything else convenient.  Each name
+recorded is called a "tag".
+
+* Menu:
+
+* Tag Syntax::		Tag syntax for various types of code and text files.
+* Create Tags Table::	Creating a tags table with `etags'.
+* Select Tags Table::	How to visit a tags table.
+* Find Tag::		Commands to find the definition of a specific tag.
+* Tags Search::		Using a tags table for searching and replacing.
+* List Tags::		Listing and finding tags defined in a file.
+
+
+File: emacs,  Node: Tag Syntax,  Next: Create Tags Table,  Up: Tags
+
+Source File Tag Syntax
+----------------------
+
+   Here is how tag syntax is defined for the most popular languages:
+
+   * In C code, any C function or typedef is a tag, and so are
+     definitions of `struct', `union' and `enum'.  `#define' macro
+     definitions and `enum' constants are also tags, unless you specify
+     `--no-defines' when making the tags table.  Similarly, global
+     variables are tags, unless you specify `--no-globals'.  Use of
+     `--no-globals' and `--no-defines' can make the tags table file
+     much smaller.
+
+   * In C++ code, in addition to all the tag constructs of C code,
+     member functions are also recognized, and optionally member
+     variables if you use the `--members' option.  Tags for variables
+     and functions in classes are named `CLASS::VARIABLE' and
+     `CLASS::FUNCTION'.
+
+   * In Java code, tags include all the constructs recognized in C++,
+     plus the `extends' and `implements' constructs.  Tags for variables
+     and functions in classes are named `CLASS.VARIABLE' and
+     `CLASS.FUNCTION'.
+
+   * In LaTeX text, the argument of any of the commands `\chapter',
+     `\section', `\subsection', `\subsubsection', `\eqno', `\label',
+     `\ref', `\cite', `\bibitem', `\part', `\appendix', `\entry', or
+     `\index', is a tag.
+
+     Other commands can make tags as well, if you specify them in the
+     environment variable `TEXTAGS' before invoking `etags'.  The value
+     of this environment variable should be a colon-separated list of
+     command names.  For example,
+
+          TEXTAGS="def:newcommand:newenvironment"
+          export TEXTAGS
+
+     specifies (using Bourne shell syntax) that the commands `\def',
+     `\newcommand' and `\newenvironment' also define tags.
+
+   * In Lisp code, any function defined with `defun', any variable
+     defined with `defvar' or `defconst', and in general the first
+     argument of any expression that starts with `(def' in column zero,
+     is a tag.
+
+   * In Scheme code, tags include anything defined with `def' or with a
+     construct whose name starts with `def'.  They also include
+     variables set with `set!' at top level in the file.
+
+   Several other languages are also supported:
+
+   * In assembler code, labels appearing at the beginning of a line,
+     followed by a colon, are tags.
+
+   * In Bison or Yacc input files, each rule defines as a tag the
+     nonterminal it constructs.  The portions of the file that contain
+     C code are parsed as C code.
+
+   * In Cobol code, tags are paragraph names; that is, any word
+     starting in column 8 and followed by a period.
+
+   * In Erlang code, the tags are the functions, records, and macros
+     defined in the file.
+
+   * In Fortran code, functions, subroutines and blockdata are tags.
+
+   * In Objective C code, tags include Objective C definitions for
+     classes, class categories, methods, and protocols.
+
+   * In Pascal code, the tags are the functions and procedures defined
+     in the file.
+
+   * In Perl code, the tags are the procedures defined by the `sub'
+     keyword.
+
+   * In Postscript code, the tags are the functions.
+
+   * In Prolog code, a tag name appears at the left margin.
+
+   You can also generate tags based on regexp matching (*note Create
+Tags Table::.) to handle other formats and languages.
+
+
+File: emacs,  Node: Create Tags Table,  Next: Select Tags Table,  Prev: Tag Syntax,  Up: Tags
+
+Creating Tags Tables
+--------------------
+
+   The `etags' program is used to create a tags table file.  It knows
+the syntax of several languages, as described in *Note Tag Syntax::.
+Here is how to run `etags':
+
+     etags INPUTFILES...
+
+The `etags' program reads the specified files, and writes a tags table
+named `TAGS' in the current working directory.  `etags' recognizes the
+language used in an input file based on its file name and contents.
+You can specify the language with the `--language=NAME' option,
+described below.
+
+   If the tags table data become outdated due to changes in the files
+described in the table, the way to update the tags table is the same
+way it was made in the first place.  It is not necessary to do this
+often.
+
+   If the tags table fails to record a tag, or records it for the wrong
+file, then Emacs cannot possibly find its definition.  However, if the
+position recorded in the tags table becomes a little bit wrong (due to
+some editing in the file that the tag definition is in), the only
+consequence is a slight delay in finding the tag.  Even if the stored
+position is very wrong, Emacs will still find the tag, but it must
+search the entire file for it.
+
+   So you should update a tags table when you define new tags that you
+want to have listed, or when you move tag definitions from one file to
+another, or when changes become substantial.  Normally there is no need
+to update the tags table after each edit, or even every day.
+
+   One tags table can effectively include another.  Specify the included
+tags file name with the `--include=FILE' option when creating the file
+that is to include it.  The latter file then acts as if it contained
+all the files specified in the included file, as well as the files it
+directly contains.
+
+   If you specify the source files with relative file names when you run
+`etags', the tags file will contain file names relative to the
+directory where the tags file was initially written.  This way, you can
+move an entire directory tree containing both the tags file and the
+source files, and the tags file will still refer correctly to the source
+files.
+
+   If you specify absolute file names as arguments to `etags', then the
+tags file will contain absolute file names.  This way, the tags file
+will still refer to the same files even if you move it, as long as the
+source files remain in the same place.  Absolute file names start with
+`/', or with `DEVICE:/' on MS-DOS and MS-Windows.
+
+   When you want to make a tags table from a great number of files, you
+may have problems listing them on the command line, because some systems
+have a limit on its length.  The simplest way to circumvent this limit
+is to tell `etags' to read the file names from its standard input, by
+typing a dash in place of the file names, like this:
+
+     find . -name "*.[chCH]" -print | etags -
+
+   Use the option `--language=NAME' to specify the language explicitly.
+You can intermix these options with file names; each one applies to
+the file names that follow it.  Specify `--language=auto' to tell
+`etags' to resume guessing the language from the file names and file
+contents.  Specify `--language=none' to turn off language-specific
+processing entirely; then `etags' recognizes tags by regexp matching
+alone.  `etags --help' prints the list of the languages `etags' knows,
+and the file name rules for guessing the language.
+
+   The `--regex' option provides a general way of recognizing tags
+based on regexp matching.  You can freely intermix it with file names.
+Each `--regex' option adds to the preceding ones, and applies only to
+the following files.  The syntax is:
+
+     --regex=/TAGREGEXP[/NAMEREGEXP]/
+
+where TAGREGEXP is used to match the lines to tag.  It is always
+anchored, that is, it behaves as if preceded by `^'.  If you want to
+account for indentation, just match any initial number of blanks by
+beginning your regular expression with `[ \t]*'.  In the regular
+expressions, `\' quotes the next character, and `\t' stands for the tab
+character.  Note that `etags' does not handle the other C escape
+sequences for special characters.
+
+   The syntax of regular expressions in `etags' is the same as in
+Emacs, augmented with the "interval operator", which works as in `grep'
+and `ed'.  The syntax of an interval operator is `\{M,N\}', and its
+meaning is to match the preceding expression at least M times and up to
+N times.
+
+   You should not match more characters with TAGREGEXP than that needed
+to recognize what you want to tag.  If the match is such that more
+characters than needed are unavoidably matched by TAGREGEXP, you may
+find useful to add a NAMEREGEXP, in order to narrow the tag scope.  You
+can find some examples below.
+
+   The `-R' option deletes all the regexps defined with `--regex'
+options.  It applies to the file names following it, as you can see
+from the following example:
+
+     etags --regex=/REG1/ voo.doo --regex=/REG2/ \
+         bar.ber -R --lang=lisp los.er
+
+Here `etags' chooses the parsing language for `voo.doo' and `bar.ber'
+according to their contents.  `etags' also uses REG1 to recognize
+additional tags in `voo.doo', and both REG1 and REG2 to recognize
+additional tags in `bar.ber'.  `etags' uses the Lisp tags rules, and no
+regexp matching, to recognize tags in `los.er'.
+
+   Here are some more examples.  The regexps are quoted to protect them
+from shell interpretation.
+
+   * Tag the `DEFVAR' macros in the emacs source files:
+
+          --regex='/[ \t]*DEFVAR_[A-Z_ \t(]+"\([^"]+\)"/'
+
+   * Tag VHDL files (this example is a single long line, broken here for
+     formatting reasons):
+
+          --language=none
+          --regex='/[ \t]*\(ARCHITECTURE\|CONFIGURATION\) +[^ ]* +OF/'
+          --regex='/[ \t]*\(ATTRIBUTE\|ENTITY\|FUNCTION\|PACKAGE\
+          \( BODY\)?\|PROCEDURE\|PROCESS\|TYPE\)[ \t]+\([^ \t(]+\)/\3/'
+
+   * Tag Tcl files (this last example shows the usage of a NAMEREGEXP):
+
+          --lang=none --regex='/proc[ \t]+\([^ \t]+\)/\1/'
+
+   For a list of the other available `etags' options, execute `etags
+--help'.
+
+
+File: emacs,  Node: Select Tags Table,  Next: Find Tag,  Prev: Create Tags Table,  Up: Tags
+
+Selecting a Tags Table
+----------------------
+
+   Emacs has at any time one "selected" tags table, and all the commands
+for working with tags tables use the selected one.  To select a tags
+table, type `M-x visit-tags-table', which reads the tags table file
+name as an argument.  The name `TAGS' in the default directory is used
+as the default file name.
+
+   All this command does is store the file name in the variable
+`tags-file-name'.  Emacs does not actually read in the tags table
+contents until you try to use them.  Setting this variable yourself is
+just as good as using `visit-tags-table'.  The variable's initial value
+is `nil'; that value tells all the commands for working with tags tables
+that they must ask for a tags table file name to use.
+
+   Using `visit-tags-table' when a tags table is already loaded gives
+you a choice: you can add the new tags table to the current list of
+tags tables, or start a new list.  The tags commands use all the tags
+tables in the current list.  If you start a new list, the new tags table
+is used *instead* of others.  If you add the new table to the current
+list, it is used *as well as* the others.  When the tags commands scan
+the list of tags tables, they don't always start at the beginning of
+the list; they start with the first tags table (if any) that describes
+the current file, proceed from there to the end of the list, and then
+scan from the beginning of the list until they have covered all the
+tables in the list.
+
+   You can specify a precise list of tags tables by setting the variable
+`tags-table-list' to a list of strings, like this:
+
+     (setq tags-table-list
+           '("~/emacs" "/usr/local/lib/emacs/src"))
+
+This tells the tags commands to look at the `TAGS' files in your
+`~/emacs' directory and in the `/usr/local/lib/emacs/src' directory.
+The order depends on which file you are in and which tags table
+mentions that file, as explained above.
+
+   Do not set both `tags-file-name' and `tags-table-list'.
+
+
+File: emacs,  Node: Find Tag,  Next: Tags Search,  Prev: Select Tags Table,  Up: Tags
+
+Finding a Tag
+-------------
+
+   The most important thing that a tags table enables you to do is to
+find the definition of a specific tag.
+
+`M-. TAG <RET>'
+     Find first definition of TAG (`find-tag').
+
+`C-u M-.'
+     Find next alternate definition of last tag specified.
+
+`C-u - M-.'
+     Go back to previous tag found.
+
+`C-M-. PATTERN <RET>'
+     Find a tag whose name matches PATTERN (`find-tag-regexp').
+
+`C-u C-M-.'
+     Find the next tag whose name matches the last pattern used.
+
+`C-x 4 . TAG <RET>'
+     Find first definition of TAG, but display it in another window
+     (`find-tag-other-window').
+
+`C-x 5 . TAG <RET>'
+     Find first definition of TAG, and create a new frame to select the
+     buffer (`find-tag-other-frame').
+
+`M-*'
+     Pop back to where you previously invoked `M-.' and friends.
+
+   `M-.' (`find-tag') is the command to find the definition of a
+specified tag.  It searches through the tags table for that tag, as a
+string, and then uses the tags table info to determine the file that the
+definition is in and the approximate character position in the file of
+the definition.  Then `find-tag' visits that file, moves point to the
+approximate character position, and searches ever-increasing distances
+away to find the tag definition.
+
+   If an empty argument is given (just type <RET>), the sexp in the
+buffer before or around point is used as the TAG argument.  *Note
+Lists::, for info on sexps.
+
+   You don't need to give `M-.' the full name of the tag; a part will
+do.  This is because `M-.' finds tags in the table which contain TAG as
+a substring.  However, it prefers an exact match to a substring match.
+To find other tags that match the same substring, give `find-tag' a
+numeric argument, as in `C-u M-.'; this does not read a tag name, but
+continues searching the tags table's text for another tag containing
+the same substring last used.  If you have a real <META> key, `M-0 M-.'
+is an easier alternative to `C-u M-.'.
+
+   Like most commands that can switch buffers, `find-tag' has a variant
+that displays the new buffer in another window, and one that makes a
+new frame for it.  The former is `C-x 4 .', which invokes the command
+`find-tag-other-window'.  The latter is `C-x 5 .', which invokes
+`find-tag-other-frame'.
+
+   To move back to places you've found tags recently, use `C-u - M-.';
+more generally, `M-.' with a negative numeric argument.  This command
+can take you to another buffer.  `C-x 4 .' with a negative argument
+finds the previous tag location in another window.
+
+   As well as going back to places you've found tags recently, you can
+go back to places *from where* you found them.  Use `M-*', which
+invokes the command `pop-tag-mark', for this.  Typically you would find
+and study the definition of something with `M-.' and then return to
+where you were with `M-*'.
+
+   Both `C-u - M-.' and `M-*' allow you to retrace your steps to a
+depth determined by the variable `find-tag-marker-ring-length'.
+
+   The command `C-M-.' (`find-tag-regexp') visits the tags that match a
+specified regular expression.  It is just like `M-.' except that it
+does regexp matching instead of substring matching.
+
+
+File: emacs,  Node: Tags Search,  Next: List Tags,  Prev: Find Tag,  Up: Tags
+
+Searching and Replacing with Tags Tables
+----------------------------------------
+
+   The commands in this section visit and search all the files listed
+in the selected tags table, one by one.  For these commands, the tags
+table serves only to specify a sequence of files to search.
+
+`M-x tags-search <RET> REGEXP <RET>'
+     Search for REGEXP through the files in the selected tags table.
+
+`M-x tags-query-replace <RET> REGEXP <RET> REPLACEMENT <RET>'
+     Perform a `query-replace-regexp' on each file in the selected tags
+     table.
+
+`M-,'
+     Restart one of the commands above, from the current location of
+     point (`tags-loop-continue').
+
+   `M-x tags-search' reads a regexp using the minibuffer, then searches
+for matches in all the files in the selected tags table, one file at a
+time.  It displays the name of the file being searched so you can
+follow its progress.  As soon as it finds an occurrence, `tags-search'
+returns.
+
+   Having found one match, you probably want to find all the rest.  To
+find one more match, type `M-,' (`tags-loop-continue') to resume the
+`tags-search'.  This searches the rest of the current buffer, followed
+by the remaining files of the tags table.
+
+   `M-x tags-query-replace' performs a single `query-replace-regexp'
+through all the files in the tags table.  It reads a regexp to search
+for and a string to replace with, just like ordinary `M-x
+query-replace-regexp'.  It searches much like `M-x tags-search', but
+repeatedly, processing matches according to your input.  *Note
+Replace::, for more information on query replace.
+
+   It is possible to get through all the files in the tags table with a
+single invocation of `M-x tags-query-replace'.  But often it is useful
+to exit temporarily, which you can do with any input event that has no
+special query replace meaning.  You can resume the query replace
+subsequently by typing `M-,'; this command resumes the last tags search
+or replace command that you did.
+
+   The commands in this section carry out much broader searches than the
+`find-tag' family.  The `find-tag' commands search only for definitions
+of tags that match your substring or regexp.  The commands
+`tags-search' and `tags-query-replace' find every occurrence of the
+regexp, as ordinary search commands and replace commands do in the
+current buffer.
+
+   These commands create buffers only temporarily for the files that
+they have to search (those which are not already visited in Emacs
+buffers).  Buffers in which no match is found are quickly killed; the
+others continue to exist.
+
+   It may have struck you that `tags-search' is a lot like `grep'.  You
+can also run `grep' itself as an inferior of Emacs and have Emacs show
+you the matching lines one by one.  This works much like running a
+compilation; finding the source locations of the `grep' matches works
+like finding the compilation errors.  *Note Compilation::.
+
+
+File: emacs,  Node: List Tags,  Prev: Tags Search,  Up: Tags
+
+Tags Table Inquiries
+--------------------
+
+`M-x list-tags <RET> FILE <RET>'
+     Display a list of the tags defined in the program file `file'.
+
+`M-x tags-apropos <RET> REGEXP <RET>'
+     Display a list of all tags matching REGEXP.
+
+   `M-x list-tags' reads the name of one of the files described by the
+selected tags table, and displays a list of all the tags defined in
+that file.  The "file name" argument is really just a string to compare
+against the file names recorded in the tags table; it is read as a
+string rather than as a file name.  Therefore, completion and
+defaulting are not available, and you must enter the file name the same
+way it appears in the tags table.  Do not include a directory as part of
+the file name unless the file name recorded in the tags table includes a
+directory.
+
+   `M-x tags-apropos' is like `apropos' for tags (*note Apropos::.).
+It reads a regexp, then finds all the tags in the selected tags table
+whose entries match that regexp, and displays the tag names found.
+
+   You can also perform completion in the buffer on the name space of
+tag names in the current tags tables.  *Note Symbol Completion::.
+
+
+File: emacs,  Node: Emerge,  Next: C/Java Modes,  Prev: Tags,  Up: Programs
+
+Merging Files with Emerge
+=========================
+
+   It's not unusual for programmers to get their signals crossed and
+modify the same program in two different directions.  To recover from
+this confusion, you need to merge the two versions.  Emerge makes this
+easier.  See also *Note Comparing Files::, for commands to compare in a
+more manual fashion, and *Note Emerge: (ediff)Emerge.
+
+* Menu:
+
+* Overview of Emerge::	How to start Emerge.  Basic concepts.
+* Submodes of Emerge::	Fast mode vs. Edit mode.
+			  Skip Prefers mode and Auto Advance mode.
+* State of Difference::	You do the merge by specifying state A or B
+			  for each difference.
+* Merge Commands::	Commands for selecting a difference,
+			  changing states of differences, etc.
+* Exiting Emerge::	What to do when you've finished the merge.
+* Combining in Emerge::	    How to keep both alternatives for a difference.
+* Fine Points of Emerge::   Misc.
+
+
+File: emacs,  Node: Overview of Emerge,  Next: Submodes of Emerge,  Up: Emerge
+
+Overview of Emerge
+------------------
+
+   To start Emerge, run one of these four commands:
+
+`M-x emerge-files'
+     Merge two specified files.
+
+`M-x emerge-files-with-ancestor'
+     Merge two specified files, with reference to a common ancestor.
+
+`M-x emerge-buffers'
+     Merge two buffers.
+
+`M-x emerge-buffers-with-ancestor'
+     Merge two buffers with reference to a common ancestor in a third
+     buffer.
+
+   The Emerge commands compare two files or buffers, and display the
+comparison in three buffers: one for each input text (the "A buffer"
+and the "B buffer"), and one (the "merge buffer") where merging takes
+place.  The merge buffer shows the full merged text, not just the
+differences.  Wherever the two input texts differ, you can choose which
+one of them to include in the merge buffer.
+
+   The Emerge commands that take input from existing buffers use only
+the accessible portions of those buffers, if they are narrowed (*note
+Narrowing::.).
+
+   If a common ancestor version is available, from which the two texts
+to be merged were both derived, Emerge can use it to guess which
+alternative is right.  Wherever one current version agrees with the
+ancestor, Emerge presumes that the other current version is a deliberate
+change which should be kept in the merged version.  Use the
+`with-ancestor' commands if you want to specify a common ancestor text.
+These commands read three file or buffer names--variant A, variant B,
+and the common ancestor.
+
+   After the comparison is done and the buffers are prepared, the
+interactive merging starts.  You control the merging by typing special
+"merge commands" in the merge buffer.  The merge buffer shows you a
+full merged text, not just differences.  For each run of differences
+between the input texts, you can choose which one of them to keep, or
+edit them both together.
+
+   The merge buffer uses a special major mode, Emerge mode, with
+commands for making these choices.  But you can also edit the buffer
+with ordinary Emacs commands.
+
+   At any given time, the attention of Emerge is focused on one
+particular difference, called the "selected" difference.  This
+difference is marked off in the three buffers like this:
+
+     vvvvvvvvvvvvvvvvvvvv
+     TEXT THAT DIFFERS
+     ^^^^^^^^^^^^^^^^^^^^
+
+Emerge numbers all the differences sequentially and the mode line
+always shows the number of the selected difference.
+
+   Normally, the merge buffer starts out with the A version of the text.
+But when the A version of a difference agrees with the common ancestor,
+then the B version is initially preferred for that difference.
+
+   Emerge leaves the merged text in the merge buffer when you exit.  At
+that point, you can save it in a file with `C-x C-w'.  If you give a
+numeric argument to `emerge-files' or `emerge-files-with-ancestor', it
+reads the name of the output file using the minibuffer.  (This is the
+last file name those commands read.)  Then exiting from Emerge saves
+the merged text in the output file.
+
+   Normally, Emerge commands save the output buffer in its file when you
+exit.  If you abort Emerge with `C-]', the Emerge command does not save
+the output buffer, but you can save it yourself if you wish.
+
+
+File: emacs,  Node: Submodes of Emerge,  Next: State of Difference,  Prev: Overview of Emerge,  Up: Emerge
+
+Submodes of Emerge
+------------------
+
+   You can choose between two modes for giving merge commands: Fast mode
+and Edit mode.  In Fast mode, basic merge commands are single
+characters, but ordinary Emacs commands are disabled.  This is
+convenient if you use only merge commands.  In Edit mode, all merge
+commands start with the prefix key `C-c C-c', and the normal Emacs
+commands are also available.  This allows editing the merge buffer, but
+slows down Emerge operations.
+
+   Use `e' to switch to Edit mode, and `C-c C-c f' to switch to Fast
+mode.  The mode line indicates Edit and Fast modes with `E' and `F'.
+
+   Emerge has two additional submodes that affect how particular merge
+commands work: Auto Advance mode and Skip Prefers mode.
+
+   If Auto Advance mode is in effect, the `a' and `b' commands advance
+to the next difference.  This lets you go through the merge faster as
+long as you simply choose one of the alternatives from the input.  The
+mode line indicates Auto Advance mode with `A'.
+
+   If Skip Prefers mode is in effect, the `n' and `p' commands skip
+over differences in states prefer-A and prefer-B (*note State of
+Difference::.).  Thus you see only differences for which neither version
+is presumed "correct."  The mode line indicates Skip Prefers mode with
+`S'.
+
+   Use the command `s a' (`emerge-auto-advance-mode') to set or clear
+Auto Advance mode.  Use `s s' (`emerge-skip-prefers-mode') to set or
+clear Skip Prefers mode.  These commands turn on the mode with a
+positive argument, turns it off with a negative or zero argument, and
+toggle the mode with no argument.
+
+
+File: emacs,  Node: State of Difference,  Next: Merge Commands,  Prev: Submodes of Emerge,  Up: Emerge
+
+State of a Difference
+---------------------
+
+   In the merge buffer, a difference is marked with lines of `v' and
+`^' characters.  Each difference has one of these seven states:
+
+A
+     The difference is showing the A version.  The `a' command always
+     produces this state; the mode line indicates it with `A'.
+
+B
+     The difference is showing the B version.  The `b' command always
+     produces this state; the mode line indicates it with `B'.
+
+default-A
+default-B
+     The difference is showing the A or the B state by default, because
+     you haven't made a choice.  All differences start in the default-A
+     state (and thus the merge buffer is a copy of the A buffer),
+     except those for which one alternative is "preferred" (see below).
+
+     When you select a difference, its state changes from default-A or
+     default-B to plain A or B.  Thus, the selected difference never has
+     state default-A or default-B, and these states are never displayed
+     in the mode line.
+
+     The command `d a' chooses default-A as the default state, and `d
+     b' chooses default-B.  This chosen default applies to all
+     differences which you haven't ever selected and for which no
+     alternative is preferred.  If you are moving through the merge
+     sequentially, the differences you haven't selected are those
+     following the selected one.  Thus, while moving sequentially, you
+     can effectively make the A version the default for some sections
+     of the merge buffer and the B version the default for others by
+     using `d a' and `d b' between sections.
+
+prefer-A
+prefer-B
+     The difference is showing the A or B state because it is
+     "preferred".  This means that you haven't made an explicit choice,
+     but one alternative seems likely to be right because the other
+     alternative agrees with the common ancestor.  Thus, where the A
+     buffer agrees with the common ancestor, the B version is
+     preferred, because chances are it is the one that was actually
+     changed.
+
+     These two states are displayed in the mode line as `A*' and `B*'.
+
+combined
+     The difference is showing a combination of the A and B states, as a
+     result of the `x c' or `x C' commands.
+
+     Once a difference is in this state, the `a' and `b' commands don't
+     do anything to it unless you give them a numeric argument.
+
+     The mode line displays this state as `comb'.
+
+
+File: emacs,  Node: Merge Commands,  Next: Exiting Emerge,  Prev: State of Difference,  Up: Emerge
+
+Merge Commands
+--------------
+
+   Here are the Merge commands for Fast mode; in Edit mode, precede them
+with `C-c C-c':
+
+`p'
+     Select the previous difference.
+
+`n'
+     Select the next difference.
+
+`a'
+     Choose the A version of this difference.
+
+`b'
+     Choose the B version of this difference.
+
+`C-u N j'
+     Select difference number N.
+
+`.'
+     Select the difference containing point.  You can use this command
+     in the merge buffer or in the A or B buffer.
+
+`q'
+     Quit--finish the merge.
+
+`C-]'
+     Abort--exit merging and do not save the output.
+
+`f'
+     Go into Fast mode.  (In Edit mode, this is actually `C-c C-c f'.)
+
+`e'
+     Go into Edit mode.
+
+`l'
+     Recenter (like `C-l') all three windows.
+
+`-'
+     Specify part of a prefix numeric argument.
+
+`DIGIT'
+     Also specify part of a prefix numeric argument.
+
+`d a'
+     Choose the A version as the default from here down in the merge
+     buffer.
+
+`d b'
+     Choose the B version as the default from here down in the merge
+     buffer.
+
+`c a'
+     Copy the A version of this difference into the kill ring.
+
+`c b'
+     Copy the B version of this difference into the kill ring.
+
+`i a'
+     Insert the A version of this difference at point.
+
+`i b'
+     Insert the B version of this difference at point.
+
+`m'
+     Put point and mark around the difference.
+
+`^'
+     Scroll all three windows down (like `M-v').
+
+`v'
+     Scroll all three windows up (like `C-v').
+
+`<'
+     Scroll all three windows left (like `C-x <').
+
+`>'
+     Scroll all three windows right (like `C-x >').
+
+`|'
+     Reset horizontal scroll on all three windows.
+
+`x 1'
+     Shrink the merge window to one line.  (Use `C-u l' to restore it
+     to full size.)
+
+`x c'
+     Combine the two versions of this difference (*note Combining in
+     Emerge::.).
+
+`x f'
+     Show the names of the files/buffers Emerge is operating on, in a
+     Help window.  (Use `C-u l' to restore windows.)
+
+`x j'
+     Join this difference with the following one.  (`C-u x j' joins
+     this difference with the previous one.)
+
+`x s'
+     Split this difference into two differences.  Before you use this
+     command, position point in each of the three buffers at the place
+     where you want to split the difference.
+
+`x t'
+     Trim identical lines off the top and bottom of the difference.
+     Such lines occur when the A and B versions are identical but
+     differ from the ancestor version.
+
+
+File: emacs,  Node: Exiting Emerge,  Next: Combining in Emerge,  Prev: Merge Commands,  Up: Emerge
+
+Exiting Emerge
+--------------
+
+   The `q' command (`emerge-quit') finishes the merge, storing the
+results into the output file if you specified one.  It restores the A
+and B buffers to their proper contents, or kills them if they were
+created by Emerge and you haven't changed them.  It also disables the
+Emerge commands in the merge buffer, since executing them later could
+damage the contents of the various buffers.
+
+   `C-]' aborts the merge.  This means exiting without writing the
+output file.  If you didn't specify an output file, then there is no
+real difference between aborting and finishing the merge.
+
+   If the Emerge command was called from another Lisp program, then its
+return value is `t' for successful completion, or `nil' if you abort.
+
+
+File: emacs,  Node: Combining in Emerge,  Next: Fine Points of Emerge,  Prev: Exiting Emerge,  Up: Emerge
+
+Combining the Two Versions
+--------------------------
+
+   Sometimes you want to keep *both* alternatives for a particular
+difference.  To do this, use `x c', which edits the merge buffer like
+this:
+
+     #ifdef NEW
+     VERSION FROM A BUFFER
+     #else /* not NEW */
+     VERSION FROM B BUFFER
+     #endif /* not NEW */
+
+While this example shows C preprocessor conditionals delimiting the two
+alternative versions, you can specify the strings to use by setting the
+variable `emerge-combine-versions-template' to a string of your choice.
+In the string, `%a' says where to put version A, and `%b' says where
+to put version B.  The default setting, which produces the results
+shown above, looks like this:
+
+     "#ifdef NEW\n%a#else /* not NEW */\n%b#endif /* not NEW */\n"
+
+
+File: emacs,  Node: Fine Points of Emerge,  Prev: Combining in Emerge,  Up: Emerge
+
+Fine Points of Emerge
+---------------------
+
+   During the merge, you mustn't try to edit the A and B buffers
+yourself.  Emerge modifies them temporarily, but ultimately puts them
+back the way they were.
+
+   You can have any number of merges going at once--just don't use any
+one buffer as input to more than one merge at once, since the temporary
+changes made in these buffers would get in each other's way.
+
+   Starting Emerge can take a long time because it needs to compare the
+files fully.  Emacs can't do anything else until `diff' finishes.
+Perhaps in the future someone will change Emerge to do the comparison in
+the background when the input files are large--then you could keep on
+doing other things with Emacs until Emerge is ready to accept commands.
+
+   After setting up the merge, Emerge runs the hook
+`emerge-startup-hook' (*note Hooks::.).
+
+
+File: emacs,  Node: C/Java Modes,  Next: Fortran,  Prev: Emerge,  Up: Programs
+
+C Modes and Java Mode
+=====================
+
+   This section describes special features available in C, C++,
+Objective-C and Java modes.
+
+* Menu:
+
+* Motion in C::
+* Electric C::
+* Hungry Delete::
+* Other C Commands::
+* Comments in C::
+
+
+File: emacs,  Node: Motion in C,  Next: Electric C,  Up: C/Java Modes
+
+C Mode Motion Commands
+----------------------
+
+   This section describes commands for moving point, in C mode and
+related modes.
+
+`C-c C-u'
+     Move point back to the containing preprocessor conditional,
+     leaving the mark behind.  A prefix argument acts as a repeat
+     count.  With a negative argument, move point forward to the end of
+     the containing preprocessor conditional.  When going backwards,
+     `#elif' is treated like `#else' followed by `#if'.  When going
+     forwards, `#elif' is ignored.
+
+`C-c C-p'
+     Move point back over a preprocessor conditional, leaving the mark
+     behind.  A prefix argument acts as a repeat count.  With a negative
+     argument, move forward.
+
+`C-c C-n'
+     Move point forward across a preprocessor conditional, leaving the
+     mark behind.  A prefix argument acts as a repeat count.  With a
+     negative argument, move backward.
+
+`M-a'
+     Move point to the beginning of the innermost C statement
+     (`c-beginning-of-statement').  If point is already at the beginning
+     of a statement, move to the beginning of the preceding statement.
+     With prefix argument N, move back N - 1 statements.
+
+     If point is within a string or comment, or next to a comment (only
+     whitespace between them), this command moves by sentences instead
+     of statements.
+
+     When called from a program, this function takes three optional
+     arguments: the numeric prefix argument, a buffer position limit
+     (don't move back before that place), and a flag that controls
+     whether to do sentence motion when inside of a comment.
+
+`M-e'
+     Move point to the end of the innermost C statement; like `M-a'
+     except that it moves in the other direction (`c-end-of-statement').
+
+`M-x c-backward-into-nomenclature'
+     Move point backward to beginning of a C++ nomenclature section or
+     word.  With prefix argument N, move N times.  If N is negative,
+     move forward.  C++ nomenclature means a symbol name in the style
+     of NamingSymbolsWithMixedCaseAndNoUnderlines; each capital letter
+     begins a section or word.
+
+     In the GNU project, we recommend using underscores to separate
+     words within an identifier in C or C++, rather than using case
+     distinctions.
+
+`M-x c-forward-into-nomenclature'
+     Move point forward to end of a C++ nomenclature section or word.
+     With prefix argument N, move N times.
+

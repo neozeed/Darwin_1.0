@@ -1,0 +1,156 @@
+.\" @(#) updatehosts.1 1.3 99/01/04 @(#)
+.TH UPDATEHOSTS 1 "99/01/04"
+.UC 4
+.SH NAME
+updatehosts \- update DNS and static host tables
+.SH SYNOPSIS
+.B updatehosts
+[
+.B -d dbdirectory
+]
+[
+.B -f configfile
+]
+[
+.B -n
+]
+[
+.B -s
+]
+[
+.B -v
+]
+.B [ file ... ]
+.SH DESCRIPTION
+Updates the DNS and static host database zone files.
+.PP
+.B updatehosts
+is a front-end to the
+.B gendns
+and
+.B genstatic
+programs which generate DNS zone files the and static host file from a set
+of input files organized as a set of flat relational files.
+.B updatehosts
+is driven off of a configuration file usually found in
+.B /usr/local/bin/updatehosts.env
+which sets variables such as the location of the input
+database files.
+An alternate configuration file location can be specified by the -f option.
+.PP
+The input database files are normally kept in the directory
+.B /var/named/db.
+The location of this directory can be specified by the -d option or with the
+DB_DIR environment variable.
+Output from
+.B updatehosts
+is normally placed in the
+.B /var/named
+directory.
+An alternate output directory location may be specified by setting the
+NAMED_DIR variable.
+.PP
+The following files are maintained in the DB_DIR directory:
+.TP
+main
+Contains information about each host within a set of domains.  Information
+such as the domain name of each host and its IP address are maintained in
+this file.
+.TP
+cname
+Contains information about aliases for hosts
+.TP
+mx
+Contains information about MX (mail exchanger) records.
+.TP
+ns
+Contains information about NS (nameserver) records.
+.TP
+soa
+Contains information about SOA (start of authority) records.
+.TP
+global
+Contains some global parameters
+.TP
+secondary
+Contains information about secondary zones served by this server
+.TP
+subnet
+Contains information about local subnets which is used to generate an
+optional BOOTP or DHCP configuration file.
+.PP
+Each of the database files is organized tabularly.  These files are
+preprocessed by the
+.B readinfo
+command.
+(see readinfo.1)
+.PP
+.B updatehosts
+may takes arguments which are the names of the database files which the user
+wants to edit.  All database files may optionally kept under SCCS control
+by setting the USE_SCCS variable or by placing the -s flag on
+the command line.
+Similarly RCS control can be maintained by setting the USE_RCS
+variable or setting the -r flag on the command line.
+A user using
+.B updatehosts
+must have write permission in the DB_DIR and the NAMED_DIR directory.
+Each database file is edited by the
+.B vi
+editor or whatever program the user has set in the EDITOR environment
+variable.
+.PP
+After each edit, the database files are optionally checked back in using SCCS
+or RCS.
+Then the static host file is generated using the
+.B genstatic
+command.
+The host file is normally placed in the NAMED_DIR directory under the name
+.B static.
+This name may be changed by setting the STATICHOSTS variable.
+.PP
+Then the DNS zone files and
+bootstrap file are updated using the
+.B gendns
+command.
+The VERSION variable can be set to either 4 or 8 depending on
+the version of the nameserver in use.
+This option alters the format of the nameserver bootstrap file.
+.PP
+The local nameserver is restarted
+with the newly updated zone and bootstrap files by calling
+.B "poke_ns restart"
+.PP
+Optionally, the POSTPROCESS environment variable can be set to the name of
+a command to run after the nameserver zone files and static host files are
+generated.
+This can be any arbitrary command.
+Normally, this may be a command to update NIS or NIS+ host maps from the
+generated static host file.
+.PP
+Environment variables should normally be set in the configuration file
+except when testing.  An exception to this rule is the EDITOR environment
+variable which is normally set to the user's favorite editor.
+.SH
+Normal Configuration Setup
+.PP
+.B updatehosts
+provides a great deal of flexibility in how a nameserver zone files and
+static host table are generated and the various permissions on those files.
+In normal practice it is desirable to set up a group (say, staff) to manage
+the nameserver files.
+Setting the directory permissions on the NAMED_DIR tree to allow staff to
+create and modify files in that tree allows
+.B updatehosts
+to be run by anyone in the staff group without root access.
+The
+.B poke_ns
+program must be run as root to restart the nameserver.
+So setting it setuid to root, but only executable by the staff group allows
+any member of the staff group to restart the running nameserver. 
+.SH
+See also
+.PP
+.BR gendns(1),
+.BR genstatic(1),
+.BR poke_ns(1)

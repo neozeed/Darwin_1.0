@@ -1,0 +1,17 @@
+Replied: Sun, 24 Jul 1994 18:52:36 -0700
+Replied: "billc@pegasus.mail.att.net (WJCarpenter) "
+Received: by gw.home.vix.com id AA24221; Sun, 24 Jul 94 15:32:19 -0700
+Date: Sun 24 Jul 1994 22:32:12 +0000
+From: billc@pegasus.mail.att.net (WJCarpenter)
+Received: from pegasus by attmail; Sun Jul 24 22:32 GMT 1994
+Subject: RE: MULTIZDB
+In-Reply-To: WJCarpenter's note of 18:25, 24 Jul 1994
+To: paul@vix.com (Paul Vixie)
+Message-Id: <BILLC.94Jul24183047@pegasus4.ATT.COM>
+Reference: <BILLC.94Jul24182511@pegasus4.ATT.COM>
+Content-Type: text
+
+billc> I'm separately sending the complete patch kit for this to Paul
+billc> Vixie in the hope that it can be included in the "contrib" area
+billc> for future public BIND releases.
+

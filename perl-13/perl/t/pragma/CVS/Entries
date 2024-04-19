@@ -1,0 +1,14 @@
+/constant.t/1.1.1.4/Fri Mar 31 05:12:48 2000//Tperl-13
+/diagnostics.t/1.1.1.1/Fri Mar 31 05:12:48 2000//Tperl-13
+/locale.t/1.1.1.4/Fri Mar 31 05:12:48 2000//Tperl-13
+/overload.t/1.1.1.4/Fri Mar 31 05:12:48 2000//Tperl-13
+/strict-refs/1.1.1.2/Fri Mar 31 05:12:48 2000//Tperl-13
+/strict-subs/1.1.1.3/Fri Mar 31 05:12:49 2000//Tperl-13
+/strict-vars/1.1.1.3/Fri Mar 31 05:12:49 2000//Tperl-13
+/strict.t/1.1.1.2/Fri Mar 31 05:12:49 2000//Tperl-13
+/sub_lval.t/1.1.1.1/Fri Mar 31 05:12:49 2000//Tperl-13
+/subs.t/1.1.1.4/Fri Mar 31 05:12:49 2000//Tperl-13
+/utf8.t/1.1.1.1/Fri Mar 31 05:12:49 2000//Tperl-13
+/warnings.t/1.1.1.1/Fri Mar 31 05:12:49 2000//Tperl-13
+D/locale////
+D/warn////

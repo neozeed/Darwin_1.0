@@ -1,0 +1,399 @@
+%!PS-Adobe-3.0
+%%Creator: groff version 1.10
+%%CreationDate: Mon Jun 21 14:21:59 1999
+%%DocumentNeededResources: font Times-Roman
+%%DocumentSuppliedResources: procset grops 1.10 0
+%%Pages: 1
+%%PageOrder: Ascend
+%%Orientation: Portrait
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset grops 1.10 0
+/setpacking where{
+pop
+currentpacking
+true setpacking
+}if
+/grops 120 dict dup begin
+/SC 32 def
+/A/show load def
+/B{0 SC 3 -1 roll widthshow}bind def
+/C{0 exch ashow}bind def
+/D{0 exch 0 SC 5 2 roll awidthshow}bind def
+/E{0 rmoveto show}bind def
+/F{0 rmoveto 0 SC 3 -1 roll widthshow}bind def
+/G{0 rmoveto 0 exch ashow}bind def
+/H{0 rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/I{0 exch rmoveto show}bind def
+/J{0 exch rmoveto 0 SC 3 -1 roll widthshow}bind def
+/K{0 exch rmoveto 0 exch ashow}bind def
+/L{0 exch rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/M{rmoveto show}bind def
+/N{rmoveto 0 SC 3 -1 roll widthshow}bind def
+/O{rmoveto 0 exch ashow}bind def
+/P{rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/Q{moveto show}bind def
+/R{moveto 0 SC 3 -1 roll widthshow}bind def
+/S{moveto 0 exch ashow}bind def
+/T{moveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/SF{
+findfont exch
+[exch dup 0 exch 0 exch neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/MF{
+findfont
+[5 2 roll
+0 3 1 roll
+neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/level0 0 def
+/RES 0 def
+/PL 0 def
+/LS 0 def
+/MANUAL{
+statusdict begin/manualfeed true store end
+}bind def
+/PLG{
+gsave newpath clippath pathbbox grestore
+exch pop add exch pop
+}bind def
+/BP{
+/level0 save def
+1 setlinecap
+1 setlinejoin
+72 RES div dup scale
+LS{
+90 rotate
+}{
+0 PL translate
+}ifelse
+1 -1 scale
+}bind def
+/EP{
+level0 restore
+showpage
+}bind def
+/DA{
+newpath arcn stroke
+}bind def
+/SN{
+transform
+.25 sub exch .25 sub exch
+round .25 add exch round .25 add exch
+itransform
+}bind def
+/DL{
+SN
+moveto
+SN
+lineto stroke
+}bind def
+/DC{
+newpath 0 360 arc closepath
+}bind def
+/TM matrix def
+/DE{
+TM currentmatrix pop
+translate scale newpath 0 0 .5 0 360 arc closepath
+TM setmatrix
+}bind def
+/RC/rcurveto load def
+/RL/rlineto load def
+/ST/stroke load def
+/MT/moveto load def
+/CL/closepath load def
+/FL{
+currentgray exch setgray fill setgray
+}bind def
+/BL/fill load def
+/LW/setlinewidth load def
+/RE{
+findfont
+dup maxlength 1 index/FontName known not{1 add}if dict begin
+{
+1 index/FID ne{def}{pop pop}ifelse
+}forall
+/Encoding exch def
+dup/FontName exch def
+currentdict end definefont pop
+}bind def
+/DEFS 0 def
+/EBEGIN{
+moveto
+DEFS begin
+}bind def
+/EEND/end load def
+/CNT 0 def
+/level1 0 def
+/PBEGIN{
+/level1 save def
+translate
+div 3 1 roll div exch scale
+neg exch neg exch translate
+0 setgray
+0 setlinecap
+1 setlinewidth
+0 setlinejoin
+10 setmiterlimit
+[]0 setdash
+/setstrokeadjust where{
+pop
+false setstrokeadjust
+}if
+/setoverprint where{
+pop
+false setoverprint
+}if
+newpath
+/CNT countdictstack def
+userdict begin
+/showpage{}def
+}bind def
+/PEND{
+clear
+countdictstack CNT sub{end}repeat
+level1 restore
+}bind def
+end def
+/setpacking where{
+pop
+setpacking
+}if
+%%EndResource
+%%IncludeResource: font Times-Roman
+grops begin/DEFS 1 dict def DEFS begin/u{.001 mul}bind def end/RES 72
+def/PL 792 def/LS false def/ENC0[/asciicircum/asciitilde/Scaron/Zcaron
+/scaron/zcaron/Ydieresis/trademark/quotesingle/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/space/exclam/quotedbl/numbersign/dollar/percent
+/ampersand/quoteright/parenleft/parenright/asterisk/plus/comma/hyphen
+/period/slash/zero/one/two/three/four/five/six/seven/eight/nine/colon
+/semicolon/less/equal/greater/question/at/A/B/C/D/E/F/G/H/I/J/K/L/M/N/O
+/P/Q/R/S/T/U/V/W/X/Y/Z/bracketleft/backslash/bracketright/circumflex
+/underscore/quoteleft/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y
+/z/braceleft/bar/braceright/tilde/.notdef/quotesinglbase/guillemotleft
+/guillemotright/bullet/florin/fraction/perthousand/dagger/daggerdbl
+/endash/emdash/ff/fi/fl/ffi/ffl/dotlessi/dotlessj/grave/hungarumlaut
+/dotaccent/breve/caron/ring/ogonek/quotedblleft/quotedblright/oe/lslash
+/quotedblbase/OE/Lslash/.notdef/exclamdown/cent/sterling/currency/yen
+/brokenbar/section/dieresis/copyright/ordfeminine/guilsinglleft
+/logicalnot/minus/registered/macron/degree/plusminus/twosuperior
+/threesuperior/acute/mu/paragraph/periodcentered/cedilla/onesuperior
+/ordmasculine/guilsinglright/onequarter/onehalf/threequarters
+/questiondown/Agrave/Aacute/Acircumflex/Atilde/Adieresis/Aring/AE
+/Ccedilla/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute/Icircumflex
+/Idieresis/Eth/Ntilde/Ograve/Oacute/Ocircumflex/Otilde/Odieresis
+/multiply/Oslash/Ugrave/Uacute/Ucircumflex/Udieresis/Yacute/Thorn
+/germandbls/agrave/aacute/acircumflex/atilde/adieresis/aring/ae/ccedilla
+/egrave/eacute/ecircumflex/edieresis/igrave/iacute/icircumflex/idieresis
+/eth/ntilde/ograve/oacute/ocircumflex/otilde/odieresis/divide/oslash
+/ugrave/uacute/ucircumflex/udieresis/yacute/thorn/ydieresis]def
+/Times-Roman@0 ENC0/Times-Roman RE
+%%EndProlog
+%%Page: 1 1
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF 1.211
+(is a program to query Internet domain name serv)72 12 R 3.711(ers. has)
+-.15 F(tw)3.711 E 3.71(om)-.1 G 1.21(odes: interacti)-3.71 F 1.51 -.15
+(ve a)-.25 H 1.21(nd non-interacti).15 F -.15(ve)-.25 G 6.21(.I).15 G
+(nteracti)-6.21 E -.15(ve)-.25 G 1.074(mode allo)72 24 R 1.074
+(ws the user to query name serv)-.25 F 1.074
+(ers for information about v)-.15 F 1.074
+(arious hosts and domains or to print a list of)-.25 F .562
+(hosts in a domain.)72 36 R(Non-interacti)5.562 E .862 -.15(ve m)-.25 H
+.561(ode is used to print just the name and requested information for a host or do-)
+.15 F 2.661(main. Interacti)72 48 R .461 -.15(ve m)-.25 H .161
+(ode is entered in the follo).15 F .162(wing cases: when no ar)-.25 F
+.162(guments are gi)-.18 F -.15(ve)-.25 G 2.662(n\().15 G .162(the def)
+-2.662 F .162(ault name serv)-.1 F .162(er will)-.15 F .475
+(be used\), when the \214rst ar)72 60 R .475(gument is a h)-.18 F .475
+(yphen \(-\) and the second ar)-.05 F .475
+(gument is the host name or Internet address of a)-.18 F .104(name serv)
+72 72 R(er)-.15 E 5.104(.N)-.55 G(on-interacti)-5.104 E .404 -.15(ve m)
+-.25 H .104
+(ode is used when the name or Internet address of the host to be look)
+.15 F .105(ed up is gi)-.1 F -.15(ve)-.25 G 2.605(na).15 G(s)-2.605 E
+.554(the \214rst ar)72 84 R .554(gument. The optional second ar)-.18 F
+.554(gument speci\214es the host name or address of a name serv)-.18 F
+(er)-.15 E 5.553(.T)-.55 G .553(he options)-5.553 F .84
+(listed under the command belo)72 96 R 3.34(wc)-.25 G .84
+(an be speci\214ed in the \214le in the user')-3.34 F 3.34(sh)-.55 G .84
+(ome directory if the)-3.34 F 3.34(ya)-.15 G .84(re listed one per)-3.34
+F 3.098(line. Options)72 108 R .598
+(can also be speci\214ed on the command line if the)3.098 F 3.097(yp)
+-.15 G .597(recede the ar)-3.097 F .597(guments and are pre\214x)-.18 F
+.597(ed with a h)-.15 F(y-)-.05 E 2.681(phen. F)72 120 R .181(or e)-.15
+F .181(xample, to change the def)-.15 F .181(ault query type to host information, and the initial timeout to 10 seconds, type:)
+-.1 F .459(nslookup -query=hinfo)108 132 R .459
+(-timeout=10 Commands may be interrupted at an)5.459 F 2.958(yt)-.15 G
+.458(ime by typing a control-C.)-2.958 F -.8(To)5.458 G -.15(ex)72 144 S
+.78(it, type a control-D or type The command line length must be less than 256 characters.)
+.15 F 2.381 -.8(To t)5.781 H .781(reat a b).8 F .781(uilt-in com-)-.2 F
+.127(mand as a host name, precede it with an escape character Look up information for using the current def)
+72 156 R .127(ault serv)-.1 F .127(er or)-.15 F .068
+(using if speci\214ed.)72 168 R .068(If is an Internet address and the query type is or the name of the host is returned.)
+5.068 F .068(If is a name and)5.068 F .81(does not ha)72 180 R 1.11 -.15
+(ve a t)-.2 H .81(railing period, the def).15 F .81
+(ault domain name is appended to the name.)-.1 F .81(\(This beha)5.81 F
+.81(vior depends on the)-.2 F .602(state of the options and T)72 192 R
+3.102(ol)-.8 G .603
+(ook up a host not in the current domain, append a period to the name.)
+-3.102 F .603(Change the de-)5.603 F -.1(fa)72 204 S .076(ult serv).1 F
+.076(er to uses the initial serv)-.15 F .075
+(er to look up information about while uses the current def)-.15 F .075
+(ault serv)-.1 F(er)-.15 E 5.075(.I)-.55 G 2.575(fa)-5.075 G 2.575(na)
+-2.575 G(uthori-)-2.575 E(tati)72 216 Q 1.48 -.15(ve a)-.25 H 1.18
+(nswer can').15 F 3.68(tb)-.18 G 3.68(ef)-3.68 G 1.18
+(ound, the names of serv)-3.68 F 1.18(ers that might ha)-.15 F 1.48 -.15
+(ve t)-.2 H 1.18(he answer are returned.).15 F 1.18(Changes the def)6.18
+F(ault)-.1 E(serv)72 228 Q .014(er to the serv)-.15 F .014
+(er for the root of the domain name space.)-.15 F(Currently)5.013 E
+2.513(,t)-.65 G .013(he host is used.)-2.513 F .013
+(\(This command is a synon)5.013 F(ym)-.15 E .587
+(for The name of the root serv)72 240 R .587
+(er can be changed with the command.)-.15 F .587
+(Connects with the \214nger serv)5.587 F .587(er on the current)-.15 F
+2.629(host. The)72 252 R .129(current host is de\214ned when a pre)2.629
+F .129(vious lookup for a host w)-.25 F .129
+(as successful and returned address information)-.1 F .731
+(\(see the command\).)72 264 R .731(The is optional.)5.731 F .731
+(and can be used to redirect output in the usual manner)5.731 F 5.731
+(.L)-.55 G .731(ist the information)-5.731 F -.2(av)72 276 S .071
+(ailable for optionally creating or appending to The def)-.05 F .07
+(ault output contains host names and their Internet addresses.)-.1 F
+.658(can be one of the follo)72 288 R .659
+(wing: lists all records of the speci\214ed type \(see belo)-.25 F 3.159
+(w\). lists)-.25 F .659(aliases of hosts in the domain;)3.159 F(synon)72
+300 Q .803(ym for lists all records for the domain; synon)-.15 F .802
+(ym for lists CPU and operating system information for the do-)-.15 F
+.422(main; synon)72 312 R .422(ym for lists well-kno)-.15 F .422
+(wn services of hosts in the domain; synon)-.25 F .422
+(ym for When output is directed to a \214le,)-.15 F .972
+(hash marks are printed for e)72 324 R -.15(ve)-.25 G .972
+(ry 50 records recei).15 F -.15(ve)-.25 G 3.472(df).15 G .972
+(rom the serv)-3.472 F(er)-.15 E 5.971(.S)-.55 G .971
+(orts and lists the output of pre)-5.971 F .971(vious com-)-.25 F .057
+(mand\(s\) with Prints a brief summary of commands.)72 336 R .057
+(Exits the program.)5.057 F .058
+(This command is used to change state infor)5.057 F(-)-.2 E .672
+(mation that af)72 348 R .672(fects the lookups.)-.25 F -1.11(Va)5.672 G
+.672(lid k)1.11 F -.15(ey)-.1 G -.1(wo).15 G .672
+(rds are: Prints the current v).1 F .671
+(alues of the frequently-used options to In-)-.25 F .789
+(formation about the)72 360 R .789(current def)5.789 F .789(ault serv)
+-.1 F .789(er and host is also printed.)-.15 F .79
+(Change the query class to one of: the Internet)5.79 F 1.37
+(class the Chaos class the MIT Athena Hesiod class wildcard \(an)72 372
+R 3.869(yo)-.15 G 3.869(ft)-3.869 G 1.369(he abo)-3.869 F -.15(ve)-.15 G
+3.869(\)T).15 G 1.369(he class speci\214es the protocol)-3.869 F .963
+(group of the information.)72 384 R(\(Def)5.963 E .963(ault = abbre)-.1
+F .963(viation = T)-.25 F .964(urn deb)-.45 F .964(ugging mode on.)-.2 F
+3.464(Al)5.964 G .964(ot more information is printed)-3.464 F .752
+(about the pack)72 396 R .751(et sent to the serv)-.1 F .751
+(er and the resulting answer)-.15 F 5.751(.\()-.55 G(Def)-5.751 E .751
+(ault = abbre)-.1 F .751(viation = T)-.25 F .751(urn e)-.45 F(xhausti)
+-.15 E 1.051 -.15(ve d)-.25 H(eb).15 E(ugging)-.2 E .472(mode on.)72 408
+R .472(Essentially all \214elds of e)5.472 F -.15(ve)-.25 G .472
+(ry pack).15 F .473(et are printed.)-.1 F(\(Def)5.473 E .473
+(ault = Change the def)-.1 F .473(ault domain name to The de-)-.1 F -.1
+(fa)72 420 S .737(ult domain name is appended to a lookup request depending on the state of the and options.)
+.1 F .736(The domain search)5.736 F .426
+(list contains the parents of the def)72 432 R .426
+(ault domain if it has at least tw)-.1 F 2.926(oc)-.1 G .427
+(omponents in its name.)-2.926 F -.15(Fo)5.427 G 2.927(re).15 G .427
+(xample, if the de-)-3.077 F -.1(fa)72 444 S 1.292
+(ult domain is CC.Berk).1 F(ele)-.1 E -.65(y.)-.15 G 1.292
+(EDU, the search list is CC.Berk).65 F(ele)-.1 E -.65(y.)-.15 G 1.291
+(EDU and Berk).65 F(ele)-.1 E -.65(y.)-.15 G 3.791(EDU. Use).65 F 1.291
+(the command to)3.791 F .049(specify a dif)72 456 R .049(ferent list.)
+-.25 F .049(Use the command to display the list.)5.049 F(\(Def)5.049 E
+.049(ault = v)-.1 F .049(alue from or abbre)-.25 F .049
+(viation = Change the de-)-.25 F -.1(fa)72 468 S 1.117
+(ult domain name to and the domain search list to etc.).1 F 3.617(Am)
+6.117 G 1.116(aximum of 6 names separated by slashes \(/\) can be)-3.617
+F 3.192(speci\214ed. F)72 480 R .692(or e)-.15 F .692
+(xample, set srchlist=lcs.MIT)-.15 F(.EDU/ai.MIT)-.74 E(.EDU/MIT)-.74 E
+.693(.EDU sets the domain to lcs.MIT)-.74 F .693(.EDU and the)-.74 F
+.795(search list to the three names.)72 492 R .795(This command o)5.795
+F -.15(ve)-.15 G .795(rrides the def).15 F .795
+(ault domain name and search list of the command.)-.1 F .444
+(Use the command to display the list.)72 504 R(\(Def)5.444 E .444
+(ault = v)-.1 F .444(alue based on or abbre)-.25 F .444
+(viation = If set, append the def)-.25 F .444(ault domain)-.1 F .752(name to a single-component lookup request \(i.e., one that does not contain a period\).)
+72 516 R(\(Def)5.752 E .752(ault = abbre)-.1 F .752(viation = If)-.25 F
+.704(the lookup request contains at least one period b)72 528 R .705
+(ut end with a trailing period, append the domain names in the do-)-.2 F
+.517(main search list to the request until an answer is recei)72 540 R
+-.15(ve)-.25 G 3.017(d. \(Def).15 F .517(ault = abbre)-.1 F .517
+(viation = Change the def)-.25 F .517(ault TCP/UDP)-.1 F .142(name serv)
+72 552 R .142(er port to \(Def)-.15 F .142(ault = 53; abbre)-.1 F .143
+(viation = Change the type of information query to one of: the host')
+-.25 F 2.643(sI)-.55 G(nternet)-2.643 E 2.5(address. the)72 564 R
+(canonical name for an alias.)2.5 E
+(the host CPU and operating system type.)5 E
+(the mailbox or mail list informa-)5 E 3.392(tion. the)72 576 R .892
+(mail e)3.392 F(xchanger)-.15 E 5.892(.t)-.55 G .892(he name serv)-5.892
+F .892(er for the named zone.)-.15 F .892
+(the host name if the query is an Internet address;)5.892 F .823
+(otherwise, the pointer to other information.)72 588 R .823(the domain')
+5.823 F 3.323(si)-.55 G 3.323(nformation. the)-3.323 F(te)3.323 E .823
+(xt information.)-.15 F .822(the user information.)5.823 F .217
+(the supported well-kno)72 600 R .217(wn services.)-.25 F .217
+(Other types are described in the RFC-1035 document.)5.217 F(\(Def)5.217
+E .218(ault = abbre)-.1 F(viations)-.25 E 3.073(=T)72 612 S .573
+(ell the name serv)-3.773 F .573(er to query other serv)-.15 F .573
+(ers if it does not ha)-.15 F .873 -.15(ve t)-.2 H .573(he information.)
+.15 F(\(Def)5.573 E .573(ault = abbre)-.1 F .572(viation = Set the)-.25
+F .999(number of retries to When a reply to a request is not recei)72
+624 R -.15(ve)-.25 G 3.5(dw).15 G 1
+(ithin a certain amount of time \(changed with the)-3.5 F .325
+(timeout period is doubled and the request is resent.)72 636 R .325
+(The retry v)5.325 F .325(alue controls ho)-.25 F 2.825(wm)-.25 G(an)
+-2.825 E 2.825(yt)-.15 G .325(imes a request is resent be-)-2.825 F .377
+(fore gi)72 648 R .377(ving up.)-.25 F(\(Def)5.377 E .377
+(ault = 4, abbre)-.1 F .377(viation = Change the name of the root serv)
+-.25 F .377(er to This af)-.15 F .377(fects the command.)-.25 F(\(De-)
+5.377 E -.1(fa)72 660 S .628(ult = abbre).1 F .628
+(viation = Change the initial timeout interv)-.25 F .628(al for w)-.25 F
+.628(aiting for a reply to seconds. Each retry doubles the)-.1 F .161
+(timeout period.)72 672 R(\(Def)5.161 E .161(ault = 5 seconds; abbre)-.1
+F .161(viation = Al)-.25 F -.1(wa)-.1 G .161
+(ys use a virtual circuit when sending requests to the serv-).1 F(er)72
+684 Q 5.756(.\()-.55 G(Def)-5.756 E .756(ault = abbre)-.1 F .756
+(viation = Ignore pack)-.25 F .755(et truncation errors.)-.1 F(\(Def)
+5.755 E .755(ault = abbre)-.1 F .755(viation = If the lookup request w)
+-.25 F(as)-.1 E .548(not successful, an error message is printed.)72 696
+R .548(Possible errors are: The serv)5.548 F .549
+(er did not respond to a request after a cer)-.15 F(-)-.2 E .496(tain amount of time \(changed with and a certain number of retries \(changed with No name serv)
+72 708 R .495(er is running on the)-.15 F(serv)72 720 Q .461
+(er machine.)-.15 F .461(The serv)5.461 F .461(er does not ha)-.15 F
+.761 -.15(ve r)-.2 H .462(esource records of the current query type for the host, although the host)
+.15 F .617(name is v)72 732 R 3.117(alid. The)-.25 F .617
+(query type is speci\214ed with the command.)3.117 F .617
+(The host or domain name does not e)5.617 F 3.117(xist. The)-.15 F(con-)
+3.117 E .114(nection to the name or \214nger serv)72 744 R .115
+(er could not be made at the current time.)-.15 F .115
+(This error commonly occurs with and re-)5.115 F 3.412(quests. The)72
+756 R .912(name serv)3.412 F .912(er found an internal inconsistenc)-.15
+F 3.412(yi)-.15 G 3.412(ni)-3.412 G .911
+(ts database and could not return a v)-3.412 F .911(alid answer)-.25 F
+5.911(.T)-.55 G(he)-5.911 E .219(name serv)72 768 R .219
+(er refused to service the request.)-.15 F .219(The name serv)5.219 F
+.22(er found that the request pack)-.15 F .22(et w)-.1 F .22
+(as not in the proper for)-.1 F(-)-.2 E 3.389(mat. It)72 780 R .888
+(may indicate an error in initial domain name and name serv)3.389 F .888
+(er addresses user')-.15 F 3.388(si)-.55 G .888
+(nitial options summary of)-3.388 F
+(commands \214le containing host aliases o)72 792 Q -.15(ve)-.15 G
+(rrides def).15 E(ault domain RFC-1034, RFC-1035, Andre)-.1 E 2.5(wC)
+-.25 G(herenson)-2.5 E EP
+%%Trailer
+end
+%%EOF

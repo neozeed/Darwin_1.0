@@ -1,0 +1,4 @@
+Package: liby
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Description: Yacc library
+Build-Depends: build-base

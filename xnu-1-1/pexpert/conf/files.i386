@@ -1,0 +1,24 @@
+OPTIONS/gprof					optional gprof
+
+#
+
+pexpert/i386/pe_bootargs.c			standard
+pexpert/i386/pe_init.c				standard
+pexpert/i386/pe_identify_machine.c		standard
+pexpert/i386/pe_interrupt.c			standard
+pexpert/i386/pe_printf.c			standard
+pexpert/i386/pe_kprintf.c			standard
+pexpert/i386/pe_misc.s				standard
+pexpert/i386/fakePPCDeviceTree.c		standard
+
+pexpert/i386/display_putc.c			standard
+pexpert/i386/video_console.c			standard
+
+
+#pexpert/i386/iokit_rpc.c			standard
+
+
+# TEMORARY UNTIL A REAL VESA/VGA DRIVER APPEARS!
+
+pexpert/i386/kd.c				standard
+pexpert/i386/kdasm.s				standard

@@ -1,0 +1,29 @@
+/APPLE_LICENSE/1.2/Thu Oct 14 21:18:48 1999//TLibc-132-2
+/CLIB-LIST/1.1.1.1/Wed Apr 14 23:18:53 1999//TLibc-132-2
+/Info.plist/1.1.1.1/Wed Apr 14 23:18:54 1999//TLibc-132-2
+/MISSING-MANPAGE/1.1.1.1/Wed Apr 14 23:18:54 1999//TLibc-132-2
+/MISSING_SYSCALLS/1.1.1.1/Wed Apr 14 23:18:54 1999//TLibc-132-2
+/Makefile/1.1.1.2/Thu Oct 14 21:08:30 1999//TLibc-132-2
+/Makefile.postamble/1.1.1.2/Thu Oct 14 21:08:30 1999//TLibc-132-2
+/Makefile.preamble/1.1.1.2/Thu Oct 14 21:08:30 1999//TLibc-132-2
+/PB.project/1.1.1.2/Thu Oct 14 21:08:30 1999//TLibc-132-2
+/REQUIRED-MACROS/1.1.1.1/Wed Apr 14 23:18:54 1999//TLibc-132-2
+/SYSCALL-LIST/1.1.1.1/Wed Apr 14 23:18:54 1999//TLibc-132-2
+/crt_externs.c/1.2/Thu Oct 14 21:18:48 1999//TLibc-132-2
+D/compat43.subproj////
+D/db.subproj////
+D/dpkg////
+D/gen.subproj////
+D/headers.subproj////
+D/internat.subproj////
+D/locale.subproj////
+D/mach.subproj////
+D/net.subproj////
+D/pthreads.subproj////
+D/regex.subproj////
+D/stdio.subproj////
+D/stdlib.subproj////
+D/string.subproj////
+D/sys.subproj////
+D/threads.subproj////
+D/util.subproj////

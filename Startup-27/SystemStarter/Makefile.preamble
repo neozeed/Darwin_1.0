@@ -1,0 +1,33 @@
+BootPanelImage  = BootPanel.pdf
+
+ImageInstallDir = $(NSLIBRARYDIR)/CoreServices/Resources
+
+AFTER_INSTALL = install_my_resources
+
+include $(MAKEFILEPATH)/CoreOS/ProjectBuilder/Makefile.Preamble.Common
+
+##
+# Choose a display implementation.
+##
+
+QUARTZ_CFILES := $(filter Quartz%, $(CFILES))
+# Use Quartz display if CoreGraphics is available.
+CGS_FRAMEWORK = $(NSFRAMEWORKDIR)/CoreGraphics.framework)
+ifneq "$(wildcard $(CGS_FRAMEWORK))" ""
+DISPLAY_CFILES = $(QUARTZ_CFILES)
+FRAMEWORKS += -framework CoreGraphics
+else
+IMPLICIT_SOURCE_FILES += $(QUARTZ_CFILES)
+endif
+
+TEXT_CFILES := $(filter Text%, $(CFILES))
+# Default implementation is text display.
+ifndef DISPLAY_CFILES
+DISPLAY_CFILES = $(TEXT_CFILES)
+else
+IMPLICIT_SOURCE_FILES += $(TEXT_CFILES)
+endif
+
+CFILES := $(filter-out Text% Quartz%, $(CFILES)) $(DISPLAY_CFILES)
+
+## CFILES should contain the right display files at this point.

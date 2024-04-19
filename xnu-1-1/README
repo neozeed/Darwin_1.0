@@ -1,0 +1,169 @@
+How to build XNU:
+
+1. Install Beaker build environment:
+
+ Install the DeveloperLibs, DeveloperTools, Local, and LocalLibs 
+ packages onto a Hera system from:
+
+  /Net/osbuild/release/<latest Beaker>/System/Installation/Packages
+
+IMPORTANT!!!!
+
+	CHANGE THE DEFAULT INSTALL DIRECTORY TO /Local/Public/MacOSX
+
+IF YOU DON'T DO THIS, YOU WILL NEED TO REINSTALL YOUR HERA SYSTEM!
+
+When installing directly on Beaker, you do not need to do this.
+
+2. Build Setup:
+
+2.a. Setup your environment:
+
+  Create and go  to your sandbox directory </sandbox/my_xnu>
+
+  $ cd </sandbox/my_xnu>
+
+  Extract the xnu project from cvs:
+
+  $ cvs co -r<xnu-tag> xnu
+
+  where <xnu-tag> must be replaced by the matching xnu tag for
+  the xnu project level.
+
+  Go to the top directory in your XNU project.
+
+  $ cd </sandbox/my_xnu>/xnu
+
+  If you are running with sh, run the following command:
+    $ . SETUP/setup.sh
+
+  If you are running with csh, run the following command:
+    % source SETUP/setup.csh
+
+  This will define  NEXT_ROOT , DSTROOT, OBJROOT, SRCROOT, SYMROOT.
+
+2.b. Populate OBJROOT (Optional):
+
+  Create a symlink in the root of your development and debug machines as 
+  follows:
+
+  $ su
+  # ln -s /Network/Servers/humpty/Prebuilt /Prebuilt
+
+  $ ./SETUP/seed_objroot <xnu-tag> [RELEASE,DEBUG]_[PPC,I366]
+
+or
+
+  $ ./SETUP/seed_objroot <xnu-tag>
+
+  seed_objroot populates the OBJROOT with a prebuilt OBJROOT. The 
+  second argument specifies the configuration (RELEASE_PPC, DEBUG_PPC, etc).
+  If no configuration is specified, all the configurations will
+  be populated.
+
+  You can also use it to duplicate an OBJROOT by setting PREBUILT_OBJROOT 
+  in your shell environment with your own OBJROOT reference (xnu-tag is
+  ignored then).
+
+3. Export the Component Header Files
+
+  From the top directory, run:
+
+  $ make exporthdrs
+
+  This exports the component header files in the $OBJROOT/EXPORT_HDRS 
+  directory.
+
+4. Build all the Components
+
+  From the top directory. run:
+
+  $ make all
+
+  This builds all the components for all architectures defined in 
+  ARCH_CONFIGS and for all kernel configurations defined in KERNEL_CONFIGS.
+  By default, ARCH_CONFIGS contains one architecture, the build machine 
+  architecture, and KERNEL_CONFIGS is set to build for RELEASE.
+  This will also create a bootable image, mach_kernel,  and a kernel binary 
+  with symbols, mach_kernel.sys.
+
+  Example:
+    $(OBJROOT)/RELEASE_PPC/osfmk/RELEASE/osfmk.o: pre-linked object for osfmk component
+    $(OBJROOT)/RELEASE_PPC/mach_kernel: bootable image
+
+5. Building a Component
+
+  From a component top directory:
+
+    $make all
+
+  This builds a component for all architectures defined in ARCH_CONFIGS 
+  and for all kernel configurations defined in KERNEL_CONFIGS. 
+  By default, ARCH_CONFIGS contains one architecture, the build machine 
+  architecture, and KERNEL_CONFIGS is set to build for RELEASE .
+
+  WARNING: If a component header file has been modified, you will have to do 
+           the above procedures 3 and 4.
+
+  Example:
+    $(OBJROOT)/RELEASE_PPC/osfmk/RELEASE/osfmk.o: pre-linked object for osfmk component
+
+  From the component top directory:
+
+    $make mach_kernel
+
+  This includes your component in the bootable image, mach_kernel,  and 
+  in the kernel binary with symbols, mach_kernel.sys.
+
+6. Building DEBUG
+
+  Define KERNEL_CONFIGS to DEBUG in your environment or when running a 
+  make command.  Then, apply procedures 4, 5
+
+  $ make KERNEL_CONFIGS=DEBUG all
+
+  or
+
+  $ export KERNEL_CONFIGS=DEBUG
+  $ make all
+
+  Example:
+    $(OBJROOT)/DEBUG_PPC/osfmk/DEBUG/osfmk.o: pre-linked object for osfmk component
+    $(OBJROOT)/DEBUG_PPC/mach_kernel: bootable image
+
+6. Building fat
+
+  Define ARCH_CONFIGS in your environment or when running a make command.
+  Apply procedures 3, 4, 5
+
+  $ make ARCH_CONFIGS="PPC I386" exporthdrs all
+
+  or
+
+  $ export ARCH_CONFIGS="PPC I386"
+  $ make exporthdrs all
+
+  Optionally you may do the following and your NEXTROOT will be set to
+    /Local/Public/MacOSX automaticly.
+
+    $ ~rc/bin/buildit . -arch ppc -arch i386 -noinstallsrc -nosum \
+			-release Beaker
+
+7. Build check before integration
+
+  Set NEXT_ROOT to /Local/Public/MacOSX (Default path for Mac OS X SDK)
+
+  From the top directory, run:
+
+    $ ~rc/bin/buildit . -arch ppc -arch i386 -noinstallsrc -nosum
+
+8. Creating tags and cscope
+
+  Set up your build environment as per instructions in 2.a
+
+  From the top directory, run:
+
+    $ make tags		# this will build ctags and etags
+
+    $ make cscope	# this will build cscope database
+

@@ -1,0 +1,3 @@
+#!/bin/sh
+
+callci copy $1, $2

@@ -1,0 +1,17 @@
+/disk.desc.cdrom/1.1.1.1/Mon May 10 02:22:42 1999//Tdpkg-4
+/disk.desc.harddisk/1.1.1.1/Mon May 10 02:22:42 1999//Tdpkg-4
+/disk.desc.mounted/1.1.1.1/Mon May 10 02:22:42 1999//Tdpkg-4
+/disk.desc.nfs/1.1.1.1/Mon May 10 02:22:42 1999//Tdpkg-4
+/disk.install/1.1.1.1/Mon May 10 02:22:42 1999//Tdpkg-4
+/disk.names/1.1.1.1/Mon May 10 02:22:42 1999//Tdpkg-4
+/disk.setup/1.1.1.1/Mon May 10 02:22:42 1999//Tdpkg-4
+/disk.update/1.1.1.1/Mon May 10 02:22:42 1999//Tdpkg-4
+/floppy.desc.floppy/1.1.1.1/Mon May 10 02:22:42 1999//Tdpkg-4
+/floppy.install/1.1.1.1/Mon May 10 02:22:42 1999//Tdpkg-4
+/floppy.names/1.1.1.1/Mon May 10 02:22:42 1999//Tdpkg-4
+/floppy.setup/1.1.1.1/Mon May 10 02:22:42 1999//Tdpkg-4
+/floppy.update/1.1.1.1/Mon May 10 02:22:42 1999//Tdpkg-4
+/hd.setup/1.1.1.1/Mon May 10 02:22:42 1999//Tdpkg-4
+/hd.unpack/1.1.1.1/Mon May 10 02:22:42 1999//Tdpkg-4
+/hd.update/1.1.1.1/Mon May 10 02:22:42 1999//Tdpkg-4
+D

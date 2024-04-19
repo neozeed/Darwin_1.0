@@ -1,0 +1,6 @@
+Package: iokituser
+Maintainer: Wilfredo Sanchez <wsanchez@apple.com>
+Vendor: Apple Computer, Inc.
+Version: 16
+Build-Depends: build-base, corefoundation
+Description: IOKit framework

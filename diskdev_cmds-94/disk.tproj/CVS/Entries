@@ -1,0 +1,17 @@
+/Makefile/1.1.1.2/Tue Jan 11 00:40:11 2000//Tdiskdev_cmds-94
+/Makefile.postamble/1.1.1.1/Sun May  2 01:42:13 1999//Tdiskdev_cmds-94
+/Makefile.preamble/1.1.1.1/Sun May  2 01:42:13 1999//Tdiskdev_cmds-94
+/PB.project/1.1.1.2/Tue Jan 11 00:40:11 2000//Tdiskdev_cmds-94
+/apple_partitions.c/1.1.1.1/Sun May  2 01:42:14 1999//Tdiskdev_cmds-94
+/disk.c/1.1.1.2/Tue Jan 11 00:40:11 2000//Tdiskdev_cmds-94
+/disk.h/1.1.1.1/Sun May  2 01:42:14 1999//Tdiskdev_cmds-94
+/disktab.c/1.1.1.1/Sun May  2 01:42:14 1999//Tdiskdev_cmds-94
+/disktab.src/1.1.1.1/Sun May  2 01:42:14 1999//Tdiskdev_cmds-94
+/fd.c/1.1.1.2/Tue Jan 11 00:40:11 2000//Tdiskdev_cmds-94
+/forkexec.c/1.1.1.1/Sun May  2 01:42:14 1999//Tdiskdev_cmds-94
+/forkexec.h/1.1.1.1/Sun May  2 01:42:14 1999//Tdiskdev_cmds-94
+/hd.c/1.1.1.2/Tue Jan 11 00:40:12 2000//Tdiskdev_cmds-94
+/inferdisktab.c/1.1.1.2/Tue Jan 11 00:40:12 2000//Tdiskdev_cmds-94
+/od.c/1.1.1.1/Sun May  2 01:42:14 1999//Tdiskdev_cmds-94
+/sd.c/1.1.1.1/Sun May  2 01:42:14 1999//Tdiskdev_cmds-94
+D

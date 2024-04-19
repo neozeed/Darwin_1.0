@@ -1,0 +1,7 @@
+Package: zsh
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Vendor: Zsh Development Group
+Version: 3.0.6
+URL: http://www.zsh.org/pub/
+Description: Z-Shell
+Build-Depends: build-base, autoconf, gnudiff, gm4, perl

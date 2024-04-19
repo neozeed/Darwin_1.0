@@ -1,0 +1,4 @@
+Package: boot
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Description: Kernel booter
+Build-Depends: build-base, adv-cmds, gawk, libc-hdrs, objc4-hdrs

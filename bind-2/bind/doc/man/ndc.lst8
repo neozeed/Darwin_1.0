@@ -1,0 +1,77 @@
+NDC(8)                    BSD System Manager's Manual                   NDC(8)
+
+NNAAMMEE
+     nnddcc - name daemon control program
+
+SSYYNNOOPPSSIISS
+     nnddcc [--cc _c_h_a_n_n_e_l] [--ll _l_o_c_a_l_s_o_c_k] [--pp _p_i_d_f_i_l_e] [--dd] [--qq] [--ss] [--tt]
+         [_c_o_m_m_a_n_d]
+
+DDEESSCCRRIIPPTTIIOONN
+     This command allows the system administrator to control the operation of
+     a name server.  If no _c_o_m_m_a_n_d is given, nnddcc will prompt for commands un-
+     til it reads EOF.
+
+     Options are:
+
+     --cc _c_h_a_n_n_e_l  Specifies the rendezvous point for the control channel.  The
+                 default is _/_v_a_r_/_r_u_n_/_n_d_c (a UNIX domain socket which is also
+                 the server's default control channel).  If the desired con-
+                 trol channel is a TCP/IP socket, then the format of the
+                 _c_h_a_n_n_e_l argument is iippaaddddrr//ppoorrtt (for example, 112277..00..00..11//5544
+                 would be TCP port 54 on the local host.)
+
+     --ll _l_o_c_a_l_s_o_c_k
+                 This option will bind(2) the client side of the control chan-
+                 nel to a specific address.  Servers can be configured to re-
+                 ject connections which do not come from specific addresses.
+                 The format is the same as for _c_h_a_n_n_e_l (see above).
+
+     --pp _p_i_d_f_i_l_e  For backward compatibility with older name servers, nnddcc is
+                 able to use UNIX signals for control communications.  This
+                 capability is optional in modern name servers and will disap-
+                 pear altogether at some future time.  Note that the available
+                 _c_o_m_m_a_n_d set is narrower when the signal interface is used.  A
+                 likely _p_i_d_f_i_l_e argument would be something like
+                 _/_v_a_r_/_r_u_n_/_n_a_m_e_d_._p_i_d.
+
+     --dd          Turns on debugging output, which is of interest mainly to de-
+                 velopers.
+
+     --qq          Suppresses prompts and result text.
+
+     --ss          Suppresses nonfatal error announcements.
+
+     --tt          Turns on protocol and system tracing, useful in installation
+                 debugging.
+
+CCOOMMMMAANNDDSS
+     Several commands are built into nnddcc, but the full set of commands sup-
+     ported by the name server is dynamic and should be discovered using the
+     _h_e_l_p command (see below).  Builtin commands are:
+
+     _/_h_e_l_p       Provides help for builtin commands.
+
+     _/_e_x_i_t       Exit from nnddcc command interpreter.
+
+     _/_t_r_a_c_e      Toggle tracing (see ----tt description above).
+
+     _/_d_e_b_u_g      Toggle debugging (see --dd description above).
+
+     _/_q_u_i_e_t      Toggle quietude (see --qq description above).
+
+     _/_s_i_l_e_n_t     Toggle silence (see --ss description above).
+
+NNOOTTEESS
+     If running in _p_i_d_f_i_l_e mode, any arguments to _s_t_a_r_t and _r_e_s_t_a_r_t commands
+     are passed to the new nnaammeedd on its command line.  If running in _c_h_a_n_n_e_l
+     mode, there is no _s_t_a_r_t command and the _r_e_s_t_a_r_t command just tells the
+     name server to execvp(2) itself.
+
+AAUUTTHHOORR
+     Paul Vixie (Internet Software Consortium)
+
+SSEEEE AALLSSOO
+     named(8),
+
+4th Berkeley Distribution      December 31, 1998                             2

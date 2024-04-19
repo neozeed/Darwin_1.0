@@ -1,0 +1,61 @@
+diff -rc bin/named/ns_main.c.orig bin/named/ns_main.c
+*** bin/named/ns_main.c.orig	Fri May 14 10:55:56 1999
+--- bin/named/ns_main.c	Fri May 28 17:21:39 1999
+***************
+*** 1078,1084 ****
+--- 1078,1092 ----
+  				"memget(interface)", NULL);
+  		ifc.ifc_len = bufsiz;
+  		ifc.ifc_buf = buf;
++ #ifdef IRIX_EMUL_IOCTL_SIOCGIFCONF
++ 		/* This is a fix for IRIX OS in which the call to ioctl with
++ 		 * the flag SIOCGIFCONF may not return an entry for all the
++ 		 * interfaces like most falvors of Unix.
++ 		 */
++ 		if (emul_ioctl(&ifc) >= 0)
++ #else
+  		if (ioctl(s, SIOCGIFCONF, (char *)&ifc) >= 0)
++ #endif
+  			break;
+  		if (errno != EINVAL)
+  			ns_panic(ns_log_default, 1,
+diff -rc bin/named-xfer/named-xfer.c.orig bin/named-xfer/named-xfer.c
+*** bin/named-xfer/named-xfer.c.orig	Fri May 14 11:50:55 1999
+--- bin/named-xfer/named-xfer.c	Fri May 28 16:59:59 1999
+***************
+*** 150,156 ****
+  #include <limits.h>
+  #include <ctype.h>
+  #include <errno.h>
+! #include <math.h>
+  #include <resolv.h>
+  #include <signal.h>
+  #include <stdio.h>
+--- 150,156 ----
+  #include <limits.h>
+  #include <ctype.h>
+  #include <errno.h>
+! /* #include <math.h> */
+  #include <resolv.h>
+  #include <signal.h>
+  #include <stdio.h>
+diff -rc lib/resolv/res_debug.c.orig lib/resolv/res_debug.c
+*** lib/resolv/res_debug.c.orig	Wed Jan 13 01:52:15 1999
+--- lib/resolv/res_debug.c	Fri May 28 16:22:51 1999
+***************
+*** 114,120 ****
+  #include <netdb.h>
+  #include <resolv.h>
+  #include <stdio.h>
+! #include <stdlib.h>
+  #include <string.h>
+  #include <time.h>
+  
+--- 114,120 ----
+  #include <netdb.h>
+  #include <resolv.h>
+  #include <stdio.h>
+! /* #include <stdlib.h> Causes probs in IRIX 6.3 */
+  #include <string.h>
+  #include <time.h>
+

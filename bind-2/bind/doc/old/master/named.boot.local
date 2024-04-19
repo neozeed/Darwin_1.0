@@ -1,0 +1,6 @@
+primary	.			localroot.zone
+primary	localhost		localhost.zone
+primary	127.in-addr.arpa	127.zone
+primary edu			/udir/vixie/edu
+primary com			/udir/vixie/com
+cache	.			localroot.cache

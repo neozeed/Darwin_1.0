@@ -1,0 +1,17 @@
+#!/bin/sh
+
+uname=/bin/uname
+grep=/bin/grep
+
+if [ -f $uname -a -f $grep ]; then
+	REL=`uname -X 2> /dev/null | grep "Release = "`
+        SYS=`uname -s`
+	case "$SYS-$REL" in
+	"SCO_SV-Release = 3.2v5.0.0") exit 0 ;;
+	"SCO_SV-Release = 3.2v5.0.2") exit 0 ;;
+	"SCO_SV-Release = 3.2v5.0.4") exit 0 ;;
+	"SCO_SV-Release = 3.2v5.0.5") exit 0 ;;
+	esac
+fi
+
+exit 1

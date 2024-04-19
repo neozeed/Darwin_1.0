@@ -1,0 +1,22 @@
+/APPLE_LICENSE/1.2/Sun Mar  5 02:04:44 2000//TLibrpcsvc-10
+/Makefile/1.1.1.1/Wed Apr 14 17:54:55 1999//TLibrpcsvc-10
+/Makefile.dist/1.1.1.1/Wed Apr 14 17:54:55 1999//TLibrpcsvc-10
+/Makefile.postamble/1.2/Mon Feb  7 19:37:09 2000//TLibrpcsvc-10
+/Makefile.preamble/1.1.1.1/Wed Apr 14 17:54:55 1999//TLibrpcsvc-10
+/PB.project/1.1.1.1/Wed Apr 14 17:54:55 1999//TLibrpcsvc-10
+/bootparam_prot.x/1.2/Sun Mar  5 02:04:44 2000//TLibrpcsvc-10
+/klm_prot.x/1.2/Sun Mar  5 02:04:44 2000//TLibrpcsvc-10
+/mount.x/1.2/Sun Mar  5 02:04:44 2000//TLibrpcsvc-10
+/nfs_prot.x/1.2/Sun Mar  5 02:04:44 2000//TLibrpcsvc-10
+/nlm_prot.x/1.2/Sun Mar  5 02:04:45 2000//TLibrpcsvc-10
+/rex.x/1.2/Sun Mar  5 02:04:45 2000//TLibrpcsvc-10
+/rnusers.x/1.2/Sun Mar  5 02:04:45 2000//TLibrpcsvc-10
+/rquota.x/1.2/Sun Mar  5 02:04:45 2000//TLibrpcsvc-10
+/rstat.x/1.2/Sun Mar  5 02:04:45 2000//TLibrpcsvc-10
+/rusers.x/1.2/Sun Mar  5 02:04:45 2000//TLibrpcsvc-10
+/rwall.x/1.2/Sun Mar  5 02:04:45 2000//TLibrpcsvc-10
+/sm_inter.x/1.2/Sun Mar  5 02:04:45 2000//TLibrpcsvc-10
+/spray.x/1.2/Sun Mar  5 02:04:45 2000//TLibrpcsvc-10
+/yp.x/1.2/Sun Mar  5 02:04:45 2000//TLibrpcsvc-10
+/yppasswd.x/1.2/Sun Mar  5 02:04:45 2000//TLibrpcsvc-10
+D/dpkg////

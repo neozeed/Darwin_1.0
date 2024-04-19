@@ -1,0 +1,25 @@
+/ChangeLog/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/Makefile.in/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/PB.project/1.1.1.1/Tue Apr 20 23:31:23 1999//Tenscript-7
+/VERSION/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/bindtextdom.c/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/cat-compat.c/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/dcgettext.c/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/dgettext.c/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/explodename.c/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/finddomain.c/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/gettext.c/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/gettext.h/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/gettextP.h/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/hash-string.h/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/intl-compat.c/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/l10nflist.c/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/libgettext.h/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/linux-msg.sed/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/loadinfo.h/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/loadmsgcat.c/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/localealias.c/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/po2tbl.sed.in/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/textdomain.c/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+/xopen-msg.sed/1.1.1.1/Tue Apr 20 23:26:43 1999//Tenscript-7
+D

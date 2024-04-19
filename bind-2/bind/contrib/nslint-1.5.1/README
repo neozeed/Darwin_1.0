@@ -1,0 +1,14 @@
+@(#) $Header: /cvs/Darwin/Services/bind/bind/contrib/nslint-1.5.1/README,v 1.1.1.1 1999/10/04 22:25:55 wsanchez Exp $ (LBL)
+
+NSLINT 1.5.1
+Lawrence Berkeley National Laboratory
+Network Research Group
+nslint@ee.lbl.gov
+ftp://ftp.ee.lbl.gov/nslint.tar.Z
+
+This directory contains source code for nslint, a lint program for dns
+files.
+
+Please send bugs and comments to nslint@ee.lbl.gov.
+
+ - Craig Leres

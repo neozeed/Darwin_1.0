@@ -1,0 +1,23 @@
+/arch.h/1.1.1.1/Fri May  7 17:46:08 1999//Tcctools-3
+/dyld.h/1.1.1.2/Fri Feb  4 21:25:05 2000//Tcctools-3
+/dyld_debug.h/1.1.1.2/Fri Feb  4 21:25:05 2000//Tcctools-3
+/fat.h/1.1.1.1/Fri May  7 17:46:07 1999//Tcctools-3
+/getsect.h/1.1.1.2/Fri Feb  4 21:25:06 2000//Tcctools-3
+/gmon.h/1.1.1.1/Fri May  7 17:46:08 1999//Tcctools-3
+/ldsyms.h/1.1.1.1/Fri May  7 17:46:06 1999//Tcctools-3
+/loader.h/1.2/Wed Feb 16 03:20:37 2000//Tcctools-3
+/nlist.h/1.1.1.1/Fri May  7 17:46:07 1999//Tcctools-3
+/ranlib.h/1.1.1.1/Fri May  7 17:46:08 1999//Tcctools-3
+/reloc.h/1.1.1.1/Fri May  7 17:46:06 1999//Tcctools-3
+/rld.h/1.1.1.1/Fri May  7 17:46:09 1999//Tcctools-3
+/rld_state.h/1.1.1.1/Fri May  7 17:46:09 1999//Tcctools-3
+/sarld.h/1.1.1.1/Fri May  7 17:46:09 1999//Tcctools-3
+/stab.h/1.1.1.2/Fri Feb  4 21:25:05 2000//Tcctools-3
+/swap.h/1.1.1.1/Fri May  7 17:46:08 1999//Tcctools-3
+D/hppa////
+D/i386////
+D/i860////
+D/m68k////
+D/m88k////
+D/ppc////
+D/sparc////

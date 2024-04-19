@@ -1,0 +1,23 @@
+/ANNOUNCE/1.1.1.2/Fri Mar 31 02:25:20 2000//Tapache_mod_ssl-2
+/CHANGES/1.1.1.2/Fri Mar 31 02:25:20 2000//Tapache_mod_ssl-2
+/CREDITS/1.1.1.2/Fri Mar 31 02:25:21 2000//Tapache_mod_ssl-2
+/INSTALL/1.1.1.2/Fri Mar 31 02:25:21 2000//Tapache_mod_ssl-2
+/INSTALL.Win32/1.1.1.2/Fri Mar 31 02:25:21 2000//Tapache_mod_ssl-2
+/LICENSE/1.1.1.2/Fri Mar 31 02:25:21 2000//Tapache_mod_ssl-2
+/NEWS/1.1.1.2/Fri Mar 31 02:25:21 2000//Tapache_mod_ssl-2
+/README/1.1.1.1/Tue Nov 23 02:33:47 1999//Tapache_mod_ssl-2
+/README.GlobalID/1.1.1.1/Tue Nov 23 02:33:47 1999//Tapache_mod_ssl-2
+/README.Patents/1.1.1.1/Tue Nov 23 02:33:47 1999//Tapache_mod_ssl-2
+/README.Support/1.1.1.2/Fri Mar 31 02:25:22 2000//Tapache_mod_ssl-2
+/README.Versions/1.1.1.2/Fri Mar 31 02:25:22 2000//Tapache_mod_ssl-2
+/README.Wishes/1.1.1.2/Fri Mar 31 02:25:22 2000//Tapache_mod_ssl-2
+/configure/1.3/Fri Mar 31 02:38:07 2000//Tapache_mod_ssl-2
+/configure.bat/1.1.1.2/Fri Mar 31 02:25:22 2000//Tapache_mod_ssl-2
+D/etc////
+D/pkg.addon////
+D/pkg.contrib////
+D/pkg.eapi////
+D/pkg.sslcfg////
+D/pkg.ssldoc////
+D/pkg.sslmod////
+D/pkg.sslsup////

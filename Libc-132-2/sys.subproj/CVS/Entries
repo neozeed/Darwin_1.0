@@ -1,0 +1,20 @@
+/CLIB-LIST/1.1.1.1/Wed Apr 14 23:19:27 1999//TLibc-132-2
+/MISSING-MANPAGE/1.1.1.1/Wed Apr 14 23:19:27 1999//TLibc-132-2
+/MISSING_SYSCALLS/1.1.1.1/Wed Apr 14 23:19:27 1999//TLibc-132-2
+/Makefile/1.1.1.2/Thu Oct 14 21:09:31 1999//TLibc-132-2
+/Makefile.postamble/1.1.1.2/Thu Oct 14 21:09:31 1999//TLibc-132-2
+/Makefile.preamble/1.1.1.2/Thu Oct 14 21:09:31 1999//TLibc-132-2
+/PB.project/1.1.1.2/Thu Oct 14 21:09:31 1999//TLibc-132-2
+/REQUIRED-MACROS/1.1.1.1/Wed Apr 14 23:19:27 1999//TLibc-132-2
+/SYSCALL-LIST/1.1.1.1/Wed Apr 14 23:19:27 1999//TLibc-132-2
+/errno.c/1.2/Thu Oct 14 21:19:25 1999//TLibc-132-2
+/getdtablesize.c/1.1.1.1/Thu Oct 14 21:09:31 1999//TLibc-132-2
+/gettimeofday.c/1.2/Thu Oct 14 21:19:25 1999//TLibc-132-2
+/sigaction.c/1.2/Thu Oct 14 21:19:26 1999//TLibc-132-2
+/sigcatch.c/1.2/Thu Oct 14 21:19:26 1999//TLibc-132-2
+/sigcatch.h/1.2/Thu Oct 14 21:19:26 1999//TLibc-132-2
+/sigprocmask.c/1.2/Thu Oct 14 21:19:26 1999//TLibc-132-2
+/sigsuspend.c/1.2/Thu Oct 14 21:19:26 1999//TLibc-132-2
+/sigtramp.c/1.2/Thu Oct 14 21:19:26 1999//TLibc-132-2
+D/i386.subproj////
+D/ppc.subproj////

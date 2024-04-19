@@ -1,0 +1,32 @@
+#!/bin/sh
+
+##
+# Run the AppleTalk Startup Program.
+##
+
+. /etc/rc.common
+
+if [ "${APPLETALK:=-NO-}" != "-NO-" ] &&
+   [ "$(uname -p)" = "powerpc" ]; then
+
+    ConsoleMessage "Starting AppleTalk"
+
+    case "${APPLETALK}" in
+
+      -ROUTER-)
+	# Router mode
+        appletalk -r -q
+	;;
+
+      -MULTIHOME-)
+	# Multihome non-routing mode
+        appletalk -x -q
+	;;
+
+      *)
+	# Single port on specified interface
+        appletalk -u ${APPLETALK} -q
+	;;
+
+    esac
+fi 

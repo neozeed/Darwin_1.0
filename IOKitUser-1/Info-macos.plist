@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<plist version="0.9">
+<dict>
+	<key>Modules</key>
+	<array>
+		<dict>
+			<key>Kernel Resource</key>
+			<true/>
+			<key>Name</key>
+			<string>com.apple.family.IOPCIBus</string>
+		</dict>
+		<dict>
+			<key>Kernel Resource</key>
+			<true/>
+			<key>Name</key>
+			<string>com.apple.family.IOSCSIParallel</string>
+		</dict>
+		<dict>
+			<key>Kernel Resource</key>
+			<true/>
+			<key>Name</key>
+			<string>com.apple.family.IOGraphics</string>
+		</dict>
+		<dict>
+			<key>Kernel Resource</key>
+			<true/>
+			<key>Name</key>
+			<string>com.apple.family.IOUSBBus</string>
+		</dict>
+		<dict>
+			<key>Kernel Resource</key>
+			<true/>
+			<key>Name</key>
+			<string>com.apple.family.IOFireWire</string>
+		</dict>
+		<dict>
+			<key>Kernel Resource</key>
+			<true/>
+			<key>Name</key>
+			<string>com.apple.family.IOAudio</string>
+		</dict>
+		<dict>
+			<key>Kernel Resource</key>
+			<true/>
+			<key>Name</key>
+			<string>com.apple.family.IOADBBus</string>
+		</dict>
+		<dict>
+			<key>Kernel Resource</key>
+			<true/>
+			<key>Name</key>
+			<string>com.apple.family.IOATABus</string>
+		</dict>
+		<dict>
+			<key>Kernel Resource</key>
+			<true/>
+			<key>Name</key>
+			<string>com.apple.family.IOStorage</string>
+		</dict>
+		<dict>
+			<key>Kernel Resource</key>
+			<true/>
+			<key>Name</key>
+			<string>com.apple.family.IONetworking</string>
+		</dict>
+		<dict>
+			<key>Kernel Resource</key>
+			<true/>
+			<key>Name</key>
+			<string>com.apple.family.IOHIDSystem</string>
+		</dict>
+	</array>
+	<key>Date</key>
+	<date>2000-01-01T17:52:47Z</date>
+	<key>Vendor</key>
+	<string>Apple Computer, Inc.</string>
+        <key>CFBundleVersion</key>
+        <string>1.0</string>
+        <key>CFBundleName</key>
+        <string>System Resource Extension</string>
+        <key>CFBundlePackageType</key>
+        <string>KEXT</string>
+        <key>CFBundleSignature</key>
+        <string>????</string>
+</dict>
+</plist>

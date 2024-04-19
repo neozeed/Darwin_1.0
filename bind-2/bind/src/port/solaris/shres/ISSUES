@@ -1,0 +1,305 @@
+Issues with BIND 4.9.3 resolver code and Solaris 2.x shared libraries
+=====================================================================
+
+$Id: ISSUES,v 1.1.1.1 1999/10/04 22:25:00 wsanchez Exp $
+
+Shared library configuration for BIND on Solaris is probably even more of a
+black art than it is on SunOS (although, in fact, it is much simpler).  This
+file sets down some important issues that should be understood in order to
+upgrade the resolver library on Solaris.
+
+by Alexander Dupuy <dupuy@smarts.com>
+
+=======================================================================
+The following six items should be read by everyone; they expand upon
+installation techniques and issues discussed in shres/solaris/INSTALL, as
+well as items that may need to be addressed after installing BIND.
+=======================================================================
+
+* The Solaris name service switch
+
+The Solaris name service switch allows the system administrator to select
+the name service(s) which should be used to resolve names and addresses at
+runtime by editing the /etc/nsswitch.conf file ("man -s4 nsswitch.conf" for
+details).  While on SunOS it's necessary to install the BIND resolver in
+the shared libc in order to get the system to use DNS to resolve names and
+addresses, on Solaris all that is needed is to edit /etc/nsswitch.conf.
+
+This means that you don't have to install the shared library resolver if
+all you need is some form of DNS host lookup on your system.  (In fact, you
+don't need to install the resolver static library either; you can use Sun's
+supplied include files and resolver shared library for applications.)
+However, if you want features from the 4.9.3 resolver library which aren't
+in the Sun-supplied resolver then you will need to install the resolver
+shared library, since the name service switch doesn't use static libraries.
+You may want to install the resolver shared library even if you don't want
+to update the name service switch lookup, to reduce the size of BIND
+executables.
+
+* Solaris resolver shared library versions
+
+Unlike SunOS, Solaris provides a shared library resolver, which is used by
+a number of programs (sendmail.mx, in.named, named-xfer, nslookup, nstest,
+and rpc.nisd_resolv) and the name service switch module nss_dns.so.1.
+
+The resolver library provided with Solaris is based on BIND 4.8.3, and
+therefore is somewhat dated; there are many misfeatures which have been
+corrected in more recent versions, and some features, like the RES_OPTIONS
+environment variable and options keyword in resolv.conf aren't supported.
+
+It's tempting to simply replace the existing Sun-provided libresolv.so.1
+with a shared library version of the 4.9.3 resolver.  However, the library
+interface in 4.9.3 is incompatible with 4.8.3 - specifically, the structure
+of the global variable _res is different - the 4.9.3 version is larger, and
+the layout and types of several fields have changed.  Applications which
+only call resolver functions and don't use _res are compatible, but
+applications that reference _res would not work correctly.
+
+For this reason, the 4.9.3 shared library resolver is libresolv.so.2
+instead of libresolv.so.1 (the Sun-supplied resolver).  By making
+libresolv.so a link to libresolv.so.2 (with an SONAME of libresolv.so.2)
+all newly linked applications will have dependencies on libresolv.so.2, but
+previously linked applications can still get the Sun-supplied library.
+
+Key applications and modules which don't use or reference _res can be
+edited so that their dependencies are for the new libresolv.so.2 library.
+This is particularly useful for the name service switch module nss_dns.so.
+since it must reference the new version of the library in order for the
+name service switch to use the new resolver library.
+
+* getXXXbyYYY vs. res_getXXXbyYYY
+
+Since the Solaris name service switch is the preferred mechanism for selecting
+the name service to use, simply linking with the resolver library doesn't force
+the use of DNS for getXXXbyYYY functions.  (Of course, the res_* functions
+always use DNS.)  If an application has a good reason for requiring the use of
+DNS (e.g. the host program sets resolver options and calls gethostbyaddr to
+resolve addresses) then it should call the res_getXXXbyYYY functions instead,
+which can easily be done with a conditional #define in the application code.
+
+While it would be possible to have the BIND 4.9.3 resolv.h include file
+#define getXXXbyYYY as res_getXXXbyYYY on Solaris, applications which
+depended on this would still get the name service switch if they were
+compiled on a stock Solaris system.  Having the 4.9.3 resolver library
+provide getXXXbyYYY functions which only use DNS would have a similar
+problem, and would introduce tricky library ordering issues where linking
+with -lnsl -lresolv would give you the name service switch, but linking
+with -lresolv -lnsl would give you only the DNS resolver.
+
+Since Sun doesn't provide a static libresolv.a, it is possible to build the
+static libresolv.a without this link compatibility by commenting out the
+definition of SOLCOMPAT in the top-level Makefile.  This isn't recommended,
+but is provided as an option for those who want to keep the semantics of
+forcing use of DNS for applications statically linked with -lresolv.
+
+* What about SUNSECURITY?
+
+The SUNSECURITY option was required in SunOS 4 because critical system programs
+like in.rshd depended on gethostbyaddr being able to detect and ignore PTR
+records in the IN-ADDR.ARPA domain for which the corresponding A record didn't
+match.  Since the BIND resolver doesn't replace gethostbyname in the libnsl
+shared library on Solaris 2, defining SUNSECURITY isn't necessary; any checking
+must be done in the nss_dns.so name service switch module.  Sun's resolver
+shared library does perform the SUNSECURITY checks, so you may want to do
+likewise, but there are no system programs which depend on this checking.
+
+* RFC 1101 network names vs. /etc/networks
+
+On SunOS, installing the BIND resolver functions in libc causes network
+names to be resolved using the DNS.  This is a Good Thing.  Just as
+/etc/hosts has been deprecated and effectively replaced by the DNS, so
+should /etc/networks be replaced by a dynamic, scalable, and
+centrally-updatable system (the DNS).
+
+On Solaris, this is controlled by the name service switch.  However, the
+nss_dns.so DNS switch module provided by Sun only provides host lookups,
+not network lookups, so if you put "networks: dns" in /etc/nsswitch.conf,
+it has no effect.
+
+The solution is to provide an nss_rfc1101.so switch module which uses DNS to
+provide network lookups, and then you could put "networks: rfc1101" in
+/etc/nsswitch.conf.  There's some documentation on the interface in
+/usr/include/nss_common.h but I don't have time to write this (yet).
+
+Even without an nss_rfc1101.so switch module, you will probably want to put
+DNS entries in for your networks, since many applications like netstat and
+traceroute will try calling gethostbyaddr to get the name of a network if
+the getnetbyaddr functions, and the "hosts: dns" entry will allow
+gethostbyaddr to get network name information from DNS in most cases.
+(This only works for getnetbyaddr; applications like ifconfig, route and
+snoop which use getnetbyname can't use gethostbyname to lookup network
+info.)
+
+RFC 1101, included in the BIND distribution (doc/rfc/rfc1101) has the full
+details; you basically just add forward and reverse PTR entries for
+"host-zero" addresses.  (The class C network 192.88.144 is
+0.144.88.192.in-addr.arpa, for example.)
+
+Once you add these DNS entries, netstat -r will display network names,
+rather than host names or numbers; netstat -rn will display addresses
+numerically.
+
+* Having named and tools linked with a shared vs. static libresolv.
+
+On Solaris, it is feasible to compile the entire BIND distribution with a
+shared libresolv, and you can do this very easily by uncommenting the line in
+Makefile which defines RES as $(SHRES)/libresolv.so and making sure that the
+line defining SOLCOMPAT is also uncommented.  If you leave SOLCOMPAT
+undefined, then you *must* link the BIND programs with the static libresolv;
+if you don't, the BIND programs will get non-BIND versions of getXXXbyYYY,
+which may lead to surprising (and incorrect) results.
+
+However, there are some reasons why you might want to use a static libresolv
+for BIND itself (the name service switch requires a shared library).  People
+have a tendency to copy tools like dig or the named server from machine to
+machine.  If the new version of libresolv.so is not present on the machines to
+which these goodies are copied TO, the application won't run (but unlike
+SunOS, you'll get a reasonably clear message explaining why).
+
+Using the Solaris/SVR4 package system can help prevent these sorts of
+problems, but if you expect to copy the BIND tools piecemeal, you may want
+to link them with the resolver static library.
+
+If you decide to link with the static libresolv be sure to read the following
+note describing problems which theoretically may occur with statically linked
+executables if a new version of the resolver shared library is installed.
+
+=======================================================================
+The following items are more nitty-gritty, "why it was done this way"
+issues, and can be safely ignored if all you care about is getting your
+system to use the BIND 4.9.3 resolver.
+=======================================================================
+
+* multiple versions of the library in a single process
+
+Normally, only the version of the library referenced by the name service
+switch module would be loaded in a single process.  However, if the
+nss_dns.so switch module references one version, and an application program
+is linked against the other, then both may be loaded in a single process.
+However, this should not cause a problem, since when resolving symbols, the
+Solaris/SVR4 dynamic linker will always use the symbols of the executable
+program and its dependencies before searching the module where the symbol
+is used (and the dependencies of that module).  Therefore the version
+referenced by the application program will be the only one used (even by
+nss_dns.so, which specifies the other version.
+
+More problematic would be the situation where an executable program has
+been linked against a resolver static library and contains some, but not
+all, of the functions.  In this case, those functions which were taken from
+the static library will be used, possibly along with other functions from
+the different version of the dynamic library, and this may cause problems.
+In practice this seems to be okay, since most applications reference the
+gethostby* functions and end up with almost all of the resolver library.
+
+* shared library version number clashes
+
+At some point, Sun will release a resolver library which incorporates the
+changes in BIND 4.9.3.  It's not clear if it will make it into Solaris
+2.5, but it should be in Solaris 2.6.  Since the 4.9.3 library interface
+is incompatible (because of changes to the _res structure, as noted above)
+it is likely that Sun will release a libresolv.so.2 with this new release
+of Solaris.  Since this hasn't happened yet, it's not clear whether this
+libresolv.so.2 will be compatible with the 4.9.3 libresolv.so.2 (we hope
+that it will).  If it isn't, you may get warning messages from the dynamic
+linker like:
+
+    copy relocation sizes differ: _res
+       (file sendmail.mx size=18c; file /usr/lib/libresolv.so.2 size=1b8)
+
+If this happens, you can keep the 4.9.3 resolver shared library, or you
+can use the Sun-provided version (presumably it will be fairly close to
+4.9.3).  If you installed the 4.9.3 resolver library in a directory other
+than /usr/lib, you may not have to do anything at all.
+
+If you want to keep the 4.9.3 resolver shared library, you will need to
+relink all 4.9.3 executables dynamically linked against libresolv.so.  You
+first need to change the shared library version number to 3, or change the
+resolver library installation directory, or both.  If you changed the
+version number, you will also need to relink the resolver shared library
+itself (to get the new version number).  Then you need to relink the
+executables.  Finally, you should make sure that the installed resolv.h
+header file is the 4.9.3 version, and that the libresolv.so symbolic link
+points to the 4.9.3 resolver library.
+
+If you want to use the Sun-provided resolver library, you should relink
+all 4.9.3 executables with the static libresolv.a instead of the shared
+libresolv.so, as described above, in shared vs. static libresolv.
+
+You should then make sure that the installed resolv.h header file is the
+Sun version, and that the libresolv.so symbolic link points to the
+Sun-supplied resolver library.  You also need to recompile any other
+applications (like sendmail) that are linked with the shared library
+resolver.
+
+* Compiling with gcc
+
+Compiling resolv with gcc will work; however the GNU assembler may have
+problems with code compiled -fpic, and the GNU linker may not be able to
+properly generate a Solaris shared library.
+
+Currently (4.9.3 resolv and gcc 2.7.0 on SPARC), the resolv library does
+not create any special gcc references.  Specifically, there are no
+unresolved references in the resolv objects, that are present in libgcc.a.
+This means that even if you compile with gcc, the objects created may be
+linked with any compiler.  All is cool, use gcc.
+
+SHOULD THIS CHANGE (e.g. on Intel or PowerPC versions of Solaris, or in a
+new release of gcc or BIND - not likely to change, but possible), you can
+still use gcc and create objects usable by any compiler.  You will need to
+add libgcc.a to the shared library link line.
+
+* gcc won't compile -fpic code, but cc will compile -pic
+
+You probably installed gcc to use GNU as.  Run gcc -v to find gcc's
+library directory:
+
+% gcc -v
+Reading specs from /usr/local/gnu/lib/gcc-lib/sparc-sun-solaris2.4/2.7.0/specs
+gcc version 2.7.0
+
+In this case, if GCC is using GNU as, it's probably installed in this
+directory as /usr/local/gnu/lib/gcc-lib/sparc-sun-solaris2.4/2.7.0/as. 
+(It may also be in your path ahead of /usr/ccs/bin/as.)
+
+GNU as does not support position-independent code.
+
+Solutions:
+
+- (best) change SHCC to "gcc -B/usr/ccs/bin/ -DSVR4 -D_SYS_STREAM_H".  
+  This will force gcc to use /usr/ccs/bin/as rather than any other one.
+
+- use cc instead of gcc for SHCC.  Suboptimal, since cc can't share the
+  read-only data (strings and the like).
+
+- remove GNU as and use Sun's as.
+
+* shared archives (aka "what about the .sa files?")
+
+On SunOS, global initialized data for shared libraries is contained in
+shared archive .sa files.  The Solaris/SVR4 linker uses another mechanism,
+called copy relocations, to deal with this issue, allowing the initialized
+data to remain in the shared library .so file.  So on Solaris, you don't
+need to worry about this problem.  You can read about the details on
+pp. 91-95 of the Linker and Libraries Guide of the Solaris Software
+Developer AnswerBook.  They explain why it's much better to use functional
+interfaces, but unfortunately it's too late to change the BIND interface
+to eliminate the use of _res.
+
+* UDP checksums
+
+Since DNS queries and responses use UDP, it is extremely useful to have
+UDP checksums enabled in order to allow detection of errors.  Solaris, by
+default, has UDP checksums on (finally!) and you can confirm that this is
+in fact the case with the command:
+    /usr/sbin/ndd /dev/udp udp_do_checksum
+which should print 1 if it is enabled.  If for some reason it isn't
+enabled, you can turn it on with the command
+    /usr/sbin/ndd -set /dev/udp udp_do_checksum 1
+
+* [Not] modifying libc
+
+Unlike SunOS, where the only way to get programs to use the resolver is to
+put functions into the C library, on Solaris, this isn't necessary.  Also,
+the 4.9.3 libresolv doesn't use any routines from the compatibility
+library lib44bsd.a, so there shouldn't be any problems with needing to add
+-l44bsd to link commands.

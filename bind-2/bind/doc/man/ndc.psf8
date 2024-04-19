@@ -1,0 +1,253 @@
+%!PS-Adobe-3.0
+%%Creator: groff version 1.10
+%%CreationDate: Mon Jun 21 14:21:58 1999
+%%DocumentNeededResources: font Times-Roman
+%%DocumentSuppliedResources: procset grops 1.10 0
+%%Pages: 1
+%%PageOrder: Ascend
+%%Orientation: Portrait
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset grops 1.10 0
+/setpacking where{
+pop
+currentpacking
+true setpacking
+}if
+/grops 120 dict dup begin
+/SC 32 def
+/A/show load def
+/B{0 SC 3 -1 roll widthshow}bind def
+/C{0 exch ashow}bind def
+/D{0 exch 0 SC 5 2 roll awidthshow}bind def
+/E{0 rmoveto show}bind def
+/F{0 rmoveto 0 SC 3 -1 roll widthshow}bind def
+/G{0 rmoveto 0 exch ashow}bind def
+/H{0 rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/I{0 exch rmoveto show}bind def
+/J{0 exch rmoveto 0 SC 3 -1 roll widthshow}bind def
+/K{0 exch rmoveto 0 exch ashow}bind def
+/L{0 exch rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/M{rmoveto show}bind def
+/N{rmoveto 0 SC 3 -1 roll widthshow}bind def
+/O{rmoveto 0 exch ashow}bind def
+/P{rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/Q{moveto show}bind def
+/R{moveto 0 SC 3 -1 roll widthshow}bind def
+/S{moveto 0 exch ashow}bind def
+/T{moveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/SF{
+findfont exch
+[exch dup 0 exch 0 exch neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/MF{
+findfont
+[5 2 roll
+0 3 1 roll
+neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/level0 0 def
+/RES 0 def
+/PL 0 def
+/LS 0 def
+/MANUAL{
+statusdict begin/manualfeed true store end
+}bind def
+/PLG{
+gsave newpath clippath pathbbox grestore
+exch pop add exch pop
+}bind def
+/BP{
+/level0 save def
+1 setlinecap
+1 setlinejoin
+72 RES div dup scale
+LS{
+90 rotate
+}{
+0 PL translate
+}ifelse
+1 -1 scale
+}bind def
+/EP{
+level0 restore
+showpage
+}bind def
+/DA{
+newpath arcn stroke
+}bind def
+/SN{
+transform
+.25 sub exch .25 sub exch
+round .25 add exch round .25 add exch
+itransform
+}bind def
+/DL{
+SN
+moveto
+SN
+lineto stroke
+}bind def
+/DC{
+newpath 0 360 arc closepath
+}bind def
+/TM matrix def
+/DE{
+TM currentmatrix pop
+translate scale newpath 0 0 .5 0 360 arc closepath
+TM setmatrix
+}bind def
+/RC/rcurveto load def
+/RL/rlineto load def
+/ST/stroke load def
+/MT/moveto load def
+/CL/closepath load def
+/FL{
+currentgray exch setgray fill setgray
+}bind def
+/BL/fill load def
+/LW/setlinewidth load def
+/RE{
+findfont
+dup maxlength 1 index/FontName known not{1 add}if dict begin
+{
+1 index/FID ne{def}{pop pop}ifelse
+}forall
+/Encoding exch def
+dup/FontName exch def
+currentdict end definefont pop
+}bind def
+/DEFS 0 def
+/EBEGIN{
+moveto
+DEFS begin
+}bind def
+/EEND/end load def
+/CNT 0 def
+/level1 0 def
+/PBEGIN{
+/level1 save def
+translate
+div 3 1 roll div exch scale
+neg exch neg exch translate
+0 setgray
+0 setlinecap
+1 setlinewidth
+0 setlinejoin
+10 setmiterlimit
+[]0 setdash
+/setstrokeadjust where{
+pop
+false setstrokeadjust
+}if
+/setoverprint where{
+pop
+false setoverprint
+}if
+newpath
+/CNT countdictstack def
+userdict begin
+/showpage{}def
+}bind def
+/PEND{
+clear
+countdictstack CNT sub{end}repeat
+level1 restore
+}bind def
+end def
+/setpacking where{
+pop
+setpacking
+}if
+%%EndResource
+%%IncludeResource: font Times-Roman
+grops begin/DEFS 1 dict def DEFS begin/u{.001 mul}bind def end/RES 72
+def/PL 792 def/LS false def/ENC0[/asciicircum/asciitilde/Scaron/Zcaron
+/scaron/zcaron/Ydieresis/trademark/quotesingle/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/space/exclam/quotedbl/numbersign/dollar/percent
+/ampersand/quoteright/parenleft/parenright/asterisk/plus/comma/hyphen
+/period/slash/zero/one/two/three/four/five/six/seven/eight/nine/colon
+/semicolon/less/equal/greater/question/at/A/B/C/D/E/F/G/H/I/J/K/L/M/N/O
+/P/Q/R/S/T/U/V/W/X/Y/Z/bracketleft/backslash/bracketright/circumflex
+/underscore/quoteleft/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y
+/z/braceleft/bar/braceright/tilde/.notdef/quotesinglbase/guillemotleft
+/guillemotright/bullet/florin/fraction/perthousand/dagger/daggerdbl
+/endash/emdash/ff/fi/fl/ffi/ffl/dotlessi/dotlessj/grave/hungarumlaut
+/dotaccent/breve/caron/ring/ogonek/quotedblleft/quotedblright/oe/lslash
+/quotedblbase/OE/Lslash/.notdef/exclamdown/cent/sterling/currency/yen
+/brokenbar/section/dieresis/copyright/ordfeminine/guilsinglleft
+/logicalnot/minus/registered/macron/degree/plusminus/twosuperior
+/threesuperior/acute/mu/paragraph/periodcentered/cedilla/onesuperior
+/ordmasculine/guilsinglright/onequarter/onehalf/threequarters
+/questiondown/Agrave/Aacute/Acircumflex/Atilde/Adieresis/Aring/AE
+/Ccedilla/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute/Icircumflex
+/Idieresis/Eth/Ntilde/Ograve/Oacute/Ocircumflex/Otilde/Odieresis
+/multiply/Oslash/Ugrave/Uacute/Ucircumflex/Udieresis/Yacute/Thorn
+/germandbls/agrave/aacute/acircumflex/atilde/adieresis/aring/ae/ccedilla
+/egrave/eacute/ecircumflex/edieresis/igrave/iacute/icircumflex/idieresis
+/eth/ntilde/ograve/oacute/ocircumflex/otilde/odieresis/divide/oslash
+/ugrave/uacute/ucircumflex/udieresis/yacute/thorn/ydieresis]def
+/Times-Roman@0 ENC0/Times-Roman RE
+%%EndProlog
+%%Page: 1 1
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF .144(This command allo)72 12 R .144
+(ws the system administrator to control the operation of a name serv)
+-.25 F(er)-.15 E 5.143(.I)-.55 G 2.643(fn)-5.143 G 2.643(oi)-2.643 G
+2.643(sg)-2.643 G -2.15 -.25(iv e)-2.643 H .143(n, will prompt).25 F
+.046(for commands until it reads EOF)72 24 R 5.046(.O)-.8 G .046
+(ptions are: Speci\214es the rendezv)-5.046 F .046
+(ous point for the control channel.)-.2 F .047(The def)5.046 F .047
+(ault is)-.1 F 1.704(\(a UNIX domain sock)72 36 R 1.704
+(et which is also the serv)-.1 F(er')-.15 E 4.204(sd)-.55 G(ef)-4.204 E
+1.704(ault control channel\).)-.1 F 1.704
+(If the desired control channel is a)6.704 F .421(TCP/IP sock)72 48 R
+.421(et, then the format of the ar)-.1 F .421(gument is \(for e)-.18 F
+.421(xample, w)-.15 F .422(ould be TCP port 54 on the local host.\))-.1
+F .422(This op-)5.422 F .39(tion will the client side of the control channel to a speci\214c address.)
+72 60 R(Serv)5.389 E .389(ers can be con\214gured to reject connections)
+-.15 F .295(which do not come from speci\214c addresses.)72 72 R .295
+(The format is the same as for \(see abo)5.295 F -.15(ve)-.15 G 2.795
+(\). F).15 F .295(or backw)-.15 F .295(ard compatibility)-.1 F 1.299
+(with older name serv)72 84 R 1.299
+(ers, is able to use UNIX signals for control communications.)-.15 F
+1.298(This capability is optional in)6.299 F .096(modern name serv)72 96
+R .096(ers and will disappear altogether at some future time.)-.15 F
+.096(Note that the a)5.096 F -.25(va)-.2 G .096(ilable set is narro).25
+F .097(wer when)-.25 F .4(the signal interf)72 108 R .4(ace is used.)-.1
+F 2.9(Al)5.4 G(ik)-2.9 E .4(ely ar)-.1 F .4(gument w)-.18 F .4
+(ould be something lik)-.1 F 2.9(eT)-.1 G .4(urns on deb)-3.35 F .4
+(ugging output, which is of in-)-.2 F .769(terest mainly to de)72 120 R
+-.15(ve)-.25 G 3.269(lopers. Suppresses).15 F .769
+(prompts and result te)3.269 F 3.269(xt. Suppresses)-.15 F(nonf)3.269 E
+.77(atal error announcements.)-.1 F -.45(Tu)5.77 G(rns).45 E .363
+(on protocol and system tracing, useful in installation deb)72 132 R
+2.863(ugging. Se)-.2 F -.15(ve)-.25 G .363(ral commands are b).15 F .363
+(uilt into b)-.2 F .362(ut the full set of)-.2 F 1.433
+(commands supported by the name serv)72 144 R 1.434
+(er is dynamic and should be disco)-.15 F -.15(ve)-.15 G 1.434
+(red using the command \(see belo).15 F(w\).)-.25 E .04
+(Builtin commands are: Pro)72 156 R .04(vides help for b)-.15 F .039
+(uiltin commands.)-.2 F .039(Exit from command interpreter)5.039 F 5.039
+(.T)-.55 G .039(oggle tracing \(see de-)-5.839 F 1.126(scription abo)72
+168 R -.15(ve)-.15 G 3.626(\). T).15 F 1.126(oggle deb)-.8 F 1.126
+(ugging \(see description abo)-.2 F -.15(ve)-.15 G 3.626(\). T).15 F
+1.126(oggle quietude \(see description abo)-.8 F -.15(ve)-.15 G 3.627
+(\). T).15 F 1.127(oggle si-)-.8 F 1.086(lence \(see description abo)72
+180 R -.15(ve)-.15 G 3.586(\). If).15 F 1.086(running in mode, an)3.586
+F 3.586(ya)-.15 G -.18(rg)-3.586 G 1.086
+(uments to and commands are passed to the ne).18 F 3.585(wo)-.25 G 3.585
+(ni)-3.585 G(ts)-3.585 E .32(command line.)72 192 R .32(If running in mode, there is no command and the command just tells the name serv)
+5.32 F .32(er to itself.)-.15 F -.15(Pa)5.32 G(ul).15 E -.6(Vi)72 204 S
+(xie \(Internet Softw).6 E(are Consortium\))-.1 E EP
+%%Trailer
+end
+%%EOF

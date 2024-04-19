@@ -1,0 +1,38 @@
+this directory is full of tools and examples that various individual
+contributors have sent in.  most of them are actually in live production
+use somewhere, though they are not of "publication" quality which is 
+why they are here instead of in comp.sources.unix.  most of them are
+not documented other than with comments in the sources.  all of them
+are fairly clever.
+
+use at your own risk.  neither the U C Regents or Digital Equipment
+Corporation asserts compilation copyright on any of the works in this
+directory; copyright, if any, rests with the contributors whose names appear
+in the source files.  no warranty is expressed or implied by the U C
+Regents or Digital Equipment Corporation.  void where prohibited by law.
+contents may have settled during shipping.
+
+------------------------------------------------------------------------------
+The following is a short description of the items contained in contrib/
+------------------------------------------------------------------------------
+umich/
+	dnsstats - A shell script which processes the logging produced by
+	named when it has been built with QRYLOG defined and started with
+	the "-q" flag.
+
+	lame-delegation/
+
+		LISA-VI-paper.ps - A PostScript copy of a paper written by
+		Bryan Beecher for the USENIX LISA VI conference describing
+		lame delegations and the following software.
+
+		lamer-message - A template used by lamers.sh when sending mail.
+
+		lamers.sh - A shell script which processes the logging produced
+		by named when it has been built with LAME_DELEGATIONS defined.
+		It sends mail to hostmasters with lame delegations, and
+		generates a report handy for spotting one's own lame 
+		delegations, or posting to comp.protocols.tcp-ip.domains.
+
+	zt - A shell script which performs zone transfers.  It has a handy
+	flag which allows it to perform recursive zone transfers.

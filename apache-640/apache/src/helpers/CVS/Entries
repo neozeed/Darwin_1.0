@@ -1,0 +1,23 @@
+/CutRule/1.1.1.1/Wed Apr 14 19:20:43 1999//Tapache-640
+/GuessCodeset/1.1.1.1/Fri Mar 31 01:45:16 2000//Tapache-640
+/GuessOS/1.3/Fri Mar 31 03:17:29 2000//Tapache-640
+/MakeEtags/1.1.1.1/Wed Apr 14 19:20:43 1999//Tapache-640
+/MakeLint/1.1.1.1/Wed Apr 14 19:20:43 1999//Tapache-640
+/PrintPath/1.1.1.2/Thu Sep 30 02:00:22 1999//Tapache-640
+/TestCompile/1.1.1.3/Fri Mar 31 01:45:16 2000//Tapache-640
+/binbuild.sh/1.1.1.3/Fri Mar 31 01:45:16 2000//Tapache-640
+/buildinfo.sh/1.1.1.2/Thu Sep 30 02:00:23 1999//Tapache-640
+/checkheader.sh/1.1.1.2/Thu Sep 30 02:00:23 1999//Tapache-640
+/dummy.c/1.1.1.5/Fri Mar 31 01:45:16 2000//Tapache-640
+/find-dbm-lib/1.1.1.2/Thu Sep 30 02:00:23 1999//Tapache-640
+/findcpp.sh/1.1.1.2/Thu Sep 30 02:00:23 1999//Tapache-640
+/fmn.sh/1.1.1.3/Fri Mar 31 01:45:17 2000//Tapache-640
+/fp2rp/1.1.1.1/Wed Apr 14 19:20:44 1999//Tapache-640
+/getuid.sh/1.1.1.1/Thu Sep 30 02:00:23 1999//Tapache-640
+/install.sh/1.1.1.3/Fri Mar 31 01:45:17 2000//Tapache-640
+/mfhead/1.1.1.1/Wed Apr 14 19:20:44 1999//Tapache-640
+/mkdir.sh/1.1.1.1/Wed Apr 14 19:20:44 1999//Tapache-640
+/mkshadow.sh/1.1.1.2/Thu Sep 30 02:00:23 1999//Tapache-640
+/ppl.sh/1.1.1.2/Thu Sep 30 02:00:24 1999//Tapache-640
+/slo.sh/1.1.1.2/Thu Sep 30 02:00:24 1999//Tapache-640
+D

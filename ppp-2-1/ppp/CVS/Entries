@@ -1,0 +1,38 @@
+/FAQ/1.1.1.1/Thu Jan 20 21:20:16 2000//Tppp-2-1
+/PLUGINS/1.1.1.1/Thu Jan 20 21:20:16 2000//Tppp-2-1
+/README/1.1.1.1/Thu Jan 20 21:20:16 2000//Tppp-2-1
+/README.MSCHAP80/1.1.1.1/Thu Jan 20 21:20:16 2000//Tppp-2-1
+/README.MacOSX/1.1/Tue Feb  1 19:48:49 2000//Tppp-2-1
+/README.NeXT/1.1.1.1/Thu Jan 20 21:20:16 2000//Tppp-2-1
+/README.bsd/1.1.1.1/Thu Jan 20 21:20:16 2000//Tppp-2-1
+/README.cbcp/1.1.1.1/Thu Jan 20 21:20:16 2000//Tppp-2-1
+/README.linux/1.1.1.1/Thu Jan 20 21:20:16 2000//Tppp-2-1
+/README.osf/1.1.1.1/Thu Jan 20 21:20:16 2000//Tppp-2-1
+/README.sol2/1.1.1.1/Thu Jan 20 21:20:16 2000//Tppp-2-1
+/README.sunos4/1.1.1.1/Thu Jan 20 21:20:16 2000//Tppp-2-1
+/README.svr4/1.1.1.1/Thu Jan 20 21:20:16 2000//Tppp-2-1
+/README.ultrix/1.1.1.1/Thu Jan 20 21:20:16 2000//Tppp-2-1
+/SETUP/1.1.1.1/Thu Jan 20 21:20:16 2000//Tppp-2-1
+/configure/1.3/Sun Mar  5 05:02:57 2000//Tppp-2-1
+D/MacOSX////
+D/NeXT////
+D/chat////
+D/common////
+D/contrib////
+D/etc.ppp////
+D/freebsd-2.0////
+D/freebsd-2.2.8////
+D/freebsd-3.0////
+D/include////
+D/linux////
+D/modules////
+D/netbsd-1.1////
+D/netbsd-1.2////
+D/osf1////
+D/pppd////
+D/pppdump////
+D/pppstats////
+D/scripts////
+D/sunos4////
+D/svr4////
+D/ultrix////

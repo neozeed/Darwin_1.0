@@ -1,0 +1,176 @@
+
+iokit/Kernel/ppc/IOAsmSupport.s					standard
+iokit/Kernel/ppc/IODBDMA.cpp					optional iokitcpp
+iokit/Kernel/ppc/IOSharedLock.s					standard
+
+iokit/Families/IOADBBus/IOADBBus.cpp				optional iokitcpp
+iokit/Families/IOADBBus/IOADBController.cpp			optional iokitcpp
+iokit/Families/IOADBBus/IOADBControllerUserClient.cpp		optional iokitcpp
+iokit/Families/IOPCIBus/IOPCIDevicePPC.cpp			optional iokitcpp
+
+# ndrv support
+
+iokit/Families/IONDRVSupport/IOPEFLoader.c			standard
+iokit/Families/IONDRVSupport/IOPEFInternals.c			standard
+iokit/Families/IONDRVSupport/IONDRV.cpp				optional iokitcpp
+iokit/Families/IONDRVSupport/IONDRVLibraries.cpp		optional iokitcpp
+iokit/Families/IONDRVSupport/IONDRVFramebuffer.cpp		optional iokitcpp
+
+iokit/Drivers/hidsystem/drvAppleADBDevices/IOADBDevice.cpp	optional iokitcpp
+iokit/Drivers/hidsystem/drvAppleADBDevices/AppleADBMouse.cpp	optional iokitcpp
+iokit/Drivers/hidsystem/drvAppleADBDevices/AppleADBKeyboard.cpp	optional iokitcpp
+iokit/Drivers/hidsystem/drvAppleADBDevices/AppleADBDisplay.cpp	optional iokitcpp
+iokit/Drivers/hidsystem/drvAppleADBDevices/AppleADBButtons.cpp	optional iokitcpp
+
+iokit/Families/IONVRAM/IONVRAMController.cpp			optional iokitcpp
+iokit/Drivers/platform/drvAppleNVRAM/AppleNVRAM.cpp		optional iokitcpp
+iokit/Drivers/platform/drvAppleCore99NVRAM/Core99NVRAM.cpp	optional iokitcpp
+iokit/Drivers/platform/drvApplePMU/IOPMUNVRAMController.cpp	optional iokitcpp
+
+iokit/Drivers/platform/drvAppleCuda/AppleCuda.cpp		optional iokitcpp
+iokit/Drivers/platform/drvAppleCuda/IOCudaADBController.cpp	optional iokitcpp
+
+iokit/Drivers/platform/drvApplePMU/pmu.cpp			optional iokitcpp
+iokit/Drivers/platform/drvApplePMU/IOPMUADBController.cpp	optional iokitcpp
+iokit/Drivers/platform/drvApplePMU/IOPMURTCController.cpp	optional iokitcpp
+# iokit/Drivers/platform/drvApplePMU/IOPMUPwrController.cpp	optional iokitcpp
+
+iokit/Drivers/pci/drvApplePCI/AppleMacRiscPCI.cpp		optional iokitcpp
+iokit/Drivers/pci/drvApplePCI/AppleGracklePCI.cpp		optional iokitcpp
+
+
+# Apple Platform Expert
+iokit/Drivers/platform/drvApplePlatformExpert/ApplePlatformExpert.cpp	optional iokitcpp
+iokit/Drivers/platform/drvApplePlatformExpert/AppleCPU.cpp		optional iokitcpp
+
+# Power Domains
+iokit/Drivers/platform/drvAppleRootDomain/RootDomain.cpp	optional iokitcpp
+
+# Apple Mac-IO driver
+iokit/Drivers/platform/drvAppleMacIO/AppleMacIO.cpp		optional iokitcpp
+
+# Apple NMI driver
+iokit/Drivers/platform/drvAppleNMI/AppleNMI.cpp			optional iokitcpp
+
+# Apple VIA driver
+iokit/Drivers/platform/drvAppleVIA/AppleVIA.cpp			optional iokitcpp
+
+# Apple MPIC driver
+iokit/Drivers/platform/drvAppleMPIC/AppleMPIC.cpp		optional iokitcpp
+
+# Platform Experts
+iokit/Drivers/platform/drvApplePowerSurgePE/PowerSurge.cpp	optional iokitcpp
+iokit/Drivers/platform/drvApplePowerStarPE/PowerStar.cpp	optional iokitcpp
+iokit/Drivers/platform/drvAppleGossamerPE/Gossamer.cpp		optional iokitcpp
+iokit/Drivers/platform/drvApplePowerExpressPE/PowerExpress.cpp	optional iokitcpp
+iokit/Drivers/platform/drvAppleCore99PE/Core99.cpp		optional iokitcpp
+iokit/Drivers/platform/drvAppleCore99PE/IOPMUSB99.cpp		optional iokitcpp
+iokit/Drivers/platform/drvAppleCore99PE/IOPMSlots99.cpp		optional iokitcpp
+
+
+# Mac-IO drivers
+iokit/Drivers/platform/drvAppleGrandCentral/GrandCentral.cpp	optional iokitcpp
+iokit/Drivers/platform/drvAppleOHare/OHare.cpp			optional iokitcpp
+iokit/Drivers/platform/drvAppleHeathrow/Heathrow.cpp		optional iokitcpp
+iokit/Drivers/platform/drvAppleKeyLargo/KeyLargo.cpp		optional iokitcpp
+
+
+# BMac driver
+
+iokit/Drivers/network/drvPPCBMac/BMacEnetHW.cpp			optional iokitcpp
+iokit/Drivers/network/drvPPCBMac/BMacEnetPrivate.cpp		optional iokitcpp
+iokit/Drivers/network/drvPPCBMac/BMacEnet.cpp			optional iokitcpp
+iokit/Drivers/network/drvPPCBMac/BMacEnetMII.cpp		optional iokitcpp
+
+# UniN driver
+
+iokit/Drivers/network/drvPPCUniN/UniNEnetHW.cpp			optional iokitcpp
+iokit/Drivers/network/drvPPCUniN/UniNEnetPrivate.cpp		optional iokitcpp
+iokit/Drivers/network/drvPPCUniN/UniNEnet.cpp			optional iokitcpp
+iokit/Drivers/network/drvPPCUniN/UniNEnetMII.cpp		optional iokitcpp
+
+# Mace driver
+
+iokit/Drivers/network/drvMaceEnet/MaceEnetHW.cpp		optional iokitcpp
+iokit/Drivers/network/drvMaceEnet/MaceEnetPrivate.cpp		optional iokitcpp
+iokit/Drivers/network/drvMaceEnet/MaceEnet.cpp			optional iokitcpp
+
+# Display drivers
+
+iokit/Families/IOGraphics/AppleG3SeriesDisplay.cpp		optional iokitcpp
+
+
+# Intel EtherExpress Pro driver (i82557/i82558)
+iokit/Drivers/network/drvIntel82557/i82557.cpp			optional iokitcpp
+iokit/Drivers/network/drvIntel82557/i82557Private.cpp		optional iokitcpp
+iokit/Drivers/network/drvIntel82557/i82557PHY.cpp		optional iokitcpp
+iokit/Drivers/network/drvIntel82557/i82557eeprom.cpp		optional iokitcpp
+
+# Awacs driver
+iokit/Drivers/audio/drvPPCAwacs/PPCAwacs.cpp			optional iokitcpp
+
+# Burgundy driver
+iokit/Drivers/audio/drvPPCBurgundy/PPCBurgundy.cpp		optional iokitcpp
+
+# DAC 3550 driver
+iokit/Drivers/audio/drvPPCDACA/PPCDACA.cpp			optional iokitcpp
+iokit/Drivers/audio/drvPPCDACA/PPCI2CInterface.cpp		optional iokitcpp
+
+# USB driver
+
+iokit/Families/IOUSBBus/IOUSBBus.cpp				optional iokitcpp
+iokit/Families/IOUSBBus/IOUSBController.cpp			optional iokitcpp
+iokit/Families/IOUSBBus/IOUSBController_Errata.cpp		optional iokitcpp
+iokit/Families/IOUSBBus/IOUSBController_Pipes.cpp		optional iokitcpp
+iokit/Families/IOUSBBus/IOUSBDevice.cpp				optional iokitcpp
+iokit/Families/IOUSBBus/IOUSBNub.cpp				optional iokitcpp
+iokit/Families/IOUSBBus/IOUSBRootHubDevice.cpp			optional iokitcpp
+iokit/Families/IOUSBBus/IOUSBInterface.cpp			optional iokitcpp
+iokit/Families/IOUSBBus/IOUSBPipe.cpp				optional iokitcpp
+iokit/Families/IOUSBBus/IOUSBUserClient.cpp			optional iokitcpp
+iokit/Families/IOUSBBus/IOUSBHub.cpp				optional iokitcpp
+iokit/Families/IOUSBBus/IOUSBHub_Ports.cpp			optional iokitcpp
+iokit/Drivers/usb/drvAppleOHCI/AppleOHCI.cpp			optional iokitcpp
+iokit/Drivers/usb/drvAppleOHCI/AppleOHCI_Interrupts.cpp		optional iokitcpp
+iokit/Drivers/usb/drvAppleOHCI/AppleOHCI_Optifixes.cpp		optional iokitcpp
+iokit/Drivers/usb/drvAppleOHCI/AppleOHCI_RootHub.cpp		optional iokitcpp
+iokit/Drivers/usb/drvAppleOHCI/AppleOHCI_UIM.cpp		optional iokitcpp
+iokit/Drivers/usb/drvAppleOHCI/AppleComposite.cpp		optional iokitcpp
+iokit/Drivers/usb/drvAppleMouse/AppleMouse.cpp			optional iokitcpp
+iokit/Drivers/usb/drvAppleKeyboard/AppleKeyboard.cpp		optional iokitcpp
+iokit/Drivers/usb/drvAppleKeyboard/Cosmo_USB2ADB.cpp		optional iokitcpp
+
+# Curio SCSI Driver
+iokit/Drivers/scsi/drvCurio/curio.cpp				optional iokitcpp
+
+# MESH SCSI Driver
+iokit/Drivers/scsi/drvMESH/mesh.cpp				optional iokitcpp
+
+# Symbios 8xx SCSI Driver
+iokit/Drivers/scsi/drvSymbios8xx/Sym8xxClient.cpp		optional iokitcpp
+iokit/Drivers/scsi/drvSymbios8xx/Sym8xxExecute.cpp		optional iokitcpp
+iokit/Drivers/scsi/drvSymbios8xx/Sym8xxInit.cpp			optional iokitcpp
+iokit/Drivers/scsi/drvSymbios8xx/Sym8xxMisc.cpp			optional iokitcpp
+
+# ATA driver 
+iokit/Drivers/ata/drvAppleATA/AppleATAPPC.cpp			optional iokitcpp
+iokit/Drivers/ata/drvAppleATA/AppleATAUltra646.cpp		optional iokitcpp
+
+
+# Firewire Family
+iokit/Families/IOFireWire/IOFireWireBus.cpp			optional iokitcpp
+iokit/Families/IOFireWire/IOFireWireController.cpp		optional iokitcpp
+iokit/Families/IOFireWire/IOFireWireNub.cpp			optional iokitcpp
+iokit/Families/IOFireWire/IOFireWireDevice.cpp			optional iokitcpp
+iokit/Families/IOFireWire/IOFireWireUnit.cpp			optional iokitcpp
+iokit/Families/IOFireWire/IOFWCommand.cpp			optional iokitcpp
+iokit/Families/IOFireWire/IOFWLocalROM.cpp			optional iokitcpp
+iokit/Families/IOFireWire/IOFWUtils.cpp				optional iokitcpp
+iokit/Families/IOFireWire/IOFWAddressSpace.cpp			optional iokitcpp
+iokit/Families/IOFireWire/IOFireWireUserClient.cpp		optional iokitcpp
+iokit/Families/IOFireWire/IOFWIsochChannel.cpp			optional iokitcpp
+iokit/Families/IOFireWire/IOFWIsochPort.cpp			optional iokitcpp
+iokit/Families/IOFireWire/IOFWDCLProgram.cpp			optional iokitcpp
+iokit/Families/IOFireWire/IOFWDCLTranslator.cpp			optional iokitcpp
+
+

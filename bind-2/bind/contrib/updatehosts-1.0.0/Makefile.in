@@ -1,0 +1,88 @@
+#### Start of system configuration section. ####
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+M4 = @M4@
+AWK = @AWK@
+PERL = @PERL@
+CC = @CC@
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+# Directory in which to install scripts.
+bindir = @bindir@
+
+# man directory
+mandir = @mandir@
+
+#### End of system configuration section. ####
+
+SHELL = /bin/sh
+
+PROGS= poke_ns poke_dhcp gendns readinfo updatehosts genstatic
+
+# group which is allowed to execute poke_ns and poke_dhcp - default "staff"
+STAFF = staff
+
+# directory for nameserver database files - default is /var/named
+DBDIR = /var/named
+
+editsh = sed -e 's,@''bindir''@,$(bindir),g'\
+	-e 's,@''M4''@,$(M4),g'\
+	-e 's,@''AWK''@,$(AWK),g'
+
+editpl = sed -e 's,@''datadir''@,$(acdatadir),g' -e 's,@''PERL''@,$(PERL),g'
+
+all: hasperl ${PROGS}
+
+hasperl:
+	@if [ ${PERL} = noperl ]; then \
+		echo "error - perl not found in PATH"; exit 1; fi
+ 
+.SUFFIXES:
+.SUFFIXES: .sh .pl .c
+
+.sh:
+	rm -f $@ $@.tmp
+	$(editsh) $< > $@.tmp && chmod +x $@.tmp && mv $@.tmp $@
+
+.pl:
+	rm -f $@ $@.tmp
+	$(editpl) $< > $@.tmp && chmod +x $@.tmp && mv $@.tmp $@
+
+Makefile: Makefile.in config.status
+	./config.status
+
+config.status: configure
+	./config.status --recheck
+
+env.o: env.c
+	${CC} ${CFLAGS} -c env.c -o env.o
+	
+poke_ns: poke_ns.c env.o
+	${CC} ${CFLAGS} -DENVFILE=\"${bindir}/poke_ns.env\" -static  poke_ns.c env.o -o poke_ns
+
+poke_dhcp: poke_dhcp.c env.o
+	${CC} ${CFLAGS} -DENVFILE=\"${bindir}/poke_dhcp.env\" -static  poke_dhcp.c env.o -o poke_dhcp
+install:
+	for f in ${PROGS}; do \
+	${INSTALL_PROGRAM} $$f ${bindir}; done
+	chown root ${bindir}/poke_ns
+	if [ ${STAFF} ]; then \
+		chgrp ${STAFF} ${bindir}/poke_ns; \
+		chmod 4710 ${bindir}/poke_ns; \
+		chgrp ${STAFF} ${bindir}/poke_dhcp; \
+		chmod 4710 ${bindir}/poke_dhcp; \
+	fi
+
+install-man:
+	cd man; ${MAKE}
+clean:
+	rm -f ${PROGS} *.o
+
+distclean: clean
+	rm -f config.cache config.log config.status Makefile

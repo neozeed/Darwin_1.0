@@ -1,0 +1,11 @@
+#!/bin/sh
+
+uname=/bin/uname
+
+if [ -f $uname ]; then
+	case `$uname -s`-`$uname -r` in
+	A/UX-3.1.1) exit 0 ;;
+	esac
+fi
+
+exit 1

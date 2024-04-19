@@ -1,0 +1,11 @@
+#!/bin/sh
+
+uname=/usr/bin/uname
+
+if [ -f $uname ]; then
+	case `$uname -s`-`$uname -v``$uname -r` in
+	AIX-32) exit 0 ;;
+	esac
+fi
+
+exit 1

@@ -1,0 +1,4 @@
+Package: libstreams
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Description: Streams library
+Build-Depends: build-base, objc4

@@ -1,0 +1,14 @@
+		switch (fork()) {
+		case -1:
+			syslog(LOG_ERR, "fork: %m");
+			exit(1);
+			/*NOTREACHED*/
+		case 0:
+			/* Child. */
+			break;
+		default:
+			/* Parent. */
+			exit(0);
+		}
+		/* Child continues. */
+		setsid();

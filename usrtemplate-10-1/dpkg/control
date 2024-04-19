@@ -1,0 +1,4 @@
+Package: usrtemplate
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Description: Template files
+Build-Depends: build-base

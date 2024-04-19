@@ -1,0 +1,4 @@
+Package: keymaps
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Description: Key mappings
+Build-Depends: build-base

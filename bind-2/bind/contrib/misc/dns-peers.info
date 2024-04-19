@@ -1,0 +1,196 @@
+Received: by gw.home.vix.com id AA02740; Mon, 25 Jul 94 23:21:19 -0700
+Received: (from wolf@localhost) by grasp.insa-lyon.fr (8.6.9.Beta2/8.6.9.Beta1) id IAA19541 for paul@vix.com; Tue, 26 Jul 1994 08:21:11 +0200
+From: Christophe Wolfhugel <Christophe.Wolfhugel@grasp.insa-lyon.fr>
+Message-Id: <199407260621.IAA19541@grasp.insa-lyon.fr>
+Subject: For Bind's contrib dir: contrib/dns-peers
+To: paul@vix.com
+Date: Tue, 26 Jul 1994 08:21:08 +0200 (MET DST)
+X-Mailer: ELM [version 2.4 PL22]
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Content-Length: 6643      
+
+Paul, you might wish to add following contribution to the Bind
+distribution.
+
+The package now has a no trouble production since the beginning of
+january on PIPEX and here on my node.
+
+ftp://ftp.univ-lyon1.fr/pub/unix/network/tcpip/dns/dns-peers.tar.gz
+
+The COPYRIGHT notice indicates:
+
+THIS SOFTWARE IS STILL UNDER DEVELOPPEMENT.
+
+This is currently not true, but I was strongly recommended to add this
+for legal reasons.
+
+Chris
+
+----------------------------------------------------------------------------
+
+                       dns-peers  1.0
+		       --------------
+
+
+INTRODUCTION
+
+There are situations where one has its site acting as a secondary
+name server for many zones managed by third parties. A typical
+example is agreements between operators: you secondary my customer's
+zones and I do yours.
+
+At a certain level of importance, this task requires a rapidly
+increasing human overhead as /etc/named.boot needs to be edited
+for each modification. This can also increase delays in a situation
+where customers expect their wishes to be taken into account immediately.
+
+DNS-Peers is a tool whose goal is to ease managing a large number of
+zones for which you are secondary.  The principles are extremely easy:
+
+-  DNS-Peers lets the remote site furnish you a list of zones for which
+   they would like you to be secondary. They manage a list of zones which 
+   will be retrieved and parsed automatically by DNS-Peers.
+
+-  DNS-Peers can retrieve zone-lists from several sources.
+
+-  DNS-Peers will construct a clean ``named.boot'' file, including your
+   local information and will send a ``SIGHUP'' to the named process
+   if the newly generated boot file did change from the previous release.
+
+-  DNS-Peers is typically run out of cron once a day.
+
+-  Of course, DNS-Peers allows you to have a local list of zones (ie which
+   is not managed automatically) which is simply used to build the complete
+   new named.boot file.
+
+For example, I use this script for automatically being secondary for
+zones on the Rocad network (the campus network) as well as for Oleane
+(an Internet service provider). Oleane and Pipex also use this for
+managing their secondaries.
+
+
+SECURITY
+
+Because DNS-Peers does only check the syntax of the remote zone-lists,
+using such a tool requires trust in the sites you are peering: DNS-Peers
+will not check for the unicity of the zones nor if the information
+provided is correct or not. It can't do such verifications anyway.
+
+DNS-Peers does retrieve the remote zones list by FTP. It handles
+failures and will only accept remote files if the FTP was
+successful. Otherwise the old version of the remote list is used for
+constructing the named.boot file.
+
+
+INSTALLATION
+
+Installation is extremely easy:
+
+1. Edit the file dns-peers.pl and customize it according to your needs.
+   The end of the configuration section is clearly marked in the script and
+   you should not need to modify anything after it.
+
+2. Generate the files socket.ph and syscall.ph (whenever possible don't use
+   the ones provided with this package) using h2ph, if they don't already
+   exist on your system. If you did not install Perl yourself, check with
+   the administrator responsible for this package.
+
+3. Create your configuration file. This will list the remote sites and
+   file names to retrieve for constructing the zone-lists.
+
+4. Create the file with the list of the local zones and other clauses
+   (like forwarders, ...). You did indicate the name of this file in 
+   the dns-peers.pl script while configuring it.
+
+5. Install the files in your favorite location. You must run the
+   script as root as it needs to reload the name-server.
+
+
+RUNNING THE SCRIPT
+
+This is extremely simple:
+
+# dns-peers.pl [-verbose] [-noreload]
+
+-verbose     will verbose the operations as they happen.
+
+-noreload    will not copy the newly generated named.boot file to its
+	     final location nor will it send SIGHUP to the named process.
+
+Out of cron, typically:
+
+8 4 * * * dns-peers.pl | mail wolf
+
+
+CONFIGRUATION FILE
+
+The configuration lists, one per line, where and how to retrieve the zone
+files from remote sites, and where to store the zone files locally.
+
+- Lines beginning with '#' are comments and are ignored.
+
+- Useful lines are composed of 5 fields, each separed by one or mor
+  tabs or spaces.
+
+     ftp.site user password remote-path local-dir
+
+  ftp.site     The host name where the zone-list will be retrieved.
+  user         The ftp user to connect to. Usually anonymous.
+  password     The password to provide, usually your email address.
+  remote-path  The exact pathname of the zone-list. Must be absolute.
+  local-dir    Where to store the zones locally, also this must be a
+	       unique identifier within the entire configuration file.
+	       Maximum length: 10 as a workin file "ftp.local-dir" is used.
+
+Example of configuration file:
+
+## Zones and where to get them from
+## Site User Pass File Local_dir
+ftp.univ-lyon1.fr anonymous -wolf@fr.net /pub/reseau/dns/secondaries/grasp rocad
+ftp.oleane.net anonymous -wolf@fr.net /pub/netinfo/dns/secondaries/grasp oleane
+
+
+ZONE FILES
+
+The zone files (ie the files the script retrieves) must have
+following format:
+
+- Anything starting with ';' (semi-colon) is a comment line and is ignored
+
+- Secondary lines may only have one IP address:
+
+    secondary zone.name   ip.of.primary.ns  filename
+
+  One line per zone. Each field can be separated by a combination of one or
+  more tabulation or space characters.
+
+  The filename is where the secondary (ie you) will store the file. This
+  file must be a UNIX acceptable filename without any slash. Unicity
+  of the file name MUST be guaranteed for each zone into a given list
+  of zones.  Multiple sources can use if they wish the same file names
+  as they are stored in different directories.
+
+Example of zone file:
+
+;-- All those zones are on the Rocad network.
+secondary univ-lyon1.fr            134.214.100.6   univ-lyon1.fr
+secondary insa-lyon.fr             134.214.100.6   insa-lyon.fr
+secondary 214.134.in-addr.arpa     134.214.100.6   134.214
+secondary gatelink.fr.net          134.214.100.6   gatelink.fr.net
+
+Very important: only one name-server's address may be listed, even if the
+syntax of named.boot allows several IP addresses, Dns-Peers does not (yet) !
+
+
+AVAILABILITY
+
+This package is available with respect of the terms listed in the
+COPYRIGHT file. You can retrieve it by anonymous ftp as:
+
+ftp://ftp.univ-lyon1.fr/pub/unix/network/tcpip/dns/dns-peers.tar.gz
+
+The author can be joined electronically as <wolf@grasp.insa-lyon.fr>, or
+if this gets outdated as <wolf@univ-lyon1.fr> among many other addresses.
+

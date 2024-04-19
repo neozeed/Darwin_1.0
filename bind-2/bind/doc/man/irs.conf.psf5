@@ -1,0 +1,290 @@
+%!PS-Adobe-3.0
+%%Creator: groff version 1.10
+%%CreationDate: Mon Jun 21 14:22:03 1999
+%%DocumentNeededResources: font Times-Roman
+%%DocumentSuppliedResources: procset grops 1.10 0
+%%Pages: 1
+%%PageOrder: Ascend
+%%Orientation: Portrait
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset grops 1.10 0
+/setpacking where{
+pop
+currentpacking
+true setpacking
+}if
+/grops 120 dict dup begin
+/SC 32 def
+/A/show load def
+/B{0 SC 3 -1 roll widthshow}bind def
+/C{0 exch ashow}bind def
+/D{0 exch 0 SC 5 2 roll awidthshow}bind def
+/E{0 rmoveto show}bind def
+/F{0 rmoveto 0 SC 3 -1 roll widthshow}bind def
+/G{0 rmoveto 0 exch ashow}bind def
+/H{0 rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/I{0 exch rmoveto show}bind def
+/J{0 exch rmoveto 0 SC 3 -1 roll widthshow}bind def
+/K{0 exch rmoveto 0 exch ashow}bind def
+/L{0 exch rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/M{rmoveto show}bind def
+/N{rmoveto 0 SC 3 -1 roll widthshow}bind def
+/O{rmoveto 0 exch ashow}bind def
+/P{rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/Q{moveto show}bind def
+/R{moveto 0 SC 3 -1 roll widthshow}bind def
+/S{moveto 0 exch ashow}bind def
+/T{moveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/SF{
+findfont exch
+[exch dup 0 exch 0 exch neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/MF{
+findfont
+[5 2 roll
+0 3 1 roll
+neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/level0 0 def
+/RES 0 def
+/PL 0 def
+/LS 0 def
+/MANUAL{
+statusdict begin/manualfeed true store end
+}bind def
+/PLG{
+gsave newpath clippath pathbbox grestore
+exch pop add exch pop
+}bind def
+/BP{
+/level0 save def
+1 setlinecap
+1 setlinejoin
+72 RES div dup scale
+LS{
+90 rotate
+}{
+0 PL translate
+}ifelse
+1 -1 scale
+}bind def
+/EP{
+level0 restore
+showpage
+}bind def
+/DA{
+newpath arcn stroke
+}bind def
+/SN{
+transform
+.25 sub exch .25 sub exch
+round .25 add exch round .25 add exch
+itransform
+}bind def
+/DL{
+SN
+moveto
+SN
+lineto stroke
+}bind def
+/DC{
+newpath 0 360 arc closepath
+}bind def
+/TM matrix def
+/DE{
+TM currentmatrix pop
+translate scale newpath 0 0 .5 0 360 arc closepath
+TM setmatrix
+}bind def
+/RC/rcurveto load def
+/RL/rlineto load def
+/ST/stroke load def
+/MT/moveto load def
+/CL/closepath load def
+/FL{
+currentgray exch setgray fill setgray
+}bind def
+/BL/fill load def
+/LW/setlinewidth load def
+/RE{
+findfont
+dup maxlength 1 index/FontName known not{1 add}if dict begin
+{
+1 index/FID ne{def}{pop pop}ifelse
+}forall
+/Encoding exch def
+dup/FontName exch def
+currentdict end definefont pop
+}bind def
+/DEFS 0 def
+/EBEGIN{
+moveto
+DEFS begin
+}bind def
+/EEND/end load def
+/CNT 0 def
+/level1 0 def
+/PBEGIN{
+/level1 save def
+translate
+div 3 1 roll div exch scale
+neg exch neg exch translate
+0 setgray
+0 setlinecap
+1 setlinewidth
+0 setlinejoin
+10 setmiterlimit
+[]0 setdash
+/setstrokeadjust where{
+pop
+false setstrokeadjust
+}if
+/setoverprint where{
+pop
+false setoverprint
+}if
+newpath
+/CNT countdictstack def
+userdict begin
+/showpage{}def
+}bind def
+/PEND{
+clear
+countdictstack CNT sub{end}repeat
+level1 restore
+}bind def
+end def
+/setpacking where{
+pop
+setpacking
+}if
+%%EndResource
+%%IncludeResource: font Times-Roman
+grops begin/DEFS 1 dict def DEFS begin/u{.001 mul}bind def end/RES 72
+def/PL 792 def/LS false def/ENC0[/asciicircum/asciitilde/Scaron/Zcaron
+/scaron/zcaron/Ydieresis/trademark/quotesingle/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/space/exclam/quotedbl/numbersign/dollar/percent
+/ampersand/quoteright/parenleft/parenright/asterisk/plus/comma/hyphen
+/period/slash/zero/one/two/three/four/five/six/seven/eight/nine/colon
+/semicolon/less/equal/greater/question/at/A/B/C/D/E/F/G/H/I/J/K/L/M/N/O
+/P/Q/R/S/T/U/V/W/X/Y/Z/bracketleft/backslash/bracketright/circumflex
+/underscore/quoteleft/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y
+/z/braceleft/bar/braceright/tilde/.notdef/quotesinglbase/guillemotleft
+/guillemotright/bullet/florin/fraction/perthousand/dagger/daggerdbl
+/endash/emdash/ff/fi/fl/ffi/ffl/dotlessi/dotlessj/grave/hungarumlaut
+/dotaccent/breve/caron/ring/ogonek/quotedblleft/quotedblright/oe/lslash
+/quotedblbase/OE/Lslash/.notdef/exclamdown/cent/sterling/currency/yen
+/brokenbar/section/dieresis/copyright/ordfeminine/guilsinglleft
+/logicalnot/minus/registered/macron/degree/plusminus/twosuperior
+/threesuperior/acute/mu/paragraph/periodcentered/cedilla/onesuperior
+/ordmasculine/guilsinglright/onequarter/onehalf/threequarters
+/questiondown/Agrave/Aacute/Acircumflex/Atilde/Adieresis/Aring/AE
+/Ccedilla/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute/Icircumflex
+/Idieresis/Eth/Ntilde/Ograve/Oacute/Ocircumflex/Otilde/Odieresis
+/multiply/Oslash/Ugrave/Uacute/Ucircumflex/Udieresis/Yacute/Thorn
+/germandbls/agrave/aacute/acircumflex/atilde/adieresis/aring/ae/ccedilla
+/egrave/eacute/ecircumflex/edieresis/igrave/iacute/icircumflex/idieresis
+/eth/ntilde/ograve/oacute/ocircumflex/otilde/odieresis/divide/oslash
+/ugrave/uacute/ucircumflex/udieresis/yacute/thorn/ydieresis]def
+/Times-Roman@0 ENC0/Times-Roman RE
+%%EndProlog
+%%Page: 1 1
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF .39
+(The functions are a set of routines in the C library which pro)72 12 R
+.39(vide access to v)-.15 F .39(arious system maps.)-.25 F .39
+(The maps that irs)5.39 F .302(currently controls are the follo)72 24 R
+.303(wing: passwd, group, services, protocols, hosts, netw)-.25 F .303
+(orks and netgroup.)-.1 F .303(When a pro-)5.303 F .637(gram \214rst calls a function that accesses one of these maps, the irs con\214guration \214le is read, and the source of each)
+72 36 R .188(map is determined for the life of the process.)72 48 R .188
+(If this \214le does not e)5.188 F .188(xist, the irs routines def)-.15
+F .189(ault to using local sources)-.1 F .354
+(for all information, with the e)72 60 R .353
+(xception of the host and netw)-.15 F .353
+(orks maps, which use the Domain Name System \(DNS\).)-.1 F 1.332
+(Each record in the \214le consists of one line.)72 72 R 3.832(Ar)6.332
+G 1.332(ecord consists of a map-name, an access-method and possibly a)
+-3.832 F .48
+(\(comma delimited\) set of options, separated by tabs or spaces.)72 84
+R .48(Blank lines, and te)5.48 F .48(xt between a # and a ne)-.15 F .48
+(wline are)-.25 F 38.066(ignored. A)72 96 R -.25(va)-.74 G 35.567
+(ilable maps: Map name).25 F 35.567(Information in map)29.51 F 18.74
+(========= ==================================)72 108 R 27.385
+(passwd User)7.385 F 4.885(authentication information)7.385 F 26.578
+(group User)72 120 R 1.578(group membership information services)4.078 F
+(Netw)21.578 E 1.578(ork services directory protocols)-.1 F(Netw)19.078
+E(ork)-.1 E .281(protocols directory hosts)72 132 R(Netw)27.781 E .281
+(ork hosts directory netw)-.1 F 17.781(orks Netw)-.1 F .281(ork "netw)
+-.1 F .281(ork names" directory netgroup)-.1 F(Netw)72 144 Q 13.587
+(ork "host groups" directory A)-.1 F -.25(va)-.74 G 13.588
+(ilable access methods: Access method).25 F(Description)11.18 E 32.18
+(============= =================================================)72 156
+R 28.903(local Use)6.404 F(a)6.403 E .034
+(local \214le, usually in /etc dns)72 168 R .034
+(Use the domain name service \(includes hesiod\) nis)32.534 F .035
+(Use the Sun-compati-)32.535 F 2.725(ble Netw)72 180 R 2.724
+(ork Information Service irp)-.1 F 2.724
+(Use the IRP daemon on the localhost.)60.89 F -1.27 -.74(Av a)7.724 H
+2.724(ilable options:).74 F 41.72(Option Description)72 192 R 24.38
+(======== ================================================)6.62 F 18.655
+(continue don')72 204 R 3.655(ts)-.18 G 1.155(top searching if you can')
+-3.655 F 3.655<748c>-.18 G 1.155(nd something mer)-3.655 F 26.155
+(ge don')-.18 F 3.655(ts)-.18 G 1.155(top searching if you CAN \214nd)
+-3.655 F .666(something The continue option creates whereby subsequent access methods of the same map type can be tried if a)
+72 216 R .085(name cannot be found using earlier access methods.)72 228
+R .085(This can be quite confusing in the case of host names, since the)
+5.085 F .606(name to address and address to name mappings can be visibly asymmetric e)
+72 240 R -.15(ve)-.25 G 3.106(nt).15 G .607(hough the data used by an)
+-3.106 F 3.107(yg)-.15 G -2.15 -.25(iv e)-3.107 H(n).25 E 1.384
+(access method is entirely consistent.)72 252 R 1.384(This beha)6.384 F
+1.384(vior is, therefore, not the def)-.2 F 3.884(ault. The)-.1 F(mer)
+3.883 E 1.383(ge option only af)-.18 F(fects)-.25 E .278
+(lookups in the groups map.)72 264 R .279(If set, subsequent access methods will be tried in order to cause local users to appear in)
+5.278 F .469
+(NIS \(or other remote\) groups in addition to the local groups.)72 276
+R 2.968(#G)5.468 G .468(et passw)-2.968 F .468
+(ord entries from local \214le, or f)-.1 F .468(ailing that,)-.1 F
+(NIS passwd)72 288 Q 31.62(local continue)25 F 40.06(passwd nis)2.5 F
+9.076(#B)72 312 S 6.576
+(uild group membership from both local \214le, and NIS.)-9.076 F 46.17
+(group local)11.576 F(continue,mer)16.56 E(ge)-.18 E 46.17(group nis)72
+324 R 2.5(#S)72 348 S(ervices comes from just the local \214le.)-2.5 E
+1.29(services local)5 F 32.28(protocols local)72 372 R 2.5(#H)72 396 S
+(osts comes \214rst from DNS, f)-2.5 E
+(ailing that, the local \214le hosts)-.1 E 19.61(dns continue)51.44 F
+48.94(hosts local)2.5 F 3.757(#N)72 420 S(etw)-3.757 E 1.257
+(orks comes \214rst from the local \214le, and f)-.1 F 1.256
+(ailing # that the, irp daemon netw)-.1 F 32.94(orks local)-.1 F
+(continue)16.56 E(netw)72 432 Q 32.94(orks irp)-.1 F 17.839
+(netgroup local)72 456 R .339
+(If a local user needs to be in the local host')2.839 F 2.84(sg)-.55 G
+.34(roup b)-2.84 F .34(ut not in e)-.2 F -.15(ve)-.25 G .34(ry host').15
+F 2.84(sg)-.55 G .34(roup, put them in the)-2.84 F .708(local host')72
+468 R 3.208(se)-.55 G .708
+(ntry and set up the portion of your \214le as: group)-3.208 F 5.708
+(local continue,mer)8.208 F .708(ge group)-.18 F .708(nis NIS tak)8.208
+F .708(es a long)-.1 F .119(time to time out.)72 480 R .119
+(Especially for hosts if you use the option to your serv)5.119 F(er')
+-.15 E 2.619(sd)-.55 G 2.619(aemon. It)-2.619 F .119
+(is important that the \214le con-)2.619 F .607
+(tain an entry for each map.)72 492 R .606(If a map is not mentioned in the \214le, all queries to that map will f)
+5.607 F 3.106(ail. The)-.1 F .606(classic NIS)3.106 F .398(mechanism for specifying union namespaces is to add an entry to a local map \214le whose name is `)
+72 504 R(`+')-.74 E 2.898('. In)-.74 F .398(IRS, this)2.898 F .512
+(is done via `)72 516 R(`continue')-.74 E 3.011('a)-.74 G .511(nd/or `)
+-3.011 F(`mer)-.74 E(ge')-.18 E 3.011('m)-.74 G .511(ap options.)-3.011
+F .511(While this results in a small incompatibility when local map)
+5.511 F .397(\214les are imported from non-IRS systems to IRS systems, there are compensating adv)
+72 528 R .398(antages in security and con\214g-)-.25 F(urability)72 540
+Q 5(.T)-.65 G(he \214le resides in)-5 E EP
+%%Trailer
+end
+%%EOF

@@ -1,0 +1,7 @@
+Package: gawk
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Vendor: GNU Project
+Version: 3.0.4
+URL: ftp://prep.ai.mit.edu/pub/gnu/gawk/
+Description: AWK programming language interpreter
+Build-Depends: build-base, perl, texi2html

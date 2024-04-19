@@ -1,0 +1,7 @@
+Package: bind
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Vendor: Internet Software Consortium
+Version: 8.2.1
+URL: http://www.isc.org/
+Description: BIND
+Build-Depends: build-base, yacc, libinfo-hdrs, flex

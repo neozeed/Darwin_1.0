@@ -1,0 +1,11 @@
+#ifdef USE_UTIME
+# include <utime.h>
+#endif
+
+#if defined(USE_UTIME)
+		struct utimbuf t;
+
+		t.actime = tt.tv_sec;
+		t.modtime = tt.tv_sec;
+		(void) utime(zp->z_source, &t);
+#else

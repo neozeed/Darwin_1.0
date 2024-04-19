@@ -1,0 +1,116 @@
+QNX port contributed by Mike Taillon <miket@qnx.com>
+
+Before you build you should do the following
+
+	# the following path is relative to the top of the BIND source
+
+	cd src/port
+
+	Edit settings, changing '//' to '///'.
+
+	Edit systype, changing '//' to '///'.
+
+Alternatively, you can apply the patch at the end of this file.
+
+Note that in either case the source may not build on non-QNX systems
+after you do it.
+
+Index: src/port/systype
+===================================================================
+RCS file: src/port/systype,v
+retrieving revision 1.1
+diff -c -r1.1 src/port/systype
+*** systype	Wed Oct  8 11:24:57 1997
+--- systype	Thu Aug 14 18:50:18 1997
+***************
+*** 1,6 ****
+  #!/bin/sh
+  
+! cachefile=${1-//}
+  
+  if [ -f $cachefile ]; then
+  	echo "Using $cachefile" >&2
+--- 1,6 ----
+  #!/bin/sh
+  
+! cachefile=${1-///}
+  
+  if [ -f $cachefile ]; then
+  	echo "Using $cachefile" >&2
+***************
+*** 17,23 ****
+  	if [ -f $systype/probe ]; then
+  		if sh $systype/probe; then
+  			case $cachefile in
+! 			//)	;;
+  			*) 	echo "Making $cachefile" >&2
+  				echo $systype > $cachefile
+  				;;
+--- 17,23 ----
+  	if [ -f $systype/probe ]; then
+  		if sh $systype/probe; then
+  			case $cachefile in
+! 			///)	;;
+  			*) 	echo "Making $cachefile" >&2
+  				echo $systype > $cachefile
+  				;;
+Index: src/port/settings
+===================================================================
+RCS file: src/port/settings,v
+retrieving revision 1.1
+diff -c -r1.1 src/port/settings
+*** settings	Wed Oct  8 11:24:57 1997
+--- settings	Thu Aug 14 18:49:51 1997
+***************
+*** 7,20 ****
+  # and it will merge things appropriately.  a cache file is maintained
+  # to avoid calling this script way too often.
+  
+! cachefile=${1-//}
+  if [ -f "$cachefile" ]; then
+  	echo "Using $cachefile" >&2
+  	exec cat $cachefile
+  fi
+  
+  case $cachefile in
+! //) ;;
+  *)   echo "Making $cachefile" >&2 ;;
+  esac
+  
+--- 7,20 ----
+  # and it will merge things appropriately.  a cache file is maintained
+  # to avoid calling this script way too often.
+  
+! cachefile=${1-///}
+  if [ -f "$cachefile" ]; then
+  	echo "Using $cachefile" >&2
+  	exec cat $cachefile
+  fi
+  
+  case $cachefile in
+! ///) ;;
+  *)   echo "Making $cachefile" >&2 ;;
+  esac
+  
+***************
+*** 27,35 ****
+  done
+  
+  case $cachefile in
+! //) echo $result ;;
+  *)  echo $result > $cachefile
+      exec cat $cachefile ;;
+  esac
+  
+  exit
+--- 27,35 ----
+  done
+  
+  case $cachefile in
+! ///) echo $result ;;
+  *)  echo $result > $cachefile
+      exec cat $cachefile ;;
+  esac
+  
+  exit
+

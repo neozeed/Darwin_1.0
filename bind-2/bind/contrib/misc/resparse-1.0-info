@@ -1,0 +1,46 @@
+Newsgroups: comp.protocols.tcp-ip.domains
+Path: vixie!decwrl!olivea!spool.mu.edu!howland.reston.ans.net!math.ohio-state.edu!jussieu.fr!univ-lyon1.fr!zaphod.crihan.fr!warwick!uknet!liv!lucs!daves
+From: daves@csc.liv.ac.uk (Dave Shield)
+Subject: resolver parsing routines
+Sender: news@compsci.liverpool.ac.uk (News Eater)
+Message-ID: <CL2KxI.MGG@compsci.liverpool.ac.uk>
+Nntp-Posting-User: daves
+Date: Fri, 11 Feb 1994 17:08:05 GMT
+Lines: 34
+Nntp-Posting-Host: irwell.csc.liv.ac.uk
+Organization: Computer Science, Liverpool University
+
+Some time ago, I asked about the availability of routines
+to parse the results of a call to res_query/res_search.
+(In the general case - not simply gethostent calls).
+
+   The general responses were either to use nslookup (or similar)
+and awk/perl/etc to parse the output at the shell level, or to use
+the BIND debugging code as a framework for unpicking the response.
+
+  I didn't much see the point in doing this just for my particular
+task, so I've put together a set of routines to parse the resolver
+response into a general C structure  (plus copying structures,
+printing them and freeing the memory used).
+
+  If anyone's interested, they're available from
+
+	ftp://ftp.csc.liv.ac.uk/hpux9/Networking/resparse-1.0.tar.gz
+
+
+ They've only been tested under HP-UX 9.01  (HP 9k/720).  Please let me
+know if they work (or any changes needed) on other configurations.
+
+
+On a related point, does anyone know of any records of the following types:
+
+	MD, MF			(Obsolete)
+	NULL
+	TXT			(with MULTIPLE strings)
+	AFSDB, X25, ISDN, RP, RT	(RFC 1183)
+	UNSPEC
+
+The handling of these hasn't been tested, 'cos the HP-UX name server
+didn't like them.
+
+Dave

@@ -1,0 +1,14 @@
+/Makefile.ssl/1.2/Sun Mar  5 03:45:46 2000//TOpenSSL-2
+/README/1.1.1.1/Sun Mar  5 02:30:55 2000//TOpenSSL-2
+/dsa.h/1.1.1.1/Sun Mar  5 02:30:55 2000//TOpenSSL-2
+/dsa_asn1.c/1.1.1.1/Sun Mar  5 02:30:55 2000//TOpenSSL-2
+/dsa_err.c/1.1.1.1/Sun Mar  5 02:30:55 2000//TOpenSSL-2
+/dsa_gen.c/1.1.1.1/Sun Mar  5 02:30:55 2000//TOpenSSL-2
+/dsa_key.c/1.1.1.1/Sun Mar  5 02:30:55 2000//TOpenSSL-2
+/dsa_lib.c/1.1.1.1/Sun Mar  5 02:30:55 2000//TOpenSSL-2
+/dsa_sign.c/1.1.1.1/Sun Mar  5 02:30:55 2000//TOpenSSL-2
+/dsa_vrf.c/1.1.1.1/Sun Mar  5 02:30:55 2000//TOpenSSL-2
+/dsagen.c/1.1.1.1/Sun Mar  5 02:30:55 2000//TOpenSSL-2
+/dsatest.c/1.1.1.1/Sun Mar  5 02:30:55 2000//TOpenSSL-2
+/fips186a.txt/1.1.1.1/Sun Mar  5 02:30:55 2000//TOpenSSL-2
+D

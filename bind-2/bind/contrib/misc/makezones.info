@@ -1,0 +1,221 @@
+Received: by gw.home.vix.com id AA27986; Thu, 21 Apr 94 09:04:27 -0700
+Received: by gw.home.vix.com id AA27961; Thu, 21 Apr 94 09:02:59 -0700
+Received: from grus.cus.cam.ac.uk [131.111.8.3] (TAP id = root) 
+	by bootes.cus.cam.ac.uk with smtp 
+	(Smail-3.1.28.1 #136) id m0pu1DC-000BzbC; Thu, 21 Apr 94 17:02 BST
+Received: by grus.cus.cam.ac.uk 
+	(Smail-3.1.28.1 #136) id m0pu1DB-0007aLC; Thu, 21 Apr 94 17:02 BST
+Message-Id: <m0pu1DB-0007aLC@grus.cus.cam.ac.uk>
+To: bind-workers@vix.com
+Cc: ph10@cus.cam.ac.uk
+Subject: makezones
+Date: Thu, 21 Apr 94 17:02:44 +0100
+From: Tony Stoneley <ajms@cus.cam.ac.uk>
+
+Another offering for the DNS database tools deliberations -
+
+We maintain our dns zone (cam.ac.uk.) by hand editing a file that is
+essentially a forward zone file (with escapes), but which is then
+processed by a perl script "makezones" (a) to check it for idiocies and
+(b) to generate the actual forward and reverse zone files.  Documentation
+is in comments in the script, but I append an extract.  makezones is
+available for anon ftp in
+
+  ftp.cus.cam.ac.uk:/pub/software/programs/DNS/makezones
+
+Further enquiries or comments to the author,
+    Philip Hazel <ph10@cus.cam.ac.uk>
+please, not to me; I'm merely a grateful user. 
+
+--
+Tony Stoneley            Email:  Tony.Stoneley@ucs.cam.ac.uk
+Computing Service        Phone:  +44 223 334710
+Cambridge University
+----------------------------------------------------------------
+
+# Makezones handles the updating of the serial number automatically. It
+# does this by updating the SOURCE FILE before generating the zone files.
+#                >>>>>      NB NB NB NB      <<<<<
+# The source file therefore has to be writeable. Makezones insists that
+# the format of the serial number be <year><month><day><version> and that
+# the year be four digits long, so that this code will continue to work 
+# after then end of 1999.
+#
+# Makezones handles Class B and Class C networks, because those are the
+# ones that are around here in Cambridge, UK. It would not be hard to 
+# extend it to handle a Class A if that were required.
+#
+# Because the file should normally be correct, makezones makes no attempt
+# attempt to continue if it finds a serious error. It just reports it and 
+# stops. However, syntax errors in the general records don't prevent it
+# going on to check further records, so you can get more than one error
+# message in a run. However, if it finds too many errors it says so, and
+# gives up. "Too many" is currently more than ten.
+#
+# The input file looks like a normal DNS zone file, with the addition of
+# the following rules, which impose additional restrictions. Some of these
+# rules are to make it easy for makezones; some of them impose conventions
+# that we use in Cambridge which might not be liked elsewhere. The code is
+# well commented, and should be easy to modify.
+#
+#   . The class field ("IN") and the type fields ("A", "CNAME", etc.) must
+#     be specified in upper case, as must "TCP" and "UDP" in WKS records.
+#
+#   . With the exception of the SOA & WKS records, all records must be 
+#     complete on one line of input. That is, continuation is not supported
+#     in general.
+#
+#   . The SOA record must be right at the start of the file, and must be
+#     set up so that each numeric parameter is on a separate line. For
+#     example:
+#
+#     @    IN    SOA    cus.cam.ac.uk. hostmaster.ucs.cam.ac.uk. (
+#                             1993080601      ; Serial
+#                             10800           ; Refresh 3 hours
+#                             3600            ; Retry 1 hour
+#                             604800          ; Expire after a week
+#                             86400 )         ; Minimum ttl
+#
+#     Note that the serial number begins with the full year number, not just
+#     the last two digits. The SOA record is expected to have the "IN" class
+#     field; subsequent records may omit it.
+#
+#   . The NS records for the zone must appear at the top of the file, just
+#     after the SOA record. These will be copied into the forward and the
+#     reverse zone files. That is, the default assumption is that the name-
+#     servers are the same for the forward and reverse zones. These NS records
+#     must NOT have anything in the name field. The copying stops on reaching
+#     the first record with a name field or the first non-NS record.
+#
+#   . Makezones can also cope with the case where there are different NS
+#     records for the different zones. If an NS record at the top of the
+#     file contains text after the nameserver name, this is taken as a list
+#     of zones to which this NS record applies. For example,
+#
+#            IN    NS    abcd.some.domain.   some.domain.  144.44.0.0
+#    
+#     The reverse zones are identified by their IP network numbers. If there
+#     are a lot of them, multiple instances of this special kind of qualified
+#     NS record can be used.
+#
+#   . NS records must always refer to fully qualified names. Makezones checks
+#     for the final dot, because it is so easy to overlook this.
+#   
+#   . Comment lines are not normally copied into the working zone files. They
+#     can, however, be forced into them by the following syntax:
+#     
+#     ;F   copy this comment (without the F) into the forward file
+#     ;R   copy this comment (without the R) into the reverse file
+# 
+#   . All records except PTR records are normally copied to the forward file. 
+#     However, A records can be marked as "reverse only" by preceding them
+#     with ">R " at the start. In this case, no A record is written to the
+#     forward file, but a PTR record is constructed for the appropriate
+#     reverse zone file. There should be exactly one space after the ">R";
+#     three characters are removed from the start of the record. If ">R" is
+#     followed by a tab, the tab is not removed (i.e. it acts as more than
+#     one space).
+#     
+#   . PTR records and A records are the only ones used when generating the 
+#     reverse zone files. "A" records can be marked "forwards only" by preced- 
+#     ing them with ">F " at the start. This suppresses generation of a PTR 
+#     record for the reverse zone. It does not, however, suppress the check that
+#     the address is in one of the networks being handled (see next item for
+#     external networks). If more than one A record has the same IP address,
+#     then all but one must have the ">F " flag, to ensure that only one PTR
+#     record is generated (for the canonical name). Again, there must be
+#     exactly one space or a tab after ">F".
+#     
+#   . We want to be able to check that all IP addresses are in one of the 
+#     networks that we are processing for. However, occasionally a record must
+#     specify an external network (glue records are the prime example). Such 
+#     records must be flagged by ">E " at their start to override the error 
+#     that would otherwise occur. (They naturally won't get into any reverse 
+#     zones.) The special local address 127.0.0.1 is recognized and treated as
+#     though ">E " is always present. The ">E " flag can be used on WKS 
+#     records as well as on A records.
+#
+#   . The name given for PTR records must be a complete, reversed IP address
+#     that corresponds to one of the reverse zones. The network portion of
+#     the "name" is removed when generating the PTR record for the reverse
+#     zone. PTR records have to be used instead of A records flagged with
+#     ">R " ("reverse only") when the name concerned is not in the domain
+#     of the forward zone, because of the following rule.
+#
+#   . The names on all records must not end with . as we conventionally
+#     specify them as partial domains for the forward zone. This means that,
+#     if you want a record with the name of the zone as its domain, you must
+#     use the "@" notation, which is supported.
+#
+#   . Makezones assumes that names consist of letters and digits, and start
+#     with a letter. You can, however, override this by enclosing a name
+#     in quotes. For example:
+#
+#     "3cpu"   A     134.232.45.69
+#
+#     I didn't want to allow these through normally, as in my zone they are
+#     more likely to be typos. You can change the rules for what characters
+#     are allowed in names (without quoting) by editing the variable 
+#     $name_pattern (see under CONFIGURATION VARIABLES at the head of this 
+#     file).
+#
+#   . CNAME records must point to fully qualified names. Makezones checks
+#     that if a name appears on a CNAME, it does not appear on any other
+#     record.
+#
+#   . MX records must point to fully qualified names.
+#     
+#
+# Makezones is run by a command of the following form:
+#
+#   makezones [options] <source> <forward-zone> <forward-zone-file> \
+#     [<reverse-zone-file>]*
+#
+# For example:
+# 
+#   makezones  DBsource  cam.ac.uk  db.cam  db.131.111  db.192.153.213
+#   
+# The source file is specified as the first argument. The second and third
+# arguments specify the name of the zone and the file into which the records
+# for that zone are to be written. The name is required so that fully
+# qualified names can be generated in the reverse zone files. The remaining
+# arguments specify the networks for which reverse zone files are to be 
+# written, and the corresponding files. There need not be any if there are 
+# no PTR or non-forwards-only A records in the source file. Each of these 
+# final arguments is the name of a zone file. The first part of the name can 
+# be anything you like - the only requirement is that the name must end with 
+# a valid Class B or Class C network number.
+#
+# [This combining of network number and zone file name is done for convenience.
+# To change makezones so that the numbers and file names are given as separate
+# arguments would not be difficult; the changes would affect only the sub-
+# routine that unpicks the arguments.]
+#
+# It is intended that makezones will normally be run as part of a "make" 
+# sequence which will also install the files and reload the nameserver(s)
+# after makezones has run successfully. Thus, the command to run it will
+# normally be stored in a file and not typed each time.
+# 
+# The output files are actually written to temporary files whose names are the 
+# same as the final ones with ".new" appended. If the processing succeeds,
+# these files are renamed; if it fails, they are deleted.
+#
+# Normally no options are required. There is currently only one option:
+#
+#   -short   Used when a new zone file is more than 5% shorter than the 
+#            previous version. If not given, the processing will fail if
+#            a new file is that much shorter. This guards against the case
+#            of accidental loss of large portions of the source file. Setting
+#            -short disables the length checking for all zones. You need to
+#            set this option if the previous versions of the files do not
+#            exist. The script can be configured to default to -short; see
+#            "configuration options" above.
+# 
+# The input file must be writable. The first thing the script does is to update
+# the serial number in the original file. This forms a permanent record and 
+# ensures that all the created zones have the same number. The form of the
+# serial number must be <year><month><day><sequence>, as in the example SOA
+# record shown above. The code will continue to work after December 31, 1999.
+# If more than 99 updates are done in one day, the failure is soft in that a 
+# valid serial number is still generated, though it no longer contains that
+# day's date.

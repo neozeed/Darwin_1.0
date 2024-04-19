@@ -1,0 +1,620 @@
+*** ../bind-8.1-T4B-with-T5B/src/bin/named/ns_main.c	Sat May  3 20:46:35 1997
+--- src/bin/named/ns_main.c	Sat May  3 19:23:09 1997
+***************
+*** 814,820 ****
+  			ifreq.ifr_addr.sa_len = 16;
+  #endif
+  		cpsize = sizeof ifreq.ifr_name + ifreq.ifr_addr.sa_len;
+! #elif defined SIOCGIFCONF_ADDR
+  		cpsize = sizeof ifreq;
+  #else
+  		cpsize = sizeof ifreq.ifr_name;
+--- 814,820 ----
+  			ifreq.ifr_addr.sa_len = 16;
+  #endif
+  		cpsize = sizeof ifreq.ifr_name + ifreq.ifr_addr.sa_len;
+! #elif defined( SIOCGIFCONF_ADDR ) || defined(__NeXT__)
+  		cpsize = sizeof ifreq;
+  #else
+  		cpsize = sizeof ifreq.ifr_name;
+*** ../bind-8.1-T4B-with-T5B/src/lib/resolv/res_debug.c	Thu Apr 24 15:22:26 1997
+*** /dev/null	Sat May  3 19:58:24 1997
+--- src/port/next/Makefile	Wed Apr 30 22:38:45 1997
+***************
+*** 0 ****
+--- 1,87 ----
++ # Copyright (c) 1996 by Internet Software Consortium
++ #
++ # Permission to use, copy, modify, and distribute this software for any
++ # purpose with or without fee is hereby granted, provided that the above
++ # copyright notice and this permission notice appear in all copies.
++ #
++ # THE SOFTWARE IS PROVIDED "AS IS" AND INTERNET SOFTWARE CONSORTIUM DISCLAIMS
++ # ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES
++ # OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL INTERNET SOFTWARE
++ # CONSORTIUM BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
++ # DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
++ # PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS
++ # ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
++ # SOFTWARE.
++ 
++ # $Id: next_diffs,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
++ 
++ # these are only appropriate for BSD 4.4 or derivatives, and are used in
++ # development.  normal builds will be done in the top level directory and
++ # this Makefile will be invoked with a lot of overrides for the following:
++ SYSTYPE= next
++ DESTDIR =
++ DESTLIB = /usr/local/lib
++ O=o
++ A=a
++ CC= gcc
++ LD= ld
++ SHELL= /bin/sh
++ CDEBUG= -O9
++ TOP= ../..
++ INCL = ${TOP}/include
++ PORTINCL = ${TOP}/port/${SYSTYPE}/include
++ LIBBIND = ${TOP}/lib/libbind.${A}
++ LIBPORT = ${TOP}/port/libport.${A}
++ CFLAGS=	${CDEBUG} -I${PORTINCL} -I${INCL}
++ LD_LIBFLAGS= -x -r
++ AR= ar cruv
++ RANLIB= ranlib
++ INSTALL= install
++ 
++ SUBDIRS= include
++ 
++ SRCS=	noop.c
++ 
++ OBJS=	noop.${O}
++ 
++ MARGS= DESTDIR="${DESTDIR}" DESTINC="${DESTINC}" INSTALL="${INSTALL}"
++ 
++ all depend clean distclean install::
++ 	@for x in ${SUBDIRS}; do \
++ 		(cd $$x; pwd; ${MAKE} ${MARGS} $@); \
++ 	done
++ 
++ all:: ${LIBPORT}
++ 
++ ${LIBPORT}: ${OBJS}
++ 	${AR} ${LIBPORT} ${ARPREF} ${OBJS} ${ARSUFF}
++ 	${RANLIB} ${LIBPORT}
++ 
++ .c.${O}:
++ 	${CC} ${CPPFLAGS} ${CFLAGS} -c $*.c
++ 	-${LDS} ${LD} ${LD_LIBFLAGS} $*.${O}
++ 	${LDS} mv a.out $*.${O}
++ 
++ distclean:: clean
++ 
++ clean:: FRC
++ 	rm -f .depend a.out core ${LIBPORT} tags
++ 	rm -f *.${O} *.BAK *.CKP *~
++ 
++ depend:: FRC
++ 	mkdep -I${INCL} -I${PORTINCL} ${CPPFLAGS} ${SRCS}
++ 
++ links: FRC
++ 	@set -e; ln -s SRC/*.[ch] SRC/bin SRC/Makefile.set SRC/probe .
++ 	@set -e; for x in ${SUBDIRS}; do \
++ 		( mkdir $$x; cd $$x; pwd; ln -s ../SRC/$$x SRC; \
++ 		cp SRC/Makefile Makefile; chmod +w Makefile; \
++ 		${MAKE} ${MARGS} links ); \
++ 	done
++ 
++ install:: FRC
++ 
++ FRC:
++ 
++ # DO NOT DELETE THIS LINE -- mkdep uses it.
++ # DO NOT PUT ANYTHING AFTER THIS LINE, IT WILL GO AWAY.
+*** /dev/null	Sat May  3 19:58:24 1997
+--- src/port/next/Makefile.set	Sat May  3 16:31:41 1997
+***************
+*** 0 ****
+--- 1,17 ----
++ 'CC=gcc -posix -fno-exceptions'
++ 'CDEBUG=-O9'
++ 'DESTBIN=/usr/bin'
++ 'DESTSBIN=/usr/etc'
++ 'DESTEXEC=/usr/etc'
++ 'DESTMAN=/usr/local/man'
++ 'DESTHELP=/usr/lib'
++ 'LEX=lex -I'
++ 'YACC=yacc -d'
++ 'SYSLIBS=-ll'
++ 'INSTALL=install'
++ 'MANDIR=cat'
++ 'MANROFF=(tbl|nroff -man)'
++ 'CATEXT=0'
++ 'PS=ps'
++ 'RANLIB=ranlib'
++ 'AR=ar cr'
+*** /dev/null	Sat May  3 19:58:24 1997
+--- src/port/next/include/Makefile	Mon Mar 10 08:45:52 1997
+***************
+*** 0 ****
+--- 1,91 ----
++ # ++Copyright++
++ # -
++ # Copyright (c) 
++ #    The Regents of the University of California.  All rights reserved.
++ # 
++ # Redistribution and use in source and binary forms, with or without
++ # modification, are permitted provided that the following conditions
++ # are met:
++ # 1. Redistributions of source code must retain the above copyright
++ #    notice, this list of conditions and the following disclaimer.
++ # 2. Redistributions in binary form must reproduce the above copyright
++ #    notice, this list of conditions and the following disclaimer in the
++ #    documentation and/or other materials provided with the distribution.
++ # 3. All advertising materials mentioning features or use of this software
++ #    must display the following acknowledgement:
++ # 	This product includes software developed by the University of
++ # 	California, Berkeley and its contributors.
++ # 4. Neither the name of the University nor the names of its contributors
++ #    may be used to endorse or promote products derived from this software
++ #    without specific prior written permission.
++ # 
++ # THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
++ # ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ # ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
++ # FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ # DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
++ # OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ # HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++ # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
++ # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
++ # SUCH DAMAGE.
++ # -
++ # Portions Copyright (c) 1993 by Digital Equipment Corporation.
++ # 
++ # Permission to use, copy, modify, and distribute this software for any
++ # purpose with or without fee is hereby granted, provided that the above
++ # copyright notice and this permission notice appear in all copies, and that
++ # the name of Digital Equipment Corporation not be used in advertising or
++ # publicity pertaining to distribution of the document or software without
++ # specific, written prior permission.
++ # 
++ # THE SOFTWARE IS PROVIDED "AS IS" AND DIGITAL EQUIPMENT CORP. DISCLAIMS ALL
++ # WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES
++ # OF MERCHANTABILITY AND FITNESS.   IN NO EVENT SHALL DIGITAL EQUIPMENT
++ # CORPORATION BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
++ # DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
++ # PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS
++ # ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
++ # SOFTWARE.
++ # -
++ # --Copyright--
++ 
++ SUBDIRS = sys
++ HFILES =
++ 
++ DESTDIR=
++ DESTINC= /usr/local/include
++ INSTALL= install
++ 
++ MARGS= DESTDIR="${DESTDIR}" DESTINC="${DESTINC}" INSTALL="${INSTALL}"
++ 
++ all depend clean distclean install::
++ 	@for x in ${SUBDIRS}; do \
++ 		(cd $$x; pwd; ${MAKE} ${MARGS} $@); \
++ 	done
++ 
++ distclean:: clean
++ 
++ clean::
++ 	rm -f *~ *.BAK *.CKP *.orig
++ 
++ links: FRC
++ 	@set -e; ln -s SRC/*.h .
++ 	@set -e; for x in ${SUBDIRS}; do \
++ 		( mkdir $$x; cd $$x; pwd; ln -s ../SRC/$$x SRC; \
++ 		cp SRC/Makefile Makefile; chmod +w Makefile; \
++ 		${MAKE} ${MARGS} links ); \
++ 	done
++ 
++ install:: ${DESTDIR}${DESTINC}
++ 	-for x in "" ${HFILES}; do \
++ 	    if [ -n "$$x" ]; then \
++ 		${INSTALL} -c -m 444 $$x ${DESTDIR}${DESTINC}/$$x; \
++ 	    fi; \
++ 	done
++ 
++ ${DESTDIR}${DESTINC}:
++ 	mkdir -p ${DESTDIR}${DESTINC}
++ 
++ FRC:
+*** /dev/null	Sat May  3 19:58:24 1997
+--- src/port/next/include/port_after.h	Sat May  3 17:04:48 1997
+***************
+*** 0 ****
+--- 1,186 ----
++ 
++ #define NEED_DAEMON
++ #define HAVE_FCHMOD
++ #define HAVE_GETRUSAGE
++ #define NEED_INETATON
++ #define NEED_PSELECT
++ #define NEED_PUTENV
++ #define NEED_SETENV
++ #define HAVE_SETVBUF
++ #define NEED_STRDUP
++ #define NEED_TIMESPEC
++ 
++ #define	_PATH_PIDFILE "/etc/named.pid"
++ #define _PATH_NAMED   "/usr/etc/named"
++ #define _PATH_XFER    "/usr/etc/named-xfer"
++ #define _PATH_CONF    "/etc/named.boot"
++ 
++ 
++ #if defined(_POSIX_SOURCE)
++ # define USE_POSIX
++ #else
++ # define USE_UTIME
++ #endif
++ 
++ #include <ctype.h>
++ #include <errno.h>
++ #include <limits.h>
++ #include <stdlib.h>
++ #include <strings.h>
++ #include <time.h>
++ #include <sys/cdefs.h>
++ #include <sys/types.h>
++ #include <netinet/in.h>
++ 
++ #if defined(USE_POSIX)
++ 
++ # include <unistd.h>
++ 
++ # define POSIX_SIGNALS
++ # define isascii(c)	((unsigned)(c)<=0177)
++ 
++ #else
++ 
++ # define STDIN_FILENO	0
++ # define STDOUT_FILENO	1
++ # define STDERR_FILENO	2
++ 
++ 	typedef int	pid_t;
++ 
++ 
++ #endif /*USE_POSIX*/
++ 
++ # include <libc.h>
++ 
++ 
++ # define SIG_FN void		/* signal-catching functions return void */
++ 
++ #if defined(USE_POSIX) && !defined(sun) && !defined(__sgi) \
++ 	&& !defined(__convex__) && !defined(__ultrix) && !defined(_AUX_SOURCE)
++ # define PORT_NONBLOCK	O_NONBLOCK
++ # define PORT_WOULDBLK	EAGAIN
++ #else
++ # define PORT_NONBLOCK	O_NDELAY
++ # define PORT_WOULDBLK	EWOULDBLOCK
++ #endif
++ 
++ #if defined(USE_POSIX) || !defined(SYSV)
++ #define USE_WAITPID
++ #endif
++ 
++ #if !defined(USE_POSIX)
++ 
++ # undef WIFEXITED
++ # undef WEXITSTATUS
++ # undef WIFSIGNALED
++ # undef WTERMSIG
++ 
++ # define waitpid(x,y,z) (wait3(y,z,(struct rusage *)NULL))
++ 
++ # define WIFEXITED(x) (!(x & 0177))
++ # define WEXITSTATUS(x) (x >> 8)
++ # define WIFSIGNALED(x) ((x & 0177) && ((x & 0377) != 0177))
++ # define WTERMSIG(x) (x & 0177)
++ 
++ #endif
++ 
++ #if !defined(WAIT_T)
++ # define WAIT_T int
++ #endif
++ 
++ #include	<sys/stat.h>
++ #if !defined(_POSIX_SOURCE)
++ # define S_IRUSR      _S_IRUSR
++ # define S_IWUSR      _S_IWUSR
++ # define S_IRGRP      0000040
++ # define S_IWGRP      0000020
++ # define S_IROTH      0000004
++ # define S_IWOTH      0000002
++ # define S_ISFIFO(m)  ((m & S_IFMT) == S_IFIFO)
++ # define S_ISREG(m)   ((m & S_IFMT) == S_IFREG)
++ # define S_ISDIR(m)   (((m) & (_S_IFMT)) == (_S_IFDIR))
++ #endif
++ 
++ #include <sys/fcntl.h>
++ #if !defined(_POSIX_SOURCE)
++ # define O_NONBLOCK   O_NDELAY
++ #endif
++ 
++ 
++ #ifndef MIN
++ # define MIN(x, y)	((x > y) ?y :x)
++ #endif
++ #ifndef MAX
++ # define MAX(x, y)	((x > y) ?x :y)
++ #endif
++ 
++ #if !defined(_POSIX_SOURCE)
++ # define PATH_MAX	1024  
++ #endif
++ 
++ #include <sys/resource.h>
++ 
++ /*
++  * Assume that a system has fchmod() unless something above says otherwise.
++  */
++ #if !defined(HAVE_FCHMOD)
++ # define HAVE_FCHMOD XXX
++ #endif
++ 
++ /*
++  * We need to know the IPv6 address family number even on IPv4-only systems.
++  * Note that this is NOT a protocol constant, and that if the system has its
++  * own AF_INET6, different from ours below, all of BIND's libraries and
++  * executables will need to be recompiled after the system <sys/socket.h>
++  * has had this type added.  The type number below is correct on most BSD-
++  * derived systems for which AF_INET6 is defined.
++  */
++ #ifndef AF_INET6
++ #define AF_INET6	24
++ #endif
++ 
++ /*
++  * Prototype the functions we'll be supplying.
++  */
++ #ifdef NEED_PUTENV
++ extern int putenv __P((char *));
++ #endif
++ 
++ #ifdef NEED_STRDUP
++ extern char *strdup __P((const char *));
++ #endif
++ 
++ #ifdef NEED_STRSEP
++ extern char *strsep __P((char **, const char *));
++ #endif
++ 
++ #ifdef NEED_TIMESPEC
++ struct timespec {
++ 	time_t	tv_sec;		/* seconds */
++ 	long	tv_nsec;	/* nanoseconds */
++ };
++ #endif
++ 
++ 
++ /* Use the system definitions of these
++    functions rather then the redefinitions. */
++ #if 0
++ #undef	inet_addr		
++ #undef	inet_aton		
++ #undef	inet_lnaof		
++ #undef	inet_makeaddr		
++ #undef	inet_neta		
++ #undef	inet_netof		
++ #undef	inet_network		
++ #undef	inet_net_ntop		
++ #undef	inet_net_pton		
++ #undef	inet_ntoa		
++ #undef	inet_pton		
++ #undef	inet_ntop		
++ #undef	inet_nsap_addr		
++ #undef	inet_nsap_ntoa		
++ #endif
++ 
++ 
++ 
++ 
+*** /dev/null	Sat May  3 19:58:24 1997
+--- src/port/next/include/port_before.h	Mon Nov 18 01:10:25 1996
+***************
+*** 0 ****
+--- 1,2 ----
++ #define WANT_IRS_NIS
++ #undef WANT_IRS_PW
+*** /dev/null	Sat May  3 19:58:24 1997
+--- src/port/next/include/sys/Makefile	Mon Mar 10 08:45:52 1997
+***************
+*** 0 ****
+--- 1,77 ----
++ # ++Copyright++
++ # -
++ # Copyright (c) 
++ #    The Regents of the University of California.  All rights reserved.
++ # 
++ # Redistribution and use in source and binary forms, with or without
++ # modification, are permitted provided that the following conditions
++ # are met:
++ # 1. Redistributions of source code must retain the above copyright
++ #    notice, this list of conditions and the following disclaimer.
++ # 2. Redistributions in binary form must reproduce the above copyright
++ #    notice, this list of conditions and the following disclaimer in the
++ #    documentation and/or other materials provided with the distribution.
++ # 3. All advertising materials mentioning features or use of this software
++ #    must display the following acknowledgement:
++ # 	This product includes software developed by the University of
++ # 	California, Berkeley and its contributors.
++ # 4. Neither the name of the University nor the names of its contributors
++ #    may be used to endorse or promote products derived from this software
++ #    without specific prior written permission.
++ # 
++ # THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
++ # ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ # ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
++ # FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ # DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
++ # OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ # HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++ # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
++ # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
++ # SUCH DAMAGE.
++ # -
++ # Portions Copyright (c) 1993 by Digital Equipment Corporation.
++ # 
++ # Permission to use, copy, modify, and distribute this software for any
++ # purpose with or without fee is hereby granted, provided that the above
++ # copyright notice and this permission notice appear in all copies, and that
++ # the name of Digital Equipment Corporation not be used in advertising or
++ # publicity pertaining to distribution of the document or software without
++ # specific, written prior permission.
++ # 
++ # THE SOFTWARE IS PROVIDED "AS IS" AND DIGITAL EQUIPMENT CORP. DISCLAIMS ALL
++ # WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES
++ # OF MERCHANTABILITY AND FITNESS.   IN NO EVENT SHALL DIGITAL EQUIPMENT
++ # CORPORATION BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
++ # DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
++ # PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS
++ # ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
++ # SOFTWARE.
++ # -
++ # --Copyright--
++ 
++ HFILES= bitypes.h cdefs.h
++ 
++ DESTDIR=
++ DESTINC= /usr/local/include
++ 
++ all depend:
++ 
++ distclean: clean
++ 
++ clean:
++ 	rm -f *~ *.BAK *.CKP *.orig time.h stat.h
++ 
++ links:
++ 	@set -e; ln -s SRC/*.h .
++ 
++ install: ${DESTDIR}${DESTINC}/sys
++ 	for x in ${HFILES}; do \
++ 		if [ -f $$x ]; then \
++ 			${INSTALL} -c -m 444 $$x ${DESTDIR}${DESTINC}/sys/$$x;\
++ 		fi \
++ 	done
++ 
++ ${DESTDIR}${DESTINC}/sys:
++ 	mkdir -p ${DESTDIR}${DESTINC}/sys
+*** /dev/null	Sat May  3 19:58:24 1997
+--- src/port/next/include/sys/bitypes.h	Fri Jan  3 15:59:17 1997
+***************
+*** 0 ****
+--- 1,37 ----
++ /*
++  * Copyright (c) 1996 by Internet Software Consortium.
++  *
++  * Permission to use, copy, modify, and distribute this software for any
++  * purpose with or without fee is hereby granted, provided that the above
++  * copyright notice and this permission notice appear in all copies.
++  *
++  * THE SOFTWARE IS PROVIDED "AS IS" AND INTERNET SOFTWARE CONSORTIUM DISCLAIMS
++  * ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES
++  * OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL INTERNET SOFTWARE
++  * CONSORTIUM BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
++  * DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
++  * PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS
++  * ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
++  * SOFTWARE.
++  */
++ 
++ #ifndef __BIT_TYPES_DEFINED__
++ #define __BIT_TYPES_DEFINED__
++ 
++ 	/*
++ 	 * Basic integral types.  Omit the typedef if
++ 	 * not possible for a machine/compiler combination.
++ 	 */
++ 	typedef /*signed*/ char            int8_t;
++ 	typedef unsigned char            u_int8_t;
++ 	typedef short                     int16_t;
++ 	typedef unsigned short          u_int16_t;
++ 	typedef int                       int32_t;
++ 	typedef unsigned int            u_int32_t;
++ 
++ # if 0	/* don't fight with these unless you need them */
++ 	typedef long long                 int64_t;
++ 	typedef unsigned long long      u_int64_t;
++ # endif
++ 
++ #endif	/* __BIT_TYPES_DEFINED__ */
+*** /dev/null	Sat May  3 19:58:24 1997
+--- src/port/next/include/paths.h	Tue Dec 17 13:48:17 1996
+***************
+*** 0 ****
+--- 1,2 ----
++ #define _PATH_DEVNULL "/dev/null"
++ 
+*** /dev/null	Sat May  3 19:58:24 1997
+--- src/port/next/noop.c	Sat May  3 12:27:46 1997
+***************
+*** 0 ****
+--- 1,3 ----
++ 
++ int a_worthless_global_variable_to_satisfy_ranlib = 0;
++ 
+*** /dev/null	Sat May  3 19:58:24 1997
+--- src/port/next/probe	Wed Apr 30 22:33:01 1997
+***************
+*** 0 ****
+--- 1,11 ----
++ #!/bin/sh
++ 
++ hostinfo=/usr/bin/hostinfo
++ 
++ if [ -f $hostinfo ]; then
++ 	case `$hostinfo | grep NeXT | sed 's/.*NeXT.*/NeXT/g'` in
++ 	NeXT) exit 0 ;;
++ 	esac
++ fi
++ 
++ exit 1
+*** /dev/null	Sat May  3 19:58:24 1997
+--- src/port/next/README	Sat May  3 20:35:26 1997
+***************
+*** 0 ****
+--- 1,32 ----
++ 
++ 
++ This is my first pass at porting BIND 8.x (T5B) to NeXTSTEP 3.3.
++ The port was done under NeXTSTEP 3.3, m68k with GCC 2.7.2,
++ snapshot 970314 and custom patches and installation. (I have
++ successfully compiled the code using NeXT's CC; however, I 
++ didn't try to run it.) The Makefile.set file in ports/next is
++ set to my GCC compiler version. I could have set it to NeXT's CC
++ but my environment is different and simply compiling with
++ NeXT's CC in my environment isn't a good indicator it will
++ compile cleanly in yours. :) 
++ 
++ Note: The compilation uses the POSIX option--so be sure to have
++ those patches. :) 
++ 
++ Note: The compilation process does not like the GCC header file
++ unistd.h. I did not look to see how to cleanly work around the
++ problem, so I deleted it. 
++ 
++ Note: There is a problem with the "irs" stuff. Specifically, it
++ does not compile cleanly and is missing NetInfo capabilities.
++ I'm not sure what to do about the irs issue and a request for help
++ to bind-workers went unanswered. For myself, I simply deleted
++ it from "SUBDIRS" in lib/Makefile and got on with it. You'll
++ have to do the same. 
++ 
++ 
++ Dennis Glatting
++ <mailto:dennis.glatting@software-munitions.com>
++ May, 1997
++ 
++ 

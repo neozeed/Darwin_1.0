@@ -1,0 +1,445 @@
+Installing BIND 4.9.3 resolver code in SunOS 4.1.x shared libraries
+===================================================================
+
+$Id: INSTALL,v 1.1.1.1 1999/10/04 22:25:01 wsanchez Exp $
+
+by Chris Davis <ckd@kei.com>
+
+based on code, documentation, and suggestions by:
+  Paul Balyoz <pab@naucse.cse.nau.edu>
+  Piete Brooks <pb@cl.cam.ac.uk>
+  Dave Morrison <drmorris@mit.edu>
+  Hal Pomeranz <pomeranz@nas.nasa.gov>
+  Matt Ragan <matt@ibmoto.com>
+  Greg A. Woods <woods@kuma.web.net>
+  Eduard Vopicka <Eduard.Vopicka@vse.cz>
+and probably others (apologies if I've forgotten you).
+
+Note that if you wish to modify this process, you should read and understand
+the file shres/sunos/ISSUES.
+
+If you have problems with the process (or its aftermath) see; 
+shres/sunos/PROBLEMS.
+
+You should read through this whole file BEFORE BEGINNING.  I mean it.  I
+really mean it.  The shared library is the second most important part of
+SunOS (right behind /vmunix).  If you screw it up you will be very very
+unhappy and so will your users.  You should also read shres/sunos/PROBLEMS 
+before starting, if only to know what sort of things to watch out for.
+
+[Disclaimer: 
+THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGE.]
+
+1.  Get and unpack a copy of BIND 4.9.3.  (This document is from that
+    distribution, as shres/sunos/INSTALL.)  See <URL:http://www.isc.org/isc/> 
+    for more information, including a pointer to the latest version.
+
+    In the remainder of this document, $BINDSRC represents the directory
+    you unpacked the BIND distribution into, and $BINDBUILD represents the
+    directory you actually built BIND in (they will be different if you
+    use "make links").
+
+2.  (Optional) Use "make DST=sun4.b links" to create a shadow source tree
+    for the Sun4 architecture (see $BINDSRC/README for details).  This is
+    particularly useful if you are building for more than one architecture
+    or operating system (like, say, SunOS 4.1.x and Solaris 2.x).  If you
+    do this, cd into the new build directory ("cd sun4.b", for example); this
+    will be referred to hereafter as $BINDBUILD.
+
+3.  Configure it to your tastes by editing $BINDSRC/conf/options.h, using
+    $BINDSRC/OPTIONS as a guide to the available choices.  (You may want to
+    delete the symbolic link in $BINDBUILD/conf and replace it with a copy of
+    options.h; this is primarily useful if you want to build different BIND
+    configurations on different system architectures.)  SUNSECURITY must be
+    on for the shared library (it should be included in the SHCC entry in
+    $BINDBUILD/Makefile).  Not all of the options affect the resolver
+    library, but you probably want the new named as well (the one Sun
+    supplies is really, really old).
+
+4.  Uncomment the appropriate lines in $BINDBUILD/Makefile (or
+    $BINDSRC/Makefile if you didn't do step 2, shame shame) for SunOS 4.
+    To build resolver code to install in the shared library, uncomment the
+    SHRES line, as well as the appropriate SHCC and PIC lines.  If you
+    have gcc, you should use it for SHCC, as it can share the read-only
+    data (see $BINDSRC/shres/sunos/ISSUES for more details).  I also use it
+    as CC to compile named, libresolv.a, and the tools.
+
+5.  (Optional) Add $BINDSRC/bin to your path, and "make depend".
+
+6.  Type "make" to build named, the tools, the "normal" libresolv, and the
+    position-independent code ("pic") libresolv.
+
+7.  Install the appropriate "jumbo libc patch" for your SunOS version, if
+    you haven't already.  Among other things, this includes fixes for some
+    bugs in the shared library building process.  This will also include
+    the shared library build directory (/usr/lib/shlib.etc), which is
+    useful if the "Shlib Custom" package was not already installed.
+
+    At the time of this writing, the patch numbers and latest revisions of
+    the "international" versions of these patches were:
+
+      4.1.3:    100891-13
+      4.1.3_U1: 101558-07
+      4.1.4:    102545-04
+
+    Note that "international" means "has not installed the extra-cost 'US
+    Encryption Kit'", so most sites, even in the US, will need these
+    versions.  If you have installed the "US Encryption Kit" you will need
+    to get the domestic versions.
+
+    As "recommended" patches, these patches are available for anonymous
+    ftp to all Sun customers, even those without support contracts, from
+    sunsolve1.sun.com in the /pub/patches directory.
+
+    Since these patches also fix the bug in syslog(3) that allows
+    attackers to get root access, it's a VERY good idea to install them.
+
+    SunOS-4.1.1 for sun3 doesn't have an explicit known libc patch,
+    though upgrading to 4.1.1_U1 does replace the shared libraries, and
+    it's highly recommended that you do upgrade if possible.  (It will
+    still be vulnerable to the aforementioned syslog(3) bug, among others,
+    however.)
+
+Perform the following steps to integrate the shareable resolver library
+code (libresolv_pic.a) into the shared libc (for both BSD and SysV
+universes).  If you use the $BINDSRC/shres/sunos/makeshlib script, steps 
+8-18 will be done for you; read them anyway.
+
+The makeshlib script does minimal error checking and is mostly a quick &
+dirty convenience for people tired of typing commands.  If it fails on
+your system, you'll probably have to do part or all of the installation
+manually instead.  (Please also let me know; I'll try to check for that
+problem, or at least document it in shres/sunos/PROBLEMS.)
+
+Note that some or all of these steps may need to be done as root.  You
+should read the makeshlib script carefully before running it as root.
+
+You may wish to run makeshlib as "sh -x shres/sunos/makeshlib" to view the
+commands as they are executed as a progress indicator.
+
+Note that the makeshlib command will fail if you used "make links" to
+create a $BINDBUILD tree but run it from the original $BINDSRC.  It will
+also fail if you try to run it before compiling shres/sunos/libresolv_pic.a,
+or if you didn't uncomment the SHRES stuff in $BINDBUILD/Makefile.  So
+don't do any of those things.  As I said, "minimal error checking".
+
+8.  Move into the shared-lib area and make a temporary directory:
+
+      cd /usr/lib/shlib.etc
+      mkdir tmp
+
+9.  Move into this new directory, extract the pic (position independent
+    code) object files from libc_pic.a and remove the SYMDEF file.  The
+    renaming (mv commands) is done because the "ar" command truncates
+    names to 16 characters.
+
+    Note that Sun's documentation (/usr/lib/shlib.etc/README) omits the
+    last "mv" command.  This will result in "undefined symbol" errors for
+    the four symbols mbstowcs_xccs, mbtowc_xccs, wcstombs_xccs, and
+    wctomb_xccs.  (See shres/sunos/PROBLEMS for more details.)
+
+      cd tmp
+      ar x ../libc_pic.a
+      rm __.SYMDEF
+      mv rpc_dtablesize. rpc_dtablesize.o
+      mv rpc_commondata. rpc_commondata.o
+      mv xccs.multibyte. xccs.multibyte.o
+
+10. Extract the shareable libresolv_pic.a into this target directory.
+    This will replace Sun's inet_addr.o, which is ok; this one is better.
+    It will also replace Sun's getnetent.o, which is ok, as long as you
+    have DNS entries for your networks (as in RFC 1101).  See the file
+    shres/sunos/ISSUES for details on why this is a Good Thing in my opinion.
+
+    If you want to keep using NIS or /etc/networks instead, you'll need to
+    save Sun's getnetent.o, remove BIND's getnet* files, and put Sun's
+    getnetent.o back after this step.  You have to remove *ALL* of BIND's
+    getnet* objects (getnetbyaddr.o, getnetbyname.o, getnetent.o,
+    getnetnamadr.o) or your shared library will fail to link properly.  The
+    symptom of this is usually "_getnetbyname: multiply defined" or a similar
+    error from ld.
+
+    Make sure that Sun's mktemp.o and strpbrk.o don't get stomped; you
+    need to use Sun's, not the ones in BIND's compat/lib.
+
+      ar x $BINDBUILD/shres/sunos/libresolv_pic.a
+      rm __.SYMDEF
+
+11. Make sure the old host resolver is not still lying around:
+
+       rm gethostent.o
+
+    (ignore error "rm: gethostent.o nonexistent" if you see it.)
+
+12. Sun's shipped awk script (/usr/lib/shlib.etc/awkfile) has two small bugs;
+    if you use their recommended procedure for saving old (FCS) versions of
+    the shared libraries, it can get the wrong version number for the new
+    libc.so.  It can also get the wrong number if you have different minor
+    revisions installed (such as 1.8.1 and 1.9; it will get 1.9.2 instead of
+    1.9.1 for the "next" revision).
+
+    You should fix these problems by applying (using the 'patch' program) the
+    patch file $BINDSRC/shres/sunos/sun-awkfile.patches.
+
+      cd /usr/lib/shlib.etc
+      patch < $BINDSRC/shres/sunos/sun-awkfile.patches
+
+    Even with these fixes, it may get the wrong version number; you may need
+    to rename the files by hand.  (Skipping a "custom" number is not unsafe,
+    just unaesthetic; if you have libc.so.1.9 and libc.so.1.9.2, the system
+    will use libc.so.1.9.2.)
+
+13. Now you need to add the BIND resolver object files to the lorder-sparc
+    file.  The easiest way to do this is to apply (using the 'patch' program)
+    the patch file $BINDSRC/shres/sunos/sun-lorder-sparc.patches.
+
+    If you removed the getnet* objects in step 10, you should remove the
+    references to them after applying the patch.  (Don't remove the reference
+    to getnetent.o, since you've put Sun's version of that back in place.)
+
+    If you don't have 'patch', duplicate the list of object files to use:
+
+      cp lorder-sparc lorder-sparc.orig
+
+    Edit this object file list and make the following modifications if
+    they haven't already been done before to this file:
+
+             remove: gethostent.o
+             add:    gethnamaddr.o
+                     getnetnamadr.o
+                     getnetbyaddr.o
+                     getnetbyname.o
+                     herror.o
+                     res_query.o
+                     res_mkquery.o
+                     sethostent.o
+                     res_send.o
+                     res_debug.o
+                     nsap_addr.o
+                     res_comp.o
+                     res_data.o
+                     res_init.o
+                     strerror.o
+
+     (Don't add the getnet* files if you removed them in step 10.)
+
+     It isn't really kosher to hack the lorder-sparc file like this, but it
+     isn't deadly either.  This ordering was created by using lorder and
+     tsort on libresolv_pic.a; it should be the best ordering of the new
+     files.
+
+14.  The Makefile supplied by Sun for building shared libraries,
+     /usr/lib/shlib.etc/Makefile, has one problem when you run it as the
+     super user if you don't have '.' in your path (and you shouldn't...).
+     So edit it and modify the definition of "OBJSORT" to read:
+
+       OBJSORT=./objsort
+
+     In some versions of /usr/lib/shlib.etc/Makefile, you will also need
+     to change the lines (there are two) which read
+
+       ld -assert pure-text `${OBJSORT} lorder-sparc tmp`
+
+     to read
+
+       ld -assert pure-text `${OBJSORT} lorder-sparc tmp` -ldl
+
+     The jumbo libc patch for 4.1.3 fixes this, but the jumbo libc patches
+     for 4.1.3_U1 and 4.1.4 don't.  (Why?  I don't know...)
+
+     If the shared library is built without -ldl, all subsequent
+     compilations (except when using static linking) on the system will
+     fail with "undefined symbol" errors for _dlopen, _dlclose, and
+     _dlsym unless you add -ldl when linking.
+
+     If you have *ever* modified your shared libc before (maybe for
+     resolv+, maybe for other reasons) and you didn't add the -ldl to
+     /usr/lib/shlib.etc/Makefile, you have probably been adding -ldl to
+     every Makefile for every program you've compiled since then.  This is
+     obviously suboptimal.  Fix your shared libc once and for all.
+
+     The easiest way to fix these problems in /usr/lib/shlib.etc/Makefile is
+     to apply (using the 'patch' program) the two patch files;
+     $BINDSRC/shres/sunos/sun-Makefile.patch1 
+     and
+     $BINDSRC/shres/sunos/sun-Makefile.patch2.
+     If you have the patched 4.1.3 version of the Makefile, the second patch
+     will fail; this can safely be ignored.
+
+15.  Now we can finally build the shared library.  Type:
+       make libc.so
+
+     What kind of errors might you get?  Here's a couple:
+
+       a. It blows up on one of the .o files in tmp, saying that the
+	  object file is in an inconsistent state.
+
+          SOLUTION: start over; you did something wrong when you compiled
+	  libresolv_pic.a in step 4, above.  Make SURE you're using the
+	  libresolv_pic.a that was built in $BINDBUILD/shres/sunos, and not
+	  the "normal" libresolv.a built in $BINDBUILD/res.
+
+       b. It lists hundreds of error lines about offsets or addresses
+	  being wrong in all your resolver .o files.
+
+          SOLUTION: start over; you needed to specify "-pic" or "-fpic" to
+	  the C compiler when building shres/sunos/libresolv_pic.a.  Make
+	  sure you're using libresolv_pic.a, and make sure that SHCC and
+	  PIC were properly defined in $BINDBUILD/Makefile.
+
+16.  To build the System V shared libc, repeat steps 8-11, using
+     'libcs5_pic.a' instead of 'libc_pic.a', then 'make libcs5.so'.
+     You'll need to delete the contents of the directory
+     '/usr/lib/shlib.etc/tmp" first.
+
+17.  If all goes well, you now have a "libc.so.x.y.z" in this directory
+     (two, if you rebuilt the SysV shared library as well; the BSD one is
+     libc.so.1.y.z, while the SysV one is libc.so.2.y.z).  Test it (or
+     them) out before installing it (or them) systemwide!  You can do this
+     by pointing the LD_LIBRARY_PATH environment variable to the current
+     directory, then trying various networking commands.
+
+     In csh or tcsh:
+       setenv LD_LIBRARY_PATH `pwd`
+       ftp another.host.com
+       telnet someone.else.ca
+       unsetenv LD_LIBRARY_PATH
+
+     ping (or any other setuid/setgid program) may not use the new library
+     if you test it this way, because LD_LIBRARY_PATH is ignored for
+     security reasons if the real and effective user or group ids do not
+     match.  (If you test as root, ping will use the new library.)
+
+     Make sure you have a valid /etc/resolv.conf, or it will not appear to
+     work.  If you have been using DNS via NIS in the past, you might not
+     have a working resolv.conf file on the NIS clients.
+
+     If anything in the library fails, you need to start section B over
+     again.  Maybe you accidentally used BIND's versions of mktemp.o and
+     strpbrk.o; things just won't work with BIND's new versions of these
+     files.
+
+18.  When you are sure it's working OK, you can install it into the system
+     library directory (you will need to be superuser to do this):
+
+       su
+       cd /usr/lib/shlib.etc
+       cp libc.so.1.y.z /usr/lib
+       chmod 755 /usr/lib/libc.so.1.y.z
+       # for sysv shared library
+       cp libc.so.2.y.z /usr/5lib
+       chmod 755 /usr/5lib/libc.so.2.y.z
+       # for both
+       ldconfig
+
+     Next you need to install the shared archive, which contains
+     initialized global data.  If you skip this step, executables compiled
+     on your machine since the new library was installed will not contain
+     that data.  They still will be able to run (which is probably why
+     this step has been missing from both the Internet and *Sun*
+     instructions for years), as the data is replicated in the shared
+     object.  A few preliminary tests indicate missing this step can
+     marginally slow down processes, although it necessarily a depends on
+     the program and the machine in question.  For more details on this,
+     see $BINDSRC/shres/sunos/ISSUES.
+
+     The numbers y and z must match the numbers in the shared object above.
+
+       cd /usr/lib
+       cp libc.sa.1.y libc.sa.1.y.z
+       ranlib libc.sa.1.y.z
+       cd /usr/5lib
+       cp libc.sa.2.y libc.sa.2.y.z
+       ranlib libc.sa.2.y.z
+
+If you used makeshlib, you can delete the temporary directories created by
+the script (/usr/lib/shlib.etc/tmp.s5 and /usr/lib/shlib.etc/tmp.ucb) now.
+
+19.  You can prove that you're using the new library now, by watching the
+     output of something like:
+
+       trace date
+
+     Look for the open() of libc.so.* and note the version number.
+
+     You can also use ldd to check which shared libraries will be used by
+     a dynamically linked program:
+
+       # ldd /usr/ucb/telnet
+       -lc.1 => /usr/lib/libc.so.1.x.y
+       -ldl.1 => /usr/lib/libdl.so.1.0
+
+     The latest BIND resolver is now installed in your system's shared C
+     library.
+
+20.  Once you are fully confident of your new library, reboot your
+     machine.  Until you do, running processes will continue to use the
+     old shared library.
+
+21.  "make install" in $BINDBUILD to install the new resolver library,
+     named, and header files.  This will allow statically linked programs
+     and programs that link directly to the resolver library (like
+     sendmail) to be compiled against the BIND resolver (highly
+     recommended).
+
+You should now read the first four items in shres/sunos/ISSUES.
+
+* "Differences between Sun's resolver and BIND's resolver"
+
+  This explains the use of the "search" directive in resolv.conf files, and
+  explains how to deal with the use of "localhost" and "loghost" in
+  configurations.
+
+* "UDP checksums"
+
+  This explains how to turn on UDP checksumming in your kernel to make DNS
+  (and, not incidentally, NFS) more reliable.
+
+* "Modifying the static libc"
+
+  You probably want to modify the nonshared system C library to contain
+  the "strerror" routine for use when compiling statically-linked
+  programs; this item explains how and why.
+
+* "RFC 1101 network names vs. /etc/networks"
+
+  This explains how to set up your network names in the DNS so that programs
+  such as netstat -r will display names, not numbers, by using the DNS.
+  If you used Sun's getnetent.o in step 10, it does not apply.
+
+If you have problems compiling certain programs, or with other aspects of
+your system, after installing the BIND resolver, you should read
+shres/sunos/PROBLEMS.
+
+In particular:
+
+** If you are compiling GNU Emacs/XEmacs or Berkeley sendmail V8 ** 
+
+you should read the entry in shres/sunos/PROBLEMS titled "undefined symbol
+_strerror when compiling -Bstatic".  If this happens, either add -l44bsd
+to the link step, add strerror.o to /usr/lib/libc.a (as described in
+shres/sunos/ISSUES), or link dynamically instead of statically.
+
+** If you are compiling GNU Emacs or NCSA httpd **
+
+you should read the entry in shres/sunos/PROBLEMS titled ""parse error" on
+inet.h, nameser.h, resolv.h, netdb.h, bitypes.h".  If you get these errors
+from your cpp, you may choose to define the preprocessor symbol "BSD" to a
+small numeric value (such as "42"), or you may wish to edit the header
+files to remove the conditional statements.
+
+** If you are using Sun's "C2 security" shadowed passwords **
+
+you should read the entry in shres/sunos/PROBLEMS titled "login gives
+"hostname is bad for this system" errors (users can't log in)".  This 
+will explain how to diagnose (and cure) this problem.

@@ -1,0 +1,240 @@
+[ i didn't put this in because i'm planning a "ctlinnd"-like interface for
+  the next release, and i don't want to glorify the existing signal-based
+  interface by adding more code to support it.		--vix, december 1994 ]
+
+Replied: Thu, 08 Dec 1994 01:20:16 -0800
+Replied: "Mark Andrews <Mark.Andrews@dms.CSIRO.AU> "
+Received: by gw.home.vix.com id AA01204; Wed, 7 Dec 94 22:04:44 -0800
+Received: from drugs.syd.dms.CSIRO.AU 
+ by dmssyd.syd.dms.CSIRO.AU (4.1/5.17)
+ id AA08025; Thu, 8 Dec 94 17:04:35 EST
+ (from Mark.Andrews@dms.csiro.au (Mark Andrews))
+Message-Id: <9412080604.AA08025@dmssyd.syd.dms.CSIRO.AU>
+To: paul@vix.com
+Subject: ndc
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="----- =_aaaaaaaaaa0"
+Date: Thu, 08 Dec 1994 17:04:33 +1100
+From: Mark Andrews <Mark.Andrews@dms.CSIRO.AU>
+
+------- =_aaaaaaaaaa0
+Content-Type: text/plain; charset="us-ascii"
+
+	Paul,
+		I've been using a suid root program for a long time to
+	permit reloading of the nameserver by users other that root. We
+	have some zones on the local nameserver that are administered by
+	non locals and we needed to give them enough power to reload the
+	nameserver securly.
+
+	I've updated this program to have an equivelent syntax to ndc.
+
+	If you only want root to be able to send control signals to the
+	nameserver other that "reload" define ROOTONLY in conf/option.h.
+
+	Only root is allowed to start/stop/restart the nameserver.
+
+	All arguements after start/restart are passwd as command line
+	args to named.
+
+	B.T.W. ndc needs to be updated w.r.t USR1/EMT and USR2/FPE;
+
+	Mark
+
+
+------- =_aaaaaaaaaa0
+Content-Type: text/plain; charset="us-ascii"
+Content-Description: reload.c
+
+#include <signal.h>
+#include <stdio.h>
+#include <errno.h>
+#include "../conf/options.h"
+
+
+#define EXECCHECK if (getuid() != 0) {fprintf(stderr,"root only\n");exit(1);}
+#define RUNNINGCHECK if (!running) {fprintf(stderr,"named not running\n"); continue;}
+#ifdef ROOTONLY
+#define ROOTCHECK EXECCHECK
+#else
+#define ROOTCHECK
+#endif
+
+extern char **environ;
+
+char *newenv[] =
+	{
+	"PATH=/bin",
+	"HOME=/",
+	0
+	};
+
+main(argc,argv)
+int  argc;
+char **argv;
+{
+	FILE* f;
+	unsigned long i = 0;
+	unsigned long s;
+	int running = 0;
+
+	f = fopen(_PATH_PIDFILE,"r");
+
+	if (f) {
+	    if (fscanf(f,"%u",&i) == 1) {
+		if (kill(i,0) == -1) {
+		    switch(errno) {
+		    case EPERM:
+			running = 1;
+			break;
+		    }
+		} else {
+		    running = 1;
+		}
+	    }
+	    fclose(f);
+	}
+
+	s = SIGHUP;
+	while ( argc-- > 1 ) {
+
+		argv++;
+		if ( ! strcmp(argv[0],"status")) {
+			fprintf(stderr,"reload: named is%srunning\n",
+				running? " ":" not ");
+			continue;
+		} else if ( ! strcmp(argv[0],"dumpdb") ) {
+			ROOTCHECK
+			RUNNINGCHECK
+			fprintf(stderr,"reload: dumping database\n");
+			s = SIGINT;
+		} else if ( ! strcmp(argv[0],"reload") ) {
+			RUNNINGCHECK
+			fprintf(stderr,"reload: reloading database\n");
+			s = SIGHUP;
+		} else if ( ! strcmp(argv[0],"stats") ) {
+			ROOTCHECK
+			RUNNINGCHECK
+			fprintf(stderr,"reload: dumping stats\n");
+			s = SIGIOT;
+		} else if ( ! strcmp(argv[0],"trace") ) {
+			ROOTCHECK
+			RUNNINGCHECK
+			fprintf(stderr,"reload: tracing on\n");
+#if defined(SIGUSR1) && defined(SIGUSR2)
+			s = SIGUSR1;
+#else
+			s = SIGEMT;
+#endif
+		} else if ( ! strcmp(argv[0],"notrace") ) {
+			ROOTCHECK
+			RUNNINGCHECK
+			fprintf(stderr,"reload: turning tracing off\n");
+#if defined(SIGUSR1) && defined(SIGUSR2)
+			s = SIGUSR2;
+#else
+			s = SIGFPE;
+#endif
+#if defined(SIGWINCH) && defined(QRYLOG)
+		} else if ( ! strcmp(argv[0],"querylog") ) {
+			ROOTCHECK
+			RUNNINGCHECK
+			fprintf(stderr,"reload: querylog toggled\n");
+			s = SIGWINCH;
+#endif
+		} else if ( ! strcmp(argv[0],"stop") ) {
+			EXECCHECK
+			fprintf(stderr,"reload: stopping named\n");
+			s = SIGTERM;
+		} else if ( ! strcmp(argv[0],"restart") ) {
+			EXECCHECK
+			if (running) {
+			    s = SIGTERM;
+			    if (kill(i,s)) {
+				perror("reload: kill");
+				fprintf(stderr,"reload: named NOT restarted\n");
+				exit(1);
+			    }
+			}
+			setuid(geteuid());
+			environ = newenv;
+			argv[0] = "named";
+			execv(NAMED, argv);
+			perror("execv");
+			exit(1);
+		} else if ( ! strcmp(argv[0],"start") ) {
+			EXECCHECK
+			if (running) {
+				fprintf(stderr,"named already running\n");
+				continue;
+			}
+			setuid(geteuid());
+			environ = newenv;
+			argv[0] = "named";
+			execv(NAMED, argv);
+			perror("execv");
+			exit(1);
+		} else {
+		    fprintf(stderr,"unknown switch \"%s\"\n",argv[0]);
+		    fprintf(stderr, "Usage: reload %s ...\n",
+#if defined(SIGWINCH) && defined(QRYLOG)
+
+"(status|dumpdb|reload|stats|trace|notrace|querylog|start|stop|restart)"
+#else
+"(status|dumpdb|reload|stats|trace|notrace|start|stop|restart)"
+#endif
+			    );
+		    continue;
+		}
+		if (kill(i,s)) {
+		    perror("reload: kill");
+		}
+	}
+	exit(0);
+}
+
+------- =_aaaaaaaaaa0
+Content-Type: text/plain; charset="us-ascii"
+Content-Description: Makefile.diff
+
+*** Makefile	Tue Dec  6 22:05:45 1994
+--- ../../BETA11-2/named/Makefile	Thu Dec  8 16:48:48 1994
+***************
+*** 107,117 ****
+  XFERSRCS=  named-xfer.c db_glue.c
+  XFEROBJ=   named-xfer.o db_glue.o storage.o dmalloc.o
+  
+! all: named named-xfer named.reload named.restart ndc
+  
+  named: ${OBJS} ${RES} ${COMPLIB} version.o
+  	${CC} ${CDEBUG} ${LDFLAGS} -o $@ version.o ${OBJS} \
+  		${RES} ${COMPLIB} ${LIBS}
+  
+  version.o: version.c
+  
+--- 107,120 ----
+  XFERSRCS=  named-xfer.c db_glue.c
+  XFEROBJ=   named-xfer.o db_glue.o storage.o dmalloc.o
+  
+! all: named named-xfer named.reload named.restart ndc reload
+  
+  named: ${OBJS} ${RES} ${COMPLIB} version.o
+  	${CC} ${CDEBUG} ${LDFLAGS} -o $@ version.o ${OBJS} \
+  		${RES} ${COMPLIB} ${LIBS}
++ 
++ reload: reload.c
++ 	${CC} ${CDEBUG} -DNAMED='"${DESTSBIN}/${IN}named"' ${DEFS} ${LDFLAGS} -o $@ reload.c 
+  
+  version.o: version.c
+  
+
+------- =_aaaaaaaaaa0
+Content-Type: text/plain; charset="us-ascii"
+
+--
+Mark Andrews, CSIRO Div Maths & Stats
+Locked Bag 17, North Ryde, NSW 2113, Australia.
+PHONE:	+61 2 325 3148			     INTERNET: marka@syd.dms.csiro.au
+UUCP: ....!uunet!syd.dms.csiro.au!marka
+
+------- =_aaaaaaaaaa0--

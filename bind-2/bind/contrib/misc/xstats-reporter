@@ -1,0 +1,219 @@
+Received: by gw.home.vix.com id AA09211; Mon, 12 Dec 94 06:12:15 -0800
+Received: by gw.home.vix.com id AA09207; Mon, 12 Dec 94 06:12:12 -0800
+Received: from sagres.inria.fr (sagres.inria.fr [128.93.2.26]) by concorde.inria.fr (8.6.9/8.6.9) with ESMTP id PAA25939 for <bind-workers@vix.com>; Mon, 12 Dec 1994 15:12:02 +0100
+Received: (from grange@localhost) by sagres.inria.fr (8.6.8/8.6.6) id PAA26305; Mon, 12 Dec 1994 15:12:21 +0100
+Date: Mon, 12 Dec 1994 15:12:21 +0100
+From: Benoit Grange <grange@sagres.inria.fr>
+Message-Id: <199412121412.PAA26305@sagres.inria.fr>
+To: bind-workers@vix.com
+Subject: Perl script to make graphs from XSTATS
+
+
+Here is a draft of a script that produces stats from named XSTATS output.
+
+Name this script as you like.
+Call it like this:
+
+$ procstats -m 86400 -d 86400 XSTATS RQ RQ reboot < stats
+
+Where stats is a file containing syslog output from named.
+
+It produces stats from the RQ variable of XSTATS lines from the stats.
+It writes the stats to a file named RQ (the second RQ of the command
+line), and also writes reboot times in the file reboot.
+
+With the options above, time origin (value 0) is midnight GMT. You can
+add a '-o nnnn' where nnnn is the number of seconds offset from GMT.
+
+Using gnuplot, you can type:
+
+gnuplot> plot 'RQ' with lines, 'reboot'
+
+to show the graph.
+
+PS: I am not very proud of the writing style of this piece of code.
+
+------------------------------------------------------------
+#!/usr/local/bin/perl
+
+##############################################################################
+#                                                                            #
+# This script read syslog output of named with option XSTATS                 #
+#                                                                            #
+# It produces time/value pairs that can be used to draw graphs               #
+#                                                                            #
+# Benoit Grange, December 1994                                               #
+#                                                                            #
+##############################################################################
+
+# USAGE: procstats type label ouput-file opt-reboot-output-file
+
+# The type currently can be USAGE, NSTATS, XSTATS
+# The label is one of the labels in syslog output
+# that appears like label=value for the type specified
+
+# The output file will contain time value pairs
+# The reboot ouput file contain lines specifiing
+# when the name server has been rebooted
+
+# OPTIONS (all times in seconds)
+# -v		verbose
+# -s		samples will be written every step
+# -b		when do we start, default=first sample
+# -e		when do we stop, default=last sample
+# -o		offset of samples from start
+# -m		make offset modulo this
+# -a		add this value to times in output
+
+# EXAMPLE
+# procstats -s 900 -a 1 XSTATS RQ RQ reboot
+#                        |     |   | 
+#                      type  value output file
+
+$debug = 0;
+
+$step = 3600;
+$tstart = 0;
+$tstop = 1e10;
+$tdiv = 1;
+$toffset = 0;
+$tmodulo = 0;
+$tadd = 0;
+
+$telapsed = 0;
+$vtotal = 0;
+
+require "getopts.pl";
+
+exit if !&Getopts('vs:b:e:o:m:d:a:');
+
+print "OPT_S $opt_s\n" if defined($opt_s);
+
+$debug++ if defined($opt_v);
+$step = $opt_s if defined($opt_s);
+$tstart = $opt_b if defined($opt_b);
+$tstop = $opt_e if defined($opt_e);
+$toffset = $opt_o if defined($opt_o);
+$tmodulo = $opt_m if defined($opt_m);
+$tdiv = $opt_d if defined($opt_d);
+$tadd = $opt_a if defined($opt_a);
+
+if (($#ARGV - $[) < 2) {
+    print STDERR "Usage: [options] TYPE LABEL OUTPUT [reboot-output]\n";
+    exit 1;
+}
+
+$qtype=$ARGV[0];
+$qname=$ARGV[1];
+
+if ($ARGV[2]) {
+    $qout =$ARGV[2];
+    (open(OUT, ">".$qout)) || die "Can't open $qout";
+}
+
+if ($ARGV[3]) {
+    (open(OUTBOOT, ">".$ARGV[3])) || die "Can't open $ARGV[3]";
+} else {
+    open(OUTBOOT, ">/dev/null");
+}
+
+$tprev = 0;
+$tnext = 0;
+$tboot = 0;
+
+printf STDERR "Start\t%09d\n", $tstart;
+printf STDERR "Step\t%09d\n", $step;
+printf STDERR "Offset\t%09d\n", $toffset;
+printf STDERR "Div\t%09d\n", $tdiv;
+printf STDERR "Add\t%g\n", $tadd;
+
+# Read lines, produces output
+loop:
+
+for($t=$tstart; $t < $tstop; $t += $step) {
+    # Check if $tprev <= $t <= $tnext
+    while (($tnext < $t) || ($tprev == 0)) {
+	$tprev = $tnext;
+	$vprev = $vnext;
+	last loop if (&readnext() == 0);
+	if ($tstart == 0) {
+	    $t = $tstart = $time;
+	    $toffset = $tstart if ($toffset == 0);
+	    $toffset = $toffset - $toffset % $tmodulo if $tmodulo > 0;
+	    printf STDERR "Start\t%09d\n", $tstart;
+	}
+	$tnext = $time;
+	$vnext = $value;
+	if ($tboot != $boot) {	# Rebooted, get next point
+	    # Finish previous line
+	    printf OUT "%g %g\n", ($tprev-$toffset) / $tdiv + $tadd, ($vprev - $pinter)/($tprev - $tpinter)
+		if (($tpinter > 0) && ($tprev > $tpinter));
+	    # Skip a line
+	    printf OUT "\n";
+	    printf STDERR "\t\tReboot at %d\n", $t;
+	    # Update vars
+	    $tboot = $boot;
+	    $pinter  = $value;
+	    $tpinter = $time;
+	    $vtotal += $vprev if ($tprev > $tstart);
+	    # Update totals
+	    if (($tprev > 0) && ($t > $tstart)) {
+		printf STDERR "\t\tMissing %d seconds\n", $time - $tprev;
+		$tmissing += $time - $tprev ;
+	    }
+	    # Add a line to reboot file
+	    printf OUTBOOT "%g 0\n", ($time-$toffset)/$tdiv+$tadd;
+	    # Continue from NOW on
+	    $t = $tnext;
+	}
+    }
+    # We have prev and next values
+    if ($tnext == $t) {
+	$vinter = $vnext;
+    } else {
+	printf STDERR "t=%8d prev=%8d next=%8d values prev=%8d next=%8d\n",
+	$t, $tprev, $tnext, $vprev, $vnext if ($debug);
+	$vinter = $vprev +
+	    (($vnext-$vprev)/($tnext-$tprev)) * ($t - $tprev);
+    }
+    printf STDERR "t=%08d value=%08d prev value=%08d time=%08d\n",
+    $t, $vinter, $pinter, $tpinter if ($debug);
+	
+    if ($t > $tpinter) {
+	printf OUT "%g %g\n", ($t-$toffset) / $tdiv + $tadd, ($vinter - $pinter)/($t - $tpinter);
+    }
+
+    $pinter = $vinter;
+    $tpinter = $t;
+}
+
+$vtotal += $value;
+
+printf STDERR "End\t%09d\n", $t;
+printf STDERR "Elapsed\t%09d\n", $t - $tstart;
+printf STDERR "Missing\t%09d\n", $tmissing;
+printf STDERR "Total\t%09d\n", $vtotal;
+
+# Stats don't work
+#if ($t > $tstart) {
+#    printf STDERR "Avg\t%g\n", $vtotal/(($t-$tstart)-$tmissing);
+#}
+
+sub readnext
+{
+    do {
+	return 0 if (!($_ = <STDIN>));
+    } until (/$qtype (\d+) (\d+).*\s$qname=([.\de+]+)/);
+    $time = $1;
+    $boot = $2;
+    $value = $3;
+    print STDERR "TIME=$time BOOT=$boot VALUE=$value\n" if ($debug);
+    return 1;
+}
+
+__END__
+---------------
+Benoit Grange
+NIC France
+
+E-Mail: Benoit.Grange@inria.fr

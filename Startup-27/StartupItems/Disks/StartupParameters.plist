@@ -1,0 +1,11 @@
+{
+  Description     = "local disks";
+  Provides        = ("Disks");
+  Requires        = ("SystemTuning");
+  OrderPreference = "First";
+  Messages =
+  {
+    start = "Mounting local disks.";
+    stop  = "Unmounting local disks.";
+  };
+}

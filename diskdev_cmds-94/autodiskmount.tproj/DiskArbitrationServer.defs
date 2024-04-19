@@ -1,0 +1,59 @@
+subsystem DiskArbitrationServer 0;
+
+#include <mach/std_types.defs>
+
+import "DiskArbitrationTypes.h";
+
+/*
+--	TYPES
+*/
+
+/* Beware: these definitions must be kept synchronized with DiskArbitrationTypes.h */
+
+type DiskArbitrationDiskIdentifier = c_string[*:1024];
+
+type DiskArbitrationMountpoint = c_string[*:1024];
+
+/*
+--	Messages sent by the DiskArbitration Client to the Server
+*/
+
+routine DiskArbRegister_rpc(
+				server: mach_port_t;
+			in	client: mach_port_make_send_t;
+			in	flags: unsigned;
+			out	errorCode: int);
+
+routine DiskArbRequestEject_rpc(
+				server: mach_port_t;
+			in	diskIdentifier: DiskArbitrationDiskIdentifier;
+			out	errorCode: int);
+
+routine DiskArbRequestUnmountOne_rpc(
+				server: mach_port_t;
+			in	diskIdentifier: DiskArbitrationDiskIdentifier;
+			out	errorCode: int);
+
+routine DiskArbDiskAppearedWithMountpointPing_rpc(
+				server: mach_port_t;
+			in	diskIdentifier: DiskArbitrationDiskIdentifier;
+			in	flags: unsigned;
+			in	mountpoint: DiskArbitrationMountpoint;
+			out	errorCode: int);
+
+routine DiskArbRequestUnmountAll_rpc(
+				server: mach_port_t;
+			in	diskIdentifier: DiskArbitrationDiskIdentifier;
+			out	errorCode: int);
+
+routine DiskArbRefresh_rpc(
+				server: mach_port_t;
+			out	errorCode: int);
+
+routine DiskArbRegisterWithPID_rpc(
+				server: mach_port_t;
+			in	client: mach_port_make_send_t;
+			in	pid: unsigned;
+			in	flags: unsigned;
+			out	errorCode: int);
+

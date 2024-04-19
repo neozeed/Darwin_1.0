@@ -1,0 +1,3048 @@
+#!/usr/local/bin/perl
+#
+#
+# Copyright (c) 1995 by TERENA
+#
+# All Rights Reserved
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted,
+# provided that the above copyright notice appear in all copies and that
+# both that copyright notice and this permission notice appear in
+# supporting documentation, and that the name of the author not be
+# used in advertising or publicity pertaining to distribution of the
+# software without specific, written prior permission.
+#
+# THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
+# ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS; IN NO EVENT SHALL
+# AUTHOR BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY
+# DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
+# AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+#
+
+# Author: David Kessens, RIPE NCC
+# Last edited: 950815
+#    
+# Bug reports/comments to <inaddr@ripe.net>
+#
+#
+# The most recent version of the tool is available at:
+#
+# ftp://ftp.ripe.net/tools/inaddrtool-$DATE.tar.gz
+#
+#
+# The tool uses some other external programs by other authors and
+# with different copyrights:
+#
+# ftp://ftp.ripe.net/tools/ping.tar.Z
+# ftp://ftp.ripe.net/tools/dns/host.tar.Z
+# ftp://ftp.ripe.net/pride/tools/prtraceroute-2.0beta3.shar.gz  
+
+# how verbose is output ??? 
+
+$DEBUG=0;
+$VERBOSE3=1 || $DEBUG;
+$VERBOSE2=1 || $VERBOSE3;
+$VERBOSE1=1 || $VERBOSE2;
+
+
+# Testmode=1: send all mail to $HUMANMAIL for debugging, and use small timings 
+
+$TESTMODE=1;
+
+# Do we check connectivity when connectivity problems are found???
+# easy for testing if we are in a hurry, 0=don't check connectivity
+
+$CHECKCONNECTIVITY=!$TESTMODE;
+
+
+# File names & dirs that are used
+
+$TMPDIR="/usr/tmp";
+
+$PROGRAMNAME="inaddrtool";
+
+$ALLOUTPUTFILE="$TMPDIR/$PROGRAMNAME.all.$$";
+$STDOUTFILE="$TMPDIR/$PROGRAMNAME.stdout.$$";
+$STDERRFILE="$TMPDIR/$PROGRAMNAME.stderr.$$";
+
+$HELPFILE="/ncc/ftp/ripe/docs/ripe-105.txt";
+
+if ($TESTMODE) {
+   $UPDLOGDIR="/home/user/log/upd";
+   $ACKLOGDIR="/home/user/log/ack";
+   $FWLOGDIR="/home/user/log/fw";
+   $MSGQUEUEDIR="/home/user/queue";
+}
+else {
+   $UPDLOGDIR="/home/auto-user/log/upd";
+   $ACKLOGDIR="/home/auto-user/log/ack";
+   $FWLOGDIR="/home/auto-user/log/fw";
+   $MSGQUEUEDIR="/home/auto-user/queue";
+}
+
+$MSGTMPFILE="$MSGQUEUEDIR/$PROGRAMNAME.msg.$$";
+
+#
+# mail header and related stuff
+#
+
+$SUBJECTTEMPLATE="Requests:\$totaldelegations Ok:\$totalok Warnings:\$totalwarnings Errors:\$totalerrors -";
+
+$HUMANMAIL="user\@example.net";
+$ZONECONTACT=$HUMANMAIL;
+
+$AUTOMAIL="auto-user\@example.net";
+
+$SENDMAILTOUSER=1;
+
+# 'Subject:' line options
+
+$LONGACK=$TESTMODE;
+$NOTEST=1;
+$NOCHANGE=1;
+
+
+#
+# commands
+#
+
+# do everything low priority...
+
+$NICECMD="/usr/bin/nice -19";
+
+# MAILCMD is the command into which a composed e-mail is given as standard
+# input, to be send as mail. The message piped into this command has ALL
+# the necessary mail header to process the mail:
+# From:
+# To:
+# Subject:
+# The mail command should take the recipients from the actual message.
+# Using sendmail it will be executed as: /usr/lib/sendmail -t < "messagefile"
+# (default: /usr/lib/sendmail -t)
+#
+# NOTE:
+# -fuser makes 'user' the trusted user that will appear on the
+# envelope. Bounces will go to this address. If you do not specify
+# this, sendmail will send bounces straight back to the automatic
+# mailbox, where it will bounce again, and again, ....
+# User has to be a trusted user, T<user> in sendmail.cf.
+
+$MAILCMD='/usr/lib/sendmail -db -fuser -t 1>/dev/null 2>/dev/null'; 
+
+# 'host' program for doing DNS queries & options
+
+# When host doesn't respond:
+
+if ($TESTMODE) {
+   $retryperiod=1;
+   $nrofretries=2;
+   $timeout=5;
+}
+else {
+   $retryperiod=180;
+   $nrofretries=3;
+   $timeout=60;
+}
+
+$HOST="$NICECMD /usr/local/bin/host -s $timeout";
+
+
+# prtraceroute & options
+
+if ($TESTMODE) {
+   $NROFHOPS=35;
+}
+else {
+   $NROFHOPS=50;
+}
+
+$PRTRACEROUTECMD="$NICECMD /usr/local/bin/prtraceroute -m $NROFHOPS -lv";
+
+# ping & options 
+
+$PINGPACKETSIZE=56;
+$PINGPACKETCOUNT=10;
+$ALLOWEDPACKETLOSS=31;    # in  %  !!!!
+
+$PINGCMD="$NICECMD /usr/etc/ping";
+
+
+
+
+# Our own NS name of the authoritive nameserver of the zone
+
+$NSNAME="ns.example.net";
+
+
+# DNS allows following characters in hostnames:
+
+$DNSNAMECHAR="a-zA-Z0-9\\-\\.";
+
+
+# 0 = don't test own server since it is not setup (yet)
+
+$TESTOWNSERVER=0;
+
+
+# 1 = test if our own $NSNAME is really authoritive for this zone. 
+
+$TESTAUTHORITY=1;
+
+
+#
+# Not documented. For experts only.
+#
+# For other $NSNAME put in the Subject: line:
+# 
+# NSNAME: nsname[:code]
+#
+# nsname   resets $NSNAME
+# code     resets $NAMESERVERCHECK
+#
+# also implies keyword TEST!
+# 
+
+#
+# $NAMESERVERCHECK= generaloptions | blockoptions | netoptions;
+#
+# $PRIMARY | $SECONDARY means must be either seondary/primary
+
+# resets $TESTOWNSERVER to !$TESTOWNSERVER
+# If I don't change the code it probably means check also the zone files
+# of our own nameserver $NSNAME
+
+$TESTOWNSERVEROPTION=64;
+
+# resets $TESTAUTHORITY to !$TESTAUTHORITY 
+# If I don't change the code it probably means don't check if $NSNAME is really
+# authoritive for the zone
+ 
+$TESTAUTHORITYOPTION=128;
+
+#
+# block delegation options:
+#
+
+#   Don't care   
+$BLOCKDONTCARE=1;
+
+#   Own NS must be primary  
+$BLOCKPRIMARY=2;
+
+#   Own NS must be secondary
+$BLOCKSECONDARY=4;
+
+#
+# net delegation options:
+#
+
+#   Don't care   
+$NETDONTCARE=8;
+
+#   Own NS must be primary
+$NETPRIMARY=16;
+
+#   Own NS must be secondary
+$NETSECONDARY=32;
+
+$NAMESERVERCHECK=0 | $BLOCKSECONDARY | 0;
+
+
+
+# show first/last # of lines of output to avoid huge mails !
+
+$SHOWFIRSTLINES=9;
+$SHOWLASTLINES=20;
+
+
+# Maximal difference between refresh and retry before generating a warning
+
+$RETRYREFRESHFACTOR=3;
+
+
+#
+# See for default 'Piet' values rfc1537
+#
+
+$VERYBIG=400000000;
+$VERYSMALL=1;
+
+$defaultrefresh=28800;  
+
+$toolowrefresh=179; 
+$lowrefresh=1700;
+$highrefresh=100000;
+$toohighrefresh=$VERYBIG; 
+
+$defaultretry=7200;
+
+$toolowretry=119;
+$lowretry=1800;
+$highretry=100000;
+$toohighretry=$VERYBIG; 
+
+$defaultexpire=604800;
+
+$toolowexpire=86000;
+$lowexpire=259000; 
+$highexpire=1000000; 
+$toohighexpire=3000000;
+
+$defaultttl=86400;
+
+$toolowttl=3400;
+$lowttl=7000;
+$highttl=130000;
+$toohighttl=400000;
+
+# for blocks when we run secundary:
+
+$toolowblockrefresh=14000; 
+$lowblockrefresh=28000;
+$highblockrefresh=40000;
+$toohighblockrefresh=100000; 
+
+$toolowblockretry=7000;
+$lowblockretry=7100;
+$highblockretry=10800;
+$toohighblockretry=29000; 
+
+$toolowblockexpire=300000;
+$lowblockexpire=500000; 
+$highblockexpire=1000000; 
+$toohighblockexpire=3000000;
+
+$toolowblockttl=14000;
+$lowblockttl=28000;
+$highblockttl=345600;
+$toohighblockttl=604800;
+
+
+# record names, zone transfer is a dirty programming trick ;-)
+
+$ARECORD="A";
+$NSRECORD="NS";
+$SOARECORD="SOA";
+$PTRRECORD="PTR";
+$ZONERECORD="zone transfer";
+
+
+# error codes
+
+$GENERALERROR=1;
+$CONNECTIVITYERROR=2;
+$NOTEXISTZONEERROR=4;
+$PRIMARIESDIFFER=8;
+$PRIMARYNOTLISTED=16;
+$WRONGNAME=32;
+$RESOLVEERROR=64;
+$EXTRASERVER=128;
+$MISSINGSERVER=256;
+$WRONGSERIAL=512;
+$WRONGZONEINFO=1024;
+$CNAMEERROR=2048;
+$NOSOARECORD=4096;
+$WRONGFORMATSERIAL=8192;
+$ZONETRANSFERERROR=16384;
+$PINGERROR=32768;
+$PRTRACEROUTEERROR=65536;
+$ALREADYDELEGATEDERROR=131072;
+$NOTAUTHORITIVEERROR=262144;
+$BADREFRESH=524288;
+$BADRETRY=1048576;
+$BADEXPIRE=2097152;
+$BADTTL=4194304;
+
+$recorderror="### error in this record ###";
+$DONTCHECKTHISHOST="### host not checked due to error condition ###";
+
+
+
+# headers for log messages (you may use $bytes, $time, $date):
+
+$UPDBANNER="\n<<< UPDATE \$bytes bytes, time: \$time >>>\n";
+$ACKBANNER="\n<<< ACK \$bytes bytes, time: \$time >>>\n";
+$FWBANNER="\n<<< FORWARD \$bytes bytes, time: \$time >>>\n";
+
+
+# texts:
+
+
+$ALL="\n\nThis is an automatic response from a new EXPERIMENTAL inaddr
+checking tool. Please send your reverse delegation requests to:
+<$AUTOMAIL>. Use LONGACK in the \'Subject:\' line for long
+reports, CHANGE to change an existing reverse delegation, TEST for
+testing an \(existing\) reverse delegation without actually doing the
+request and HELP to get the RIPE document on reverse delegations. Source
+code is available at: ftp://ftp.ripe.net/tools/inaddrtool-950815.tar.gz.
+For human intervention or bug reports send mail to: \<$HUMANMAIL\>.\n\n";
+
+$NOVALIDOBJECTS="\nNo valid domain/inetnum RIPE database objects were found
+in your mail, please read (ftp:/ftp.ripe.net/ripe/docs/ripe-105.{txt|ps}
+for further information on how to submit a reverse delegation request!
+
+You can also get this document by sending mail with HELP in the subject
+line to (Don't use reply!): <$AUTOMAIL> 
+
+Please note that this document is a little bit outdated and will be
+rewritten soon!\n\n";
+
+$OK="No errors were found in your \$reverse zone by
+the automatic checks.\n";
+
+$WARNING="However, some warning(s) were found. You might consider to
+change your zonefiles to avoid (future) problems:\n";
+
+$ALSOWARNING="\n\nAlso some warning(s) were found, you might consider to change your 
+zonefiles to avoid (future) problems:\n\n";
+
+$ERROR="\nError(s) were found in your \$reverse zone by
+the automatic checks. 
+Please correct your zone files and resubmit your request.\n\nThe following error(s) were found:\n\n";
+
+$NOTAUTHORITIVE="The RIPE NCC is not authoritive for the \$motherzone zone:\n\n
+\> \$ \$cmd
+\> \$line
+
+The E-mail address of the contact person for asking reverse delegation is:
+
+\$contact\n";
+
+$ALREADYDELEGATED="The reverse zone \$reverse is already delegated. If you
+still want to proceed with your request since you want to make changes to
+your already established in-addr.arpa delegation, please resubmit your
+request but add the keyword CHANGE to the \'Subject:\' line of your
+E-mail message. Please also add an explanation in your message why you
+want to make these changes.
+
+\> \$ \$cmd
+\> \$line\n\n";
+
+$DETAILS="\n\nMore details can be found in the attached report(s).";
+
+$ACK="\nYour request has now been forwarded for further (manual) processing.
+After the (final) manual checks are completed, you will receive a message 
+that the \$reverse zone has been delegated, or the reason(s) 
+why this hasn't been done. 
+
+No further action for the reverse delegation of \$reverse 
+is now required from your side.\n";
+
+$SIGNATURE="Kind regards,
+
+The RIPE NCC automatic reverse delegation checking robot.\n";
+
+
+# Take care, fields must be filled in directly in $MAILHEADER
+# since the mailheader is used by &writelogandsendmail
+# to be able to not log the help file every time...
+
+$MAILHEADER="To: \$FROM
+Cc: \$CC
+From: The RIPE NCC automatic reverse delegation checking robot \<$HUMANMAIL\>
+Subject: \$SUBJECT
+Reply-To: $HUMANMAIL
+X-Organization: RIPE Network Coordination Centre
+X-Phone: +31 20 592 5065
+X-Fax: +31 20 592 5090\n";
+
+$ERROROBJECTHEADER="The following error has been found in object (\$objecttype):\n\n";
+
+
+#
+# global vars, define them local, you'll never know...
+#
+
+# all the report info
+
+local($SHORTREPORT)="";
+local($REPORT)="";
+local($EXTRACTREPORT)="";
+local($OKREPORT)="";
+
+local($HELP)="";
+local($ADDTOZONEFILE)="";
+local($LOCALINFO)="";
+local($LOCALREPORT)="";
+local($LOCALSHORTWARNINGREPORT)="";
+local($LOCALSHORTERRORREPORT)="";
+local($PARSEERRORREPORT)="";
+local($PARSEWARNINGREPORT)="";
+local($ORIGINALMESSAGE)="";
+
+# mail header and extracted values related stuff
+
+
+local($SUBJECT)="";
+local($FROM)="";
+local($CC)="";
+local($REPLYTO)="";
+local($BODY)="";
+local($REGISTRY)="";
+
+
+# For statistics
+
+local($errors)=0;
+local($warnings)=0;
+
+local($parseerrors)=0;
+local($parsewarnings)=0;
+
+local($totaldelegations)=0;
+local($totalerrors)=0;
+local($totalok)=0;
+local($totalwarnings)=0;
+local($objecterrors)=0;
+local($totalobjects)=0;
+
+
+# some info on the delegation
+
+local($reverse);
+local($block);
+
+
+# Some handy stuff for reports and other stuff...
+
+local($YYMMDD);
+local($HHMMSS);
+local($YEAR);
+local($headerline)="-" x 74;
+local($bigheaderline)="=" x 74;
+
+local(%prefixlength)=(0,0,
+                      1,127,
+                      2,63,
+                      3,31,
+                      4,15,
+                      5,7,
+                      6,3,
+                      7,1);
+
+local($NSNAMEREGULAR)=&MakeRegular($NSNAME);              
+              
+
+local(@nameservers);
+local(%realnameservers);
+local(%records);
+local(%nameservers);
+local(%nsservers);
+local(%primaries);
+local(%hostmasters);
+local(%serials);
+local(%refreshs);
+local(%retries);
+local(%expires);
+local(%zoneinfos);
+local(%ttls);
+local($regularreverse);
+local($regularserver);
+
+
+
+
+#       *********  Here starts the program *********
+
+#       First some utilities... :
+
+$LOCK_SH=1;
+$LOCK_EX=2;
+$LOCK_NB=4;
+$LOCK_UN=8;
+
+sub writelogandsendmail {
+    local($filename,$banner,$who,$data)=@_;
+    
+    # First send mail, then we can modify $data for helpfile...
+    
+    if ($who) {
+       print STDERR "Send mail to $who ... ";
+       
+       open(ALLOUTPUT,">$ALLOUTPUTFILE");
+       print ALLOUTPUT $data;
+       # print STDERR "\n$MAILCMD <$ALLOUTPUTFILE\n\n$data";
+       close(ALLOUTPUT);
+       system("$MAILCMD <$ALLOUTPUTFILE");
+       unlink(($ALLOUTPUTFILE));
+       
+       print STDERR "done\n";
+    }
+    
+    # open & lock file
+    
+    open(LOCKEDOUTPUT,">>$filename");
+    flock(LOCKEDOUTPUT,$LOCK_EX);
+    seek(LOCKEDOUTPUT,0,2);
+    
+    # write logs but don't log help file
+    
+    if (($who) && ($HELP)) {
+       $data=$MAILHEADER."\nHELP ($HELPFILE) FILE SENT\n\n";
+    }
+    
+    local($length)=length($data);
+    $banner=~ s/\$bytes/$length/;
+    $banner=~ s/\$date/$YYMMDD/;
+    $banner=~ s/\$time/$HHMMSS/;
+
+    print LOCKEDOUTPUT $banner, $data;
+    
+    # close & unlock file
+    
+    flock(LOCKEDOUTPUT,$LOCK_UN);
+    close(LOCKEDOUTPUT);
+}
+
+sub MakeRegular {
+    local($line)=@_;
+    
+    # This tricky : always do first the \
+    
+    $line=~ s/\\/\\\\/g;
+    $line=~ s/\//\\\//g;     
+    $line=~ s/\./\\\./g;
+    $line=~ s/\,/\\\,/g;
+    $line=~ s/\_/\\\_/g;     
+    $line=~ s/\-/\\\-/g;     
+    $line=~ s/\+/\\\+/g;     
+    $line=~ s/\=/\\\=/g;
+    $line=~ s/\$/\\\$/g;
+    $line=~ s/\@/\\\@/g;     
+    $line=~ s/\%/\\\%/g;     
+    $line=~ s/\&/\\\&/g;
+    $line=~ s/\#/\\\#/g;
+    $line=~ s/\*/\\\*/g;     
+    $line=~ s/\^/\\\^/g;
+    $line=~ s/\[/\\\[/g;     
+    $line=~ s/\]/\\\]/g;     
+    $line=~ s/\(/\\\(/g;     
+    $line=~ s/\)/\\\)/g;
+    $line=~ s/\{/\\\{/g;     
+    $line=~ s/\}/\\\}/g;     
+    $line=~ s/\?/\\\?/g;     
+    $line=~ s/\!/\\\!/g;     
+    $line=~ s/\|/\\\|/g;
+    $line=~ s/\`/\\\`/g;
+    $line=~ s/\'/\\\'/g;
+    $line=~ s/\"/\\\"/g;
+    $line=~ s/\</\\\</g;
+    $line=~ s/\>/\\\>/g;
+    $line=~ s/\:/\\\:/g;
+    $line=~ s/\;/\\\;/g;
+    $line=~ s/\~/\\\~/g;
+    
+    return $line;
+}
+
+sub printmsg {
+    local($i,$attribute,$msg)=@_;
+    $i++;
+    
+    $msg="\n$attribute $i:\n$msg\n";
+    
+    $LOCALREPORT.=$msg;
+    
+    if ($attribute=~ /Error/i) {
+       $LOCALSHORTERRORREPORT.=$msg;
+    }
+    elsif ($attribute=~ /Warning/i) {
+       $LOCALSHORTWARNINGREPORT.=$msg;
+    }
+    
+    return $i;
+}
+
+sub printerror {
+    local($errors,$msg)=@_;
+
+    return &printmsg($errors,"Error",$msg);
+}
+
+sub printwarning {
+    local($warnings,$msg)=@_;
+
+    return &printmsg($warnings,"Warning",$msg);
+}
+
+
+sub printarray {
+  local(@recordinfo)=@_;
+  
+  
+  # print STDERR "Test 2:\n\n";
+  # foreach $line (@recordinfo) {
+  #   print STDERR "$line\n";
+  # }
+  # print STDERR "Totallines: $SHOWFIRSTLINES+$SHOWLASTLINES+5\n";
+  
+  if (@recordinfo<$SHOWFIRSTLINES+$SHOWLASTLINES+5) {
+     # print STDERR "No need to skip lines!\n";
+     
+     $LOCALINFO.=join("\n",@recordinfo);
+
+  }
+  else {
+     local($i);
+     local($dellines)=@recordinfo-$SHOWFIRSTLINES-$SHOWLASTLINES-2;
+     
+     # print STDERR "ici\n";
+     
+     for ($i=0;$i<=$SHOWFIRSTLINES;$i++) {
+         # print STDERR "a: $i\n";
+         $LOCALINFO.="$recordinfo[$i]\n";
+     }
+     
+     $LOCALINFO.="\n\[ ...skipped $dellines lines... \]\n\n"; 
+     
+     # print STDERR "del: $dellines\n";
+     
+     for ($i=$#recordinfo-$SHOWLASTLINES;$i<=$#recordinfo;$i++) {
+         # print STDERR "b: $i\n";
+         $LOCALINFO.="$recordinfo[$i]\n";
+     }
+     
+     # print "ici3\n";
+  }
+
+  # print STDERR "until here\n" if $DEBUG;
+
+  $LOCALINFO.="\n";
+
+}
+
+sub readanddelfile {
+    local($file)=@_;
+    
+    local(@lines);
+    local($line);
+    
+    open(READFILE,$file);
+    
+    while ($line=<READFILE>) {
+       print STDERR "$file: $line" if $DEBUG;
+       $line=~ s/\r?\n$//;
+       push(@lines,($line));
+    }
+    
+    print STDERR @lines if $DEBUG;
+    close(READFILE);
+    
+    # system("$RMCMD $file");
+    unlink(($file));
+    
+    return @lines;
+}
+
+sub execcmd {
+  local($cmd)=@_;
+  
+  local(@lines)=();
+  
+  # print STDERR "ExecCmd $cmd 1>$STDOUTFILE 2>$STDERRFILE\n";
+  
+  system("$cmd 1>$STDOUTFILE 2>$STDERRFILE");
+  
+  print STDERR "***done0, $cmd" if $DEBUG;
+  
+  @lines=&readanddelfile($STDOUTFILE);
+  
+  # print STDERR "done1", @lines;
+  
+  push(@lines,&readanddelfile($STDERRFILE));
+  
+  # print STDERR "done2", @lines;
+  
+  return @lines;
+}
+
+
+# implementation dependant stuff Ping, PrTraceRoute &Extract????
+
+sub Ping {
+  local($server)=@_;
+ 
+  local($RETURNCODE)=0;
+  local($line);
+  local($packetloss)=-1;
+  local($packetrec)=-1; 
+  local($cmd)="$PINGCMD $server $PINGPACKETSIZE $PINGPACKETCOUNT";
+  
+  print STDERR "'ping' $server ... " if $VERBOSE1;
+
+  local(@lines)=&execcmd($cmd);
+  
+  $cmd=~ /\/([^\/]*)$/;
+  $cmd=$1;
+  $LOCALINFO.="$headerline\n\nThe command\n\n\'$cmd\'\n\nproduced the following output:\n\n\n";
+  &printarray(@lines);
+  
+  foreach $line (@lines) {
+     if ($line=~ /$PINGPACKETCOUNT\s+packets\s+transmitted\,\s+(\d+)\s+packets\s+received,\s+(\d+)\%\s+packet\s+loss/) {
+        $packetrec=$1;
+        $packetloss=$2;
+        # print STDERR "Ping: rec:$packetrec loss:$packetloss\n";
+     }
+  }
+  
+  $LOCALINFO.="\nExtracted information:\n\n$server is ";
+  
+  if ($packetrec<=0) {
+     local($msg)="\'ping\' command says: $server doesn't respond at all!\n" if $VERBOSE2;  
+     
+     $LOCALREPORT.=$msg;
+     $LOCALSHORTERRORREPORT.=$msg;
+     
+     $LOCALINFO.="not ";
+     print STDERR "done, but didn't get any response from $server\n" if $VERBOSE1;
+     
+     $RETURNCODE=$PINGERROR;
+  }
+  elsif ($packetloss>$ALLOWEDPACKETLOSS) {
+     ($warnings)=&printwarning($warnings,
+                               "\'ping\' command says: more then $ALLOWEDPACKETLOSS\% packet loss when pinging $server!");
+  } 
+  
+  if (!$RETURNCODE) {
+     local($msg)="But \'ping\' command says: $server responds\n" if $VERBOSE1; 
+     
+     $LOCALREPORT.=$msg;
+     $LOCALSHORTERRORREPORT.=$msg;
+     
+     print STDERR "done\n" if $VERBOSE1;
+  }
+  
+  $LOCALINFO.="reachable according to \'ping\'\n\n";
+
+  return $RETURNCODE;
+}
+
+sub PrTraceroute {
+  local($server)=@_;
+  local($regularserver)=&MakeRegular($server);
+   
+  local($RETURNCODE)=$PRTRACEROUTEERROR;
+  local($ipaddr);
+  local($line);
+  local($cmd)="$PRTRACEROUTECMD $server";
+  
+  print STDERR "\'prtraceroute\' to $server ... " if $VERBOSE1;
+  
+  local(@lines)=&execcmd($cmd);
+
+  # print STDERR "$cmd\n";
+  
+  # print STDERR "Test 1:\n\n";
+  # foreach $line (@lines) {
+  #   print STDERR $line;
+  # }
+  
+  $cmd=~ /\/([^\/]*)$/;
+  $cmd=$1;
+  
+  $LOCALINFO.="$headerline\n\nThe command\n\n\'$cmd\'\n\nproduced the following output:\n\n\n";
+  &printarray(@lines);
+  
+  $ipaddr=$DONTCHECKTHISHOST;
+  
+  foreach $line (@lines) {
+     $line=~ tr/A-Z/a-z/;
+     
+     # print "*$ipaddr*$line\n";
+     
+     if ($line =~ /^\s*to\s+\S+\s+$regularserver \((.*)\)/) {
+        $ipaddr=&MakeRegular($1);
+        
+        # print STDERR "prtraceroute: *$server*$line*$ipaddr*\n";
+     }
+     elsif ($line =~ /^\s*\d+\s+\S+\s+\S+\s+$ipaddr/) {
+        # print STDERR "prtracerouteOK: *$server*$line*$ipaddr*\n";
+        
+        $RETURNCODE=0;
+     }
+  }
+  
+  $LOCALINFO.="\nExtracted information:\n\n$server is ";
+
+  if ($RETURNCODE) {
+     local($msg)="and \'prtraceroute\' command says: $server not reachable\n" if $VERBOSE2;
+     
+     $LOCALREPORT.=$msg;
+     $LOCALSHORTERRORREPORT.=$msg;
+     
+     $LOCALINFO.="not ";
+     print STDERR "done, but $server is not reachable\n" if $VERBOSE1;
+  }
+  else {
+     local($msg)="and \'prtraceroute\' command says: $server is reachable\n" if $VERBOSE2;  
+     
+     $LOCALREPORT.=$msg;
+     $LOCALSHORTERRORREPORT.=$msg;
+     
+     print STDERR "done\n" if $VERBOSE1;
+  }
+  
+  $LOCALINFO.="reachable according to \'prtraceroute\'\n\n";
+  
+  return $RETURNCODE
+}
+
+sub GetRecord {
+  local($recordname,$server)=@_;
+  
+  local($RETURNCODE)=1;
+  local(@recordinfo);
+  local($recordinfo);
+  local($tries)=0;
+  
+  local($cmd);
+  local($regularserver)=&MakeRegular($server);  
+  
+  # print STDERR "HideHi\n";
+  
+  # print STDERR "*$regularserver*$regularreverse*\n";  
+  
+  print "GetRecord start...\n" if $DEBUG;
+  
+  if ($recordname=~ /^\s*$ARECORD\s*$/i) {
+     $cmd="$HOST $server";
+  }
+  elsif ($recordname=~ /$ZONERECORD/) {
+     $cmd="$HOST -l -v $reverse $server";   
+  }
+  else {
+     $cmd="$HOST -t $recordname $reverse $server";
+  }
+
+  print "GetRecord $cmd...\n" if $DEBUG;  
+  
+  while (($RETURNCODE) && ($tries < $nrofretries)) {
+       
+       $tries++;
+       $RETURNCODE=0;
+       @recordinfo=&execcmd($cmd);
+       $recordinfo=join("\n",@recordinfo);
+       
+       print STDERR @recordinfo, "\n" if $DEBUG;
+       
+       # push(@recordinfo,("$server not respond"));
+       
+       if ($recordinfo=~ /$regularserver\s+not respond/i) {
+          $errormsg="Nameserver $server isn't responding";
+       
+          $RETURNCODE|=$CONNECTIVITYERROR;
+       }
+       elsif ($recordinfo=~ /$regularserver not reachable/i) { 
+          if (!grep(/Transfer complete\, \d+ records received for $reverse/i,@recordinfo)) {
+             $errormsg="Nameserver $server isn't reachable";
+       
+             $RETURNCODE|=$CONNECTIVITYERROR;
+          }
+       }
+       elsif ($recordinfo=~ /$regularserver does not exist \(authoritative answer\)/i) { 
+          $errormsg="Nameserver $server doesn't exist";
+          $nameservers{$server}=$DONTCHECKTHISHOST;
+          $tries=$nrofretries+1;
+          $RETURNCODE|=$GENERALERROR;
+       }
+       elsif ($recordinfo=~ /$regularserver not running/i) {
+          $errormsg="$server doesn't run a nameserver";
+          $nameservers{$server}=$DONTCHECKTHISHOST;
+       
+          $tries=$nrofretries+1;
+          $RETURNCODE|=$GENERALERROR;
+       }
+       elsif ($recordinfo=~ /query failed/i) {
+          $errormsg="zone transfer query from $server failed";
+       
+          $RETURNCODE|=$GENERALERROR;
+       }
+       elsif ($recordinfo=~ /$regularreverse $recordname record not found at $regularserver\, server failure/i) {
+          $errormsg="$recordname not found at $server due to server failure";
+       
+          $RETURNCODE|=$GENERALERROR;
+       }
+       elsif ($recordinfo=~ /$regularreverse does not exist at\s+\S+\s+\(authoritative answer\)/i) {
+          $errormsg="$reverse does not exist at $server (Authoritative answer)\n$server is not setup for the $reverse zone" if $VERBOSE2;
+          
+          $nameservers{$server}=$DONTCHECKTHISHOST;
+    
+          # print STDERR "Error found\n";
+          
+          $tries=$nrofretries+1;
+          $RETURNCODE|=$NOTEXISTZONEERROR;
+       }
+       elsif ($recordinfo=~ /$regularreverse\s+has no $recordname record at\s+$regularserver\s+\(authoritative answer\)/i) {
+          $errormsg="$server has no $recordname record (Authoritative answer)" if $VERBOSE2;
+    
+          $tries=$nrofretries+1;
+          $RETURNCODE|=$NOTEXISTZONEERROR;
+       }
+
+       print STDERR "What is this ?\n" if $DEBUG;
+
+       sleep($retryperiod) if (($RETURNCODE & $CONNECTIVITYERROR) && ($tries < $nrofretries));
+       
+       print STDERR ".";
+  }
+    
+  print STDERR "Out of while\n" if $DEBUG;  
+    
+  if ($RETURNCODE) {
+     local($msg)="";
+     if ($RETURNCODE & $CONNECTIVITYERROR) {
+        $msg="Connectivity problem while getting $recordname record.\n$server doesn't respond even after $nrofretries tries and an interval of $retryperiod seconds\n";
+     }
+     $msg.="\'host\' command says: $errormsg";
+     ($errors)=&printerror($errors,$msg);
+     
+     # print STDERR "problem while getting record\n";
+  }
+  elsif ($tries>2) {
+     ($warnings)=&printwarning($warnings,
+                               "Connectivity problem while getting $recordname record,\n$server responded after $tries tries.\n");
+  }
+
+  $cmd=~ /\/([^\/]*)$/;
+  $cmd=$1;
+  $LOCALINFO.="$headerline\n\nThe command\n\n\'$cmd\'\n\nproduced the following output:\n\n\n";
+  &printarray(@recordinfo);
+      
+  for ($i=0;$i<=$#recordinfo;$i++) {
+      $recordinfo[$i]=~ tr/A-Z/a-z/;
+  }
+  
+  return $RETURNCODE,@recordinfo;
+}
+
+
+sub ExtractIPaddrInfo {
+    local($server)=@_;
+    
+    local($RETURNCODE);
+    local($ipaddr);
+    local(@ipaddr);
+    
+    print STDERR "Resolve $server " if $VERBOSE1;
+    
+    ($RETURNCODE,@ipaddr)=&GetRecord($ARECORD,$server);
+    
+    $ipaddr=shift(@ipaddr);
+    # print "\n$ipaddr\n"; 
+    if ((!$RETURNCODE) && ($ipaddr=~ /^$server\.?\S*\s+(a|cname)\s+(\S+)\s*$/)) {
+       
+       # print STDERR "\n$ipaddr\n";
+       
+       local($tmp)=$2;
+       
+       if ((!$TESTOWNSERVER) && ($server=~ /$NSNAMEREGULAR/)) {
+          print STDERR " $tmp done\n" if $VERBOSE1;
+          $nameservers{$server}=$DONTCHECKTHISHOST;
+       }
+       
+       $LOCALINFO.="\nExtracted info:\n\n";
+       
+       local($resolvehost)=$server;
+       
+       while ($ipaddr=~ /^$resolvehost\.?\S*\s+(a|cname)\s+(\S+)\s*$/) {
+          # print "$ipaddr\n";
+          local($tmp)=$2;
+          
+          if ($1 eq "cname") {
+             ($errors)=&printerror($errors,"CNAME ($2) for nameserver $server\nmight cause problems for certain versions of bind that don't support\nrecursive lookups.");
+       
+             $RETURNCODE|=$CNAMEERROR;
+          }
+          else {
+             $tmp=~ tr/A-Z/a-z/;
+             if (!defined($nameservers{$server})) {
+                $nameservers{$server}=$tmp;
+                if (!$RETURNCODE) {
+                   print STDERR " $tmp done\n" if $VERBOSE1;
+                }
+             }
+             $LOCALINFO.="IP address $server: $tmp\n";
+          }
+          $resolvehost=$tmp;
+          $ipaddr=shift(@ipaddr);
+          print STDERR "\nIPline: ($ipaddr)\n" if $DEBUG;
+       }
+       
+       $LOCALINFO.="\n";
+       
+    } else {
+       $LOCALINFO.="\nExtracted info:\n\nIP address $server: $recorderror\n\n";
+       
+       $nameservers{$server}=$DONTCHECKTHISHOST;
+       
+       if (!$RETURNCODE) {
+          ($errors)=&printerror($errors,"Undefined error when trying to contact $server");
+       }
+       
+       $RETURNCODE|=$GENERALERROR;
+    }
+    
+    if ($RETURNCODE) {    
+       $LOCALREPORT.="error detected while resolving hostname\n\n" if $VERBOSE1;
+       print STDERR " done, but errors detected\n\n" if VERBOSE2;
+    }   
+    
+    print "ExtractIPinfo doen\n" if $DEBUG;
+    return $RETURNCODE;
+}      
+
+sub ExtractNSInfo {
+    local($server)=@_; 
+    
+    local(@nsinfo);
+    print STDERR "Get ns record of $server " if $VERBOSE1;
+
+    ($RETURNCODE,@nsinfo)=&GetRecord($NSRECORD,$server);
+        
+    if ($RETURNCODE) {
+       print STDERR " done, but errors detected while getting $NSRECORD record.\n" if $VERBOSE1;
+       $LOCALINFO.="\nExtracted info $SOARECORD record:\n\n$recorderror, unable to get NS record\n\n";
+    } 
+    else {
+       # print @nsinfo;
+       
+       local($count)=0;
+       
+       while ($nsinfo=shift(@nsinfo)) {
+          if ($nsinfo=~ /\s*$regularreverse\s+ns\s+(\S+)\s*$/i) {
+             local($tmp)=$1;
+             $count++;
+             $nsservers{$server,$count}=$tmp;
+             print STDERR "$reverse $count $nsservers{$server,$count}" if $DEBUG;  
+          }
+          elsif ((!$nsinfo=~ /^\s*$/) && (!$RETURNCODE)) {
+             ($errors)=&printerror($errors,"Unknown problem while getting NS record");
+          
+             $RETURNCODE=$GENERALERROR; 
+          }  
+       }
+    
+       $nsservers{$server,0}=$count;
+           
+       $LOCALINFO.="\nExtracted info $NSRECORD record:\n\n";
+       
+       if (!$RETURNCODE) {
+          for ($count=$nsservers{$server,0};$count;$count--) {
+              $LOCALINFO.="Server: $nsservers{$server,$count}\n";
+          }
+          $LOCALINFO.="\n";
+       }
+       else {
+          $LOCALINFO.="$recorderror\n";
+       }
+       
+       print STDERR " done\n" if $VERBOSE1;
+    }
+    
+    return $RETURNCODE;
+}
+
+sub ExtractSOAInfo {
+    local($server)=@_; 
+    
+    local($RETURNCODE);
+    local(@soainfo);
+    local($soainfo);
+    
+    print STDERR "Get soa record " if $VERBOSE1;
+
+    ($RETURNCODE,@soainfo)=&GetRecord($SOARECORD,$server);   
+    
+    if (!$RETURNCODE) {
+    
+       $soainfo=join("\n",@soainfo);
+    
+       if ($soainfo=~ /\s*$reverse\s+soa\s+(\S+)\s+(\S)+\s+\(/) {
+          $primaries{$server}=$1;
+          local($tmp)=$2;
+          if ($tmp) {
+             $hostmasters{$server}=$tmp;
+          }
+          else {
+             $hostmasters{$server}=$recorderror;
+             $RETURNCODE|=$NOSOARECORD; 
+          }
+          # print STDERR "\n Primary: $primaries{$server}\n" if $VERBOSE3;  
+       }
+       else {
+          $primaries{$server}=$recorderror;
+          $RETURNCODE|=$NOSOARECORD;
+       }
+    
+       if ($soainfo=~ /\s+(\d+)\s+;serial/) {
+          $serials{$server}=$1;
+          # print STDERR " Serial: $serials{$server}\n" if $VERBOSE3;  
+       }
+       else {
+          $serials{$server}=$recorderror;
+          $RETURNCODE|=$NOSOARECORD;
+       }
+    
+       if ($soainfo=~ /\s+(\d+)\s+;refresh/) {
+          $refreshs{$server}=$1;
+          # print STDERR " Refresh: $refreshs{$server}\n" if $VERBOSE3;  
+       }
+       else {
+          $refreshs{$server}=$recorderror;
+          $RETURNCODE|=$NOSOARECORD;
+       }
+    
+       if ($soainfo=~ /\s+(\d+)\s+;retry/) {
+          $retries{$server}=$1;
+          # print STDERR " Retry: $retries{$server}\n" if $VERBOSE3;  
+       }
+       else {
+          $retries{$server}=$recorderror;
+          $RETURNCODE|=$NOSOARECORD;
+       } 
+    
+       if ($soainfo=~ /\s+(\d+)\s+;expire/) {
+          $expires{$server}=$1;
+          # print STDERR " Expire: $expires{$server}\n" if $VERBOSE3;  
+       }
+       else {
+          $expires{$server}=$recorderror;
+          $RETURNCODE|=$NOSOARECORD;
+       }
+    
+       if ($soainfo=~ /\s+(\d+)\s+;default\s+ttl/) {
+          $ttls{$server}=$1;
+          # print STDERR " Ttl: $ttls{$server}\n" if $VERBOSE3;  
+       }
+       else {
+          $ttls{$server}=$recorderror;
+          $RETURNCODE|=$NOSOARECORD;
+       }
+    
+       if ($RETURNCODE & $NOSOARECORD) {
+          ($errors)=&printerror($errors,"No $SOARECORD record found at $server");
+          $records{$server,$SOARECORD}|=$RETURNCODE;
+       }
+        
+       if ($RETURNCODE) {
+          $LOCALINFO.="Errors detected while getting $SOARECORD record:\n\n";
+       }
+       else {
+          $LOCALINFO.="\nExtracted info $SOARECORD record:\n\n";
+       }
+    
+       $LOCALINFO.="Primary: $primaries{$server}\n";
+       $LOCALINFO.="Serial: $serials{$server}\n";
+       $LOCALINFO.="Refresh: $refreshs{$server}\n";
+       $LOCALINFO.="Retry: $retries{$server}\n";
+       $LOCALINFO.="Expire: $expires{$server}\n";
+       $LOCALINFO.="Ttl: $ttls{$server}\n";
+    
+    }
+    else {
+       $LOCALINFO.="\nExtracted info $SOARECORD record:\n\nNo $SOARECORD record found\n\n";
+    }
+    
+    if ($RETURNCODE) {
+       print STDERR " done, but errors detected while getting $SOARECORD record\n";
+    } else {
+       print STDERR " done\n" if $VERBOSE1;
+    }
+    
+    return $RETURNCODE;
+}
+
+sub ExtractZoneInfo {
+    local($server)=@_; 
+     
+    local($RETURNCODE)=0;
+    local(@zoneinfo)=();
+    local($zoneinfo)="";
+    
+    print STDERR "Do zone transfer " if $VERBOSE1;
+    
+    ($RETURNCODE,@zoneinfo)=&GetRecord($ZONERECORD,$server);   
+    
+    if (!$RETURNCODE) {
+       while ($zoneinfo !~ /asking zone transfer for\s+$reverse\s+\.\.\.\s*/) { 
+              $zoneinfo=shift(@zoneinfo);
+              # print STDERR "**$zoneinfo**\n";
+       }
+       $zoneinfos{$server}="";
+       if (!@zoneinfo) {
+          $RETURNCODE|=$ZONETRANSFERERROR;
+       }
+       while (($zoneinfo=shift(@zoneinfo)) && ($zoneinfo !~ /\s*transfer complete, \d+ records received for $reverse/i)) {
+           # print STDERR "--$zoneinfo--\n";
+           $zoneinfos{$server}.="$zoneinfo\n"; 
+       }       
+       if (!@zoneinfo) {
+          $RETURNCODE|=$ZONETRANSFERERROR;
+       }
+    }
+    
+    if ($RETURNCODE & $ZONETRANSFERERROR) {
+       
+       ($errors)=&printerror($errors,"zone transfer from $server failed");
+       
+       $zoneinfos{$server}=$recorderror;
+           
+       $RETURNCODE|=$NOTEXISTZONEERROR;
+    }
+    
+    $LOCALINFO.="\nExtracted information:\n\n";
+    
+    # print STDERR "**$zoneinfos{$server}\n";
+    
+    if ($RETURNCODE) {
+       $LOCALINFO.="$recorderror, zone transfer failed\n\n";
+       print STDERR " done, but errors detected\n" if $VERBOSE1;
+    }
+    else {
+    
+       @zoneinfo=split("\n",$zoneinfos{$server});
+    
+       &printarray(@zoneinfo);
+    
+       print STDERR " done\n" if $VERBOSE1;
+    }
+    
+    return $RETURNCODE; 
+}
+
+
+# checking subroutines
+
+
+sub CheckServerNames {
+    local($server);
+    local($RETURNCODE)=0;
+    
+    $LOCALREPORT.="\nStart syntax check names of nameservers ... " if $VERBOSE1;
+    foreach $server (@server) {
+       if ($server=~ /[^$DNSNAMECHAR]/ ) {
+          
+          ($errors)=&printerror($errors,"Nameserver $server contains other characters then a-Z,0-9,-,. in its name.");
+          
+          $RETURNCODE|=$WRONGNAME;
+       }
+       else {
+          $LOCALREPORT.="Syntax of name of $server OK.\n" if $VERBOSE3;
+       } 
+    }
+    
+    if ($RETURNCODE) {
+       $LOCALREPORT.="\nEnd of name of nameservers syntax check, error(s) detected\n\n" if $VERBOSE1;    
+    }
+    else {
+       $LOCALREPORT.="done\n\n" if $VERBOSE1;       
+    }
+    
+    return $RETURNCODE;
+}
+
+sub CheckNSMissingServers {
+    local($server);
+ 
+    local($RETURNCODE)=0;   
+    local($i);
+    local(@servers);
+    
+    $LOCALREPORT.="Start check for missing nameservers in NS record ... " if $VERBOSE1;
+    
+    foreach $server (@nameservers) {
+       if (($nameservers{$server} ne $DONTCHECKTHISHOST) &&
+           (!$records{$server,$NSRECORD})) {
+          $LOCALREPORT.="\nCheck NS record $server ... " if $VERBOSE3;
+          foreach $checkserver (@nameservers) {
+             $found=0; 
+             for ($i=$nsservers{$server,0};$i;$i--) {
+                 if ($nsservers{$server,$i} eq $checkserver) {
+                    $found=1;
+                 }
+             }
+             if (!$found) {
+                    
+                ($errors)=&printerror($errors,"Missing nameserver.\n$checkserver not mentioned in NS record of $server");
+             
+                $RETURNCODE|=$MISSINGNSSERVER;
+             }
+             else {
+                $LOCALREPORT.="\n $checkserver OK." if $VERBOSE3;
+             } 
+          }
+          $LOCALREPORT.="\nNS record $server done" if $VERBOSE3;
+       }   
+       
+    }
+    
+    if (!($VERBOSE2)) {
+       if ($RETURNCODE) {
+          $LOCALREPORT.="done, errors detected.\n\n";
+       }
+       else {
+          $LOCALREPORT.="done\n\n";
+       }
+    }   
+    else {   
+       if ($RETURNCODE) {
+          $LOCALREPORT.="\nEnd of check for missing nameservers, errors detected\n\n";      
+       }
+       else {
+          $LOCALREPORT.="\nEnd of check for missing nameservers.\n\n";      
+       }
+    }
+    
+    return $RETURNCODE;
+}
+
+sub CheckNSExtraServers {
+    local($server);
+ 
+    local($RETURNCODE)=0;   
+    local($i);
+    local(@servers);
+    
+    $LOCALREPORT.="Start check for extra nameservers in NS record ... " if $VERBOSE1;
+    
+    foreach $server (@nameservers) {
+       if (($nameservers{$server} ne $DONTCHECKTHISHOST) &&
+           (!$records{$server,$NSRECORD})) {   
+          $LOCALREPORT.="\nCheck $server ... " if $VERBOSE3;
+          for ($i=$nsservers{$server,0};$i;$i--) {
+              if (!grep(/$nsservers{$server,$i}/,@nameservers)) {
+
+                 ($errors)=&printerror($errors,"Extra nameserver found.\n$nsservers{$server,$i} mentioned in NS record of $server\nbut not in the database object.");
+              
+                 $RETURNCODE|=$EXTRASERVER;
+              }
+              else {
+                 $LOCALREPORT.="\n $nsservers{$server,$i} OK." if $VERBOSE3;
+              } 
+          }
+          $LOCALREPORT.="\nNS record $server done" if ($VERBOSE3);
+       }   
+    }
+    
+    if (!($VERBOSE2)) {
+       if ($RETURNCODE) {
+          $LOCALREPORT.="done, errors detected.\n\n";
+       }
+       else {
+          $LOCALREPORT.="done\n";
+       }
+    }
+    else {   
+       if ($RETURNCODE) {
+          $LOCALREPORT.="\nEnd of check for extra nameservers, errors detected\n\n";      
+       }
+       else {
+          $LOCALREPORT.="\nEnd of check for extra nameservers.\n\n";      
+       }
+    }
+
+    return $RETURNCODE;
+}
+
+sub FindFirstValidHost {
+    local($record)=@_; 
+     
+    local($firsthost)="";
+    local($server); 
+       
+   
+    foreach $server (@nameservers) {
+       
+       # print STDERR "1$server ($firsthost):",($nameservers{$primaries{$server}} ne $DONTCHECKTHISHOST),(grep(/^$primaries{$server}$/,@nameservers)),(!$records{$primaries{$server},$record}),"\n";
+       
+       if ((!$firsthost) &&
+           ($nameservers{$server} ne $DONTCHECKTHISHOST) &&
+           ($nameservers{$primaries{$server}} ne $DONTCHECKTHISHOST) &&
+           (grep(/^$primaries{$server}$/,@nameservers)) &&
+           (!$records{$primaries{$server},$record})) {
+          
+          if ($record eq $ARECORD) {
+                $firsthost=$primaries{$server};
+          }
+          elsif ($record eq $NSRECORD) {
+             if ($nsservers{$primaries{$server},0}!=0) {
+                $firsthost=$primaries{$server};
+             }
+          }
+          elsif ($record eq $SOARECORD) {
+             if (($primaries{$primaries{$server}} ne $recorderror) &&
+                 ($serials{$primaries{$server}} ne $recorderror) &&
+                 ($refreshs{$primaries{$server}} ne $recorderror) &&
+                 ($retries{$primaries{$server}} ne $recorderror) &&
+                 ($expires{$primaries{$server}} ne $recorderror) &&
+                 ($ttls{$primaries{$server}} ne $recorderror)) {
+           
+                $firsthost=$primaries{$server};
+             }
+          }
+          elsif ($record eq $ZONERECORD) {
+             if ($zoneinfos{$primaries{$server}}=$recorderror) {
+                $firsthost=$primaries{$server};
+             }
+          }         
+
+       }
+    }   
+        
+    if (!$firsthost) {
+       foreach $server (@nameservers) {
+          # print STDERR "2$server ($firsthost): !$records{$server,$record}\n";
+ 
+          if ((!$firsthost) &&
+              ($nameservers{$server} ne $DONTCHECKTHISHOST) &&
+              (!$records{$server,$record})) {
+          
+             if ($record eq $ARECORD) {
+                $firsthost=$server;
+             }
+             elsif ($record eq $NSRECORD) {
+                if ($nsservers{$server,0}!=0) {
+                   $firsthost=$server;
+                }
+             }
+             elsif ($record eq $SOARECORD) {
+                if (($primaries{$server} ne $recorderror) &&
+                    ($serials{$server} ne $recorderror) &&
+                    ($refreshs{$server} ne $recorderror) &&
+                    ($retries{$server} ne $recorderror) &&
+                    ($expires{$server} ne $recorderror) &&
+                    ($ttls{$server} ne $recorderror)) {
+           
+                   $firsthost=$server;
+                }
+             }
+             elsif ($record eq $ZONERECORD) {
+                if ($zoneinfos{$server}=$recorderror) {
+                   $firsthost=$server;
+                }
+             }
+          }
+       }
+    }
+    # print STDERR "3 $firsthost 3\n";
+    
+    return $firsthost;
+}
+
+sub CheckPrimaries {
+    local($server,$checkserver);
+    local($primary)="";
+    local($primaryhost)="";
+    local($RETURNCODE)=0;
+    
+    foreach $server (@nameservers) {
+       if ((!$primary) && 
+           ($nameservers{$server} ne $DONTCHECKTHISHOST) &&
+           (!$records{$server,$SOARECORD}) &&
+           ($primaries{$server} ne $recorderror)) {
+          $primaryhost=$server;
+          $primary=$primaries{$primaryhost};
+       }
+    }
+        
+    if ($primary) {    
+       
+       $LOCALREPORT.="Check primaries ... " if $VERBOSE1;
+         
+       foreach $server (@nameservers) {
+          if (($nameservers{$server} ne $DONTCHECKTHISHOST) &&
+              (!$records{$server,$SOARECORD}) &&
+              ($primaries{$server} ne $recorderror)) {
+             print STDERROR "prim:$primaries{$server} error:$recorderror\n" if $DEBUG;
+             local($regularprimary)=$primaries{$server};
+             if ((!(grep(/^$regularprimary$/i,@nameservers))) ||
+                 ($primaries{$server} ne $primary)) {
+                
+                $errors++;
+                local($msg)="\nError $errors:\n";
+                $LOCALREPORT.=$msg;
+                $LOCALSHORTERRORREPORT.=$msg;
+             
+                foreach $checkserver (@nameservers) {
+                   if (($nameservers{$checkserver} ne $DONTCHECKTHISHOST) &&
+                       (!$records{$checkserver,$SOARECORD}) &&
+                       ($primaries{$checkserver} ne $recorderror)) {
+                      local($regularprimary)=$primaries{$checkserver};
+                      if (!grep(/^$regularprimary$/i,@nameservers)) { 
+                         $msg="Primary ($primaries{$checkserver}) in SOA record of $checkserver\nis not listed in database object.\n" if $VERBOSE2;
+                         $LOCALREPORT.=$msg;
+                         $LOCALSHORTERRORREPORT.=$msg;
+                         $RETURNCODE|=$PRIMARYNOTLISTED;
+                      }
+                      elsif ($primaries{$checkserver} ne $primary) {
+                         $msg="Primary ($primaries{$checkserver}) in SOA record of $checkserver\nis not the same as in SOA record of $primaryhost ($primary).\n" if $VERBOSE2;
+                         $LOCALREPORT.=$msg;
+                         $LOCALSHORTERRORREPORT.=$msg;
+                         $RETURNCODE|=$PRIMARIESDIFFER;
+                      }
+                   }
+                }      
+             
+                $LOCALREPORT.="End of primaries check, errors detected\n\n" if $VERBOSE1;       
+             
+                return $RETURNCODE;
+             }
+          }
+       }
+                      
+       $LOCALREPORT.="done\n\n" if $VERBOSE1;       
+       
+    }
+     
+    return $RETURNCODE;
+}
+
+sub CheckServersAssArr {
+    local($errormsggeneral,$errormsgrepeat,$record,%array)=@_;
+ 
+    local($value);
+    local($valuehost)=&FindFirstValidHost($record);
+    
+    if ($valuehost) {
+    
+       $value=$array{$valuehost};
+       
+       foreach $server (@nameservers) {
+          if (($nameservers{$server} ne $DONTCHECKTHISHOST) &&
+              (!$records{$server,$record}) &&
+              ($array{$server} ne $recorderror))  {
+             if ($array{$server} ne $value) {
+             
+                ($errors)=&printerror($errors,"$errormsggeneral");
+             
+                foreach $checkserver (@nameservers) {
+                   if (($nameservers{$checkserver} ne $DONTCHECKTHISHOST) &&
+                       (!$records{$checkserver,$record}) &&
+                       ($array{$checkserver} ne $recorderror))  {
+                      local($msg)=" $errormsgrepeat $checkserver: $array{$checkserver}\n" if ($VERBOSE2);
+                      $LOCALSHORTERRORREPORT.=$msg;
+                      $LOCALREPORT.=$msg;
+                   }
+                }
+             
+                return $GENERALERROR;
+             }
+          }
+       }
+    }
+    
+    return 0;
+}
+
+
+sub CheckSerials {
+    local($RETURNCODE)=0;
+    
+    local($server);
+    local($valuehost)=&FindFirstValidHost($SOARECORD);
+    
+    if ($valuehost) {
+       $LOCALREPORT.="Check serials ... " if $VERBOSE1;
+     
+       $RETURNCODE|=&CheckServersAssArr("Serials differ at different servers:\n",
+                                        "Serial on",
+                                        $SOARECORD,
+                                        %serials);
+       
+       if ($serials{$valuehost} !~ /^\d+$/) {
+
+          ($errors)=&printerrors($errrors,"Serial ($serials{$valuehost}) contains other characters then 0-9\nit is recommended to have the serial number in a YYYYMMDD[nn] format");
+
+          $RETURNCODE|=$WRONGSERIAL;
+       }
+    
+       local($yearprefix)=19;
+       $yearprefix=20 if $YEAR<95;
+      
+       if ($serials{$valuehost} !~ /^0*($yearprefix)?$YEAR(0[1-9]|1[0-2])(0[1-9]|[0-2][0-9]|3[01])\d{0,2}$/) {
+
+          ($warnings)=&printwarning($warnings,"Serial ($serials{$valuehost}) not formatted in recommended YYYYMMDD[nn] format");
+
+       }             
+    
+       if (($RETURNCODE) & ($WRONGFORMATSERIAL)) {
+          $LOCALREPORT.="done, but warnings detected.\n\n" if $VERBOSE1;
+       }
+       elsif ($RETURNCODE) {
+          $LOCALREPORT.="done, but errors detected.\n\n" if $VERBOSE1;
+       }
+       else {
+          $LOCALREPORT.="done\n\n" if $VERBOSE1;
+       }
+    }
+    
+    return $RETURNCODE;
+}
+
+sub printtimererror {
+    local($i,$error,$value,$default,$msg)=@_;
+    
+    $msg.=" ($value) ";
+       
+    if ($error) {
+       $msg.="too ";
+    }
+    else {
+       $msg.="pretty "; 
+    }
+    
+    if ($value<$default) {
+       $msg.="low";
+    }
+    else {
+       $msg.="high";
+    }
+    
+    $msg.=", RFC1537 recommends $default";
+    
+    if ($error) {
+       return &printerror($i,$msg);
+    }
+    else {
+       return &printwarning($i,$msg); 
+    }
+}
+
+sub CheckTimingValues {
+    local($value,$default,$toolow,$low,$high,$toohigh,$BADTIMING,$msg)=@_;
+    
+    local($RETURNCODE)=0;
+    local($LOCALWARNINGS)=0;
+    
+    # debug checkings...
+    
+    print STDERR "Toolow: $toolow\n" if $toolow<=1;
+    print STDERR "Low: $low\n" if $low<=1;
+    print STDERR "High: $high\n" if $high<=1;
+    print STDERR "TooHigh: $toohigh\n" if $toohigh<=1;
+
+    # the real checkings...
+
+    if ($value<$toolow) {
+       ($errors)=&printtimererror($errors,1,$value,$default,$msg);
+
+       $RETURNCODE|=$BADTIMING;
+    }
+    elsif ($value>$toohigh) {
+       ($errors)=&printtimererror($errors,1,$value,$default,$msg);
+
+       $RETURNCODE|=$BADTIMING;
+    }
+    elsif ($value>$high) {
+       ($warnings)=&printtimererror($warnings,0,$value,$default,$msg);
+
+       $LOCALWARNINGS=1;
+    }
+    elsif ($value<$low) {
+       ($warnings)=&printtimererror($warnings,0,$value,$default,$msg);
+
+       $LOCALWARNINGS=1;
+    }
+    else {
+       $LOCALREPORT.="\n$msg ($value) OK, " if $VERBOSE3;
+    
+       if ($value==$default) {
+          $LOCALREPORT.="same as RFC1537 recommends" if $VERBOSE3;
+       }
+       else {
+          $LOCALREPORT.="near to recommended value ($default) from RFC1537" if $VERBOSE3;
+       }
+    }
+    
+    return $RETURNCODE;
+}
+
+sub CheckTimings {
+    local($RETURNCODE)=0;
+    
+    local($server);
+    local($valuehost)=&FindFirstValidHost($SOARECORD);
+        
+    if ($valuehost) {
+       $LOCALREPORT.="Check timings: ... " if $VERBOSE1;
+    
+       # $LOCALREPORT.="$nameservers[0]\n";
+  
+       if ($block) {  
+          $RETURNCODE|=&CheckTimingValues($refreshs{$valuehost},
+                                          $defaultrefresh,
+                                          $toolowblockrefresh,
+                                          $lowblockrefresh,
+                                          $highblockrefresh,
+                                          $toohighblockrefresh,
+                                          $BADREFRESH,
+                                          "refresh period for block delegation");
+       }
+       else {
+          $RETURNCODE|=&CheckTimingValues($refreshs{$valuehost},
+                                          $defaultrefresh,
+                                          $toolowrefresh,
+                                          $lowrefresh,
+                                          $highrefresh,
+                                          $toohighrefresh,
+                                          $BADREFRESH,
+                                          "refresh period");
+       }
+       
+       if ($block) {                                          
+          $RETURNCODE|=&CheckTimingValues($retries{$valuehost},
+                                          $defaultretry,
+                                          $toolowblockretry,
+                                          $lowblockretry,
+                                          $highblockretry,
+                                          $toohighblockretry,
+                                          $BADRETRY,
+                                          "retry interval for block delegation");
+       }
+       else {
+          $RETURNCODE|=&CheckTimingValues($retries{$valuehost},
+                                          $defaultretry,
+                                          $toolowretry,
+                                          $lowretry,
+                                          $highretry,
+                                          $toohighretry,
+                                          $BADRETRY,
+                                          "retry interval");
+       }
+       
+       if ($block) {
+          $RETURNCODE|=&CheckTimingValues($expires{$valuehost},
+                                          $defaultexpire,
+                                          $toolowblockexpire,
+                                          $lowblockexpire,
+                                          $highblockexpire,
+                                          $toohighblockexpire,
+                                          $BADEXPIRE,
+                                          "expire time for block delegation");
+       }
+       else {
+          $RETURNCODE|=&CheckTimingValues($expires{$valuehost},
+                                          $defaultexpire,
+                                          $toolowexpire,
+                                          $lowexpire,
+                                          $highexpire,
+                                          $toohighexpire,
+                                          $BADEXPIRE,
+                                          "expire time");
+       }
+       
+       if ($block) {
+          $RETURNCODE|=&CheckTimingValues($ttls{$valuehost},
+                                          $defaultttl,
+                                          $toolowblockttl,
+                                          $lowblockttl,
+                                          $highblockttl,
+                                          $toohighblockttl,
+                                          $BADTTL,
+                                          "default ttl for block delegation");
+       }
+       else {
+          $RETURNCODE|=&CheckTimingValues($ttls{$valuehost},
+                                          $defaultttl,
+                                          $toolowttl,
+                                          $lowttl,
+                                          $highttl,
+                                          $toohighttl,
+                                          $BADTTL,
+                                          "default ttl");
+       }
+       
+       if ($refreshs{$valuehost} && 
+           $retries{$valuehost}) {
+           
+          if ($retries{$valuehost}>$refreshs{$valuehost}) {   
+             
+             ($warnings)=&printwarning($warnings,"retry interval ($retries{$valuehost}) greater then refresh period ($refreshs{$valuehost})");
+             
+          }
+          elsif ($retries{$valuehost}*$RETRYREFRESHFACTOR>$refreshs{$valuehost}) {
+             ($warnings)=&printwarning($warnings,"retry interval ($retries{$valuehost}) less then $RETRYREFRESHFACTOR times smaller then refresh period ($refreshs{$valuehost})");
+          }
+       
+       }
+       
+       
+       
+       if ($RETURNCODE) {
+          $LOCALREPORT.="\ndone, but errors detected.\n\n" if $VERBOSE1;
+       }
+       else  {
+          $LOCALREPORT.="\ndone\n\n" if $VERBOSE1;
+       }
+    
+    }
+    
+    return $RETURNCODE;
+}
+
+sub CheckZoneInfos {
+
+    local($server);
+    local($RETURNCODE)=0;
+    local(@zoneinfos);
+    
+    $LOCALREPORT.="Start syntax check of zoneinfo of nameservers ... " if $VERBOSE1;
+    
+    foreach $server (@nameservers) {
+       if (($nameservers{$server} ne $DONTCHECKTHISHOST) && 
+           (!$records{$server,$ZONERECORD})) {
+          # print $zoneinfos{$server};
+          
+          @zoneinfos=split("\n",$zoneinfos{$server});
+       
+          # print @zoneinfos;
+       
+          foreach $line (@zoneinfos) {
+         
+             local($originalline)=$line;
+
+             $line=~ tr/[A-Z]/[a-z]/;
+             $line=~ /\s*(.*)\s*/;
+             $line=$1;
+            
+             if ($line=~/^([0-1]?\d?\d\.|2[0-4]\d\.|25[0-5]\.){1,4}in\-addr\.arpa(\S)\s+\d+\s+in\s+($NSRECORD|$PTRRECORD)\s+\S+(\S)$/i) {
+                local($tmp)=$3;
+                
+                # print STDERR "NS/PTR record\n";
+                
+                if ("$2$4" ne '..') {
+                                      
+                   $tmp=~ tr/[a-z]/[A-Z]/;
+                   
+                   ($errors)=&printerror($errors,"Zone info $server has no dot after domainname in $tmp record:\n$originalline");
+               
+                   $RETURNCODE|=$WRONGZONEINFO;
+                }
+             }
+             elsif ($line=~ /^\S+\s+\d+\s+in\s+$ARECORD\s+([0-1]?\d?\d|2[0-4]\d|25[0-5])\.([0-1]?\d?\d|2[0-4]\d|25[0-5])\.([0-1]?\d?\d|2[0-4]\d|25[0-5])\.([0-1]?\d?\d|2[0-4]\d|25[0-5])$/i) {            
+                # print STDERR "A record\n";
+                ($warnings)=&printwarning($warnings,"Zone info $server *may* have an unnecessary\nglue record that can cause unwanted side effects in line:\n$originalline");                
+             }
+             elsif (($line!~ /^\!\!\! /) ||
+                    ($line!~ /^\s*$/)) {
+                   
+                ($errors)=&printerror($errors,"Zone info $server contains errors in line:\n$originalline");
+               
+                $RETURNCODE|=$WRONGZONEINFO;
+             }   
+             
+          }
+       }
+    }
+    
+    
+    if ($RETURNCODE) {
+       $LOCALREPORT.="\nEnd of check, error(s) detected\n\n" if $VERBOSE1;    
+    }
+    else {
+       $LOCALREPORT.="done\n\n" if $VERBOSE1;       
+    }
+    
+    return $RETURNCODE;    
+}
+
+
+
+sub CheckMandatoryNS {
+
+    local($DONTCARE,$PRIMARY,$SECONDARY)=@_;
+    
+    local($RETURNCODE)=0;
+    local($primary)="";
+    local($server);
+    local($msg)="";
+    
+    # print STDERR "$NAMESERVERCHECK Dontcare: $DONTCARE P:$PRIMARY S:$SECONDARY\n";
+    
+    if (!($NAMESERVERCHECK & $DONTCARE)) {
+    
+       foreach $server (@nameservers) {
+          if ((!$primary) && 
+              ($nameservers{$server} ne $DONTCHECKTHISHOST) &&
+              (!$records{$server,$SOARECORD}) &&
+              ($primaries{$server} ne $recorderror)) {
+             $primary=$primaries{$primary};
+          }
+       }
+       
+       if (($NAMESERVERCHECK & $PRIMARY) &&
+           ($NAMESERVERCHECK & $SECONDARY)) {
+          $LOCALREPORT.="Check if $NSNAME is one of the nameservers ... " if $VERBOSE1;
+          
+          if (!defined($nameservers{$NSNAME})) {
+             $msg="$NSNAME is not mentioned in the RIPE database object but must be\none of the nameservers";
+             $RETURNCODE|=$GENERALERROR;    
+          }          
+       
+       }
+       elsif ($NAMESERVERCHECK & ($PRIMARY | $SECONDARY)) {
+          
+          if ($NAMESERVERCHECK & $PRIMARY) {
+             $LOCALREPORT.="Check if $NSNAME is the primary nameserver ... " if $VERBOSE1;
+          }
+          else {
+             $LOCALREPORT.="Check if $NSNAME is one of the secondary nameservers ... " if $VERBOSE1;
+          }
+          
+          if (($NAMESERVERCHECK & $SECONDARY) &&
+              (!defined($nameservers{$NSNAME}))) { 
+             $msg="$NSNAME is not mentioned in the RIPE database\n";
+             
+             if ($primary eq $NSNAME) {
+                $msg.="and should not be the primary nameserver but a secondary nameserver instead";
+             }
+             else {
+                $msg.="but must be one of the secondary nameservers";
+             }
+             
+             $RETURNCODE|=$GENERALERROR;
+                
+          }
+          elsif (($NAMESERVERCHECK & $PRIMARY) &&
+                 (!defined($nameservers{$NSNAME}))) { 
+             $msg="$NSNAME is not mentioned in the RIPE database\n";
+             
+             if ($primary ne $NSNAME) {
+                $msg.="and should be mentioned as the primary nameserver in the SOA records";
+             }
+             else {
+                $msg.="but must be the primary nameserver";
+             }
+             
+             $RETURNCODE|=$GENERALERROR;
+                
+          }
+          
+          if ((!$RETURNCODE) && ($primary)) {
+          
+             if (($NAMESERVERCHECK & $SECONDARY) &&
+                 ($primary eq $NSNAME)) {
+                if ($RETURNCODE) { 
+                   $msg
+                }
+                else {
+                   $msg="$NSNAME should be one of the secondaries instead of\nbeing the primary nameserver";
+                   $RETURNCODE|=$GENERALERROR;
+                }
+             }
+             elsif (($NAMESERVERCHECK & $PRIMARY) && 
+                    ($primary ne $NSNAME)) { 
+                $msg="$NSNAME should be the primary nameserver";
+                if (!defined($nameservers{$primary})) {
+                   $msg.=" instead of being one of the secondary nameservers";
+                }
+                else {
+                   $msg.=" and is not mentioned in the RIPE database object";
+                }
+                $RETURNCODE|=$GENERALERROR;
+             }
+          }
+          
+          if (($primary) && ($NAMESERVERCHECK & $SECONDARY)) {
+             
+             $LOCALREPORT.="Check if $NSNAME is not the primary nameserver ... " if $VERBOSE1;
+             
+             if ($primary eq $NSNAME) { 
+                
+                $msg="$NSNAME should be one of the secondaries instead of\nbeing the primary nameserver";
+                $RETURNCODE|=$GENERALERROR;
+                
+             }
+          }
+          elsif (($NAMESERVERCHECK & $PRIMARY) && 
+                 ($primary ne $NSNAME)) { 
+             $msg="$NSNAME should be the primary nameserver";
+             if (!defined($nameservers{$primary})) {
+                $msg.=" instead of being one of the secondary nameservers";
+             }
+             else {
+                $msg.=" and is not mentioned in the RIPE database object";
+             }
+             $RETURNCODE|=$GENERALERROR;
+          }
+       }
+       else {
+          $LOCALREPORT.="Check if $NSNAME is not one of the nameservers ... " if $VERBOSE1;
+          
+          if (defined($nameservers{$NSNAME})) {
+             $msg="$NSNAME is mentioned in the RIPE database object but is not\nallowed to be one of the nameservers";
+             $RETURNCODE|=$GENERALERROR;    
+          }
+       }
+    
+       if ($RETURNCODE) {
+          ($errors)=&printerror($errors,$msg); 
+       
+          $LOCALREPORT.="Done, detected errors.\n" if $VERBOSE1;
+       }
+       else {
+          $LOCALREPORT.="done\n\n" if $VERBOSE1;
+       }
+    
+    }
+    
+    return $RETURNCODE;
+    
+}
+
+sub CheckNrOfNS {
+      
+    $LOCALREPORT.="Check if enough nameservers are present ... " if $VERBOSE1;
+      
+    if ($block) {
+       if (@nameservers < 3) {
+          ($errors)=&printerror($errors,"Less then three nameservers present."); 
+
+          $LOCALREPORT.="Done, detected errors.\n" if $VERBOSE1;
+       }
+       else {
+          $LOCALREPORT.="done\n\n" if $VERBOSE1;
+       }
+    } else {
+       if (@nameservers < 2) {
+          ($errors)=&printerror($errors,"Less then two nameservers present."); 
+          $LOCALREPORT.="Done, detected errors.\n" if $VERBOSE1;
+       }
+       else {
+          $LOCALREPORT.="done\n\n" if $VERBOSE1;
+       }
+    }
+} 
+
+sub PrintFinalReport {
+    
+    if (!($errors)) {
+       if ($warnings) {
+          local($multiplewarnings)="";
+          $multiplewarnings="s" if ($warnings>1);
+          $totalwarnings++;
+          $LOCALREPORT.="\n\n**** Warning$multiplewarnings found ****\n\n";
+          print STDERR "\n\n**** Warning$multiplewarnings found ****\n\n";
+       }
+       else {
+          $LOCALREPORT.="\n\n**** No errors found ****\n\n";
+          $totalok++;
+       }
+       
+       $reverse=~ /\.(\d+\.in-addr.arpa)/;
+       $file=$1;
+       
+       local($ip2,$ip3,$ip4);
+       
+       if ($block) {
+          $reverse=~ /(\d+)\.(\d+)\.in-addr.arpa/;  
+          $ip3=$1;
+          $ip4=$2;
+       }
+       else {
+          $reverse=~ /(\d+)\.(\d+)\.(\d+)\.in-addr.arpa/;  
+          $ip2=$1;
+          $ip3=$2;
+          $ip4=$3;
+       }
+       
+       if (!$REGISTRY) {
+          $REGISTRY="Registry xxx";
+       }
+       
+       $ADDTOZONEFILE.="\nAdd the following to $file:\n\n";
+       
+       $ADDTOZONEFILE.=";\n; $ip4.$ip3";
+       
+       if (!$block) {
+          $ADDTOZONEFILE.=".$ip2";
+       } 
+       
+       $ADDTOZONEFILE.=" $REGISTRY -";
+       
+       if ($block) {
+          $ADDTOZONEFILE.=" delegated";
+       }
+
+       local($tmp)=$ENV{"SIGNAME"};
+
+       $ADDTOZONEFILE.=" $YYMMDD $tmp\n;\n";       
+       
+       foreach $server (@nameservers) {
+          if (!$block) {
+             $ADDTOZONEFILE.="$ip2.";
+          }
+          $ADDTOZONEFILE.="$ip3\t\tIN\tNS\t$realnameservers{$server}.\n";
+       }
+       
+       if (($block) || (defined($nameservers{$NSNAME}))) {
+          $ADDTOZONEFILE.="\n\nAdd the following to named.boot:\n\n";
+          
+          local($server);
+    
+          $ADDTOZONEFILE.="\n; $REGISTRY - $ip4.$ip3";
+          
+          if (!$block) {
+             $ADDTOZONEFILE.=".$ip2";
+          }
+          
+          $ADDTOZONEFILE.=" ($realnameservers{$primaries{$nameservers[0]}})\nsecondary\t$reverse\t$nameservers{$primaries{$nameservers[0]}}\tsec/$ip4.$ip3";
+          
+          if (!$block) {
+             $ADDTOZONEFILE.=".$ip2";       
+          }
+          
+          $ADDTOZONEFILE.="\n";
+       }
+       $LOCALREPORT.="\n\n";  
+    }
+    else {
+       local($multipleerrors)="";
+       $multipleerrors="s" if ($errors>1);
+       $LOCALREPORT.="\n\n**** Error$multipleerrors found ****\n\nPlease fix your zone files for $reverse!\n\n";
+       print STDERR "\n**** Error$multipleerrors found ****\n\n";
+       $totalerrors++;
+    }
+}
+
+sub NotYetDelegated {
+    
+    local($RETURNCODE)=0;
+    local(@lines);
+    local($line)="";
+    local($output);
+    local($nsserver);
+    local($contact)="";
+    local($motherzone)=$reverse;
+    local($motherregular)="";
+    local($ZONEREGULAR)=&MakeRegular($ZONECONTACT);
+    
+    $ZONEREGULAR=~ s/\@/\./;
+    
+    while (($TESTAUTHORITY) &&
+           ($motherzone ne "in-addr.arpa") &&
+           (!$errors) &&
+           ($line!~ /^\s*$motherregular\s+soa\s+$NSNAMEREGULAR\s+\S+\s+\(/i)) {
+    
+       $motherzone=~ /^\d+\.(.+)$/;
+       $motherzone=$1;    
+       
+       $motherregular=&MakeRegular($motherzone);
+       
+       $cmd="$HOST -t $SOARECORD $motherzone";
+    
+       @lines=&execcmd($cmd);    
+       $line=join("\n",@lines);
+       $output=$line;
+       $line=~ tr/A-Z/a-z/;
+    
+       # print STDERR "\s*$motherregular\s+soa\s+$NSNAMEREGULAR\s+$ZONEREGULAR+\s+\(\n";
+       # print STDERR "$line\n";
+       
+       if ($line!~ /^\s*$motherregular\s+soa\s+$NSNAMEREGULAR\s+\S+\s+\(/i) {
+          if ($line=~ /\s*$motherregular\s+soa\s+\S+\s+(\S+)+\s+\(/i) {
+       
+             $contact=$1;
+       
+             $DONTASKUS=$NOTAUTHORITIVE;
+       
+             $errors++;
+          
+             $RETURNCODE=$NOTAUTHORITIVEERROR;
+          }
+       }   
+    }
+    
+    if ((!$RETURNCODE) && ($NOCHANGE)) {
+        
+       $cmd="$HOST -t $SOARECORD $reverse";
+    
+       @lines=&execcmd($cmd);    
+       $line=join("\n",@lines);
+       $output=$line;
+       $line=~ tr/A-Z/a-z/;
+       
+       if ($line=~ /\s*$reverse\s+soa\s+\S+\s+(\S+)+\s+\(/) { 
+          
+          $contact=$1;
+       
+          # print STDERR "Contact1: $contact\n";
+       
+          $DONTASKUS=$ALREADYDELEGATED;
+
+          $errors++;
+          
+          $RETURNCODE=$ALREADYDELEGATEDERROR;
+       }
+    }
+    
+    if ($RETURNCODE) {
+       $cmd=~ /\/([^\/]*)$/;  
+       $cmd=$1;
+       
+       $output=~ s/(^|\n)/\n\> /g;
+       
+       $contact=~ s/\./\\\@/;
+       
+       # print STDERR "Contact2: $contact\n";
+       
+       $DONTASKUS=~ s/\$reverse/$reverse/g;
+       $DONTASKUS=~ s/\$motherzone/$motherzone/g;
+       $DONTASKUS=~ s/\$cmd/$cmd/g;
+       $DONTASKUS=~ s/\$line/$output/g;
+       $DONTASKUS=~ s/\$contact/$contact/g;
+       
+       $DONTASKUS=~ s/\\\@/\@/g;
+    
+       $LOCALINFO="\nNo further details available";
+    }
+    
+    return $RETURNCODE;
+}
+
+sub GetRidOfAutoMailBoxes {
+    local($line)=@_;
+    
+    local($REGULARAUTOMAIL)=$AUTOMAIL;
+    
+    if ($AUTOMAIL=~ /\@/) {
+       $REGULARAUTOMAIL=~ /^(.*\@)/;
+       $REGULARAUTOMAIL=$1;
+    }
+    
+    $REGULARAUTOMAIL=&MakeRegular($REGULARAUTOMAIL);
+    
+    $line.=" ";
+    $line=~ s/auto\-dbm\S*[\s\,]//;
+    $line=~ s/$REGULARAUTOMAIL\S*[\s\,]//;
+       
+    $line=~ s/\,\s*\,/\,/;
+    
+    $line=~ /^(.*)\s*$/;
+    $line=$1;
+    
+    return $line;    
+}
+
+sub CheckForMailHeader {
+    local($line)=@_;
+        
+    print STDERR "Check mail headers...$SUBJECT\n" if $DEBUG;
+      
+    if ((!$SUBJECT) && ($line=~ /^Subject\:\s*(.*)\s*$/i)) {
+       $SUBJECT=$1;
+       
+       # print STDERR "Subject: $SUBJECT\n" if $DEBUG;
+       # if ($SUBJECT=~ /^$SUBJECTTEMPLATE/) {
+       #   print STDERR "Don't send mail.\n" if $DEBUG;
+       #   $SENDMAIL=0;
+       # }
+       
+       if ($SUBJECT=~ /LONGACK/) {
+          $LONGACK=1;
+       }
+       if ($SUBJECT=~ /CHANGE/) {
+          # print STDERR "Change!\n";
+          $NOCHANGE=0;
+       }
+       if ($SUBJECT=~ /TEST/) {
+          # print STDERR "Test!\n";
+          $NOTEST=0;
+       }
+       
+       # undocumented feature!
+       
+       # if ($SUBJECT=~ /NSNAME(\s|\:)\s*(\S+)(\:\d+)\s+/i) {
+       if ($SUBJECT=~ /NSNAME(\s|\:)\s*(\S+)(\:\d+)?(\s|$)/i) {
+          # print STDERR "NSNAME!\n";
+          
+          $NOTEST=0;
+          $NSNAME=$2.$3;
+          
+          # print STDERR "$NSNAME *$3*\n";
+          
+          if ($NSNAME=~ /(.+)\:(\d+)$/) {
+             $NSNAME=$1;
+             $NAMESERVERCHECK=$2;
+             
+             # print STDERR "$NAMESERVERCHECK\n";
+             
+          }
+          
+          # print STDERR "$NSNAME : $NAMESERVERCHECK\n";
+          
+          if ($NAMESERVERCHECK & $TESTOWNSERVEROPTION) {
+             $TESTOWNSERVER=!$TESTOWNSERVER;
+          }
+          
+          if ($NAMESERVERCHECK & $TESTAUTHORITYOPTION) {
+             $TESTAUTHORITY=!$TESTAUTHORITY;
+          }
+          
+          ($NSNAMEREGULAR)=&MakeRegular($NSNAME); 
+       }
+              
+       if ($SUBJECT=~ /HELP/) {
+          local(@HELP);
+          
+          print STDERR "Help file requested.\n";
+          
+          open(HELPINPUT,"<$HELPFILE");
+          @HELP=<HELPINPUT>;
+          close(HELPINPUT);
+          $HELP=join("",@HELP);
+          
+          # print $HELP;
+          
+          # and patch on the fly...
+          
+          $HELP=~ s/reported to \<hostmaster\@ripe\.net/reported to \<$HUMANMAIL/g;
+          $HELP=~ s/contact the RIPE NCC at \<hostmaster\@ripe\.net/contact the RIPE NCC at \<$HUMANMAIL/g; 
+          $HELP=~ s/hostmaster\@ripe\.net/$AUTOMAIL/g;
+          
+          $HELP=~ s/193\.1\.2/193\.1\.2\.0/g;  
+       }
+       
+       print STDERR "Subject: $SUBJECT\n" if $DEBUG;   
+    }
+    elsif ((!$FROM) && ($line=~ /^From:\s*(.*)\s*$/i)) {
+       $FROM=$1;
+       
+       ($FROM)=&GetRidOfAutoMailBoxes($FROM);
+       
+       print STDERR "From: $FROM\n" if $DEBUG;   
+    }
+    elsif ((!$CC) && ($line=~ /^Cc:\s*(.*)\s*$/i)) {
+       $CC=$1;
+       
+       ($CC)=&GetRidOfAutoMailBoxes($CC);
+       
+       print STDERR "Cc: $CC\n" if $DEBUG;   
+    }
+    elsif ((!$REPLYTO) && ($line=~ /^Reply-To:\s*(.*)\s*$/i)) {
+       $REPLYTO=$1;
+       
+       ($REPLYTO)=&GetRidOfAutoMailBoxes($REPLYTO);
+       
+       print STDERR "Reply-To: $REPLYTO\n" if $DEBUG;   
+    }
+    elsif ((!$REGISTRY) && ($line=~ /X\-NCC\-RegID:\s*(.*)\s*$/i)) {
+       $REGISTRY=$1;
+       
+       print STDERR "Registry: $REGISTRY\n" if $DEBUG;   
+    }
+    
+}
+
+
+# Here starts the real program!
+
+local($s,$m,$h,$yr,$day,$month,$wd,$yd,$is,
+      $start,
+      $line);
+
+print STDERR "Start program...\n";
+
+($s,$m,$h,$day,$month,$yr,$wd,$yd,$is)= localtime(time);
+
+$month = "0".$month unless ++$month > 9;
+$day = "0".$day unless $day > 9;
+$YEAR=$yr;
+$yr = "0".$yr unless $yr > 9;
+
+$YYMMDD = "$yr$month$day";
+
+$s = "0".$s unless $s > 9;
+$m = "0".$m unless $m > 9;
+$h = "0".$h unless $h > 9;
+
+$HHMMSS="$h:$m:$s";
+
+print STDERR "$YYMMDD $HHMMSS\n" if $DEBUG;                    
+
+# read complete input to help sendmail
+# delete when finished to be able to recover after a crash!
+
+open(MSGTMPFILE,">$MSGTMPFILE");
+print MSGTMPFILE <STDIN>;
+close(MSGTMPFILE);
+
+# log incoming message
+
+open(MSGTMPFILE,"<$MSGTMPFILE");
+@ORIGINALMESSAGE=<MSGTMPFILE>;
+$ORIGINALMESSAGE=join("",@ORIGINALMESSAGE);
+&writelogandsendmail("$UPDLOGDIR/$YYMMDD",$UPDBANNER,"",$ORIGINALMESSAGE);
+close(MSGTMPFILE);
+
+while (@ORIGINALMESSAGE) {
+   
+   $start=0;
+      
+   print STDERR "Start search for object...\n" if $DEBUG;
+   
+   $EXTRACTLOCALREPORT="";
+   
+   local($objectheader)="";
+   local($objecttype)="";
+      
+   while ((!$start) && ($line=shift(@ORIGINALMESSAGE))) {
+ 
+      # special for broken MIME mailers...
+      
+      $line=~ s/\n//;
+      $line=~ s/\=20$//;
+           
+      &CheckForMailHeader($line);
+      
+      $line=~ tr/A-Z/a-z/;
+      
+      print STDERR "Search Object...\n" if $DEBUG;
+      
+      
+      if ((!$HELP) && ($line=~ /^.*(inetnum|\*in|domain|\*dn):\s+(\S.*)?$/)) {
+         # print STDERR "Object: $1\n";
+         
+         $line=$2;
+         $objectheader="$1: $line";
+         $objecttype=$1;
+         $objectheader=~ s/\n//;
+         
+         $reverse="";
+         $block=0;
+         $fromdelegation=0;
+         $untildelegation=0;
+         $parseerrors=0;
+         $parsewarnings=0;
+         $PARSEERRORREPORT="";
+         $PARSEWARNINGREPORT="";
+         $LOCALSHORTERRORREPORT="";
+         $LOCALSHORTWARNINGREPORT="";
+      
+         if ($objecttype=~ /^\*?d.*n$/) {
+            if ($line=~ /^([0-1]?\d?\d|2[0-4]\d|25[0-5])\.([0-1]?\d?[1-9]|2[0-4]\d|25[0-5])\.in\-addr.arpa\s*$/i) {
+               $reverse="$1.$2.in-addr.arpa";
+               $block=1;
+               $start=1;
+            }
+            elsif ($line=~ /^([0-1]?\d?\d|2[0-4]\d|25[0-5])\.([0-1]?\d?\d|2[0-4]\d|25[0-5])\.([0-1]?\d?\d|2[0-4]\d|25[0-5])\.in\-addr.arpa\s*$/) {
+               $reverse="$1.$2.$3.in-addr.arpa";;
+               $start=1;
+            }
+            elsif ($line=~ /(.*)$/) {
+               $objecterrors++;
+               $EXTRACTLOCALREPORT.="Fatal error in \'domain:\' attribute: $1\n";
+               $EXTRACTLOCALREPORT.="\'domain:\' attribute syntax (for reverse delegation) is:\ndomain: [x.]x.x.in-addr.arpa\n"; 
+            }
+         }
+         else {
+         
+            # print STDERR "Found inetnum:...$line\n";
+                  
+            if (($line !~ /\//) && 
+                ($line=~ /^([0-1]?\d?\d|2[0-4]\d|25[0-5])\.([0-1]?\d?\d|2[0-4]\d|25[0-5])\.([0-1]?\d?\d|2[0-4]\d|25[0-5])(\.[0-1]?\d?\d|\.2[0-4]\d|\.25[0-5])?(\s*\-.*)?$/)) {
+                
+               $reverse="$3.$2.$1.in-addr.arpa";
+               $fromdelegation=$3;
+               $line=$5;
+               
+               local($tmpline)=$4;
+               if ($tmpline=~ /^\s*\-/) {
+                  $line=$tmpline;
+               }
+               
+               print STDERR "Line: *$line*\n" ;
+               
+               print STDERR "$reverse\n";
+               
+               if ($line=~ /^\s*$/) {
+                  print STDERR "Only one delegation found in object ...\n";
+                  $untildelegation=$fromdelegation;
+                  $start=1;
+               }
+               elsif ($line=~ /^\s*\-\s*([0-1]?\d?\d|2[0-4]\d|25[0-5])\.([0-1]?\d?\d|2[0-4]\d|25[0-5])\.([0-1]?\d?\d|2[0-4]\d|25[0-5])(\.[0-1]?\d?\d|\.2[0-4]\d|\.25[0-5])?\s*$/) {
+                  print STDERR "More delegations in object ...\n";
+                  $untildelegation=$3;
+               
+                  # print STDERR "From: $fromdelegation Until: $untildelegation\n" if $DEBUG;
+               
+                  if (($fromdelegation==0) && ($untildelegation==255)) {
+                     $reverse=~ /\d+\.(\S+)/;
+                     $reverse=$1;
+                     $fromdelegation=0;
+                     $untildelegation=0;
+                     $block=1;
+                  }
+               
+                  $start=1;
+               
+               }
+            }    
+            elsif ($line=~ /^([0-1]?\d?\d|2[0-4]\d|25[0-5])(\.[0-1]?\d?\d|\.2[0-4]\d|\.25[0-5])?(\.[0-1]?\d?\d|\.2[0-4]\d|\.25[0-5])?(\.[0-1]?\d?\d|\.2[0-4]\d|\.25[0-5])?\s*\/\s*0*([89]|[1-2][0-9]|3[0-2])\s*$/) {            
+               
+               # print STDERR "match!";
+               
+               local($ip1)=$1;
+               local($ip2)=$2;
+               local($ip3)=$3;
+               local($ip4)=$4;
+               local($prefixl)=$5;
+                              
+               # print STDERR "ip1: $ip1   ip2: $ip2 ip3: $ip3 ip4: $ip4 prefixl $prefixl \n";               
+                              
+               $block=1;
+               $reverse=".$ip1.in-addr.arpa";
+
+               if ($prefixl > 8) {
+                  $reverse="$ip2$reverse";
+                  # print STDERR "reverse: $reverse / $prefixl\n";
+               }
+               if ($prefixl >16) {
+                  $block=0;
+                  $reverse="$ip3$reverse";
+                  # print STDERR "reverse: $reverse / $prefixl\n";
+               }
+               
+               $reverse=~ /^\.(.*)$/;
+               $reverse=$1;
+                              
+               # print STDERR "prefix ip3: $ip3 pref: $prefixl!\n";
+               
+               if (($prefixl<9) || ($prefix>24)) {
+                  $objecterrors++;
+               }
+               else {
+                  $reverse=~ /^(\d+)\./;
+                  $fromdelegation=$1;
+                     
+                  if ($fromdelegation % ($prefixlength{$prefixl%8}+1)) {
+                     # print STDERR "prefix error\n";
+                     $objecterrors++;
+                  }
+                  else {
+                     $untildelegation=$fromdelegation+$prefixlength{$prefixl%8};
+                        
+                     print STDERR "From: $fromdelegation Until: $untildelegation\n";
+               
+                  }
+                     
+               }
+               if ($objecterrors) {
+                  $EXTRACTLOCALREPORT.="Fatal error in \'inetnum:\' attribute: $line\ninetnum: bad prefix\n";
+               }                     
+               else {
+                  $start=1;
+               }
+            }   
+            else {
+               print STDERR "errors in inetnum !\n";
+               
+               $objecterrors++;
+               $EXTRACTLOCALREPORT.="Fatal error in \'inetnum:\' attribute: $line\n";
+               $EXTRACTLOCALREPORT.="\'inetnum:\' attribute syntax (for reverse delegation) is:\ninetnum: x.x.x.x [- x.x.x.x]\n"; 
+            }
+            if (($untildelegation>255) || 
+                ($fromdelegation<0) || 
+                ($untildelegation<$fromdelegation)) {
+               $objecterrors++;
+               $EXTRACTLOCALREPORT.="Fatal error in \'inetnum:\' attribute: $line\n";
+               $EXTRACTLOCALREPORT.="\'inetnum:\' invalid IP number range:\ninetnum: x.x.x.x [- x.x.x.x]\n";    
+            }
+         }
+         if ($objecterrors) {
+            $start=0;
+         }  
+      }
+   }
+   
+   # print STDERR "Start: $start\n";
+   
+   if ($start) {
+      @nameservers=();
+      %realnameservers=();
+      
+      while (($line=shift(@ORIGINALMESSAGE)) && ($line=~ /\s*\S+:.*$/)) {
+         
+         # special for broken MIME mailers...
+      
+         $line=~ s/\n//;
+         $line=~ s/\=20$//;
+      
+         
+         print STDERR "Find servers in object...\n" if $DEBUG;
+      
+         if ($line=~ /^.*(\*ns|nserver|\*rz|rev\-srv):\s+(\S+)\s*$/i) {
+            local($attribute)=$1;
+            local($realserver)=$2;
+            local($server)=$realserver;
+            local($testserver)=$server;
+            
+            $server=~ tr/A-Z/a-z/;
+            $attribute=~ tr/A-Z/a-z/;
+            
+            # avoid ambigiuties about . or no .'s after server names
+            
+            $server=~ s/\.$//;
+            $realserver=~ s/\.$//;
+            
+            # try to catch problems, but accept as mutch funny characters
+            # as possible
+            
+            $testserver=~ s/^\@//;
+            $testserver=~ s/\@$//;
+            $testserver=~ s/^\.//;
+            $testserver=~ s/\.\.//;
+
+            $testserver=~ s/[^a-zA-Z0-9\-\_\=\+\@\.]//g;
+            
+            if ($server ne $testserver) {
+               $objecterrors++;
+               $EXTRACTLOCALREPORT.="Fatal error in $attribute attribute:\n";
+               $EXTRACTLOCALREPORT.="Don't trust strange characters in server name ($server)\n"; 
+            }
+            else {
+               local($regularserver)=&MakeRegular($server);
+             
+               if (grep(/^$regularserver$/i,@nameservers)) {
+                  # print STDERR "Warning found!\n";
+                  ($parsewarnings)=&printwarning($parsewarnings,"$server is mentioned more then once in the RIPE database object");
+               }  
+               else {
+                  push(@nameservers,$server);
+                  $realnameservers{$server}=$realserver;
+               }
+               print STDERR "Server found: $server\n" if $DEBUG;
+            }
+         }
+      }
+      if (!@nameservers) {
+         $EXTRACTLOCALREPORT.="No nameservers found in object $objectheader!\n";
+         $start=0;
+      } 
+   }
+   
+   if ($EXTRACTLOCALREPORT) {
+      $EXTRACTREPORT.=$ERROROBJECTHEADER;
+      $EXTRACTREPORT.="$EXTRACTLOCALREPORT\n";
+      $EXTRACTREPORT=~ s/\$objecttype/$objecttype/;
+   }
+   
+   if ($LOCALSHORTERRORREPORT) {
+         $PARSEERRORREPORT=$LOCALSHORTERRORREPORT;
+   }
+   
+   if ($LOCALSHORTWARNINGREPORT) {
+         $PARSEWARNINGREPORT=$LOCALSHORTWARNINGREPORT;
+   }
+   
+   while ($start) {
+      
+      %nameservers=();
+      %nsservers=();
+      %records=();
+      %primaries=();
+      %hostmasters=();
+      %serials=();
+      %refresh=();
+      %retries=();
+      %expires=();
+      %zoneinfos=();
+      %ttls=();
+
+      $LOCALINFO="";
+      $LOCALREPORT="";
+      $CONTACT="";
+      $DONTASKUS="";
+      
+      if ($PARSEERRORREPORT) {
+         $LOCALSHORTERRORREPORT=$PARSEERRORREPORT;
+         $errors=$parseerrors;
+      }
+      else {
+         $errors=0;
+         $LOCALSHORTERRORREPORT="";
+      }
+      
+      if ($PARSEWARNINGREPORT) {
+         $LOCALSHORTWARNINGREPORT=$PARSEWARNINGREPORT;
+         $warnings=$parsewarnings;
+      }
+      else {
+         $warnings=0;
+         $LOCALSHORTWARNINGREPORT="";
+      }
+      
+      $totaldelegations++;
+      
+      ($regularreverse)=&MakeRegular($reverse);
+  
+      print STDERR "Do checkings for reverse delegation $reverse\n"; 
+
+      {
+        local($tmp)="\nReverse delegation of ";
+        $tmp.="block " if $block;
+        $tmp.="$reverse:\n";
+        
+        $SHORTREPORT.=$tmp;
+        $SHORTREPORT.="-" x (length($tmp)-1);
+        $SHORTREPORT.="\n\n";
+        
+        $REPORT.=$tmp;
+      }
+      
+      if (!&NotYetDelegated) {
+      
+         $LOCALINFO.="The report on the reverse delegation of $reverse\nis based on the following information :\n\n";
+         $LOCALINFO.="The following nameservers were found in the database object:\n\n";
+         foreach $server (@nameservers) {
+            $LOCALINFO.="Nameserver: $server\n";
+         }
+      
+         foreach $server (@nameservers) {
+            $LOCALINFO.="\n$bigheaderline\n\nExtracting info from $server:\n\n$headerline\n";
+      
+            ($regularserver)=&MakeRegular($server);
+         
+            $records{$server,$ARECORD}=&ExtractIPaddrInfo($server) if ($nameservers{$server} ne $DONTCHECKTHISHOST);
+            $records{$server,$SOARECORD}=&ExtractSOAInfo($server) if ($nameservers{$server} ne $DONTCHECKTHISHOST);
+            $records{$server,$NSRECORD}=&ExtractNSInfo($server) if ($nameservers{$server} ne $DONTCHECKTHISHOST);
+            $records{$server,$ZONERECORD}=&ExtractZoneInfo($server) if ($nameservers{$server} ne $DONTCHECKTHISHOST);
+          
+            # if ($server eq "ns.ripe.net") {
+            #    &PrTraceroute("193.15.5.9");
+            # }
+            
+            if (($records{$server,$ARECORD} & $CONNECTIVITYERROR) ||
+                ($records{$server,$NSRECORD} & $CONNECTIVITYERROR) || 
+                ($records{$server,$SOARECORD} & $CONNECTIVITYERROR) ||
+                ($records{$server,$ZONERECORD} & $CONNECTIVITYERROR)) {
+            
+               if ($CHECKCONNECTIVITY) {
+                  &Ping($server);
+                  &PrTraceroute($server);
+               }
+            }
+         }
+      
+         $LOCALINFO.="$bigheaderline\n\nThe program reports the following:\n\n" if VERBOSE1;
+      
+         print STDERR "Do checkings ... ";  
+         &CheckServerNames();
+         &CheckPrimaries();
+         if ($block) {
+            &CheckMandatoryNS($BLOCKDONTCARE,$BLOCKPRIMARY,$BLOCKSECONDARY);
+         }
+         else {
+            &CheckMandatoryNS($NETDONTCARE,$NETPRIMARY,$NETSECONDARY);
+         }
+         &CheckNrOfNS();
+         &CheckNSMissingServers();
+         &CheckNSExtraServers();
+         &CheckSerials();
+         &CheckTimings();
+         &CheckZoneInfos();
+         if ($errors) {
+            print STDERR "done, but errors found\n";
+         }
+         else {
+            print STDERR "done\n";  
+         }
+      }
+      
+      &PrintFinalReport();
+      
+      if ($errors) {
+         if ($DONTASKUS) {
+            $SHORTREPORT.=$DONTASKUS;
+         }
+         else {
+            $SHORTREPORT.=$ERROR;
+         }
+         $SHORTREPORT.=$LOCALSHORTERRORREPORT;
+         
+         if ($warnings) {
+            $SHORTREPORT.=$ALSOWARNING;
+            $SHORTREPORT.=$LOCALSHORTWARNINGREPORT;
+         }
+         
+         $SHORTREPORT.=$DETAILS if (($LONGACK) && (($LOCALSHORTERRORREPORT) || ($LOCALSHORTWARNINGREPORT)));
+      }
+      else {
+         $SHORTREPORT.=$OK;
+         
+         if ($warnings) {
+            if ($errors) {
+               $SHORTREPORT.=$ALSOWARNING;
+            }
+            else {
+               $SHORTREPORT.=$WARNING;
+            }
+            
+            $SHORTREPORT.=$LOCALSHORTWARNINGREPORT;
+            $SHORTREPORT.=$DETAILS if ($LONGACK);
+         }
+         
+         if ($NOTEST) {
+            $SHORTREPORT.=$ACK;
+         }
+      }
+      
+      $SHORTREPORT.="\n\n";
+      $SHORTREPORT=~ s/\$reverse/$reverse/g;
+
+      $REPORT.=$LOCALINFO;
+      $REPORT.=$LOCALREPORT;
+
+      $REPORT.="$bigheaderline\n$bigheaderline\n\n";
+      
+      if ($untildelegation > $fromdelegation) {
+         local($olddelegation)=$fromdelegation;
+         $fromdelegation++;
+         $reverse=~ s/$olddelegation/$fromdelegation/;
+         print "From: $fromdelegation Until: $untildelegation\n" if $DEBUG;
+      }
+      else {   
+         print "Start From: $fromdelegation Until: $untildelegation\n" if $DEBUG; 
+         $start=0;
+      }
+      
+   }
+   
+}
+
+
+
+($s,$m,$h,$day,$month,$yr,$wd,$yd,$is)= localtime(time);
+
+$month = "0".$month unless ++$month > 9;
+$day = "0".$day unless $day > 9;
+$yr = "0".$yr unless $yr > 9;
+
+$YYMMDD = "$yr$month$day";
+
+$s = "0".$s unless $s > 9;
+$m = "0".$m unless $m > 9;
+$h = "0".$h unless $h > 9;
+
+$HHMMSS="$h:$m:$s";
+
+print STDERR "$YYMMDD $HHMMSS\n" if $DEBUG;                    
+
+if (($TESTMODE) || ((!$FROM) && (!$REPLYTO))) {
+   $FROM=$HUMANMAIL;
+   $CC="";
+   $REPLYTO="";
+}
+
+if ($REPLYTO) {
+   $FROM=$REPLYTO;  
+}
+
+$MAILHEADER=~ s/\$FROM/$FROM/;
+
+if ($CC) {
+   $MAILHEADER=~ s/\$CC/$CC/;
+}
+else {
+   $MAILHEADER=~ s/Cc\:.*\n//i;
+}
+
+if ($HELP) {
+   $MAILHEADER=~ s/\$SUBJECT/Re: $SUBJECT/;
+}
+else {
+   $SUBJECTTEMPLATE=~ s/\$totaldelegations/$totaldelegations/;
+   $SUBJECTTEMPLATE=~ s/\$totalok/$totalok/;
+   $SUBJECTTEMPLATE=~ s/\$totalwarnings/$totalwarnings/;
+   $SUBJECTTEMPLATE=~ s/\$totalerrors/$totalerrors/;
+
+   $MAILHEADER=~ s/\$SUBJECT/$SUBJECTTEMPLATE Re: $SUBJECT/;
+}
+   
+print STDERR $MAILHEADER if $DEBUG;
+   
+if ((!$totaldelegations) && (!$EXTRACTREPORT)) {
+   $ALL.=$NOVALIDOBJECTS;
+}
+   
+$ALL.=$EXTRACTREPORT;
+$ALL.=$SHORTREPORT;
+   
+if ((!$totaldelegations) && ($EXTRACTREPORT)) {
+   $ALL.=$NOVALIDOBJECTS;
+}
+      
+$ALL.=$SIGNATURE;
+$ALL.="\n$bigheaderline\n$bigheaderline\n\n";
+      
+$ALL.="Original request:\n\n";
+$ALL.=$ORIGINALMESSAGE; 
+$ALL.="\n$bigheaderline\n$bigheaderline\n\n";
+         
+if (($totaldelegations) && ($LONGACK)) {
+   local($tmp)="Detailed report(s):\n";
+   $ALL.=$tmp;
+   $ALL.="-" x (length($tmp)-1);
+   $ALL.="\n\n\n";
+   $ALL.=$REPORT;
+}
+   
+   
+# print STDERR $ALL;
+         
+if ($SENDMAILTOUSER) {
+   # print STDERR "HELP: $HELP\n";
+   
+   local($toaddress)=$FROM;
+   
+   if ($CC) {
+      $toaddress.=" and cc'ed to $CC";
+   }
+         
+   if ($HELP) {
+      &writelogandsendmail("$ACKLOGDIR/$YYMMDD",$ACKBANNER,$toaddress,$MAILHEADER.$HELP);
+   }  
+   else {
+      &writelogandsendmail("$ACKLOGDIR/$YYMMDD",$ACKBANNER,$toaddress,$MAILHEADER.$ALL);
+   }
+}
+      
+if ($totalok || $totalwarnings) {
+   $MAILHEADER=~ s/To\:.*\n/To\: $HUMANMAIL\n/i;
+   $MAILHEADER=~ s/Cc\:.*\n//i if $CC;
+
+   print STDERR $MAILHEADER if $DEBUG;
+
+   $MAILHEADER.="\n";
+   $MAILHEADER.="-" x 33;
+   $MAILHEADER.=" Cut here ";
+   $MAILHEADER.="-" x 33;
+   $MAILHEADER.="\n";
+   $MAILHEADER.=$ADDTOZONEFILE;
+   $MAILHEADER.="-" x 33;
+   $MAILHEADER.=" Cut here ";
+   $MAILHEADER.="-" x 33;
+   $MAILHEADER.="\n";
+      
+   if ($totaldelegations) {
+      $ALL.="Detailed report(s):\n";
+      $ALL.="-" x (length($tmp)-1);
+      $ALL.="\n\n\n";
+      $ALL.=$REPORT;
+   }
+      
+   if ($NOTEST) {
+      &writelogandsendmail("$FWLOGDIR/$YYMMDD",$FWBANNER,$HUMANMAIL,$MAILHEADER.$ALL);   
+   }
+}
+
+unlink(($ALLOUTPUTFILE));
+unlink(($MSGTMPFILE));
+
+print STDERR "End of program.\n";
+
+
+

@@ -1,0 +1,12 @@
+/pe_bootargs.c/1.1.1.1/Sat Mar 25 21:03:11 2000//Txnu-1-1
+/pe_clock_speed.c/1.1.1.1/Sat Mar 25 21:03:11 2000//Txnu-1-1
+/pe_clock_speed_asm.s/1.1.1.1/Sat Mar 25 21:03:11 2000//Txnu-1-1
+/pe_debug.c/1.1.1.1/Sat Mar 25 21:03:11 2000//Txnu-1-1
+/pe_identify_machine.c/1.1.1.1/Sat Mar 25 21:03:11 2000//Txnu-1-1
+/pe_images.h/1.1.1.1/Sat Mar 25 21:03:11 2000//Txnu-1-1
+/pe_init.c/1.1.1.1/Sat Mar 25 21:03:11 2000//Txnu-1-1
+/pe_interrupt.c/1.1.1.1/Sat Mar 25 21:03:11 2000//Txnu-1-1
+/pe_kprintf.c/1.1.1.1/Sat Mar 25 21:03:11 2000//Txnu-1-1
+/pe_misc.s/1.1.1.1/Sat Mar 25 21:03:11 2000//Txnu-1-1
+/pe_printf.c/1.1.1.1/Sat Mar 25 21:03:11 2000//Txnu-1-1
+D

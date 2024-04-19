@@ -1,0 +1,28 @@
+#else /* BSD */
+
+#define	_PATH_DEVNULL	"/dev/null"
+#define	_PATH_TTY	"/dev/tty"
+#ifndef _PATH_XFER
+# define _PATH_XFER	"/etc/named-xfer"
+#endif
+#define	_PATH_DEBUG	"/usr/tmp/named.run"
+#define	_PATH_DUMPFILE	"/usr/tmp/named_dump.db"
+#ifndef _PATH_PIDFILE
+# define _PATH_PIDFILE	"/etc/named.pid"
+#endif
+#define	_PATH_STATS	"/usr/tmp/named.stats"
+#define	_PATH_XFERTRACE	"/usr/tmp/xfer.trace"
+#define _PATH_XFERDDT	"/usr/tmp/xfer.ddt"
+#define	_PATH_TMPXFER	"/usr/tmp/xfer.ddt.XXXXXX"
+#define	_PATH_TMPDIR	"/usr/tmp"
+#endif /* BSD */
+
+# if defined(__sgi) || defined(NeXT) || defined(__ultrix)
+#  undef _PATH_XFER
+#  define _PATH_XFER	"/usr/etc/named-xfer"
+# endif
+
+# ifdef sun
+#  undef _PATH_XFER
+#  define _PATH_XFER	"/usr/etc/in.named-xfer"
+# endif

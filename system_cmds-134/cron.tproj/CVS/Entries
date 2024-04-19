@@ -1,0 +1,26 @@
+/CHANGES/1.1.1.1/Sun May  2 04:21:24 1999//Tsystem_cmds-134
+/CONVERSION/1.1.1.1/Sun May  2 04:21:24 1999//Tsystem_cmds-134
+/FEATURES/1.1.1.1/Sun May  2 04:21:24 1999//Tsystem_cmds-134
+/INSTALL/1.1.1.1/Sun May  2 04:21:24 1999//Tsystem_cmds-134
+/MAIL/1.1.1.1/Sun May  2 04:21:25 1999//Tsystem_cmds-134
+/MANIFEST/1.1.1.1/Sun May  2 04:21:25 1999//Tsystem_cmds-134
+/Makefile/1.1.1.1/Sun May  2 04:21:25 1999//Tsystem_cmds-134
+/Makefile.dist/1.1.1.1/Sun May  2 04:21:25 1999//Tsystem_cmds-134
+/Makefile.preamble/1.1.1.1/Sun May  2 04:21:25 1999//Tsystem_cmds-134
+/PB.project/1.1.1.1/Sun May  2 04:21:25 1999//Tsystem_cmds-134
+/Part01/1.1.1.2/Tue Jan 11 02:10:08 2000//Tsystem_cmds-134
+/Part02/1.1.1.1/Sun May  2 04:21:25 1999//Tsystem_cmds-134
+/Patch01/1.1.1.1/Sun May  2 04:21:25 1999//Tsystem_cmds-134
+/README/1.1.1.1/Sun May  2 04:21:25 1999//Tsystem_cmds-134
+/THANKS/1.1.1.1/Sun May  2 04:21:25 1999//Tsystem_cmds-134
+/compat.c/1.1.1.2/Tue Jan 11 02:10:08 2000//Tsystem_cmds-134
+/compat.h/1.1.1.2/Tue Jan 11 02:10:08 2000//Tsystem_cmds-134
+/config.h/1.1.1.2/Tue Jan 11 02:10:08 2000//Tsystem_cmds-134
+/cron.h/1.1.1.2/Tue Jan 11 02:10:08 2000//Tsystem_cmds-134
+/entry.c/1.1.1.2/Tue Jan 11 02:10:09 2000//Tsystem_cmds-134
+/env.c/1.1.1.2/Tue Jan 11 02:10:09 2000//Tsystem_cmds-134
+/externs.h/1.1.1.1/Sun May  2 04:21:25 1999//Tsystem_cmds-134
+/misc.c/1.1.1.2/Tue Jan 11 02:10:09 2000//Tsystem_cmds-134
+/pathnames.h/1.1.1.2/Tue Jan 11 02:10:09 2000//Tsystem_cmds-134
+D/cron////
+D/crontab////

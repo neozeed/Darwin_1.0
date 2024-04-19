@@ -1,0 +1,33 @@
+#### Start of system configuration section. ####
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+M4 = @M4@
+AWK = @AWK@
+PERL = @PERL@
+CC = @CC@
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+# Directory in which to install scripts.
+bindir = @bindir@
+
+# man directory
+mandir = @mandir@
+
+#### End of system configuration section. ####
+
+SHELL = /bin/sh
+
+PROGS= poke_ns poke_dhcp gendns readinfo updatehosts genstatic
+
+SHELL = /bin/sh
+
+MANPAGES = gendhcp.1 gendns.1 poke_dhcp.1 poke_ns.1 readinfo.1 updatehosts.1
+
+man: 
+	for f in ${MANPAGES}; do ${INSTALL_PROGRAM} -m 444 $$f ${mandir}/man1; done

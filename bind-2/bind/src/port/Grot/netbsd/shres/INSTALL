@@ -1,0 +1,75 @@
+Installing BIND 4.9.3 resolver code in SunOS compatible shared libraries
+========================================================================
+
+modified for NetBSD by Matt Ragan <matt@ibmoto.com>
+fixes for SunOS-4.x and NetBSD-1.1 by Greg A. Woods <woods@planix.com>
+
+based directly on documentation for installing SunOS shared libraries
+by Chris Davis <ckd@kei.com>
+
+based on code and documentation by:
+  Paul Balyoz <pab@naucse.cse.nau.edu>
+  Piete Brooks <pb@cl.cam.ac.uk>
+  Dave Morrison <drmorris@mit.edu>
+  Hal Pomeranz <pomeranz@nas.nasa.gov>
+  Matt Ragan <matt@ibmoto.com>
+  Greg A. Woods <woods@planix.com>
+  Eduard Vopicka <Eduard.Vopicka@vse.cz>
+and probably others (apologies if I've forgotten you).
+
+1.  Get and unpack a copy of BIND 4.9.3.  (This document is from that
+    distribution, as shres/netbsd/INSTALL.) See <URL:http://www.isc.org/isc/> 
+    for more information, including a pointer to the latest version.
+
+    In the remainder of this document, $BINDSRC represents the directory
+    you unpacked the BIND distribution into.
+
+2.  Configure it to your tastes by editing $BINDSRC/conf/options.h,
+    using $BINDSRC/OPTIONS as a guide to the available choices.  Not all
+    of the options affect the resolver library, but you probably want
+    the new named as well.  The one supplied with NetBSD 1.0 is from
+    BIND 4.8.3.
+
+3.  (Optional) Use "make DST=NetBSD links" to create a shadow source
+    tree for the NetBSD architecture (see $BINDSRC/README for details).
+    This is particularly useful if you are building for more than one
+    architecture or operating system (like, say, SunOS 4.1.x and Solaris
+    2.x).  If you do this, cd into the new build directory ("cd NetBSD",
+    for example).
+
+4.  Uncomment the appropriate lines in $BINDSRC/Makefile for NetBSD 1.x,
+    FreeBSD 2.x, BSDI-2.x, or SunOS-4.x.  To build a shared library (the
+    goal of this section) also set the SHRES macro to "shres/netbsd".
+
+5.  (Optional) run "make depend".
+
+6.  Type "make" to build named, the tools, the "normal" libresolv, and
+    the position-independent code ("pic") libresolv_pic.
+
+7.  Build and install the new library with the makeshlib script:
+
+	sh ./makeshlib
+
+    NOTE:  You will have to be in the $BINDSRC/shres/netbsd directory
+    before running this script.
+
+    WARNING:  The makeshlib script does minimal error checking -- it
+    only runs the 'date' command with the new library.
+
+    Note that you will have to be "root" for the final install of the
+    library to succeed.  You should read the makeshlib script carefully
+    before running it as root.
+
+    You may wish to use "sh -x ./makeshlib" to view the commands as
+    they are executed as a progress indicator.
+
+8.  Once you are fully confident of your new library, reboot your
+    machine.  Until you do, running processes will continue to use the
+    old shared library.
+
+NOTE: This version of BIND does not update /usr/lib/libc.a.  Use
+"-lresolv" when linking new static programs to ensure use of the new
+BIND 4.9.3 resolver routines.
+
+
+#ident	   "@(#)bind/shres/netbsd:$Name: bind-2 $:$Id: INSTALL,v 1.1.1.1 1999/10/04 22:24:51 wsanchez Exp $"

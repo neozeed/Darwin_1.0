@@ -1,0 +1,7 @@
+NEXTSTEP_PB_CFLAGS += -DkBootImagePath="\"$(ImageInstallDir)/$(BootPanelImage)\""
+
+include $(CoreOSMakefiles)/ProjectBuilder/Makefile.Postamble.Common
+
+install_my_resources:
+	$(INSTALL_DIRECTORY) $(DSTROOT)$(ImageInstallDir)
+	$(INSTALL_FILE) -c $(BootPanelImage) $(DSTROOT)$(ImageInstallDir)/$(BootPanelImage)

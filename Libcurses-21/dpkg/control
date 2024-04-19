@@ -1,0 +1,4 @@
+Package: libcurses
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Description: Text-mode display library
+Build-Depends: build-base

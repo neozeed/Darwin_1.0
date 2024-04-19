@@ -1,0 +1,27 @@
+
+CURRENT_PROJECT_VERSION = 160
+COMPATIBILITY_PROJECT_VERSION = 150
+VERSIONING_SYSTEM = apple-generic
+VERSION_INFO_PREFIX = kCF
+VERSION_INFO_CVS = YES
+ENABLE_HELP_DICTIONARY = NO
+ENABLE_INFO_DICTIONARY = NO
+ENABLE_DEF_FILE_GENERATION = NO
+
+override DUMMY_SYMBOL_FILE =
+override DUMMY_SYMBOL_INFO_FILE =
+
+OTHER_SOURCEFILES += apple-generic.make apple-generic-local.make\
+	MacTypes.h ConditionalMacros.h
+AFTER_INSTALLHDRS += install-special-makefiles
+
+OTHER_CFLAGS += -DCF_BUILDING_CF -Wno-precomp -Wno-four-char-constants
+BEFORE_INSTALL += debug profile
+BEFORE_POSTINSTALL += corefoundation-strip-debug-binary
+OTHER_LDFLAGS += -image_base 0x69b00000
+OTHER_LIBTOOL_FLAGS += -Wl,-init,___CFInitialize
+ifeq "$(ENCODINGS_INSTALLDIR)" ""
+	ENCODINGS_INSTALLDIR = $(SYSTEM_LIBRARY_DIR)/CoreServices/Encodings
+endif
+OTHER_RECURSIVE_VARIABLES += ENCODINGS_INSTALLDIR
+

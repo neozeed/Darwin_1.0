@@ -1,0 +1,70 @@
+SQL Bind Notes
+
+6/8/99
+sqlbind8-0.4.1 released.  This is really just updates to patch the new bind 
+8.2.1 that is about to come out.  It looks like the bug with new versions
+of mysql have been fixed.  I still haven't had time to get the ndc relead
+bug fixed.  I'm still working on the daemon to do dynamic updates.
+
+5/12/99
+Just so people don't think I have abandoned sqlbind8, I am still working on it.
+I have a basic config file parser working and when i get a real release going, I
+will have more time to make up one in yacc to do it with better error checking.
+I am pushing for a release of the daemonized version in about 2 weeks.  It will
+be able to do updates on the fly without having to mess with named.
+
+4/14/99
+I finally got the sqlbind daemon to start doing dynamic updates.  It won't be 
+long before I release a new version.
+
+3/23/99
+Newly redesigned web site is up and going. (Like the pencil? :) Web stats are
+brought to you by a handy log parser called webalizer.
+
+3/21/99
+New release up: 0.4.0.  Fixes problems with the new release of bind 8.2.  
+The patch has been broken into a few parts now to account for bind 8.1.2 
+and 8.2.  Updated README and added some defaults in case some fields are 
+left out of named.conf.
+
+3/13/99
+Fixed some minor bugs in records with blank owners.
+
+3/10/99
+I'm currently haveing a few problems parsing out the owner in the record so a 
+new version will not be out quite yet.  I also added a new field to the table 
+to be used as a comments field for anything you want.
+
+3/8/99
+I haven't had a lot of time to work on this lately so it's taken a while to get a 
+new version out.  This is mostly a cleanup release and a fix in the diff (i missed
+diffing a file :).  Incase your wondering about the format of the named.conf, it 
+is done like that to make the records in the database all match the same format.
+The serial number is a temporary thing untill I get it to automatically update
+while it refreshes.
+1/24/99
+First off, I wanted to keep the changes I make to the original code to a bare 
+minimum so I wrapped a few things in an if() and called out to functions in 
+the new db_sql.c file I created.  This should make finding things pretty easy.
+Next, the horrid while in db_load() just didn't cut it for what I wanted to do, 
+so I copied it into db_sql.c and started hacking on it until I came up with 
+what I call sql_load_rec().  I prefix all of my functions with sql_ to keep  
+them strait from the rest of the code.  Since almost all kinds of records in  
+a zone file are in the same format except for the SOA, I created a SQL_REC  
+structure to make things easy to pass around and this gets passed into 
+sql_load_rec() with a few other things where it's hacked up and finally 
+loaded into the cache.
+I added a few things to named.conf to make up for what the SOA was missing in  
+the sql record.  Yes, you will see a user name and password for the sql db server 
+in the named.conf.  This was about the only way I could see to get it to load the 
+zone from different db servers if you want.  Named only needs read access to the  
+db so if you give root the only permission to named.conf, I don't see much problem 
+with it.
+If you are wondering what the fixname() is for, since a table can not have a '.' 
+or a '-' in the table name, I used '_' and '__' in thier place.  When you pass 
+fixname() the zone name, it converts the '.' and '-' and I use that to read from 
+db table so now I can load normal and reverse zones without a problem.
+Currently I have only edited the Makefile, ns_config.c, ns_def.h, ns_lexer.c, 
+ns_parser.y, db_load and I created db_sql.c. 
+ 
+

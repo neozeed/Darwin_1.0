@@ -1,0 +1,14 @@
+/.cvsignore/1.1.1.1/Mon Oct  4 22:24:40 1999//Tbind-2
+/Makefile/1.2/Tue Oct  5 00:07:50 1999//Tbind-2
+/commands.l/1.1.1.1/Mon Oct  4 22:24:40 1999//Tbind-2
+/debug.c/1.1.1.1/Mon Oct  4 22:24:40 1999//Tbind-2
+/getinfo.c/1.1.1.1/Mon Oct  4 22:24:40 1999//Tbind-2
+/list.c/1.1.1.1/Mon Oct  4 22:24:40 1999//Tbind-2
+/main.c/1.1.1.1/Mon Oct  4 22:24:40 1999//Tbind-2
+/nslookup.help/1.1.1.1/Mon Oct  4 22:24:40 1999//Tbind-2
+/pathnames.h/1.1.1.1/Mon Oct  4 22:24:40 1999//Tbind-2
+/res.h/1.1.1.1/Mon Oct  4 22:24:40 1999//Tbind-2
+/send.c/1.1.1.1/Mon Oct  4 22:24:40 1999//Tbind-2
+/skip.c/1.1.1.1/Mon Oct  4 22:24:40 1999//Tbind-2
+/subr.c/1.1.1.1/Mon Oct  4 22:24:40 1999//Tbind-2
+D

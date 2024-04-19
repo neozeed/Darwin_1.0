@@ -1,0 +1,30 @@
+/BUGS/1.1.1.1/Sun May  2 02:42:24 1999//Temacs-33
+/ChangeLog/1.1.1.2/Thu Sep  2 05:32:22 1999//Temacs-33
+/GETTING.GNU.SOFTWARE/1.1.1.1/Sun May  2 02:42:24 1999//Temacs-33
+/INSTALL/1.1.1.2/Thu Sep  2 05:32:22 1999//Temacs-33
+/Makefile.in/1.1.1.4/Thu Sep  2 05:46:18 1999//Temacs-33
+/README/1.1.1.2/Thu Sep  2 05:32:22 1999//Temacs-33
+/README.MacOSXServer/1.1.1.1/Thu Sep  2 05:46:19 1999//Temacs-33
+/config.bat/1.1.1.2/Thu Sep  2 05:32:22 1999//Temacs-33
+/config.guess/1.2/Wed Jan 26 05:57:37 2000//Temacs-33
+/config.sub/1.2/Wed Jan 26 05:57:37 2000//Temacs-33
+/configure/1.2/Fri Feb  4 19:09:45 2000//Temacs-33
+/configure.in/1.2/Fri Feb  4 19:09:45 2000//Temacs-33
+/install.sh/1.1.1.1/Sun May  2 02:42:25 1999//Temacs-33
+/make-dist/1.1.1.2/Thu Sep  2 05:32:24 1999//Temacs-33
+/mkinstalldirs/1.1.1.1/Sun May  2 02:42:25 1999//Temacs-33
+/move-if-change/1.1.1.1/Sun May  2 02:42:25 1999//Temacs-33
+/update-subdirs/1.1.1.1/Sun May  2 02:42:25 1999//Temacs-33
+/vpath.sed/1.1.1.1/Sun May  2 02:42:25 1999//Temacs-33
+D/etc////
+D/info////
+D/leim////
+D/lib-src////
+D/lisp////
+D/lwlib////
+D/man////
+D/msdos////
+D/nt////
+D/oldXMenu////
+D/src////
+D/vms////

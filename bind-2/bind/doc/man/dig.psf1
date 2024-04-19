@@ -1,0 +1,414 @@
+%!PS-Adobe-3.0
+%%Creator: groff version 1.10
+%%CreationDate: Mon Jun 21 14:21:55 1999
+%%DocumentNeededResources: font Times-Roman
+%%DocumentSuppliedResources: procset grops 1.10 0
+%%Pages: 2
+%%PageOrder: Ascend
+%%Orientation: Portrait
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset grops 1.10 0
+/setpacking where{
+pop
+currentpacking
+true setpacking
+}if
+/grops 120 dict dup begin
+/SC 32 def
+/A/show load def
+/B{0 SC 3 -1 roll widthshow}bind def
+/C{0 exch ashow}bind def
+/D{0 exch 0 SC 5 2 roll awidthshow}bind def
+/E{0 rmoveto show}bind def
+/F{0 rmoveto 0 SC 3 -1 roll widthshow}bind def
+/G{0 rmoveto 0 exch ashow}bind def
+/H{0 rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/I{0 exch rmoveto show}bind def
+/J{0 exch rmoveto 0 SC 3 -1 roll widthshow}bind def
+/K{0 exch rmoveto 0 exch ashow}bind def
+/L{0 exch rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/M{rmoveto show}bind def
+/N{rmoveto 0 SC 3 -1 roll widthshow}bind def
+/O{rmoveto 0 exch ashow}bind def
+/P{rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/Q{moveto show}bind def
+/R{moveto 0 SC 3 -1 roll widthshow}bind def
+/S{moveto 0 exch ashow}bind def
+/T{moveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/SF{
+findfont exch
+[exch dup 0 exch 0 exch neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/MF{
+findfont
+[5 2 roll
+0 3 1 roll
+neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/level0 0 def
+/RES 0 def
+/PL 0 def
+/LS 0 def
+/MANUAL{
+statusdict begin/manualfeed true store end
+}bind def
+/PLG{
+gsave newpath clippath pathbbox grestore
+exch pop add exch pop
+}bind def
+/BP{
+/level0 save def
+1 setlinecap
+1 setlinejoin
+72 RES div dup scale
+LS{
+90 rotate
+}{
+0 PL translate
+}ifelse
+1 -1 scale
+}bind def
+/EP{
+level0 restore
+showpage
+}bind def
+/DA{
+newpath arcn stroke
+}bind def
+/SN{
+transform
+.25 sub exch .25 sub exch
+round .25 add exch round .25 add exch
+itransform
+}bind def
+/DL{
+SN
+moveto
+SN
+lineto stroke
+}bind def
+/DC{
+newpath 0 360 arc closepath
+}bind def
+/TM matrix def
+/DE{
+TM currentmatrix pop
+translate scale newpath 0 0 .5 0 360 arc closepath
+TM setmatrix
+}bind def
+/RC/rcurveto load def
+/RL/rlineto load def
+/ST/stroke load def
+/MT/moveto load def
+/CL/closepath load def
+/FL{
+currentgray exch setgray fill setgray
+}bind def
+/BL/fill load def
+/LW/setlinewidth load def
+/RE{
+findfont
+dup maxlength 1 index/FontName known not{1 add}if dict begin
+{
+1 index/FID ne{def}{pop pop}ifelse
+}forall
+/Encoding exch def
+dup/FontName exch def
+currentdict end definefont pop
+}bind def
+/DEFS 0 def
+/EBEGIN{
+moveto
+DEFS begin
+}bind def
+/EEND/end load def
+/CNT 0 def
+/level1 0 def
+/PBEGIN{
+/level1 save def
+translate
+div 3 1 roll div exch scale
+neg exch neg exch translate
+0 setgray
+0 setlinecap
+1 setlinewidth
+0 setlinejoin
+10 setmiterlimit
+[]0 setdash
+/setstrokeadjust where{
+pop
+false setstrokeadjust
+}if
+/setoverprint where{
+pop
+false setoverprint
+}if
+newpath
+/CNT countdictstack def
+userdict begin
+/showpage{}def
+}bind def
+/PEND{
+clear
+countdictstack CNT sub{end}repeat
+level1 restore
+}bind def
+end def
+/setpacking where{
+pop
+setpacking
+}if
+%%EndResource
+%%IncludeResource: font Times-Roman
+grops begin/DEFS 1 dict def DEFS begin/u{.001 mul}bind def end/RES 72
+def/PL 792 def/LS false def/ENC0[/asciicircum/asciitilde/Scaron/Zcaron
+/scaron/zcaron/Ydieresis/trademark/quotesingle/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/space/exclam/quotedbl/numbersign/dollar/percent
+/ampersand/quoteright/parenleft/parenright/asterisk/plus/comma/hyphen
+/period/slash/zero/one/two/three/four/five/six/seven/eight/nine/colon
+/semicolon/less/equal/greater/question/at/A/B/C/D/E/F/G/H/I/J/K/L/M/N/O
+/P/Q/R/S/T/U/V/W/X/Y/Z/bracketleft/backslash/bracketright/circumflex
+/underscore/quoteleft/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y
+/z/braceleft/bar/braceright/tilde/.notdef/quotesinglbase/guillemotleft
+/guillemotright/bullet/florin/fraction/perthousand/dagger/daggerdbl
+/endash/emdash/ff/fi/fl/ffi/ffl/dotlessi/dotlessj/grave/hungarumlaut
+/dotaccent/breve/caron/ring/ogonek/quotedblleft/quotedblright/oe/lslash
+/quotedblbase/OE/Lslash/.notdef/exclamdown/cent/sterling/currency/yen
+/brokenbar/section/dieresis/copyright/ordfeminine/guilsinglleft
+/logicalnot/minus/registered/macron/degree/plusminus/twosuperior
+/threesuperior/acute/mu/paragraph/periodcentered/cedilla/onesuperior
+/ordmasculine/guilsinglright/onequarter/onehalf/threequarters
+/questiondown/Agrave/Aacute/Acircumflex/Atilde/Adieresis/Aring/AE
+/Ccedilla/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute/Icircumflex
+/Idieresis/Eth/Ntilde/Ograve/Oacute/Ocircumflex/Otilde/Odieresis
+/multiply/Oslash/Ugrave/Uacute/Ucircumflex/Udieresis/Yacute/Thorn
+/germandbls/agrave/aacute/acircumflex/atilde/adieresis/aring/ae/ccedilla
+/egrave/eacute/ecircumflex/edieresis/igrave/iacute/icircumflex/idieresis
+/eth/ntilde/ograve/oacute/ocircumflex/otilde/odieresis/divide/oslash
+/ugrave/uacute/ucircumflex/udieresis/yacute/thorn/ydieresis]def
+/Times-Roman@0 ENC0/Times-Roman RE
+%%EndProlog
+%%Page: 1 1
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF .49(\(domain information groper\) is a \215e)72
+12 R .49(xible command line tool which can be used to g)-.15 F .49
+(ather information from the Do-)-.05 F .482(main Name System serv)72 24
+R 2.982(ers. has)-.15 F(tw)2.983 E 2.983(om)-.1 G .483
+(odes: simple interacti)-2.983 F .783 -.15(ve m)-.25 H .483
+(ode for a single query).15 F 2.983(,a)-.65 G .483
+(nd batch mode which e)-2.983 F(x-)-.15 E .194
+(ecutes a query for each in a list of se)72 36 R -.15(ve)-.25 G .193(ral query lines. All query options are accessible from the command line.)
+.15 F(The)5.193 E .019(usual simple use of will tak)72 48 R 2.519(et)-.1
+G .019(he form: where: may be either a domain name or a dot-notation Internet address. If this)
+-2.519 F(optional \214eld is omitted, will attempt to use the def)72 60
+Q(ault name serv)-.1 E(er for your machine.)-.15 E .127
+(If a domain name is speci\214ed, this will be resolv)72 84 R .126
+(ed using the domain name system resolv)-.15 F .126
+(er \(i.e., BIND\). If your sys-)-.15 F .296
+(tem does not support DNS, you may to specify a dot-notation address.)72
+96 R(Alternati)5.297 E -.15(ve)-.25 G(ly).15 E 2.797(,i)-.65 G 2.797(ft)
+-2.797 G .297(here is a serv)-2.797 F .297(er at your dis-)-.15 F .585
+(posal some)72 108 R 3.085(where, all)-.25 F .584
+(that is required is that be present and indicate where the def)3.085 F
+.584(ault name serv)-.1 F .584(ers reside,)-.15 F .584(so that)5.584 F
+.086(itself can be resolv)72 120 R .086
+(ed. See for information on Changing will af)-.15 F .086
+(fect both the standard resolv)-.25 F .086(er library and se)-.15 F -.15
+(ve)-.25 G .087(ral pro-).15 F .572(grams which use it.)72 132 R .572
+(As an option, the user may set the en)5.572 F .572(vironment v)-.4 F
+.571(ariable to name a \214le which is to be used in-)-.25 F .098
+(stead of is speci\214c to the resolv)72 144 R .099
+(er and is not referenced by the standard resolv)-.15 F .099
+(er If the v)-.15 F .099(ariable is not set or the speci-)-.25 F .723
+(\214ed \214le is not readable, then will be used.)72 156 R .722
+(is the domain name for which you are requesting information.)5.723 F
+.722(See the)5.722 F 1.09
+(option \(documented in the subsection of this section\) for con)72 168
+R -.15(ve)-.4 G 1.09(nient w).15 F 1.09(ay to specify in)-.1 F -.15(ve)
+-.4 G 1.09(rse address query).15 F 6.09(.i)-.65 G 3.59(st)-6.09 G(he)
+-3.59 E .283(type of information \(DNS query type\) that you are requesting. If omitted, the def)
+72 180 R .283(ault is The follo)-.1 F .283(wing types are rec-)-.25 F
+.815(ognized: netw)72 192 R .815(ork address all/an)-.1 F 3.315(yi)-.15
+G .815(nformation about speci\214ed domain mail e)-3.315 F .815
+(xchanger for the domain name serv)-.15 F(ers)-.15 E .159(zone of authority record host information zone transfer \(must ask an authoritati)
+72 204 R .459 -.15(ve s)-.25 H(erv).15 E .158
+(er\) arbitrary number of strings)-.15 F .358
+(\(See RFC 1035 for the complete list.\))72 216 R .358(is the netw)5.358
+F .358(ork class requested in the query)-.1 F 2.858(.I)-.65 G 2.858(fo)
+-2.858 G .358(mitted, the def)-2.858 F .359(ault is The fol-)-.1 F(lo)72
+228 Q .269(wing classes are recognized: Internet class domain all/an)
+-.25 F 2.769(yc)-.15 G .269
+(lass information \(See RFC 1035 for the complete list.\))-2.769 F 1.015
+(can be used to specify a and/or a of query)72 240 R 6.015(.w)-.65 G
+1.015(ill parse the \214rst occurrence of to mean T)-6.015 F 3.515(os)
+-.8 G 1.015(pecify you must either)-3.515 F .632
+(specify twice, or set using the option \(see belo)72 252 R 3.132
+(w\). is)-.25 F .632(used to included an ar)3.132 F .632
+(gument that is simply not parsed.)-.18 F(This)5.632 E(may be useful)72
+264 Q .001(if running in batch mode. Instead of resolving e)5.001 F -.15
+(ve)-.25 G .001(ry in a list of queries, you can a).15 F -.2(vo)-.2 G
+.001(id the o).2 F -.15(ve)-.15 G .001(rhead of).15 F .256
+(doing so, and still ha)72 276 R .556 -.15(ve t)-.2 H .255(he domain name on the command line as a reference. Example: is used to specify an option)
+.15 F .53(which af)72 288 R .53(fects the operation of The follo)-.25 F
+.531(wing options are currently a)-.25 F -.25(va)-.2 G .531
+(ilable \(although not guaranteed to be useful\):).25 F(Con)72 300 Q
+-.15(ve)-.4 G .587(nient form to specify in).15 F -.15(ve)-.4 G .587
+(rse address mapping.).15 F .586
+(Instead of one can simply File for batch mode. The \214le con-)5.587 F
+.315(tains a list of query speci\214cations \( command lines\) which are to be e)
+72 312 R -.15(xe)-.15 G .316(cuted successi).15 F -.15(ve)-.25 G(ly).15
+E 5.316(.L)-.65 G .316(ines be)-5.316 F .316(ginning with or)-.15 F .759
+(are ignored.)72 324 R .759
+(Other options may still appear on command line, and will be in ef)5.759
+F .758(fect for each batch query)-.25 F 5.758(.T)-.65 G .758(ime in)
+-6.108 F .866(seconds between start of successi)72 336 R 1.167 -.15
+(ve q)-.25 H .867(ueries when running in batch mode. Can be used to k)
+.15 F .867(eep tw)-.1 F 3.367(oo)-.1 G 3.367(rm)-3.367 G .867(ore batch)
+-3.367 F .392(commands running roughly in sync.)72 348 R(Def)5.391 E
+.391(ault is zero.)-.1 F .391(Port number)5.391 F 2.891(.Q)-.55 G .391
+(uery a name serv)-2.891 F .391(er listening to a non-standard)-.15 F
+.238(port number)72 360 R 5.238(.D)-.55 G(ef)-5.238 E .238(ault is 53.)
+-.1 F .238(After query returns, e)5.238 F -.15(xe)-.15 G .238
+(cute a command for response time comparison.).15 F .239
+(This rather un-)5.239 F(ele)72 372 Q -.05(ga)-.15 G .077(ntly mak).05 F
+.077(es a call to the shell.)-.1 F .077(The last three lines of statistics is printed for the command: If the optional is pre-)
+5.077 F .331(sent, it replaces in the shell command.)72 384 R .331
+(Specify type of query)5.331 F 5.332(.M)-.65 G .332
+(ay specify either an inte)-5.332 F .332(ger v)-.15 F .332
+(alue to be included in)-.25 F .007(the type \214eld or use the abbre)72
+396 R .007(viated mnemonic as discussed abo)-.25 F .307 -.15(ve \()-.15
+H .007(i.e., Specify class of query).15 F 2.507(.M)-.65 G .006
+(ay specify either an)-2.507 F(inte)72 408 Q .391(ger v)-.15 F .391
+(alue to be included in the class \214eld or use the abbre)-.25 F .392
+(viated mnemonic as discussed abo)-.25 F .692 -.15(ve \()-.15 H .392
+(i.e., in = C_IN\).).15 F .163(This \215ag speci\214es that the en)72
+420 R .162(vironment \(def)-.4 F .162
+(aults, print options, etc.\), after all of the ar)-.1 F .162
+(guments are parsed, should be)-.18 F(sa)72 432 Q -.15(ve)-.2 G 3.065
+(dt).15 G 3.065(oa\214)-3.065 G .565(le to become the def)-3.065 F .565
+(ault en)-.1 F 3.065(vironment. This)-.4 F .566
+(is useful if you do not lik)3.065 F 3.066(et)-.1 G .566
+(he standard set of def)-3.066 F .566(aults and)-.1 F .036
+(do not desire to include a lar)72 444 R .036
+(ge number of options each time is used.)-.18 F .036(The en)5.036 F .036
+(vironment consists of resolv)-.4 F .036(er state v)-.15 F(ari-)-.25 E
+.486(able \215ags, timeout, and retries as well as the \215ags detailing output \(see belo)
+72 456 R 2.987(w\). If)-.25 F .487(the shell en)2.987 F .487
+(vironment v)-.4 F .487(ariable is)-.25 F .122
+(set to the name of a \214le, this is where the def)72 468 R .122
+(ault en)-.1 F .122(vironment is sa)-.4 F -.15(ve)-.2 G 2.622(d. If).15
+F .121(not, the \214le is created in the current w)2.622 F(ork-)-.1 E
+.573(ing directory)72 480 R 5.573(.i)-.65 G 3.073(ss)-5.573 G .573
+(peci\214c to the resolv)-3.073 F(er)-.15 E 3.073(,a)-.4 G .573
+(nd will not af)-3.073 F .573(fect operation of the standard resolv)-.25
+F .573(er library)-.15 F 5.574(.E)-.65 G .574(ach time is)-5.574 F -.15
+(exe)72 492 S .709
+(cuted, it looks for or the \214le speci\214ed by the shell en).15 F
+.708(vironment v)-.4 F .708(ariable If such \214le e)-.25 F .708
+(xists and is readable, then)-.15 F .519(the en)72 504 R .519
+(vironment is restored from this \214le before an)-.4 F 3.019(ya)-.15 G
+-.18(rg)-3.019 G .519(uments are parsed.).18 F .52(This \215ag only af)
+5.52 F .52(fects batch query runs.)-.25 F .279
+(When is speci\214ed on a line in a batch \214le, the en)72 516 R .278
+(vironment after the ar)-.4 F .278(guments are parsed becomes the def)
+-.18 F .278(ault en)-.1 F(vi-)-.4 E .937
+(ronment for the duration of the batch \214le, or until the ne)72 528 R
+.937(xt line which speci\214es This \215ag only af)-.15 F .937
+(fects batch query)-.25 F 2.706(runs. It)72 540 R .206
+(speci\214es that the en)2.706 F .206(vironment \(as read initially or set by switch\) is to be restored before each query \(line\) in)
+-.4 F 3.58(ab)72 552 S 1.08(atch \214le.)-3.58 F 1.08(The def)6.08 F
+1.08(ault means that the en)-.1 F 1.081(vironment does not stick, hence options speci\214ed on a single line in a)
+-.4 F .74(batch \214le will remain in ef)72 564 R .74
+(fect for subsequent lines \(i.e. the)-.25 F 3.24(ya)-.15 G .739
+(re not restored to the def)-3.24 F 3.239(ault\). is)-.1 F .739
+(used to specify an)3.239 F .654(option to be changed in the query pack)
+72 576 R .654(et or to change output speci\214cs. Man)-.1 F 3.154(yo)
+-.15 G 3.154(ft)-3.154 G .654(hese are the same parameters ac-)-3.154 F
+.676(cepted by If an option requires a parameter)72 588 R 3.175(,t)-.4 G
+.675(he form is as follo)-3.175 F .675(ws: Most k)-.25 F -.15(ey)-.1 G
+-.1(wo).15 G .675(rds can be abbre).1 F 3.175(viated. P)-.25 F .675
+(arsing of)-.15 F 1.09(the options)72 600 R 1.09(is v)6.09 F 3.59
+(ery simplistic)-.15 F 3.59(\212av)3.59 G 1.09
+(alue must not be separated from its k)-3.84 F -.15(ey)-.1 G -.1(wo).15
+G 1.09(rd by white space. The follo).1 F(wing)-.25 E -.1(ke)72 612 S(yw)
+-.05 E .94(ords are currently a)-.1 F -.25(va)-.2 G .939(ilable: K).25 F
+-.15(ey)-.25 G -.1(wo).15 G 13.439(rd Abbre).1 F 4.739 -.65(v. M)-.25 H
+.939(eaning [def).65 F .939(ault] turn on/of)-.1 F 3.439(fd)-.25 G(eb)
+-3.439 E .939(ugging mode turn on/of)-.2 F(f)-.25 E -.15(ex)72 624 S .23
+(tra deb).15 F .23(ugging mode use/don')-.2 F 2.73(tu)-.18 G .23
+(se recursi)-2.73 F .53 -.15(ve l)-.25 H .23
+(ookup set number of retries to # set timeout length to # seconds k).15
+F(eep)-.1 E 1.857(open option \(implies vc\) use/don')72 636 R 4.357(tu)
+-.18 G 1.857(se virtual circuit use/don')-4.357 F 4.357(tu)-.18 G 1.857
+(se def)-4.357 F 1.856(ault domain name use/don')-.1 F 4.356(tu)-.18 G
+1.856(se domain)-4.356 F 1.124(search list set def)72 648 R 1.124
+(ault domain name to ignore/don')-.1 F 3.625(ti)-.18 G 1.125
+(gnore trunc. errors use/don')-3.625 F 3.625(tu)-.18 G 1.125
+(se primary serv)-3.625 F 1.125(er authoritati)-.15 F -.15(ve)-.25 G
+.992(query only \215ag echo parsed ar)72 660 R .992(guments print query statistics print basic header print header \215ags print TTLs print)
+-.18 F .18(class info print outgoing query print reply print question section print answer section print authoritati)
+72 672 R .48 -.15(ve s)-.25 H .18(ection print).15 F 1.048
+(additional section set to def)72 684 R 1.047
+(ault print \215ags set to minimal def)-.1 F 1.047
+(ault print \215ags set print \215ags to # \(# can be he)-.1 F(x/oc-)
+-.15 E 1.17(tal/decimal\) bitwise and print \215ags with # bitwise or print \215ags with # The and options af)
+72 696 R 1.17(fect the retransmission)-.25 F(strate)72 708 Q .182
+(gy used by the resolv)-.15 F .182
+(er library when sending datagram queries.)-.15 F .182
+(The algorithm is as follo)5.182 F .182(ws: for i = 0 to retry -)-.25 F
+(1)72 720 Q(for j = 1 to num_serv)82 732 Q 36(ers send_query w)-.15 F
+(ait\(\(time * \(2**i\)\) / num_serv)-.1 E(ers\))-.15 E .404
+(end end \(Note: al)82 744 R -.1(wa)-.1 G .404(ys uses a v).1 F .405
+(alue of 1 for once required a slightly modi\214ed v)-.25 F .405
+(ersion of the BIND library)-.15 F 5.405(.A)-.65 G 2.905(so)-5.405 G(f)
+-2.905 E .585(BIND 4.9, BIND')72 756 R 3.085(sr)-.55 G(esolv)-3.085 E
+.585(er has been augmented to w)-.15 F .584
+(ork properly with Essentially)-.1 F 3.084(,i)-.65 G 3.084(sas)-3.084 G
+(traight-forw)-3.084 E .584(ard \(albeit not)-.1 F .498(pretty\) ef)72
+768 R .498(fort of parsing ar)-.25 F .499
+(guments and setting appropriate parameters.)-.18 F .499
+(uses routines as well as accessing the struc-)5.499 F 3.074
+(ture. \214le)72 780 R .574(to use in place of P)3.074 F 3.074(a/)-.15 G
+(etc/resolv)-3.074 E .574(.conf def)-.65 F .574(ault en)-.1 F .574
+(vironment \214le See also the e)-.4 F .573
+(xplanation of the and options,)-.15 F(abo)72 792 Q -.15(ve)-.15 G 5.671
+(.i).15 G .671(nitial domain name and name serv)-5.671 F .671
+(er addresses def)-.15 F .671(ault sa)-.1 F .971 -.15(ve \214)-.2 H .671
+(le for def).15 F .671(ault options RFC 1035.)-.1 F(Ste)5.672 E .972
+-.15(ve H)-.25 H(otz).15 E EP
+%%Page: 2 2
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF .357
+(hotz@isi.edu uses functions from authored by Andre)72 12 R 2.856(wC)
+-.25 G 2.856(herenson. has)-2.856 F 2.856(as)2.856 G .356
+(erious case of "creeping featurism" -- the)-2.856 F .472
+(result of considering se)72 24 R -.15(ve)-.25 G .472
+(ral potential uses during it').15 F 2.972(sd)-.55 G -2.15 -.25(ev e)
+-2.972 H 2.973(lopment. It).25 F -.1(wo)2.973 G .473
+(uld probably bene\214t from a rigorous diet.).1 F(Similarly)72 36 Q
+2.664(,t)-.65 G .163(he print \215ags and granularity of the items the)
+-2.664 F 2.663(ys)-.15 G .163(pecify mak)-2.663 F 2.663(ee)-.1 G .163
+(vident their rather ad hoc genesis.)-2.913 F .163(does not)5.163 F .131
+(consistently e)72 48 R .132
+(xit nicely \(with appropriate status\) when a problem occurs some)-.15
+F .132(where in the resolv)-.25 F .132(er most of the com-)-.15 F .256
+(mon e)72 60 R .256(xit cases are handled This is particularly anno)-.15
+F .255(ying when running in batch mode.)-.1 F .255(If it e)5.255 F .255
+(xits abnormally \(and is)-.15 F
+(not caught\), the entire batch aborts; when such an e)72 72 Q -.15(ve)
+-.25 G(nt is trapped, simply continues with the ne).15 E(xt query)-.15 E
+(.)-.65 E EP
+%%Trailer
+end
+%%EOF

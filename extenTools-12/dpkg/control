@@ -1,0 +1,4 @@
+Package: extentools
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Description: Kernel Extension Tools
+Build-Depends: build-base, corefoundation

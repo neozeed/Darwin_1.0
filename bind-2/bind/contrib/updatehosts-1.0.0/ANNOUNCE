@@ -1,0 +1,62 @@
+Version 1.0.0
+
+Updatehosts is a system for automatically managing and generating DNS zone
+files using flat relational tables.  Some of the features of updatehosts
+includes:
+
+1) Automatic generation of DNS zone files including *.in-addr.arpa zones
+   for an unlimited number of DNS zones.
+
+2) Automatic generation of BIND V4 or V8 bootstrap files with support
+   for most BIND options.
+
+3) Automatic serial number generation in DNS zone files.
+
+3) Automatic generation of the DHCP bootstrap file.
+
+4) Limited support for DNS updates when using DHCP dynamic addressing.
+
+5) Generation of static hosts files from the same set of information used
+   for DNS zone file generation
+
+6) Flexible input file syntax which allows additional information such as
+   contact names, etc to be kept with all DNS information.  This information
+   can be added without impacting DNS zone file generation.
+
+7) Tools which allow a set of administrators to manage the the nameserver
+   configuration without requiring root access.
+
+8) Conversion utilities to convert existing DNS zone files or static host
+   tables into the updatehosts input file format.
+
+9) Flexible postprocessing hooks which allow site specific command to be
+   run after the file generation is completed.
+
+10) General purpose tool for reading flat ASCII files as database relations.
+
+11) Maintenance of input files under SCCS or RCS control as a user option.
+
+This is an initial open source release of the software.  It is protected by
+the GNU software copyright and license.  While it is an initial release,
+the software has been in use and tested for several years, so it should
+be quite robust.  It is known to run on Sun Solaris and Linux platforms,
+but should run on almost any Unix system.
+
+Future plans include a Web front-end update utility.
+
+A mailing list (updatehosts@tic.com) has been set up to share user
+experience with the software and also as a repository for any bug reports
+and related problems.  Subscribe to this list by sending a subscribe
+request to majordomo@tic.com.
+
+Sources can be found at:
+
+ftp://ftp.tic.com/pub/updatehosts/updatehosts-1.0.0.tar.gz
+
+updatehosts requires perl 5 and a C compiler for use.  BIND 8.1.2 from the
+Internet Software Consortium (ISC)is highly recommended as the nameserver.
+Also the DHCP support is for the ISC version of DHCP.  See http://www.isc.org
+for the availability of this software.
+
+Smoot Carl-Mitchell
+smoot@tic.com

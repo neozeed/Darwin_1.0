@@ -1,0 +1,39 @@
+/Makefile/1.1.1.1/Fri Apr 23 02:45:53 1999//Ttext_cmds-8-1
+/Makefile.postamble/1.1.1.1/Fri Apr 23 02:45:53 1999//Ttext_cmds-8-1
+/Makefile.preamble/1.2/Fri Feb 25 20:40:27 2000//Ttext_cmds-8-1
+/PB.project/1.1.1.1/Fri Apr 23 02:45:53 1999//Ttext_cmds-8-1
+/PROJECT/1.1.1.1/Fri Sep 17 00:19:06 1999//Ttext_cmds-8-1
+D/banner////
+D/cat////
+D/cksum////
+D/cmp////
+D/col////
+D/colrm////
+D/column////
+D/comm////
+D/cut////
+D/dpkg////
+D/ed////
+D/expand////
+D/fmt////
+D/fold////
+D/head////
+D/join////
+D/lam////
+D/look////
+D/paste////
+D/pr////
+D/rev////
+D/rs////
+D/sed////
+D/sort////
+D/split////
+D/tail////
+D/tr////
+D/ul////
+D/unexpand////
+D/uniq////
+D/unvis////
+D/vis////
+D/wc////
+D/mail////

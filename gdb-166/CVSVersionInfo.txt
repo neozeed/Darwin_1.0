@@ -1,0 +1,5 @@
+# Created and modified by checkpoint; do not edit
+# $Id: CVSVersionInfo.txt,v 1.4 2000/04/08 01:31:11 wsanchez Exp $
+# $Name: gdb-166 $
+ProjectName: gdb
+ProjectVersion: 166

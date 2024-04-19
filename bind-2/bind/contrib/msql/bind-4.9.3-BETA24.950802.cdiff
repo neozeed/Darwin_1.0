@@ -1,0 +1,1143 @@
+diff -c -r bind-BETA24/Makefile bind-BETA24-msql/Makefile
+*** bind-BETA24/Makefile	Fri Jul 07 02:33:32 1995
+--- bind-BETA24-msql/Makefile	Fri Jul 21 18:20:19 1995
+***************
+*** 75,85 ****
+  # DO NOT COMMENT THESE OUT.  OVERRIDE THEM BELOW.
+  #
+  CC = cc $(CPPFLAGS)
+! CPPFLAGS=
+  INDOT =
+  XFER_INDOT =
+  LEX = lex -I
+! LIBS = -ll -lutil
+  PIDDIR = /var/run
+  DESTBIN = /usr/bin
+  DESTSBIN = /usr/sbin
+--- 75,85 ----
+  # DO NOT COMMENT THESE OUT.  OVERRIDE THEM BELOW.
+  #
+  CC = cc $(CPPFLAGS)
+! CPPFLAGS= -I/usr/local/Minerva/include
+  INDOT =
+  XFER_INDOT =
+  LEX = lex -I
+! LIBS = -ll -lutil -L/usr/local/Minerva/lib -lmsql -lmisc
+  PIDDIR = /var/run
+  DESTBIN = /usr/bin
+  DESTSBIN = /usr/sbin
+***************
+*** 115,132 ****
+  #LEX=lex
+  
+  #(DEC AXP OSF/1 Version 2.1 and earlier)
+! #CC = cc $(CPPFLAGS) -Olimit 2000
+! #CPPFLAGS =
+! #LEX = lex
+! #LIBS = -ll -lutil
+! #DESTEXEC = /usr/sbin
+! #COMPINCL = compat/include
+! #INSTALL_COMPAT = install-compat
+! #INSTALL = installbsd
+! #MANDIR = man
+! #MANROFF = cat
+! #CATEXT = $$$$N
+! #PS = ps -p
+  
+  #(DEC AXP OSF/1 Version 3.0 and after)
+  #CC = cc $(CPPFLAGS) -std -Olimit 2000
+--- 115,132 ----
+  #LEX=lex
+  
+  #(DEC AXP OSF/1 Version 2.1 and earlier)
+! CC = cc $(CPPFLAGS) -Olimit 2000
+! CPPFLAGS = -I/usr/Minerva/include
+! LEX = lex
+! LIBS = -ll -lutil -L/usr/Minerva/lib -lmsql 
+! DESTEXEC = /usr/sbin
+! COMPINCL = compat/include
+! INSTALL_COMPAT = install-compat
+! INSTALL = installbsd
+! MANDIR = man
+! MANROFF = cat
+! CATEXT = $$$$N
+! PS = ps -p
+  
+  #(DEC AXP OSF/1 Version 3.0 and after)
+  #CC = cc $(CPPFLAGS) -std -Olimit 2000
+***************
+*** 226,236 ****
+  #don't include sys/stream.h via netinet/in.h by defining _SYS_STREAM_H.
+  #PIDDIR = /etc
+  #LEX = lex
+! #CC = cc $(CPPFLAGS)
+! #CPPFLAGS = -DSVR4 -D_SYS_STREAM_H
+  #INDOT = in.
+  #XFER_INDOT =
+! #LIBS = -ll -lnsl -lsocket
+  #DESTEXEC = /usr/sbin
+  #LDS = :
+  #RANLIB = :
+--- 226,236 ----
+  #don't include sys/stream.h via netinet/in.h by defining _SYS_STREAM_H.
+  #PIDDIR = /etc
+  #LEX = lex
+! #CC = cc $(CPPFLAGS) 
+! #CPPFLAGS = -DSVR4 -D_SYS_STREAM_H -I/usr/local/Minerva/include
+  #INDOT = in.
+  #XFER_INDOT =
+! #LIBS = -ll -lnsl -lsocket -L/usr/local/Minerva/lib -lmsql
+  #DESTEXEC = /usr/sbin
+  #LDS = :
+  #RANLIB = :
+Only in bind-BETA24/BSD: BIND
+diff -c -r bind-BETA24/conf/options.h bind-BETA24-msql/conf/options.h
+*** bind-BETA24/conf/options.h	Thu Jun 29 04:25:56 1995
+--- bind-BETA24-msql/conf/options.h	Tue Aug 01 15:29:33 1995
+***************
+*** 73,78 ****
+--- 73,79 ----
+   *      bg = Benoit Grange of INRIA
+   *      ckd = Christopher Davis of Kapor Enterprises
+   *      gns = Greg Shapiro of WPI
++  *      cls = Christopher Seawood of Rose-Hulman
+   */
+  
+  #define DEBUG		/* enable -d flag and SIGUSR[12] support (ucb) */
+***************
+*** 119,124 ****
+--- 120,126 ----
+  #define XSTATS		/* extended statistics, syslogged periodically (bg) */
+  /*#define BIND_NOTIFY	/* experimental - do not enable in customer products */
+  /*#define LOC_RR	/* support for (draft) LOC record parsing (ckd) */
++ #define MSQL            /* support for msql-aware bind (cls) */
+  
+  /*--------------------------------------------*
+   * no user-servicable parts beyond this point *
+Only in bind-BETA24/doc/bog: file.lst
+Only in bind-BETA24/doc/bog: file.psf
+diff -c -r bind-BETA24/named/db_defs.h bind-BETA24-msql/named/db_defs.h
+*** bind-BETA24/named/db_defs.h	Mon Jun 19 15:55:40 1995
+--- bind-BETA24-msql/named/db_defs.h	Thu Jul 20 10:33:26 1995
+***************
+*** 96,101 ****
+--- 96,104 ----
+  	int16_t		d_rcode;	/* rcode added for negative caching */
+  #endif
+  	int16_t		d_rcnt;
++ #ifdef MSQL
++ 	int16_t         d_dynamic;      /* 0 = static, 1 = dynamic entry */
++ #endif
+  #ifdef STATS
+  	struct nameser	*d_ns;		/* NS from whence this came */
+  #endif
+diff -c -r bind-BETA24/named/db_load.c bind-BETA24-msql/named/db_load.c
+*** bind-BETA24/named/db_load.c	Tue Jul 04 01:35:12 1995
+--- bind-BETA24-msql/named/db_load.c	Wed Aug 02 13:39:14 1995
+***************
+*** 74,79 ****
+--- 74,82 ----
+  #include <resolv.h>
+  
+  #include "named.h"
++ #ifdef MSQL
++ #include <msql.h>
++ #endif
+  
+  static int		gettoken __P((register FILE *, const char *)),
+  			getnonblank __P((FILE *, const char *)),
+***************
+*** 83,88 ****
+--- 86,107 ----
+  static int		empty_token = 0;
+  int	getnum_error;
+  
++ #ifdef MSQL
++ #define C_MSQL 151
++ #define T_MSQL 151
++ typedef struct {
++   m_result *result;
++   int      row;
++   char     buffer[1024];
++   int      linePos;
++   int      status;
++  } msqlResultStruct;
++ inline int              GETC __P((FILE *)),
++                         UNGETC __P((int, FILE *));
++ char                    msqlGetc __P(());
++ msqlResultStruct msqlData;
++ #endif
++ 
+  /*
+   * Map class and type names to number
+   */
+***************
+*** 98,103 ****
+--- 117,125 ----
+  #endif
+  	{ "chaos",	C_CHAOS },
+  	{ "hs",		C_HS },
++ #ifdef MSQL
++ 	{ "msql",         C_MSQL },
++ #endif
+  };
+  #define M_CLASS_CNT (sizeof(m_class) / sizeof(struct map))
+  
+***************
+*** 136,141 ****
+--- 158,166 ----
+  #ifdef ALLOW_T_UNSPEC
+  	{ "unspec",	T_UNSPEC },
+  #endif /* ALLOW_T_UNSPEC */
++ #ifdef MSQL
++ 	{ "msql",         T_MSQL },
++ #endif
+  };
+  #define M_TYPE_CNT (sizeof(m_type) / sizeof(struct map))
+  
+***************
+*** 187,192 ****
+--- 212,220 ----
+  #ifdef DO_WARN_SERIAL
+  	u_int32_t serial;
+  #endif
++ #ifdef MSQL
++  	time_t dbupdate, dbrefresh, dbtime=0;
++ #endif
+  
+  	errs = 0;
+  	didinclude = 0;
+***************
+*** 443,449 ****
+  					multiline = 1;
+  				} else {
+  					multiline = 0;
+! 					ungetc(c, fp);
+  				}
+  #ifdef DO_WARN_SERIAL
+  				serial = zp->z_serial;
+--- 471,477 ----
+  					multiline = 1;
+  				} else {
+  					multiline = 0;
+! 					UNGETC(c, fp);
+  				}
+  #ifdef DO_WARN_SERIAL
+  				serial = zp->z_serial;
+***************
+*** 450,455 ****
+--- 478,489 ----
+  #endif
+  				zp->z_serial = getnum(fp, filename,
+  						      GETNUM_SERIAL);
++ #ifdef MSQL
++ 				if (usingMsql){
++ 				  gettime(&tt);
++ 				  zp->z_serial = tt.tv_sec;
++ 				};
++ #endif
+  				if (getnum_error)
+  					errs++;
+  				n = (u_int32_t) zp->z_serial;
+***************
+*** 672,684 ****
+                                  cp = buf + (n = strlen(buf));
+  				*cp = ' ';
+  				cp++;
+! 				while ((i = getc(fp), *cp = i, i != EOF)
+                                         && *cp != '\n'
+                                         && (n < MAXDATA)) {
+                                    cp++; n++;
+                                  }
+                                  if (*cp == '\n') /* leave \n for getword */
+!                                     ungetc(*cp, fp);
+                                  *cp = '\0';
+  				/* now process the whole line */
+  				n = loc_aton(buf, (u_char *)data);
+--- 706,718 ----
+                                  cp = buf + (n = strlen(buf));
+  				*cp = ' ';
+  				cp++;
+! 				while ((i = GETC(fp), *cp = i, i != EOF)
+                                         && *cp != '\n'
+                                         && (n < MAXDATA)) {
+                                    cp++; n++;
+                                  }
+                                  if (*cp == '\n') /* leave \n for getword */
+!                                     UNGETC(*cp, fp);
+                                  *cp = '\0';
+  				/* now process the whole line */
+  				n = loc_aton(buf, (u_char *)data);
+***************
+*** 710,716 ****
+--- 744,868 ----
+                                  }
+                                  break;
+  #endif /* ALLOW_T_UNSPEC */
++ #ifdef MSQL
++  	       	      case T_MSQL:
++  				{
++  /* Read msql-db info (hostname, db name, table name) from data file */
++ 				  int dbNum, dbnew=0;
++ 				  int dbZone=0;
++ 				  char dbname[255], dbhostname[255], dbtable[255], dbzonetable[255];
++ 				  char dbString[255];
++ 				  time_t dbrefresh, dbupdate;
++ 				  m_row dbrow;
++ 				  
++ 				  strncpy(dbhostname,buf,255);
++ 				  if (!getword((char *)buf, sizeof(buf), fp)){
++ 				    errs++;
++ 				    continue;
++ 				  };
++ 				  strncpy(dbname,buf,255);
++ 				  if (!getword((char *)buf, sizeof(buf), fp)){
++ 				    errs++;
++ 				    continue;
++ 				  }
++ 				  strncpy(dbtable,buf,255);
++ 				  if (!getword((char *)buf, sizeof(buf), fp)){
++ 				    errs++;
++ 				    continue;
++ 				  }
++ 				  strncpy(dbzonetable,buf,255);
++ 				  if (!getword((char *)buf, sizeof(buf), fp)){
++ 				    errs++;
++ 				    continue;
++ 				  }
++ 				  dbupdate = (time_t)atoi(buf);
++ 				  if (!getword((char *)buf, sizeof(buf), fp)){
++ 				    errs++;
++ 				    continue;
++ 				  }
++ 				  dbrefresh = (time_t)atoi(buf);
++ 				  endline(fp);
+  
++ /* Attempt to connect to the database */
++ 				  
++ 				  if (!strcasecmp(dbhostname,"127.0.0.1") ||
++ 				      !strcasecmp(dbhostname,"localhost"))
++ 				    dbNum = msqlConnect(NULL);
++ 				  else
++ 				    dbNum = msqlConnect(dbhostname);
++ 				  if (dbNum == -1){
++ 				    errs++;
++ 				    syslog(LOG_ERR,msqlErrMsg);
++ 				    continue;
++ 				  };
++ 				  if (msqlSelectDB(dbNum,dbname)==-1){
++ 				    errs++;
++ 				    syslog(LOG_ERR,msqlErrMsg);
++ 				    msqlClose(dbNum);
++ 				    continue;
++ 				  };
++ 				  strcpy(zp->z_dbdtable,dbtable);
++ 				  strcpy(zp->z_dbhost,dbhostname);
++ 				  strcpy(zp->z_dbname,dbname);
++ 				  strcpy(zp->z_dbztable,dbzonetable);
++ 
++ /* Start retrieving information from the database */
++ /* Get the zoneid first */
++ 				  gettime(&tt);
++ 				  sprintf(dbString,"select zoneid from %s where name like '%s.%%'",zp->z_dbztable,zp->z_origin);
++ 				  if (msqlQuery(dbNum,dbString)==-1){
++ 				    errs++;
++ 				    syslog(LOG_ERR,msqlErrMsg);
++ 				    msqlClose(dbNum);
++ 				    continue;
++ 				  };
++ 				  msqlData.result = msqlStoreResult();
++ /* Check validity of zone */
++ 				  if (!(dbZone=msqlNumRows(msqlData.result))){
++ 				    errs++;
++ 				    syslog(LOG_ERR,"msql_dns: No zoneid associated with zone %s",zp->z_origin);
++ 				    msqlClose(dbNum);
++ 				    continue;
++ 				  } else if (dbZone > 1){
++ 				    syslog(LOG_ERR,"db_load: Multiple zoneids found for zone %s, using first one",zp->z_origin);
++ 				  };
++ 				  dbrow = msqlFetchRow(msqlData.result);
++ 				  dbZone = atoi(dbrow[0]);
++ 				  msqlFreeResult(msqlData.result);
++ /* Zone is valid, start retrieving entries */
++ 				  sprintf(dbString,"select machine, class, type, info, importance, dynamic from %s where importance<3 or assigned_time >%d and zoneid = %d order by importance", zp->z_dbdtable,zp->z_dbtime,dbZone);
++ 				  if (msqlQuery(dbNum,dbString)==-1){
++ 				    errs++;
++ 				    syslog(LOG_ERR,msqlErrMsg);
++ 				    msqlClose(dbNum);
++ 				    continue;
++ 				  };
++ 				  msqlData.result = msqlStoreResult();
++ 				  msqlClose(dbNum);
++ 				  msqlDataSeek(msqlData.result,0);
++ /* Check to see if anything besides SOA & NS entries were retrieved */
++ 				  while ((dbrow=msqlFetchRow(msqlData.result))!=NULL)
++ 				    if (atoi(dbrow[4])>2)
++ 				      dbnew++;
++ 				  msqlDataSeek(msqlData.result,0);
++     				  if (dbnew){				    
++ 				    msqlData.row = 0;
++ 				    bzero(msqlData.buffer, 
++ 					  sizeof(msqlData.buffer));
++ 				    msqlData.linePos = 0;
++ /* Default to static entries */	    msqlData.status = 0;
++ 				    usingMsql = 1;
++ 				  } else
++ 				    usingMsql = 0;
++ 				  zp->z_dbtime = tt.tv_sec;
++ 				  if (!zp->z_dblastupdate)
++ 				    zp->z_dblastupdate = tt.tv_sec;
++ 				  zp->z_dbupdate = dbupdate;
++ 				  zp->z_dbrefresh = dbrefresh;
++ 				  break;
++  				}
++ #endif /* MSQL */
++ 
+  			default:
+  				goto err;
+  			}
+***************
+*** 739,744 ****
+--- 891,902 ----
+  			dp->d_flags = dataflags;
+  			dp->d_cred = DB_C_ZONE;
+  			dp->d_clev = clev;
++ #ifdef MSQL
++ 			if (usingMsql)
++ 			  dp->d_dynamic = msqlData.status;
++ 			else
++ 			  dp->d_dynamic = 0;
++ #endif
+  			if ((c = db_update(domain, dp, dp, dbflags,
+  					   (zp->z_type == Z_CACHE)
+  					   ? fcachetab
+***************
+*** 824,830 ****
+  	char op[32];
+  
+  	for (;;) {
+! 		c = getc(fp);
+  	top:
+  		switch (c) {
+  		case EOF:
+--- 982,988 ----
+  	char op[32];
+  
+  	for (;;) {
+! 		c = GETC(fp);
+  	top:
+  		switch (c) {
+  		case EOF:
+***************
+*** 843,849 ****
+  			return (ERROR);
+  
+  		case ';':
+! 			while ((c = getc(fp)) != EOF && c != '\n')
+  				;
+  			goto top;
+  
+--- 1001,1007 ----
+  			return (ERROR);
+  
+  		case ';':
+! 			while ((c = GETC(fp)) != EOF && c != '\n')
+  				;
+  			goto top;
+  
+***************
+*** 862,868 ****
+  			continue;
+  
+  		default:
+! 			(void) ungetc(c, fp);
+  			return (DNAME);
+  		}
+  	}
+--- 1020,1026 ----
+  			continue;
+  
+  		default:
+! 			(void) UNGETC(c, fp);
+  			return (DNAME);
+  		}
+  	}
+***************
+*** 889,919 ****
+  	register int c;
+  
+  	empty_token = 0;
+! 	for (cp = buf; (c = getc(fp)) != EOF; ) {
+  		if (c == ';') {
+! 			while ((c = getc(fp)) != EOF && c != '\n')
+  				;
+  			c = '\n';
+  		}
+  		if (c == '\n') {
+  			if (cp != buf)
+! 				ungetc(c, fp);
+  			else
+  				lineno++;
+  			break;
+  		}
+  		if (isspace(c)) {
+! 			while (isspace(c = getc(fp)) && c != '\n')
+  				;
+! 			ungetc(c, fp);
+  			if (cp != buf)		/* Trailing whitespace */
+  				break;
+  			continue;		/* Leading whitespace */
+  		}
+  		if (c == '"') {
+! 			while ((c = getc(fp)) != EOF && c != '"' && c != '\n') {
+  				if (c == '\\') {
+! 					if ((c = getc(fp)) == EOF)
+  						c = '\\';
+  					if (c == '\n')
+  						lineno++;
+--- 1047,1077 ----
+  	register int c;
+  
+  	empty_token = 0;
+! 	for (cp = buf; (c = GETC(fp)) != EOF; ) {
+  		if (c == ';') {
+! 			while ((c = GETC(fp)) != EOF && c != '\n')
+  				;
+  			c = '\n';
+  		}
+  		if (c == '\n') {
+  			if (cp != buf)
+! 				UNGETC(c, fp);
+  			else
+  				lineno++;
+  			break;
+  		}
+  		if (isspace(c)) {
+! 			while (isspace(c = GETC(fp)) && c != '\n')
+  				;
+! 			UNGETC(c, fp);
+  			if (cp != buf)		/* Trailing whitespace */
+  				break;
+  			continue;		/* Leading whitespace */
+  		}
+  		if (c == '"') {
+! 			while ((c = GETC(fp)) != EOF && c != '"' && c != '\n') {
+  				if (c == '\\') {
+! 					if ((c = GETC(fp)) == EOF)
+  						c = '\\';
+  					if (c == '\n')
+  						lineno++;
+***************
+*** 926,933 ****
+  				lineno++;
+  				break;
+  			}
+! 			if ((c = getc(fp)) != EOF)
+! 				ungetc(c, fp);
+  			if (c == EOF || isspace(c) || c == '\n') {
+  				*cp = '\0';
+  				return (1);
+--- 1084,1091 ----
+  				lineno++;
+  				break;
+  			}
+! 			if ((c = GETC(fp)) != EOF)
+! 				UNGETC(c, fp);
+  			if (c == EOF || isspace(c) || c == '\n') {
+  				*cp = '\0';
+  				return (1);
+***************
+*** 936,942 ****
+  				continue;
+  		}
+  		if (c == '\\') {
+! 			if ((c = getc(fp)) == EOF)
+  				c = '\\';
+  			if (c == '\n')
+  				lineno++;
+--- 1094,1100 ----
+  				continue;
+  		}
+  		if (c == '\\') {
+! 			if ((c = GETC(fp)) == EOF)
+  				c = '\\';
+  			if (c == '\n')
+  				lineno++;
+***************
+*** 990,996 ****
+  	if (opt & GETNUM_SERIAL)
+  		allow_dots++;
+  #endif
+! 	for (n = 0; (c = getc(fp)) != EOF; ) {
+  		if (isspace(c)) {
+  			if (c == '\n')
+  				lineno++;
+--- 1148,1154 ----
+  	if (opt & GETNUM_SERIAL)
+  		allow_dots++;
+  #endif
+! 	for (n = 0; (c = GETC(fp)) != EOF; ) {
+  		if (isspace(c)) {
+  			if (c == '\n')
+  				lineno++;
+***************
+*** 999,1005 ****
+  			continue;
+  		}
+  		if (c == ';') {
+! 			while ((c = getc(fp)) != EOF && c != '\n')
+  				;
+  			if (c == '\n')
+  				lineno++;
+--- 1157,1163 ----
+  			continue;
+  		}
+  		if (c == ';') {
+! 			while ((c = GETC(fp)) != EOF && c != '\n')
+  				;
+  			if (c == '\n')
+  				lineno++;
+***************
+*** 1011,1017 ****
+  			continue;
+  		if (!isdigit(c)) {
+  			if (c == ')' && seendigit) {
+! 				(void) ungetc(c, fp);
+  				break;
+  			}
+  			if (seendigit && (opt & GETNUM_SCALED) &&
+--- 1169,1175 ----
+  			continue;
+  		if (!isdigit(c)) {
+  			if (c == ')' && seendigit) {
+! 				(void) UNGETC(c, fp);
+  				break;
+  			}
+  			if (seendigit && (opt & GETNUM_SCALED) &&
+***************
+*** 1080,1086 ****
+  {
+  	register int c;
+  
+! 	while ( (c = getc(fp)) != EOF ) {
+  		if (isspace(c)) {
+  			if (c == '\n')
+  				lineno++;
+--- 1238,1244 ----
+  {
+  	register int c;
+  
+! 	while ( (c = GETC(fp)) != EOF ) {
+  		if (isspace(c)) {
+  			if (c == '\n')
+  				lineno++;
+***************
+*** 1087,1093 ****
+  			continue;
+  		}
+  		if (c == ';') {
+! 			while ((c = getc(fp)) != EOF && c != '\n')
+  				;
+  			if (c == '\n')
+  				lineno++;
+--- 1245,1251 ----
+  			continue;
+  		}
+  		if (c == ';') {
+! 			while ((c = GETC(fp)) != EOF && c != '\n')
+  				;
+  			if (c == '\n')
+  				lineno++;
+***************
+*** 1142,1150 ****
+  {
+  	register int c;
+  
+! 	while ((c = getc(fp)) != '\0') {
+  		if (c == '\n') {
+! 			(void) ungetc(c,fp);
+  			break;
+  		} else if (c == EOF) {
+  			break;
+--- 1300,1308 ----
+  {
+  	register int c;
+  
+! 	while ((c = GETC(fp)) != '\0') {
+  		if (c == '\n') {
+! 			(void) UNGETC(c,fp);
+  			break;
+  		} else if (c == EOF) {
+  			break;
+***************
+*** 1201,1207 ****
+  		}
+  		if ( b[0] == ')') {
+  			bracket = 0;
+! 			while ((ch = getc(fp)) != EOF && ch != '\n')
+  				;
+  			if (ch == '\n')
+  				lineno++;
+--- 1359,1365 ----
+  		}
+  		if ( b[0] == ')') {
+  			bracket = 0;
+! 			while ((ch = GETC(fp)) != EOF && ch != '\n')
+  				;
+  			if (ch == '\n')
+  				lineno++;
+***************
+*** 1364,1366 ****
+--- 1522,1574 ----
+  	}
+  	*netlistp = NULL;
+  }
++ 
++ #ifdef MSQL
++ inline int GETC(FILE *fp)
++ { 
++   if (usingMsql) 
++     {
++       if (msqlData.buffer[msqlData.linePos] == '\0')
++ 	return(msqlGetc(&msqlData)); 
++       else
++ 	return (msqlData.buffer[msqlData.linePos++]);
++     }
++   else 	
++     return(getc(fp));
++ }
++ 
++ inline int UNGETC(int c, FILE *fp)
++ {
++   if (usingMsql)
++     {
++       if (msqlData.linePos > 0)
++ 	msqlData.linePos--; 
++       return(c);
++     }
++   else 
++     return(ungetc(c, fp));
++ }
++ 
++ char msqlGetc(msqlResultStruct *s)
++ {
++   m_row row;
++ 
++   row = msqlFetchRow(s->result);
++   (s->row)++;
++   if (row == NULL)
++     {
++       msqlFreeResult(s->result);
++       usingMsql = 0;
++       return '\n';
++     }
++   bzero(s->buffer, sizeof(s->buffer));
++   (void) sprintf(s->buffer,"%s %s %s %s\n",
++ 		 row[0],row[1],row[2],row[3]);
++   s->linePos = 0;
++   s->status = atoi(row[5]);
++   return (s->buffer[(s->linePos)++]);
++ }
++ #else
++ #define GETC(fp) getc(fp)
++ #define UNGETC(c,fp) ungetc(c,fp)
++ #endif /* MSQL */
+diff -c -r bind-BETA24/named/db_update.c bind-BETA24-msql/named/db_update.c
+*** bind-BETA24/named/db_update.c	Thu Jun 29 04:26:19 1995
+--- bind-BETA24-msql/named/db_update.c	Wed Aug 02 13:40:37 1995
+***************
+*** 521,527 ****
+  				    !bcmp(dp->d_data, newdp->d_data,
+  					  INT32SZ + sizeof(u_char)))
+  					goto delete;
+! 			}
+  			if ((flags & DB_NODATA) && !db_cmp(dp, odp)) {
+  				/* refresh ttl if cache entry */
+  				if (dp->d_zone == 0) {
+--- 521,538 ----
+  				    !bcmp(dp->d_data, newdp->d_data,
+  					  INT32SZ + sizeof(u_char)))
+  					goto delete;
+! #ifdef MSQL
+! 				/* 
+! 				 *  We don't want multiple ip addresses 
+! 				 *  returned or inverse lookups going to the 
+! 				 *  wrong machine for dynamic hosts
+! 				 */
+! 				if (dp->d_dynamic && 
+! 				    bcmp(dp->d_data, newdp->d_data,
+! 					 INT32SZ + sizeof(u_char)))
+! 				  goto delete;
+! #endif /* MSQL */
+!  			}
+  			if ((flags & DB_NODATA) && !db_cmp(dp, odp)) {
+  				/* refresh ttl if cache entry */
+  				if (dp->d_zone == 0) {
+diff -c -r bind-BETA24/named/named.h bind-BETA24-msql/named/named.h
+*** bind-BETA24/named/named.h	Thu Dec 15 01:24:17 1994
+--- bind-BETA24-msql/named/named.h	Mon Jul 10 14:14:49 1995
+***************
+*** 17,19 ****
+--- 17,20 ----
+  
+  #include "ns_func.h"
+  #include "db_func.h"
++ 
+diff -c -r bind-BETA24/named/ns_defs.h bind-BETA24-msql/named/ns_defs.h
+*** bind-BETA24/named/ns_defs.h	Mon Jun 19 15:55:43 1995
+--- bind-BETA24-msql/named/ns_defs.h	Wed Jul 12 11:30:32 1995
+***************
+*** 133,138 ****
+--- 133,148 ----
+  	/* XXX - this will have to move to the name when we do !SOA notify */
+  	struct notify	*z_notifylist;	/* list of servers we should notify */
+  #endif
++ #ifdef MSQL
++ 	u_int32_t       z_dbtime;       /* latest modification time of db */
++ 	u_int32_t       z_dblastupdate; /* last time cache was updated */
++ 	time_t          z_dbupdate;     /* db cache update rate */
++ 	time_t          z_dbrefresh;    /* cache refresh rate */
++ 	char            z_dbhost[255];  /* hostname of db server */
++ 	char            z_dbname[255];  /* name of db */
++ 	char            z_dbdtable[255]; /* name of dns table */
++ 	char            z_dbztable[255];  /* name of zone table */
++ #endif
+  };
+  
+  #ifdef BIND_NOTIFY
+diff -c -r bind-BETA24/named/ns_glob.h bind-BETA24-msql/named/ns_glob.h
+*** bind-BETA24/named/ns_glob.h	Mon Jun 19 15:55:44 1995
+--- bind-BETA24-msql/named/ns_glob.h	Mon Jul 10 14:14:50 1995
+***************
+*** 265,267 ****
+--- 265,272 ----
+  	/* should IQUERY be answered bogusly rather than with NOTIMPL? */
+  DECL	int			fake_iquery	INIT(0);
+  #endif
++ 
++ #ifdef MSQL
++         /* is a msql db being accessed? */
++ DECL    int                     usingMsql       INIT(0);
++ #endif
+diff -c -r bind-BETA24/named/ns_init.c bind-BETA24-msql/named/ns_init.c
+*** bind-BETA24/named/ns_init.c	Thu Jun 29 04:26:21 1995
+--- bind-BETA24-msql/named/ns_init.c	Thu Jul 20 14:16:11 1995
+***************
+*** 73,78 ****
+--- 73,81 ----
+  #include <assert.h>
+  
+  #include "named.h"
++ #ifdef MSQL
++ #include <msql.h>
++ #endif
+  
+  #undef nsaddr
+  
+***************
+*** 511,516 ****
+--- 514,522 ----
+  			 * then there's no need to reload.
+  			 */
+  			if (zp->z_source &&
++ #ifdef MSQL
++ 			    !msql_update_check(zp) &&
++ #endif 
+  			    !strcmp(source, zp->z_source) &&
+  			    !(zp->z_flags & Z_INCLUDE) && 
+  			    stat(zp->z_source, &f_time) != -1 &&
+***************
+*** 945,947 ****
+--- 951,1030 ----
+  		exit(1);
+  	}
+  }
++ 
++  
++ #ifdef MSQL
++ /*
++  * Returns
++  * 0 if msql db has NOT changed.
++  * >1 if msql db has changed.
++  */
++ 
++ extern int 
++ msql_update_check (zp)
++ struct zoneinfo *zp;
++ {
++   
++    int dbNum;
++    m_row dbRow;
++    m_result *dbDNS;
++    char dbString[255];
++    int update=0, dbZone;
++    m_result *dbRes;
++    
++ /* Update the cache if db has never been read */
++    if (!strlen(zp->z_dbhost) || 
++        !strlen(zp->z_dbname) || 
++        !strlen(zp->z_dbdtable) ||
++        !strlen(zp->z_dbztable))
++      return 0;
++ 
++    if (!strcasecmp(zp->z_dbhost,"127.0.0.1") ||
++        !strcasecmp(zp->z_dbhost,"localhost"))
++      dbNum = msqlConnect(NULL);
++    else
++      dbNum = msqlConnect(zp->z_dbhost);
++    if (dbNum == -1){
++      syslog(LOG_ERR,msqlErrMsg);
++      return 0;
++    };
++     if (msqlSelectDB(dbNum,zp->z_dbname)==-1){
++      syslog(LOG_ERR,msqlErrMsg);
++      msqlClose(dbNum);
++      return 0;
++    };
++    sprintf(dbString,"select zoneid from %s where name like '%s.%%'",zp->z_dbztable,zp->z_origin);
++    if (msqlQuery(dbNum,dbString)==-1){
++      syslog(LOG_ERR,msqlErrMsg);
++      msqlClose(dbNum);
++      return 0;
++    };
++    dbRes = msqlStoreResult();
++    if (!(dbZone=msqlNumRows(dbRes))){
++      syslog(LOG_ERR,"msql_update_check: No zoneid associated with zone %s",zp->z_origin);
++      msqlClose(dbNum);
++      return 0;
++    };
++    dbRow = msqlFetchRow(dbRes);
++    dbZone = atoi(dbRow[0]);
++ 
++    sprintf(dbString,"Select assigned_time from %s where zoneid = %d and assigned_time > %d",zp->z_dbdtable,dbZone, zp->z_dbtime);
++    if (msqlQuery(dbNum,dbString)==-1){
++      syslog(LOG_ERR,msqlErrMsg);
++      msqlClose(dbNum);
++      return 0;
++    };
++ 
++    dbDNS = msqlStoreResult();   
++    if (msqlNumRows(dbDNS))
++      update++;
++ 
++    msqlFreeResult(dbDNS);
++ 
++ /* Close connection to Msql DB */
++    msqlClose(dbNum);
++ 
++   return update;
++ 
++ };
++ #endif /*MSQL*/
+diff -c -r bind-BETA24/named/ns_maint.c bind-BETA24-msql/named/ns_maint.c
+*** bind-BETA24/named/ns_maint.c	Thu Jun 29 04:26:23 1995
+--- bind-BETA24-msql/named/ns_maint.c	Wed Jul 12 11:35:54 1995
+***************
+*** 72,77 ****
+--- 72,80 ----
+  #include <sys/stat.h>
+  
+  #include "named.h"
++ #ifdef MSQL
++ #include <msql.h>
++ #endif
+  
+  #ifdef USE_UTIME
+  # include <utime.h>
+***************
+*** 88,93 ****
+--- 91,103 ----
+  			addxfer __P((struct zoneinfo *)),
+  			tryxfer __P((void));
+  
++ #ifdef MSQL
++ static void              msql_update_cache __P((void));
++ int dbrefresh;
++ int dbupdatereload;
++ int dbinit;
++ #endif 
++ 
+  #define	qserial_qfull()	(qserials_running == MAXQSERIAL)
+  
+  #ifdef CLEANCACHE
+***************
+*** 100,105 ****
+--- 110,116 ----
+   * Invoked at regular intervals by signal interrupt; refresh all secondary
+   * zones from primary name server and remove old cache entries.  Also,
+   * ifdef'd ALLOW_UPDATES, dump database if it has changed since last
++ 
+   * dump/bootup.
+   */
+  void
+***************
+*** 107,113 ****
+  {
+  	register struct zoneinfo *zp;
+  	int zonenum;
+! 
+  	gettime(&tt);
+  
+  	dprintf(1, (ddt, "\nns_maint(); now %s", ctimel(tt.tv_sec)));
+--- 118,127 ----
+  {
+  	register struct zoneinfo *zp;
+  	int zonenum;
+! #ifdef MSQL
+! 	int updatemsql=0, dbupdate=0, lastupdate=0, dbtime=0;
+! 	dbupdatereload = dbrefresh=0;
+! #endif
+  	gettime(&tt);
+  
+  	dprintf(1, (ddt, "\nns_maint(); now %s", ctimel(tt.tv_sec)));
+***************
+*** 118,124 ****
+  		if (debug >= 2)
+  			printzoneinfo(zonenum);
+  #endif
+! 		if (tt.tv_sec >= zp->z_time && zp->z_refresh > 0) {
+  			switch (zp->z_type) {
+  
+  			case Z_CACHE:
+--- 132,147 ----
+  		if (debug >= 2)
+  			printzoneinfo(zonenum);
+  #endif
+! #ifdef MSQL
+! /* Check to see if there actually is a msql entry in this zone */
+! 		if (zp->z_dbupdate)
+! 		  updatemsql=msql_update_check(zp); 
+! 
+! 		if ((tt.tv_sec >= zp->z_time && zp->z_refresh > 0 ) || 
+! 		    updatemsql){
+! #else
+!  		if (tt.tv_sec >= zp->z_time && zp->z_refresh > 0) {
+! #endif
+  			switch (zp->z_type) {
+  
+  			case Z_CACHE:
+***************
+*** 162,169 ****
+  #endif /* ALLOW_UPDATES */
+  			}
+  			gettime(&tt);
+! 		}
+! 	}
+  #ifdef CLEANCACHE
+  	if ((cache_time + cache_interval) <= tt.tv_sec) {
+  		if (cache_time)
+--- 185,201 ----
+  #endif /* ALLOW_UPDATES */
+  			}
+  			gettime(&tt);
+! 	        }
+! #ifdef MSQL
+! 		dbupdate += updatemsql;
+! 		if (lastupdate < zp->z_dblastupdate)
+! 		  lastupdate = zp->z_dblastupdate;
+! 		if (dbrefresh < zp->z_dbrefresh)
+! 		  dbrefresh = zp->z_dbrefresh;
+! #endif
+! 		      
+! 	      }
+! 
+  #ifdef CLEANCACHE
+  	if ((cache_time + cache_interval) <= tt.tv_sec) {
+  		if (cache_time)
+***************
+*** 178,183 ****
+--- 210,234 ----
+  		stats_time = tt.tv_sec;
+  	}
+  #endif
++ #ifdef MSQL
++ 	if ((lastupdate + dbrefresh) < tt.tv_sec){
++ 	  dbupdatereload++;
++ 	  for (zp = zones, zonenum = 0; 
++ 	       zp < &zones[nzones]; zp++, zonenum++)
++ 	    zp->z_dbtime=0;
++ 	} else if (!lastupdate)
++ 	  dbupdate=0;
++ 
++ 	if (dbupdatereload){
++ 	  db_reload();
++ 	  needmaint=0;
++  	}else if (dbupdate){	  
++ 	  for (zp = zones, zonenum = 0; zp < &zones[nzones]; zp++, zonenum++)
++ 	    if (msql_update_check(zp)) 
++ 	      (void) db_load(zp->z_source, zp->z_origin, zp, NULL);
++ 	  needmaint=0;
++ 	}		
++ #endif
+  	if (!needmaint)
+  		sched_maint();
+  	dprintf(1, (ddt, "exit ns_maint()\n"));
+***************
+*** 198,208 ****
+  	time_t next_refresh = 0;
+  #endif
+  	static time_t next_alarm;
+  
+  	for (zp = zones; zp < &zones[nzones]; zp++)
+! 		if (zp->z_time != 0 &&
+! 		    (next_refresh == 0 || next_refresh > zp->z_time))
+! 			next_refresh = zp->z_time;
+          /*
+  	 *  Schedule the next call to ns_maint.
+  	 *  Don't visit any sooner than maint_interval.
+--- 249,281 ----
+  	time_t next_refresh = 0;
+  #endif
+  	static time_t next_alarm;
++ #ifdef MSQL
++  	int updatemsql=0;
++ #endif
+  
+  	for (zp = zones; zp < &zones[nzones]; zp++)
+! 		if (zp->z_time != 0 &&	
+! #ifdef MSQL
+! 		    (next_refresh == 0 || next_refresh > zp->z_time) ||
+! 		    (zp->z_dbupdate && zp->z_dbhost && zp->z_dbname)){
+! 		  if (zp->z_dbupdate && zp->z_dbhost && zp->z_dbname){
+! 		    if (updatemsql < zp->z_dbupdate)
+! 		      updatemsql=zp->z_dbupdate;
+! 		    gettime(&tt);
+! 		    next_refresh = tt.tv_sec + updatemsql;
+! 		    if (dbupdatereload){
+! 		      dbupdatereload = 0;
+! 		      zp->z_dblastupdate = tt.tv_sec;
+! 		    };
+! 	          } else{
+! #else
+! 		    (next_refresh == 0 || next_refresh > zp->z_time)){
+! #endif
+! 		    next_refresh = zp->z_time;
+! 		  }
+! #ifdef MSQL
+! 		  }
+! #endif
+          /*
+  	 *  Schedule the next call to ns_maint.
+  	 *  Don't visit any sooner than maint_interval.
+***************
+*** 220,226 ****
+--- 293,304 ----
+  		if (next_refresh < tt.tv_sec)
+  			next_refresh = tt.tv_sec;
+  		ival.it_value.tv_sec = next_refresh - tt.tv_sec;
++ #ifdef MSQL
++ 		if (((long) ival.it_value.tv_sec < maint_interval) 
++ 		    && !updatemsql)
++ #else
+  		if ((long) ival.it_value.tv_sec < maint_interval)
++ #endif
+  			ival.it_value.tv_sec = maint_interval;
+  		next_alarm = next_refresh;
+  		alarm_pending = 1;
+***************
+*** 978,980 ****
+--- 1056,1059 ----
+  		tryxfer();
+  	}
+  }
++ 

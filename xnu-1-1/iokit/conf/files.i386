@@ -1,0 +1,42 @@
+
+# Intel platform support
+
+iokit/Drivers/platform/drvAppleI386Generic/AppleI386PlatformExpert.cpp	optional iokitcpp
+iokit/Drivers/platform/drvAppleI386Generic/AppleI386CPU.cpp            optional iokitcpp
+
+# PCI support
+
+iokit/Families/IOPCIBus/IOPCIDeviceI386.cpp                 optional iokitcpp
+iokit/Drivers/pci/drvApplePCI/AppleI386PCI.cpp              optional iokitcpp
+
+# Shared lock
+
+iokit/Kernel/i386/IOSharedLock.s                            standard
+iokit/Kernel/i386/IOAsmSupport.s                            standard
+
+# PS2 support
+
+iokit/Drivers/platform/drvApplePS2Controller/ApplePS2Controller.cpp	optional iokitcpp
+iokit/Drivers/platform/drvApplePS2Controller/ApplePS2KeyboardDevice.cpp	optional iokitcpp
+iokit/Drivers/platform/drvApplePS2Controller/ApplePS2MouseDevice.cpp	optional iokitcpp
+iokit/Drivers/hidsystem/drvApplePS2Keyboard/ApplePS2Keyboard.cpp	optional iokitcpp
+iokit/Drivers/hidsystem/drvApplePS2Mouse/ApplePS2Mouse.cpp		optional iokitcpp
+
+
+# Interrupt Controller
+iokit/Drivers/platform/drvAppleIntelClassicPIC/PIC8259.cpp  optional iokitcpp
+
+# Real Time Clock hack
+iokit/Drivers/platform/drvAppleIntelClock/IntelClock.cpp    optional iokitcpp
+
+# Power Domains
+iokit/Drivers/platform/drvAppleRootDomain/RootDomain.cpp    optional iokitcpp
+
+# Intel EtherExpress Pro driver (i82557/i82558)
+iokit/Drivers/network/drvIntel82557/i82557.cpp              optional iokitcpp
+iokit/Drivers/network/drvIntel82557/i82557Private.cpp       optional iokitcpp
+iokit/Drivers/network/drvIntel82557/i82557PHY.cpp           optional iokitcpp
+iokit/Drivers/network/drvIntel82557/i82557eeprom.cpp        optional iokitcpp
+
+# ATA (Intel PIIX IDE) controller driver
+iokit/Drivers/ata/drvAppleATA/AppleATAPIIX.cpp              optional iokitcpp

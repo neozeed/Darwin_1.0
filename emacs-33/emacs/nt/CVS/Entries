@@ -1,0 +1,22 @@
+/ChangeLog/1.1.1.2/Thu Sep  2 05:36:16 1999//Temacs-33
+/INSTALL/1.1.1.1/Sun May  2 02:43:43 1999//Temacs-33
+/README/1.1.1.1/Sun May  2 02:43:43 1999//Temacs-33
+/TODO/1.1.1.1/Sun May  2 02:43:43 1999//Temacs-33
+/addpm.c/1.1.1.2/Thu Sep  2 05:36:16 1999//Temacs-33
+/cmdproxy.c/1.1.1.2/Thu Sep  2 05:36:16 1999//Temacs-33
+/config.h/1.1.1.1/Sun May  2 02:43:43 1999//Temacs-33
+/config.nt/1.1.1.2/Thu Sep  2 05:36:17 1999//Temacs-33
+/ddeclient.c/1.1.1.1/Thu Sep  2 05:36:18 1999//Temacs-33
+/debug.bat.in/1.1.1.1/Sun May  2 02:43:43 1999//Temacs-33
+/ebuild.bat/1.1.1.1/Sun May  2 02:43:43 1999//Temacs-33
+/emacs.bat.in/1.1.1.1/Sun May  2 02:43:43 1999//Temacs-33
+/emacs.ico/1.1.1.1/Sun May  2 02:43:43 1999/-kb/Temacs-33
+/emacs.rc/1.1.1.2/Thu Sep  2 05:36:19 1999//Temacs-33
+/fast-install.bat/1.1.1.1/Sun May  2 02:43:43 1999//Temacs-33
+/ftime.bat/1.1.1.1/Sun May  2 02:43:43 1999//Temacs-33
+/install.bat/1.1.1.1/Sun May  2 02:43:43 1999//Temacs-33
+/makefile.def/1.1.1.2/Thu Sep  2 05:36:19 1999//Temacs-33
+/makefile.nt/1.1.1.2/Thu Sep  2 05:36:20 1999//Temacs-33
+/paths.h/1.1.1.1/Sun May  2 02:43:43 1999//Temacs-33
+/runemacs.c/1.1.1.1/Sun May  2 02:43:43 1999//Temacs-33
+D/inc////

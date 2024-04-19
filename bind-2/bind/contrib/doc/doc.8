@@ -1,0 +1,169 @@
+.\"
+.\"   Distributed with: Doc - Version 2.0 (8/22/90)
+.\"   USC Information Sciences Institute
+.\"
+.\"   DOC - Version 2.1.1 (5/27/95)
+.\"   Defense Information Systems Agency
+.\"
+.\"	doc.8	2.1.1 (DISA) 5/27/95
+.TH DOC 8 5/27/95
+.SH NAME
+doc \- diagnose unhealthy DNS domains
+.SH SYNOPSIS
+.B doc
+.RI [-p]
+.RI [-e][-w][-v][-d]
+.I domain_name
+.RI [parent_domain_name]
+.SH DESCRIPTION
+\fIDoc\fP is an automated tool for verifying (to an extent) that a
+domain is configured and functioning correctly.  It makes no
+attempt to validate the data inside a domain, only the structure.
+The only required parameter is the valid domain name of an existing
+domain.  Example:
+.sp 1
+		doc isi.edu.
+.sp 1
+Previous versions of \fIdoc\fP required that you specify the parent
+(delegating) domain if it was not precisely one level up from the
+domain being checked (or specify the parent nameservers in an
+appropriately named file).  Although the option still exists to do
+that (and it may be required with some complex configurations), some
+heuristics have been added that make some attempt to handle parent
+domains that are more than one level up from the current domain.
+Examples:
+.sp 1
+.nf
+	doc isi.edu. edu.			(correct, but not required)
+	doc isi.edu.    			(this works too)
+	doc 9.128.in-addr.arpa. arpa.	(correct, but not required)
+	doc 9.128.in-addr.arpa.		(this works too)
+.fi
+.sp 1
+If you have problems, giving the parent information information
+explicitly may help.
+
+.SH OPTIONS
+.IP "\-p"
+Skip testing the information held at delegating domain's servers.
+.sp 1
+The default operation of \fIdoc\fP includes testing that all of the
+servers for the delegating (parent) domain agree about the
+delegation information held for the domain in question.  Since
+inconsistencies discovered at this level may or may not indicate
+serious problems, one can choose to skip the parent testing.
+If so, \fIdoc\fP uses the first non-authoritative list of NS records
+from a parent domain server as those to direct further queries.
+If all of the parent domain servers are additionally authoritative
+for the domain, the answer from the last one queried is used.
+This may be a useful timesaver if you are regularly checking up
+on a large number of domains.  [See also section FILES USED for
+a similar functionality.]
+
+.IP "\-[e][w][v][d]  Specify the level of verbosity to standard output."
+.sp 1
+The default mode of operation is to only print to standard output
+a summary of what is discovered.  In addition, errors made in the
+process of testing (i.e. query errors, errors causing \fIdoc\fP to
+abort, etc) are noted.
+.sp 1
+.nf
+    -e	Output comments about errors discovered.
+    -w	Output comments about warnings issued.
+    -v	Verbose output. Include misc. comments and output
+		confirming correct behavior.
+    -d	Debug output. Checkpoint current (last)
+		nameserver query.
+.fi
+.sp 1
+These output options are cumulative (i.e. -v implies -v -w -e).
+.sp 1
+\fBNOTE:\fP Parsing is very simple.  All option flags must come
+before the domain names.
+.SH FILES CREATED
+In addition to the standard output, \fIdoc\fP produces a log file
+named log.<domain_name>, which it places in the current
+directory.  This file includes all "verbose" level comments,
+followed by the nameserver responses to the queries (in a
+slightly masticated form).
+.sp 1
+While running, \fIdoc\fP creates several temporary files in the
+current directory.  These files have names of the form:
+.sp 1
+	<domain_name>.* 
+.SH FILES USED
+\fIDoc\fP expects the auxiliary files: doc1.awk, doc3.awk, and
+doc4.awk to reside in the current working directory.  This can be
+overridden by changing the program to look for them in a directory
+indicated in a shell variable intended for this purpose.  If your
+System Administrator installed \fIdoc\fP, they'll need to make the
+necessary modification.
+.sp 1
+\fIDoc\fP looks for the file DNsrv.<parent_domain_name> in the
+working directory.  If it exists, \fIdoc\fP does not make a standard
+query to discover the list of nameservers for the parent domain.
+Rather it queries the list of servers contained in this file to
+obtain delegation information for the domain being tested.  This
+may be useful if one regularly tests a series of domains, all
+with the same delegating zone, where one of the servers in known
+to be foul.  This server would simply be omitted from the the
+DNsrv.* file.
+.sp 1
+awk, sed & dig (version 2.0 or higher) are expected to be found
+in your normal path.  If not, you may want to alias to the full
+path inside of \fIdoc\fP itself.
+.SH DETAILS
+See file INFO (included with distribution tar) for details of
+procedure.
+
+.SH BUGS
+The exit code returned via the shell is only 8 bits.  This could
+cause a problem in the value returned by the auxiliary file doc3.awk.
+This hasn't been seen yet (a "poison configuration" is not likely to
+occur yet), and hopefully will be corrected if/when
+\fIdoc\fP is re-implemented (see below).
+.sp 1
+The current implementation is fairly simple (albeit not pretty),
+so it is not expected to abort unexpectedly.  However, this
+version (2.0) is an initial attempt at automating this task.
+Further development is expected in identifying the appropriate
+queries, analysis, and subsequent conclusions that are made.
+Hopefully once the design of the test suite has become more stable,
+a less "patchwork" production version of \fIdoc\fP will be done.
+.SH COMMENTS
+The previous authors effectively stopped further development and
+support in 1990.  Starting with version 2.1, the official anonymous
+FTP site for \fIdoc\fP is ftp.vix.com as part of the the latest
+distribution of BIND (see the BIND Home Page at
+<URL:http://www.isc.org/isc/>).  It will likely also be made
+available in the DNS Resource Directory
+<URL:http://www.is.co.za/andras/computer/dnsrd/> in the near future.
+.sp 1
+Relatively minor modifications have been made with version 2.1,
+mostly to make the program a bit more robust in handling parent
+(delegating) domains for the use of Defense Information Systems
+Agency personnel.
+.sp 1
+This program is being shared with the rest of the Internet on a
+unsupported basis.  If you have any enhancements or changes you have
+made, please let us know.  We'd love to see them, with an eye towards
+integrating them into our version (and also into the publicly
+available version).  However, keep in mind that I'm not getting paid
+(nor do I have the time) to support the whole Internet on this tool.
+.sp 1
+With the previous authors no longer providing support for \fIdoc\fP,
+it becomes far less likely that a "less 'patchwork' production
+version" will ever become available.
+.SH INFO
+The name \fIdoc\fP comes from Domain Obscenity Control, in that the
+kinds of problems it looks for are considered "obscene" from the
+perspective of a well-managed DNS.
+.SH TO DO
+RFC 1537 SOA value conformance checking (warnings only).
+.SH PREVIOUS AUTHORS
+Steve Hotz (hotz@isi.edu)
+Paul Mockapetris (pvm@isi.edu)
+.SH MODIFICATIONS BY
+Brad Knowles (brad@birch.ims.disa.mil)
+.SH SEE ALSO
+dig(1),  bind operators guide (BOG),  RFCs: 1034,1035,1535-1537,1713,xxxx

@@ -1,0 +1,222 @@
+Common problems with installing BIND 4.9.3 on SunOS 4.1.x
+=========================================================
+
+$Id: PROBLEMS,v 1.1.1.1 1999/10/04 22:25:01 wsanchez Exp $
+
+by Chris Davis <ckd@kei.com>
+
+There are a number of potential trouble spots when installing BIND 4.9.3
+on a SunOS 4.1.x system (though the rewards, in my opinion, far outweigh
+the risks).  This file is an incomplete and partial list of them, with
+solutions and/or workarounds.  Comments and additions are appreciated.
+
+Note that you should read the file shres/sunos/INSTALL *thoroughly* before
+beginning the installation of BIND's resolver code in your shared library.
+
+* undefined symbols _dlopen, _dlclose, _dlsym (unless you -ldl)
+
+You've previously rebuilt your shared library using Sun's instructions
+(/usr/lib/shlib.etc/README).  (See also next topic.)
+
+Sun's /usr/lib/shlib.etc/Makefile usually does not include -ldl when
+building the new shared library.  Unfortunately, this means that if you
+ever rebuild the shared library without adding -ldl, you will need to add
+-ldl to *every* compilation on that machine from then on.
+
+This is often the case when you have installed resolv+ or made other
+changes to libc.so; since Sun's shipped /usr/lib/shlib.etc/Makefile, and
+even the copy included with most "jumbo libc patches", doesn't include the
+-ldl, you may have already found this problem.
+
+Solution: The file shres/sunos/sun-Makefile.patch2 will add -ldl to the
+appropriate lines in /usr/lib/shlib.etc/Makefile, as will some (but not
+all!) versions of the various "jumbo libc" patches.  The lines beginning
+with "ld -assert" should both end with "-ldl".
+
+* undefined symbols _mbstowcs_xccs, _mbtowc_xccs, wcstombs_xccs, _wctomb_xccs 
+
+You've previously rebuilt your shared library using Sun's instructions
+(/usr/lib/shlib.etc/README).  (See also previous topic.)
+
+Sun's /usr/lib/shlib.etc/README tells you that you need to do two mv
+commands because "ar" truncated filenames over 16 characters.
+
+They lied; you need to do *three*.  "mv xccs.multibyte. xccs.multibyte.o"
+at the end of step 3 in /usr/lib/shlib.etc/README.
+
+Solution: shres/sunos/INSTALL tells you about, and shres/makeshlib renames, 
+all three files.
+
+* undefined symbol _strerror when compiling -Bstatic
+
+This is usually seen when compiling emacs or sendmail V8, but will arise
+with any program that uses -lresolv and is not dynamically linked.
+
+You haven't integrated strerror.o into your static library libc.a, and you
+didn't add -l44bsd to bring it in, either.
+
+Solutions: Link with -l44bsd, link dynamically instead of statically, or
+include strerror.o in the non-shared libc as well (see shres/sunos/ISSUES,
+"Modifying the static libc").
+
+* "parse error" on inet.h, nameser.h, resolv.h, netdb.h, bitypes.h
+
+The BIND header files use the existence or value of the "BSD" preprocessor
+definition to conditionally include bit-size types (since ANSI didn't
+bother to create any when doing the C standard, alas).  The newest BSDish
+systems have them already, but older BSDish (and all non-BSDish) systems
+need them included (this category includes SunOS 4.1.x).
+
+The problem is that if the symbol "BSD" is defined but has a null value,
+the preprocessor will get a syntax error.  Various versions and variants
+of GNU Emacs have this problem, as well as the NCSA httpd and probably
+many other packages.
+
+Solutions: change the program(s) being compiled to define "BSD" to a small
+numeric value (such as "42"), or remove the conditional statements in the
+installed header files (making sure to re-run fixincludes if using gcc).
+
+* login gives "hostname is bad for this system" errors (users can't log in)
+
+This is caused when using the SunOS "C2" password shadowing stuff
+(/etc/security/passwd.adjunct and friends).  Make sure that
+
+    dig `hostname`
+
+returns the correct address(es) for this machine, and that
+
+    dig `localhost`
+
+returns 127.0.0.1.
+
+Solution: make sure /etc/resolv.conf has a correct "search" path and
+correct "nameserver" entries.  Also make sure that "localhost.your.domain"
+exists and has the address 127.0.0.1.
+
+* nslookup gives "*** Can't find server name for address x: Not implemented"
+
+This means that you're using the old nslookup that Sun supplies, which
+tries to use the (deprecated) INVQ operation to get the name of the DNS
+server it's talking to.  The inverse query stuff is not supported by
+default in BIND 4.9.3's named.
+
+Solutions:
+
+  Well, you could use DiG instead.... ;-)
+
+  (best) replace Sun's nslookup with the one that came with BIND. This is
+  not always possible if you have 1000 workstations, but if you're
+  installing the new shared library on all of them, you can usually
+  install the new nslookup too.
+
+  (middlin') turn on "options fake-iquery" in your nameserver's named.boot
+  file.  Unfortunately, this won't help you or your users if you point
+  nslookup toward an off-site 4.9.3 named that didn't do this.  See also
+  the BOG, section 5.1.11.
+
+  (worst) compile with INVQ defined in conf/options.h.  This makes your
+  named more bloated for no good reason and also has the disadvantages of
+  the "fake-iquery" listed above.
+
+* _res not defined
+
+The shared library resolver objects use _res_shlib to prevent conflicts.
+
+Solution: link programs that use _res directly with -lresolv.  This should
+be done anyway as the _res internals may change or disappear in different
+BIND versions.  For more details on why _res_shlib is used, see
+shres/sunos/ISSUES, "global variable collision".
+
+* /etc/hosts or NIS not consulted for host lookups
+
+They aren't supposed to be; BIND 4.9.3's resolver is DNS-only.  4.9.4
+should have something similar to resolv+'s functionality (allowing you to
+configure the lookup order and services).  I leave /etc/hosts minimal (for
+use with mount and rcp, since they're statically linked) and don't run
+NIS.  At our site, DNS is considered the One True Hostname Authority.  NIS
+and /etc/hosts don't have the same semantics as DNS anyway, which can
+cause a number of problems.
+
+Solutions: put all hosts in DNS, or use resolv+ until 4.9.4 is available.
+
+* mount and rcp don't look up hosts using DNS
+
+For good and logical reasons (they're useful for recovering if you manage
+to screw up your shared libraries) they're statically linked.  They
+therefore have the old gethostbyname() which looks only in NIS (if it's
+running and supplies a hosts.byname map) or /etc/hosts (if NIS is not
+running, or if it's not serving hosts.byname).
+
+Solutions:
+
+ - Put all the hosts you plan to mount filesystems from and/or rcp files
+   to/from, in NIS or /etc/hosts.  Since most of the time you don't mount
+   filesystems from just any old place, this is not a big problem for
+   mount.  rcp within a small set of (presumably local) hosts is also
+   possible.
+
+ - Compile mount and/or rcp from 4.4Lite or Net/2 sources.  Some patching
+   and fussing may be necessary.  I recommend saving the statically linked
+   ones in /sbin for disaster recovery purposes.  If you give up on the
+   traditional r-utilities for security reasons, compiling the Kerberized
+   rcp (such as that in the Cygnus Network Security distribution) will
+   normally result in a dynamically linked rcp.
+
+* gcc won't compile -fpic code, but cc will compile -pic
+
+You probably installed gcc to use GNU as.  Run gcc -v to find gcc's
+library directory:
+
+% gcc -v
+Reading specs from /usr/local/lib/gcc-lib/sparc-sun-sunos4.1.3_U1/2.5.8/specs
+gcc version 2.5.8
+
+In this case, if GCC is using GNU as, it's probably installed in this
+directory as /usr/local/lib/gcc-lib/sparc-sun-sunos4.1.3_U1/2.5.8/as.  (It
+may also be in your path ahead of /usr/bin/as.)
+
+GNU as does not support position-independent code.
+
+Solutions:
+
+- (best) change SHCC to "gcc -B/usr/bin/ -DSUNOS4".  This will force gcc
+  to use /usr/bin/as rather than any other one.
+
+- use cc instead of gcc for SHCC.  Suboptimal, since cc can't share the
+  read-only data (strings and the like).
+
+- remove GNU as and use Sun's as.
+
+* various problems with shared library revision numbers
+
+Make sure you do *NOT* have the LD_LIBRARY_PATH variable set to put
+/usr/5lib first when building BIND.  BIND is not designed to be linked
+with the System V libraries in /usr/5lib.  (If LD_LIBRARY_PATH is set to
+include /usr/openwin, that's fine; BIND doesn't use the X11 libraries.)
+
+Also, if /usr/lib is included in LD_LIBRARY_PATH, make sure it's
+"/usr/lib" and not "/lib" or "/usr/lib/" or the like.  This will confuse
+ld.so when searching for libdl, and may cause the shared library build to
+break.
+
+* _getnetbyname/_getnetbyaddr "multiply defined"
+
+You put Sun's getnetent.o back, but you didn't delete BIND's getnet*
+object files.  BIND's getnetnamadr.o defines these.
+
+You would normally only do this if you wanted to use /etc/networks instead
+of the DNS for network names.  (See shres/sunos/ISSUES for why I recommend 
+using RFC 1101 for network names instead.)
+
+Solution: Delete *ALL* of BIND's getnet* objects before building the
+shared library.
+
+* update of libc.sa.* fails when using makeshlib
+
+Sun's awkfile can get confused if you have certain combinations of libc.so
+versions around.  This will result in makeshlib being unable to copy the
+(nonexistant) libc.sa.1.* into place.  The awkfile patches cover all the
+(currently known) ways it can get confused, but I'm sure there's still a
+way to break it.
+
+Solution: do it by hand.  makeshlib can't solve *every* problem.

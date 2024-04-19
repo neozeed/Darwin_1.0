@@ -1,0 +1,5 @@
+#! /bin/sh
+
+# $Id: manroff,v 1.1.1.1 1999/10/04 22:24:38 wsanchez Exp $
+
+nroff -man -h $*

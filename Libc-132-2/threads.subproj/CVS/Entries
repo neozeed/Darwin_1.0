@@ -1,0 +1,13 @@
+/Makefile/1.1.1.2/Thu Oct 14 21:09:48 1999//TLibc-132-2
+/Makefile.postamble/1.1.1.2/Thu Oct 14 21:09:48 1999//TLibc-132-2
+/Makefile.preamble/1.1.1.2/Thu Oct 14 21:09:48 1999//TLibc-132-2
+/PB.project/1.1.1.2/Thu Oct 14 21:09:49 1999//TLibc-132-2
+/cprocs.c/1.2/Thu Oct 14 21:19:53 1999//TLibc-132-2
+/cthread_internals.h/1.2/Thu Oct 14 21:19:53 1999//TLibc-132-2
+/cthreads.c/1.2/Thu Oct 14 21:19:53 1999//TLibc-132-2
+/cthreads.h/1.2/Thu Oct 14 21:19:53 1999//TLibc-132-2
+/lu_utils.c/1.1.1.1/Thu Oct 14 21:09:49 1999//TLibc-132-2
+/mig_support.c/1.2/Thu Oct 14 21:19:54 1999//TLibc-132-2
+/threads_data.c/1.2/Thu Oct 14 21:19:54 1999//TLibc-132-2
+D/i386.subproj////
+D/ppc.subproj////

@@ -1,0 +1,26 @@
+/Makefile.dep/1.1.1.1/Fri Apr 23 01:12:08 1999//Tgroff-8
+/Makefile.sub/1.1.1.1/Fri Apr 23 01:12:08 1999//Tgroff-8
+/TODO/1.1.1.1/Fri Apr 23 01:12:08 1999//Tgroff-8
+/box.cc/1.1.1.1/Fri Apr 23 01:12:08 1999//Tgroff-8
+/box.h/1.1.1.1/Fri Apr 23 01:12:08 1999//Tgroff-8
+/delim.cc/1.1.1.1/Fri Apr 23 01:12:08 1999//Tgroff-8
+/eqn.cc/1.1.1.3/Thu Sep  2 06:19:32 1999//Tgroff-8
+/eqn.h/1.1.1.1/Fri Apr 23 01:12:08 1999//Tgroff-8
+/eqn.man/1.1.1.1/Fri Apr 23 01:12:08 1999//Tgroff-8
+/eqn.tab.h/1.1.1.3/Thu Sep  2 06:19:33 1999//Tgroff-8
+/eqn.y/1.1.1.1/Fri Apr 23 01:12:08 1999//Tgroff-8
+/lex.cc/1.1.1.1/Fri Apr 23 01:12:08 1999//Tgroff-8
+/limit.cc/1.1.1.1/Fri Apr 23 01:12:09 1999//Tgroff-8
+/list.cc/1.1.1.1/Fri Apr 23 01:12:09 1999//Tgroff-8
+/main.cc/1.1.1.1/Fri Apr 23 01:12:09 1999//Tgroff-8
+/mark.cc/1.1.1.1/Fri Apr 23 01:12:09 1999//Tgroff-8
+/neqn.sh/1.1.1.1/Fri Apr 23 01:12:09 1999//Tgroff-8
+/other.cc/1.1.1.1/Fri Apr 23 01:12:09 1999//Tgroff-8
+/over.cc/1.1.1.1/Fri Apr 23 01:12:09 1999//Tgroff-8
+/pbox.h/1.1.1.1/Fri Apr 23 01:12:09 1999//Tgroff-8
+/pile.cc/1.1.1.1/Fri Apr 23 01:12:09 1999//Tgroff-8
+/script.cc/1.1.1.1/Fri Apr 23 01:12:09 1999//Tgroff-8
+/special.cc/1.1.1.1/Fri Apr 23 01:12:09 1999//Tgroff-8
+/sqrt.cc/1.1.1.1/Fri Apr 23 01:12:09 1999//Tgroff-8
+/text.cc/1.1.1.1/Fri Apr 23 01:12:09 1999//Tgroff-8
+D

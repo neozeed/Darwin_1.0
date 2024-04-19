@@ -1,0 +1,34 @@
+/Makefile/1.1.1.2/Tue Jan 11 00:36:17 2000//Tbootstrap_cmds-22-1
+/Makefile.ORIG/1.1.1.1/Tue Jan 11 00:36:17 2000//Tbootstrap_cmds-22-1
+/Makefile.postamble/1.1.1.2/Tue Jan 11 00:36:17 2000//Tbootstrap_cmds-22-1
+/Makefile.preamble/1.1.1.2/Tue Jan 11 00:36:17 2000//Tbootstrap_cmds-22-1
+/PB.project/1.1.1.2/Tue Jan 11 00:36:17 2000//Tbootstrap_cmds-22-1
+/alloc.h/1.1.1.2/Tue Jan 11 00:36:17 2000//Tbootstrap_cmds-22-1
+/error.c/1.1.1.2/Tue Jan 11 00:36:17 2000//Tbootstrap_cmds-22-1
+/error.h/1.1.1.2/Tue Jan 11 00:36:17 2000//Tbootstrap_cmds-22-1
+/global.c/1.1.1.2/Tue Jan 11 00:36:17 2000//Tbootstrap_cmds-22-1
+/global.h/1.1.1.2/Tue Jan 11 00:36:18 2000//Tbootstrap_cmds-22-1
+/handler.c/1.1.1.2/Tue Jan 11 00:36:18 2000//Tbootstrap_cmds-22-1
+/header.c/1.1.1.2/Tue Jan 11 00:36:18 2000//Tbootstrap_cmds-22-1
+/lexxer.h/1.1.1.2/Tue Jan 11 00:36:18 2000//Tbootstrap_cmds-22-1
+/lexxer.l/1.1.1.2/Tue Jan 11 00:36:18 2000//Tbootstrap_cmds-22-1
+/mig.c/1.1.1.2/Tue Jan 11 00:36:18 2000//Tbootstrap_cmds-22-1
+/mig.sh/1.1.1.2/Tue Jan 11 00:36:18 2000//Tbootstrap_cmds-22-1
+/mig_errors.h/1.1.1.2/Tue Jan 11 00:36:18 2000//Tbootstrap_cmds-22-1
+/mig_machine.h/1.1.1.1/Tue Jan 11 00:36:18 2000//Tbootstrap_cmds-22-1
+/parser.y/1.1.1.2/Tue Jan 11 00:36:18 2000//Tbootstrap_cmds-22-1
+/routine.c/1.1.1.2/Tue Jan 11 00:36:18 2000//Tbootstrap_cmds-22-1
+/routine.h/1.1.1.2/Tue Jan 11 00:36:19 2000//Tbootstrap_cmds-22-1
+/server.c/1.1.1.2/Tue Jan 11 00:36:19 2000//Tbootstrap_cmds-22-1
+/statement.c/1.1.1.2/Tue Jan 11 00:36:19 2000//Tbootstrap_cmds-22-1
+/statement.h/1.1.1.2/Tue Jan 11 00:36:19 2000//Tbootstrap_cmds-22-1
+/strdefs.h/1.1.1.1/Tue Jan 11 00:36:19 2000//Tbootstrap_cmds-22-1
+/string.c/1.1.1.2/Tue Jan 11 00:36:19 2000//Tbootstrap_cmds-22-1
+/type.c/1.1.1.2/Tue Jan 11 00:36:19 2000//Tbootstrap_cmds-22-1
+/type.h/1.1.1.2/Tue Jan 11 00:36:19 2000//Tbootstrap_cmds-22-1
+/user.c/1.1.1.2/Tue Jan 11 00:36:19 2000//Tbootstrap_cmds-22-1
+/utils.c/1.1.1.2/Tue Jan 11 00:36:20 2000//Tbootstrap_cmds-22-1
+/utils.h/1.1.1.2/Tue Jan 11 00:36:20 2000//Tbootstrap_cmds-22-1
+/write.h/1.1.1.2/Tue Jan 11 00:36:20 2000//Tbootstrap_cmds-22-1
+D/i386////
+D/ppc////

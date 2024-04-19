@@ -1,0 +1,19 @@
+/Makefile/1.1.1.1/Mon Oct  4 22:24:56 1999//Tbind-2
+/Makefile.set/1.1.1.1/Mon Oct  4 22:24:56 1999//Tbind-2
+/README/1.1.1.1/Mon Oct  4 22:24:56 1999//Tbind-2
+/bind.c/1.1.1.1/Mon Oct  4 22:24:56 1999//Tbind-2
+/endgrent.c/1.1.1.1/Mon Oct  4 22:24:56 1999//Tbind-2
+/endpwent.c/1.1.1.1/Mon Oct  4 22:24:56 1999//Tbind-2
+/fcntl.c/1.1.1.1/Mon Oct  4 22:24:56 1999//Tbind-2
+/fsync.c/1.1.1.1/Mon Oct  4 22:24:56 1999//Tbind-2
+/ftruncate.c/1.1.1.1/Mon Oct  4 22:24:56 1999//Tbind-2
+/getline.c/1.1.1.1/Mon Oct  4 22:24:56 1999//Tbind-2
+/getpass.c/1.1.1.1/Mon Oct  4 22:24:56 1999//Tbind-2
+/initgroups.c/1.1.1.1/Mon Oct  4 22:24:56 1999//Tbind-2
+/nice.c/1.1.1.1/Mon Oct  4 22:24:56 1999//Tbind-2
+/probe/1.1.1.1/Mon Oct  4 22:24:56 1999//Tbind-2
+/recvfrom.c/1.1.1.1/Mon Oct  4 22:24:56 1999//Tbind-2
+/setgid.c/1.1.1.1/Mon Oct  4 22:24:56 1999//Tbind-2
+/setuid.c/1.1.1.1/Mon Oct  4 22:24:56 1999//Tbind-2
+D/bin////
+D/include////

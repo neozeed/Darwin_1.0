@@ -1,0 +1,16 @@
+#  if defined(TIOCNOTTY)
+		(void) ioctl(STDIN_FILENO, TIOCNOTTY, (char *)NULL);
+		(void) ioctl(STDOUT_FILENO, TIOCNOTTY, (char *)NULL);
+		(void) ioctl(STDERR_FILENO, TIOCNOTTY, (char *)NULL);
+#  endif
+		n = open(_PATH_DEVNULL, O_RDONLY);
+		(void) dup2(n, STDIN_FILENO);
+		(void) dup2(n, STDOUT_FILENO);
+		(void) dup2(n, STDERR_FILENO);
+		if (n != STDIN_FILENO &&
+		    n != STDOUT_FILENO &&
+		    n != STDERR_FILENO)
+			(void) close(n);
+#  if defined(SYSV) || defined(hpux)
+		setpgrp();
+#  endif

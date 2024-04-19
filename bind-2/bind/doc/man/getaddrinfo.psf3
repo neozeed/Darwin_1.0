@@ -1,0 +1,316 @@
+%!PS-Adobe-3.0
+%%Creator: groff version 1.10
+%%CreationDate: Mon Jun 21 14:22:02 1999
+%%DocumentNeededResources: font Times-Roman
+%%DocumentSuppliedResources: procset grops 1.10 0
+%%Pages: 1
+%%PageOrder: Ascend
+%%Orientation: Portrait
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset grops 1.10 0
+/setpacking where{
+pop
+currentpacking
+true setpacking
+}if
+/grops 120 dict dup begin
+/SC 32 def
+/A/show load def
+/B{0 SC 3 -1 roll widthshow}bind def
+/C{0 exch ashow}bind def
+/D{0 exch 0 SC 5 2 roll awidthshow}bind def
+/E{0 rmoveto show}bind def
+/F{0 rmoveto 0 SC 3 -1 roll widthshow}bind def
+/G{0 rmoveto 0 exch ashow}bind def
+/H{0 rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/I{0 exch rmoveto show}bind def
+/J{0 exch rmoveto 0 SC 3 -1 roll widthshow}bind def
+/K{0 exch rmoveto 0 exch ashow}bind def
+/L{0 exch rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/M{rmoveto show}bind def
+/N{rmoveto 0 SC 3 -1 roll widthshow}bind def
+/O{rmoveto 0 exch ashow}bind def
+/P{rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/Q{moveto show}bind def
+/R{moveto 0 SC 3 -1 roll widthshow}bind def
+/S{moveto 0 exch ashow}bind def
+/T{moveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/SF{
+findfont exch
+[exch dup 0 exch 0 exch neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/MF{
+findfont
+[5 2 roll
+0 3 1 roll
+neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/level0 0 def
+/RES 0 def
+/PL 0 def
+/LS 0 def
+/MANUAL{
+statusdict begin/manualfeed true store end
+}bind def
+/PLG{
+gsave newpath clippath pathbbox grestore
+exch pop add exch pop
+}bind def
+/BP{
+/level0 save def
+1 setlinecap
+1 setlinejoin
+72 RES div dup scale
+LS{
+90 rotate
+}{
+0 PL translate
+}ifelse
+1 -1 scale
+}bind def
+/EP{
+level0 restore
+showpage
+}bind def
+/DA{
+newpath arcn stroke
+}bind def
+/SN{
+transform
+.25 sub exch .25 sub exch
+round .25 add exch round .25 add exch
+itransform
+}bind def
+/DL{
+SN
+moveto
+SN
+lineto stroke
+}bind def
+/DC{
+newpath 0 360 arc closepath
+}bind def
+/TM matrix def
+/DE{
+TM currentmatrix pop
+translate scale newpath 0 0 .5 0 360 arc closepath
+TM setmatrix
+}bind def
+/RC/rcurveto load def
+/RL/rlineto load def
+/ST/stroke load def
+/MT/moveto load def
+/CL/closepath load def
+/FL{
+currentgray exch setgray fill setgray
+}bind def
+/BL/fill load def
+/LW/setlinewidth load def
+/RE{
+findfont
+dup maxlength 1 index/FontName known not{1 add}if dict begin
+{
+1 index/FID ne{def}{pop pop}ifelse
+}forall
+/Encoding exch def
+dup/FontName exch def
+currentdict end definefont pop
+}bind def
+/DEFS 0 def
+/EBEGIN{
+moveto
+DEFS begin
+}bind def
+/EEND/end load def
+/CNT 0 def
+/level1 0 def
+/PBEGIN{
+/level1 save def
+translate
+div 3 1 roll div exch scale
+neg exch neg exch translate
+0 setgray
+0 setlinecap
+1 setlinewidth
+0 setlinejoin
+10 setmiterlimit
+[]0 setdash
+/setstrokeadjust where{
+pop
+false setstrokeadjust
+}if
+/setoverprint where{
+pop
+false setoverprint
+}if
+newpath
+/CNT countdictstack def
+userdict begin
+/showpage{}def
+}bind def
+/PEND{
+clear
+countdictstack CNT sub{end}repeat
+level1 restore
+}bind def
+end def
+/setpacking where{
+pop
+setpacking
+}if
+%%EndResource
+%%IncludeResource: font Times-Roman
+grops begin/DEFS 1 dict def DEFS begin/u{.001 mul}bind def end/RES 72
+def/PL 792 def/LS false def/ENC0[/asciicircum/asciitilde/Scaron/Zcaron
+/scaron/zcaron/Ydieresis/trademark/quotesingle/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/space/exclam/quotedbl/numbersign/dollar/percent
+/ampersand/quoteright/parenleft/parenright/asterisk/plus/comma/hyphen
+/period/slash/zero/one/two/three/four/five/six/seven/eight/nine/colon
+/semicolon/less/equal/greater/question/at/A/B/C/D/E/F/G/H/I/J/K/L/M/N/O
+/P/Q/R/S/T/U/V/W/X/Y/Z/bracketleft/backslash/bracketright/circumflex
+/underscore/quoteleft/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y
+/z/braceleft/bar/braceright/tilde/.notdef/quotesinglbase/guillemotleft
+/guillemotright/bullet/florin/fraction/perthousand/dagger/daggerdbl
+/endash/emdash/ff/fi/fl/ffi/ffl/dotlessi/dotlessj/grave/hungarumlaut
+/dotaccent/breve/caron/ring/ogonek/quotedblleft/quotedblright/oe/lslash
+/quotedblbase/OE/Lslash/.notdef/exclamdown/cent/sterling/currency/yen
+/brokenbar/section/dieresis/copyright/ordfeminine/guilsinglleft
+/logicalnot/minus/registered/macron/degree/plusminus/twosuperior
+/threesuperior/acute/mu/paragraph/periodcentered/cedilla/onesuperior
+/ordmasculine/guilsinglright/onequarter/onehalf/threequarters
+/questiondown/Agrave/Aacute/Acircumflex/Atilde/Adieresis/Aring/AE
+/Ccedilla/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute/Icircumflex
+/Idieresis/Eth/Ntilde/Ograve/Oacute/Ocircumflex/Otilde/Odieresis
+/multiply/Oslash/Ugrave/Uacute/Ucircumflex/Udieresis/Yacute/Thorn
+/germandbls/agrave/aacute/acircumflex/atilde/adieresis/aring/ae/ccedilla
+/egrave/eacute/ecircumflex/edieresis/igrave/iacute/icircumflex/idieresis
+/eth/ntilde/ograve/oacute/ocircumflex/otilde/odieresis/divide/oslash
+/ugrave/uacute/ucircumflex/udieresis/yacute/thorn/ydieresis]def
+/Times-Roman@0 ENC0/Times-Roman RE
+%%EndProlog
+%%Page: 1 1
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF .581(The function is de\214ned for protocol-independent nodename-to-address translation.)
+72 12 R .581(It performs functionality of and)5.581 F .212
+(in more sophisticated manner)72 24 R 5.212(.T)-.55 G .213(he addrinfo structure is de\214ned as a result of including the header: struct addrinfo {)
+-5.212 F(*)72 36 Q 10(int ai_\215ags; /*)84.5 48 R(AI_P)2.5 E
+(ASSIVE, AI_CANONN)-.92 E(AME, AI_NUMERICHOST */)-.35 E 10(int ai_f)84.5
+60 R 7.5(amily; /*)-.1 F(PF_xxx */)2.5 E 10(int ai_socktype;)84.5 72 R
+(/* SOCK_xxx */)5 E 10(int ai_protocol;)84.5 84 R(/* 0 or IPPR)5 E -1.88
+-.4(OT O)-.4 H(_xxx for IPv4 and IPv6 */).4 E 2.5(size_t ai_addrlen;)
+84.5 96 R(/* length of ai_addr */)7.5 E 5(char *ai_canonname;)84.5 108 R
+(/* canonical name for nodename */)2.5 E(struct sockaddr)84.5 120 Q
+(*ai_addr; /* binary address */)5 E .699(struct addrinfo)84.5 132 R
+(*ai_ne)5.699 E .699(xt; /* ne)-.15 F .699(xt structure in link)-.15 F
+.699(ed list */ }; The and ar)-.1 F .698
+(guments are pointers to null-terminated)-.18 F 1.085
+(strings or One or both of these tw)72 144 R 3.585(oa)-.1 G -.18(rg)
+-3.585 G 1.085(uments must be a pointer).18 F 6.085(.I)-.55 G 3.585(nt)
+-6.085 G 1.086(he normal client scenario, both the and are)-3.585 F
+2.734(speci\214ed. In)72 156 R .234(the normal serv)2.734 F .234
+(er scenario, only the is speci\214ed.)-.15 F 2.734(As)5.234 G .234
+(tring can be either a node name or a numeric host)-2.734 F .499
+(address string i.e., a dotted-decimal IPv4 address or an IPv6 he)72 168
+R 2.999(xa)-.15 G .499
+(ddress A string can be either a service name or a)-2.999 F .404
+(decimal port number)72 180 R 5.404(.T)-.55 G .404
+(he caller can optionally pass an structure, pointed to by the third ar)
+-5.404 F .404(gument, to pro)-.18 F .403(vide hints)-.15 F .191
+(concerning the type of sock)72 192 R .191(et that the caller supports.)
+-.1 F .192
+(In this structure all members other than and must be zero or a)5.191 F
+(pointer)72 204 Q 5.508(.A)-.55 G -.25(va)-2.5 G .508
+(lue of for means the caller will accept an).25 F 3.008(yp)-.15 G .508
+(rotocol f)-3.008 F(amily)-.1 E 5.508(.A)-.65 G -.25(va)-2.5 G .507
+(lue of 0 for means the caller will ac-).25 F .404(cept an)72 216 R
+2.904(ys)-.15 G(ock)-2.904 E .404(et type.)-.1 F 2.904(Av)5.404 G .405
+(alue of 0 for means the caller will accept an)-3.154 F 2.905(yp)-.15 G
+2.905(rotocol. F)-2.905 F .405(or e)-.15 F .405
+(xample, if the caller handles)-.15 F .329(only TCP and not UDP)72 228 R
+2.828(,t)-1.11 G .328
+(hen the member of the hints structure should be set to when is called.)
+-2.828 F .328(If the caller handles)5.328 F .237(only IPv4 and not IPv6, then the member of the structure should be set to when is called.)
+72 240 R .237(If the third ar)5.237 F .237(gument to is)-.18 F 2.72(ap)
+72 252 S(ointer)-2.72 E 2.72(,t)-.4 G .219(his is the same as if the caller had \214lled in an structure initialized to zero with set to PF_UNSPEC.)
+-2.72 F(Upon)5.219 E 1.243(successful return a pointer to a link)72 264
+R 1.244
+(ed list of one or more structures is returned through the \214nal ar)
+-.1 F 3.744(gument. The)-.18 F .197
+(caller can process each structure in this list by follo)72 276 R .197
+(wing the pointer)-.25 F 2.697(,u)-.4 G .197
+(ntil a pointer is encountered.)-2.697 F .196(In each returned)5.196 F
+1.047(structure the three members and are the corresponding ar)72 288 R
+1.047(guments for a call to the function.)-.18 F 1.048
+(In each structure the)6.048 F .216(member points to a \214lled-in sock)
+72 300 R .216
+(et address structure whose length is speci\214ed by the member)-.1 F
+5.216(.I)-.55 G 2.715(ft)-5.216 G .215(he bit is set in the)-2.715 F
+.423(member of the structure, then the caller plans to use the returned sock)
+72 312 R .423(et address structure in a call to In this case, if)-.1 F
+.765(the ar)72 324 R .764(gument is a pointer)-.18 F 3.264(,t)-.4 G .764
+(hen the IP address portion of the sock)-3.264 F .764
+(et address structure will be set to for an IPv4 ad-)-.1 F .915
+(dress or for an IPv6 address.)72 336 R .915(If the bit is not set in the member of the structure, then the returned sock)
+5.915 F .915(et address)-.1 F .454(structure will be ready for a call to or either In this case, if the ar)
+72 348 R .454(gument is a pointer)-.18 F 2.953(,t)-.4 G .453
+(hen the IP address portion of)-2.953 F .333(the sock)72 360 R .333
+(et address structure will be set to the loopback address.)-.1 F .334
+(If the bit is set in the member of the structure, then)5.334 F .619
+(upon successful return the member of the \214rst structure in the link)
+72 372 R .618(ed list will point to a null-terminated string con-)-.1 F
+.116(taining the canonical name of the speci\214ed If the bit is set in the member of the structure, then a string must be a nu-)
+72 384 R .357(meric host address string.)72 396 R .357
+(Otherwise an error of is returned.)5.357 F .357(This \215ag pre)5.357 F
+-.15(ve)-.25 G .356(nts an).15 F 2.856(yt)-.15 G .356
+(ype of name resolution service)-2.856 F .72
+(\(e.g., the DNS\) from being called.)72 408 R .72(All of the information returned by is dynamically allocated: the structures, and)
+5.72 F .708(the sock)72 420 R .708(et address structures and canonical node name strings pointed to by the addrinfo structures.)
+-.1 F 2.307 -.8(To r)5.707 H .707(eturn this).8 F .219
+(information to the system the function Fn freeaddrinfo is called.)72
+432 R .22(The structure pointed to by the is freed, along with)5.219 F
+(an)72 444 Q 3.341(yd)-.15 G .841
+(ynamic storage pointed to by the structure.)-3.341 F .84
+(This operation is repeated until a pointer is encountered.)5.841 F 2.44
+-.8(To a)5.84 H(id).8 E .17(applications in printing error messages based on the codes returned by is de\214ned.)
+72 456 R .17(The ar)5.17 F .17(gument is one of the v)-.18 F(alues)-.25
+E .603(de\214ned earlier and the return v)72 468 R .602
+(alue points to a string describing the error)-.25 F 5.602(.I)-.55 G
+3.102(ft)-5.602 G .602(he ar)-3.102 F .602(gument is not one of the v)
+-.18 F(alues,)-.25 E .51(the function still returns a pointer to a string whose contents indicate an unkno)
+72 480 R .511(wn error)-.25 F 5.511(.E)-.55 G .511
+(rror return status from is)-5.511 F 1.398
+(zero on success and non-zero on errors.)72 492 R 1.397
+(Non-zero error codes are de\214ned in and as follo)6.397 F 1.397
+(ws: address f)-.25 F 1.397(amily for)-.1 F .955
+(nodename not supported temporary f)72 504 R .956
+(ailure in name resolution in)-.1 F -.25(va)-.4 G .956(lid v).25 F .956
+(alue for ai_\215ags non-reco)-.25 F -.15(ve)-.15 G .956(rable f).15 F
+.956(ailure in)-.1 F .274(name resolution ai_f)72 516 R .273
+(amily not supported memory allocation f)-.1 F .273
+(ailure no address associated with nodename nodename)-.1 F .282
+(nor servname pro)72 528 R .282(vided, or not kno)-.15 F .282(wn servname not supported for ai_socktype ai_socktype not supported system er)
+-.25 F(-)-.2 E .421(ror returned in errno If called with proper ar)72
+540 R .421(gument, returns a pointer to a string describing the gi)-.18
+F -.15(ve)-.25 G 2.921(ne).15 G .421(rror code.)-2.921 F(If)5.421 E .668
+(the ar)72 552 R .668(gument is not one of the v)-.18 F .669(alues, the function still returns a pointer to a string whose contents indicate an un-)
+-.25 F(kno)72 564 Q .927(wn error)-.25 F 5.927(.R)-.55 G 3.427(.G)-5.927
+G(illig)-3.427 E .927(an, S.)-.05 F .927(Thomson, J. Bound, and W)5.927
+F 3.427(.S)-.92 G(te)-3.427 E -.15(ve)-.25 G .927(ns, `).15 F .927
+(`Basic Sock)-.74 F .927(et Interf)-.1 F .926(ace Extensions for IPv6,)
+-.1 F -.74('')-.7 G .685(RFC2133, April 1997.)72 576 R .685(The implementation \214rst appeared in WIDE Hydrangea IPv6 protocol stack kit.)
+5.685 F .686(The func-)5.686 F .434(tion is de\214ned IEEE POSIX 1003.1g draft speci\214cation, and documented in `)
+72 588 R .434(`Basic Sock)-.74 F .434(et Interf)-.1 F .434
+(ace Extensions for)-.1 F(IPv6')72 600 Q 2.5('T)-.74 G(he te)-2.5 E
+(xt w)-.15 E(as shamelessly copied from RFC2133.)-.1 E EP
+%%Trailer
+end
+%%EOF

@@ -1,0 +1,19 @@
+/.cvsignore/1.1.1.1/Mon Oct  4 22:24:44 1999//Tbind-2
+/Makefile/1.2/Tue Oct  5 00:07:51 1999//Tbind-2
+/daemon.c/1.1.1.1/Mon Oct  4 22:24:44 1999//Tbind-2
+/ftruncate.c/1.1.1.1/Mon Oct  4 22:24:44 1999//Tbind-2
+/gettimeofday.c/1.1.1.1/Mon Oct  4 22:24:44 1999//Tbind-2
+/mktemp.c/1.1.1.1/Mon Oct  4 22:24:44 1999//Tbind-2
+/putenv.c/1.1.1.1/Mon Oct  4 22:24:44 1999//Tbind-2
+/readv.c/1.1.1.1/Mon Oct  4 22:24:44 1999//Tbind-2
+/setenv.c/1.1.1.1/Mon Oct  4 22:24:44 1999//Tbind-2
+/setitimer.c/1.1.1.1/Mon Oct  4 22:24:44 1999//Tbind-2
+/strcasecmp.c/1.1.1.1/Mon Oct  4 22:24:44 1999//Tbind-2
+/strdup.c/1.1.1.1/Mon Oct  4 22:24:45 1999//Tbind-2
+/strerror.c/1.1.1.1/Mon Oct  4 22:24:45 1999//Tbind-2
+/strpbrk.c/1.1.1.1/Mon Oct  4 22:24:45 1999//Tbind-2
+/strsep.c/1.1.1.1/Mon Oct  4 22:24:45 1999//Tbind-2
+/strtoul.c/1.1.1.1/Mon Oct  4 22:24:45 1999//Tbind-2
+/utimes.c/1.1.1.1/Mon Oct  4 22:24:45 1999//Tbind-2
+/writev.c/1.1.1.1/Mon Oct  4 22:24:45 1999//Tbind-2
+D

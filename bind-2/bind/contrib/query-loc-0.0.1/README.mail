@@ -1,0 +1,7 @@
+
+Here is a new version of my query-loc program, if you wish to include it in bind/contrib. This version has just small changes, to make it run on Solaris (as well as on the Linux development box).
+
+Björn Augustsson <d3august@dtek.chalmers.se>, intend to include this code into his xtraceroute program. 
+
+Now, we just need LOC in the DNS. We can start with 204.152.184 :-)
+

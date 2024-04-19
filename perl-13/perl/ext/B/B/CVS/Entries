@@ -1,0 +1,20 @@
+/Asmdata.pm/1.1.1.2/Fri Mar 31 05:11:09 2000//Tperl-13
+/Assembler.pm/1.1.1.3/Fri Mar 31 05:11:09 2000//Tperl-13
+/Bblock.pm/1.1.1.2/Fri Mar 31 05:11:09 2000//Tperl-13
+/Bytecode.pm/1.1.1.2/Fri Mar 31 05:11:09 2000//Tperl-13
+/C.pm/1.1.1.3/Fri Mar 31 05:11:10 2000//Tperl-13
+/CC.pm/1.1.1.3/Fri Mar 31 05:11:10 2000//Tperl-13
+/Debug.pm/1.1.1.2/Fri Mar 31 05:11:10 2000//Tperl-13
+/Deparse.pm/1.1.1.2/Fri Mar 31 05:11:10 2000//Tperl-13
+/Disassembler.pm/1.1.1.3/Fri Mar 31 05:11:10 2000//Tperl-13
+/Lint.pm/1.1.1.2/Fri Mar 31 05:11:11 2000//Tperl-13
+/Showlex.pm/1.1.1.1/Fri Apr 23 01:31:48 1999//Tperl-13
+/Stackobj.pm/1.1.1.2/Fri Mar 31 05:11:11 2000//Tperl-13
+/Stash.pm/1.1.1.1/Fri Mar 31 05:11:11 2000//Tperl-13
+/Terse.pm/1.1.1.2/Fri Mar 31 05:11:11 2000//Tperl-13
+/Xref.pm/1.1.1.2/Fri Mar 31 05:11:11 2000//Tperl-13
+/assemble/1.1.1.1/Fri Apr 23 01:31:49 1999//Tperl-13
+/cc_harness/1.1.1.1/Fri Apr 23 01:31:49 1999//Tperl-13
+/disassemble/1.1.1.1/Fri Apr 23 01:31:49 1999//Tperl-13
+/makeliblinks/1.1.1.1/Fri Apr 23 01:31:49 1999//Tperl-13
+D

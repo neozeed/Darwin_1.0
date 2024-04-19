@@ -1,0 +1,4 @@
+Package: netinfo
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Description: NetInfo directory service
+Build-Depends: build-base, libinfo-hdrs, objc4, bootp-hdrs, librpcsvc-hdrs

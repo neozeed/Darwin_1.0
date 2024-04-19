@@ -1,0 +1,17 @@
+/conf.c/1.1.1.1/Sat Mar 25 21:02:15 2000//Txnu-1-1
+/cons.c/1.1.1.1/Sat Mar 25 21:02:15 2000//Txnu-1-1
+/cons.h/1.1.1.1/Sat Mar 25 21:02:15 2000//Txnu-1-1
+/kern_machdep.c/1.1.1.1/Sat Mar 25 21:02:15 2000//Txnu-1-1
+/km.c/1.1.1.1/Sat Mar 25 21:02:15 2000//Txnu-1-1
+/lock_stubs.c/1.1.1.1/Sat Mar 25 21:02:15 2000//Txnu-1-1
+/mem.c/1.1.1.1/Sat Mar 25 21:02:15 2000//Txnu-1-1
+/memmove.c/1.1.1.1/Sat Mar 25 21:02:15 2000//Txnu-1-1
+/pci_device.h/1.1.1.1/Sat Mar 25 21:02:15 2000//Txnu-1-1
+/pio.h/1.1.1.1/Sat Mar 25 21:02:15 2000//Txnu-1-1
+/sel.h/1.1.1.1/Sat Mar 25 21:02:15 2000//Txnu-1-1
+/sel_inline.h/1.1.1.1/Sat Mar 25 21:02:15 2000//Txnu-1-1
+/stubs.c/1.1.1.1/Sat Mar 25 21:02:15 2000//Txnu-1-1
+/table_inline.h/1.1.1.1/Sat Mar 25 21:02:15 2000//Txnu-1-1
+/unix_signal.c/1.1.1.1/Sat Mar 25 21:02:15 2000//Txnu-1-1
+/unix_startup.c/1.1.1.1/Sat Mar 25 21:02:15 2000//Txnu-1-1
+D

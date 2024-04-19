@@ -1,0 +1,4 @@
+Package: libm
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Description: Math library
+Build-Depends: build-base

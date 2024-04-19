@@ -1,0 +1,17 @@
+/IOHIDDescriptorParser.h/1.1.1.1/Sat Mar 25 21:02:44 2000//Txnu-1-1
+/IOHIDParameter.h/1.1.1.1/Sat Mar 25 21:02:44 2000//Txnu-1-1
+/IOHIDShared.h/1.1.1.1/Sat Mar 25 21:02:44 2000//Txnu-1-1
+/IOHIDSystem.h/1.1.1.1/Sat Mar 25 21:02:44 2000//Txnu-1-1
+/IOHIDTypes.h/1.1.1.1/Sat Mar 25 21:02:44 2000//Txnu-1-1
+/IOHIDUsageTables.h/1.1.1.1/Sat Mar 25 21:02:44 2000//Txnu-1-1
+/IOHIDevice.h/1.1.1.1/Sat Mar 25 21:02:44 2000//Txnu-1-1
+/IOHIKeyboard.h/1.1.1.1/Sat Mar 25 21:02:44 2000//Txnu-1-1
+/IOHIKeyboardMapper.h/1.1.1.1/Sat Mar 25 21:02:44 2000//Txnu-1-1
+/IOHIPointing.h/1.1.1.1/Sat Mar 25 21:02:44 2000//Txnu-1-1
+/IOHITablet.h/1.1.1.1/Sat Mar 25 21:02:44 2000//Txnu-1-1
+/IOHITabletPointer.h/1.1.1.1/Sat Mar 25 21:02:44 2000//Txnu-1-1
+/IOLLEvent.h/1.1.1.1/Sat Mar 25 21:02:44 2000//Txnu-1-1
+/Makefile/1.1.1.1/Sat Mar 25 21:02:44 2000//Txnu-1-1
+/ev_keymap.h/1.1.1.1/Sat Mar 25 21:02:44 2000//Txnu-1-1
+/ev_private.h/1.1.1.1/Sat Mar 25 21:02:44 2000//Txnu-1-1
+D

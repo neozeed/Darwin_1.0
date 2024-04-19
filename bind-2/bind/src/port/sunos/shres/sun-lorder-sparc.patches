@@ -1,0 +1,33 @@
+*** lorder-sparc.orig	Mon Oct 30 15:54:47 1995
+--- lorder-sparc	Sun Dec 24 11:05:53 1995
+***************
+*** 149,155 ****
+  listen.o
+  getwd.o
+  getnetgrent.o
+! gethostent.o
+  ypxdr.o
+  ttyname.o
+  setbuffer.o
+--- 149,169 ----
+  listen.o
+  getwd.o
+  getnetgrent.o
+! gethnamaddr.o
+! getnetnamadr.o
+! getnetbyaddr.o
+! getnetbyname.o
+! herror.o
+! res_query.o
+! res_mkquery.o
+! sethostent.o
+! res_send.o
+! res_debug.o
+! nsap_addr.o
+! res_comp.o
+! res_data.o
+! res_init.o
+! strerror.o
+  ypxdr.o
+  ttyname.o
+  setbuffer.o

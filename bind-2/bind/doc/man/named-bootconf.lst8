@@ -1,0 +1,24 @@
+
+NAMED-BOOTCONF(8)         BSD System Manager's Manual        NAMED-BOOTCONF(8)
+
+NNAAMMEE
+     nnaammeedd--bboooottccoonnff - convert name server configuration files
+
+SSYYNNOOPPSSIISS
+     nnaammeedd--bboooottccoonnff
+
+DDEESSCCRRIIPPTTIIOONN
+     nnaammeedd--bboooottccoonnff converts named configuration files from BIND 4 format to
+     BIND 8 format.
+
+EEXXAAMMPPLLEESS
+     named-bootconf < named.boot > named.conf
+
+BBUUGGSS
+     Comments from the source file will not always appear at the appropriate
+     place in the target file.
+
+SSEEEE AALLSSOO
+     named(8),  named.conf(5)
+
+ NetBSD                        November 19, 1998                             1

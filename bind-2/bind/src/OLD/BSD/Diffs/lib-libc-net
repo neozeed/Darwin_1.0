@@ -1,0 +1,4673 @@
+#!/bin/sh
+# This is a shell archive (produced by GNU sharutils 4.1).
+# To extract the files from this archive, save it to some FILE, remove
+# everything before the `!/bin/sh' line above, then type `sh FILE'.
+#
+# Made on 1994-12-12 10:17 PST by <vixie@gw.home.vix.com>.
+# Source directory was `/a4/vixie/2.0b1/src/lib/libc/net'.
+#
+# Existing files will *not* be overwritten unless `-c' is specified.
+#
+# This shar contains:
+# length mode       name
+# ------ ---------- ------------------------------------------
+# 114437 -rw-rw-r-- diffs
+#   3693 -rw-rw-r-- nsap_addr.c
+#
+touch -am 1231235999 $$.touch >/dev/null 2>&1
+if test ! -f 1231235999 && test -f $$.touch; then
+  shar_touch=touch
+else
+  shar_touch=:
+  echo
+  echo 'WARNING: not restoring timestamps.  Consider getting and'
+  echo "installing GNU \`touch', distributed in GNU File Utilities..."
+  echo
+fi
+rm -f 1231235999 $$.touch
+#
+# ============= diffs ==============
+if test -f 'diffs' && test X"$1" != X"-c"; then
+  echo 'x - skipping diffs (file already exists)'
+else
+  echo 'x - extracting diffs (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'diffs' &&
+*** ../net-2.0b1/Makefile.inc	Wed Nov  9 12:57:47 1994
+--- Makefile.inc	Mon Dec 12 00:05:27 1994
+***************
+*** 7,17 ****
+X  
+X  SRCS+=	gethostnamadr.c getnetbyaddr.c getnetbyname.c getnetent.c \
+! 	getnetnamadr.c getproto.c getprotoent.c getprotoname.c getservbyname.c \
+! 	getservbyport.c getservent.c herror.c inet_addr.c inet_lnaof.c \
+! 	inet_makeaddr.c inet_netof.c inet_network.c inet_ntoa.c iso_addr.c \
+! 	link_addr.c ns_addr.c ns_ntoa.c rcmd.c recv.c res_comp.c res_debug.c \
+! 	res_init.c res_mkquery.c res_query.c res_send.c send.c sethostent.c
+! 
+! CFLAGS+=-DRESOLVSORT -DRFC1535
+X  
+X  # machine-dependent net sources
+--- 7,16 ----
+X  
+X  SRCS+=	gethostnamadr.c getnetbyaddr.c getnetbyname.c getnetent.c \
+! 	getnetnamadr.c getproto.c getprotoent.c getprotoname.c \
+! 	getservbyname.c getservbyport.c getservent.c herror.c inet_addr.c \
+! 	inet_lnaof.c inet_makeaddr.c inet_netof.c inet_network.c \
+! 	inet_ntoa.c iso_addr.c link_addr.c nsap_addr.c ns_addr.c ns_ntoa.c \
+! 	rcmd.c recv.c res_comp.c res_debug.c res_init.c res_mkquery.c \
+! 	res_query.c res_send.c send.c sethostent.c
+X  
+X  # machine-dependent net sources
+*** ../net-2.0b1/gethostnamadr.c	Mon Nov  7 10:54:16 1994
+--- gethostnamadr.c	Mon Dec 12 00:11:04 1994
+***************
+*** 58,62 ****
+X  #if defined(LIBC_SCCS) && !defined(lint)
+X  static char sccsid[] = "@(#)gethostnamadr.c	8.1 (Berkeley) 6/4/93";
+! static char rcsid[] = "=Id: gethnamaddr.c,v 4.9.1.7 1993/11/12 01:23:34 vixie Exp =";
+X  #endif /* LIBC_SCCS and not lint */
+X  
+--- 58,62 ----
+X  #if defined(LIBC_SCCS) && !defined(lint)
+X  static char sccsid[] = "@(#)gethostnamadr.c	8.1 (Berkeley) 6/4/93";
+! static char rcsid[] = "=Id: gethnamaddr.c,v 4.9.1.22 1994/12/11 19:05:40 vixie Exp =";
+X  #endif /* LIBC_SCCS and not lint */
+X  
+***************
+*** 72,97 ****
+X  #include <ctype.h>
+X  #include <errno.h>
+X  #include <string.h>
+X  
+! #ifdef SUNSECURITY
+! #include <syslog.h>
+X  #endif
+X  
+X  #define	MAXALIASES	35
+X  #define	MAXADDRS	35
+X  
+X  static char *h_addr_ptrs[MAXADDRS + 1];
+X  
+X  static struct hostent host;
+X  static char *host_aliases[MAXALIASES];
+! static char hostbuf[BUFSIZ+1];
+X  static struct in_addr host_addr;
+X  static FILE *hostf = NULL;
+- static char hostaddr[MAXADDRS];
+- static char *host_addrs[2];
+X  static int stayopen = 0;
+X  
+X  #ifdef RESOLVSORT
+! static int qcomp __P((void *, void *));
+X  #endif
+X  
+--- 72,103 ----
+X  #include <ctype.h>
+X  #include <errno.h>
++ #include <syslog.h>
+X  #include <string.h>
+X  
+! #ifndef LOG_AUTH
+! # define LOG_AUTH 0
+X  #endif
+X  
++ #define MULTI_PTRS_ARE_ALIASES 1
++ #define RESOLVSORT 1
++ #define DEBUG 1
++ 
+X  #define	MAXALIASES	35
+X  #define	MAXADDRS	35
+X  
++ static const char AskedForGot[] =
++ 			  "gethostby*.getanswer: asked for \"%s\", got \"%s\"";
++ 
+X  static char *h_addr_ptrs[MAXADDRS + 1];
+X  
+X  static struct hostent host;
+X  static char *host_aliases[MAXALIASES];
+! static char hostbuf[8*1024];
+X  static struct in_addr host_addr;
+X  static FILE *hostf = NULL;
+X  static int stayopen = 0;
+X  
+X  #ifdef RESOLVSORT
+! static void addrsort __P((char **, int));
+X  #endif
+X  
+***************
+*** 114,132 ****
+X  extern int h_errno;
+X  
+X  static struct hostent *
+! getanswer(answer, anslen, iquery)
+! 	querybuf *answer;
+X  	int anslen;
+! 	int iquery;
+X  {
+! 	register HEADER *hp;
+! 	register u_char *cp;
+X  	register int n;
+! 	u_char *eom;
+! 	char *bp, **ap;
+X  	int type, class, buflen, ancount, qdcount;
+! 	int haveanswer, getclass = C_ANY;
+! 	char **hap;
+X  
+X  	eom = answer->buf + anslen;
+X  	/*
+--- 120,158 ----
+X  extern int h_errno;
+X  
++ #ifdef DEBUG
++ static void
++ dprintf(msg, num)
++ 	char *msg;
++ 	int num;
++ {
++ 	if (_res.options & RES_DEBUG) {
++ 		int save = errno;
++ 
++ 		printf(msg, num);
++ 		errno = save;
++ 	}
++ }
++ #else
++ # define dprintf(msg, num) /*nada*/
++ #endif
++ 
+X  static struct hostent *
+! getanswer(answer, anslen, qname, qclass, qtype)
+! 	const querybuf *answer;
+X  	int anslen;
+! 	const char *qname;
+! 	int qclass, qtype;
+X  {
+! 	register const HEADER *hp;
+! 	register const u_char *cp;
+X  	register int n;
+! 	const u_char *eom;
+! 	char *bp, **ap, **hap;
+X  	int type, class, buflen, ancount, qdcount;
+! 	int haveanswer, had_error;
+! 	int toobig = 0;
+! 	char tbuf[MAXDNAME+1];
+X  
++ 	host.h_name = NULL;
+X  	eom = answer->buf + anslen;
+X  	/*
+***************
+*** 137,165 ****
+X  	qdcount = ntohs(hp->qdcount);
+X  	bp = hostbuf;
+! 	buflen = sizeof(hostbuf);
+! 	cp = answer->buf + sizeof(HEADER);
+! 	if (qdcount) {
+! 		if (iquery) {
+! 			if ((n = dn_expand((u_char *)answer->buf,
+! 			    (u_char *)eom, (u_char *)cp, (u_char *)bp,
+! 			    buflen)) < 0) {
+! 				h_errno = NO_RECOVERY;
+! 				return ((struct hostent *) NULL);
+! 			}
+! 			cp += n + QFIXEDSZ;
+! 			host.h_name = bp;
+! 			n = strlen(bp) + 1;
+! 			bp += n;
+! 			buflen -= n;
+! 		} else
+! 			cp += __dn_skipname(cp, eom) + QFIXEDSZ;
+! 		while (--qdcount > 0)
+! 			cp += __dn_skipname(cp, eom) + QFIXEDSZ;
+! 	} else if (iquery) {
+! 		if (hp->aa)
+! 			h_errno = HOST_NOT_FOUND;
+! 		else
+! 			h_errno = TRY_AGAIN;
+! 		return ((struct hostent *) NULL);
+X  	}
+X  	ap = host_aliases;
+--- 163,188 ----
+X  	qdcount = ntohs(hp->qdcount);
+X  	bp = hostbuf;
+! 	buflen = sizeof hostbuf;
+! 	cp = answer->buf + HFIXEDSZ;
+! 	if (qdcount != 1) {
+! 		h_errno = NO_RECOVERY;
+! 		return (NULL);
+! 	}
+! 	if ((n = dn_expand(answer->buf, eom, cp, bp, buflen)) < 0) {
+! 		h_errno = NO_RECOVERY;
+! 		return (NULL);
+! 	}
+! 	cp += n + QFIXEDSZ;
+! 	if (qtype == T_A) {
+! 		/* res_send() has already verified that the query name is the
+! 		 * same as the one we sent; this just gets the expanded name
+! 		 * (i.e., with the succeeding search-domain tacked on).
+! 		 */
+! 		n = strlen(bp) + 1;		/* for the \0 */
+! 		host.h_name = bp;
+! 		bp += n;
+! 		buflen -= n;
+! 		/* The qname can be abbreviated, but h_name is now absolute. */
+! 		qname = host.h_name;
+X  	}
+X  	ap = host_aliases;
+***************
+*** 172,263 ****
+X  #endif
+X  	haveanswer = 0;
+! 	while (--ancount >= 0 && cp < eom) {
+! 		if ((n = dn_expand((u_char *)answer->buf, (u_char *)eom,
+! 		    (u_char *)cp, (u_char *)bp, buflen)) < 0)
+! 			break;
+! 		cp += n;
+X  		type = _getshort(cp);
+!  		cp += sizeof(u_int16_t);
+X  		class = _getshort(cp);
+!  		cp += sizeof(u_int16_t) + sizeof(u_int32_t);
+X  		n = _getshort(cp);
+! 		cp += sizeof(u_int16_t);
+! 		if (type == T_CNAME) {
+X  			cp += n;
+X  			if (ap >= &host_aliases[MAXALIASES-1])
+X  				continue;
+X  			*ap++ = bp;
+! 			n = strlen(bp) + 1;
+X  			bp += n;
+X  			buflen -= n;
+X  			continue;
+X  		}
+! 		if (iquery && type == T_PTR) {
+! 			if ((n = dn_expand((u_char *)answer->buf,
+! 			    (u_char *)eom, (u_char *)cp, (u_char *)bp,
+! 			    buflen)) < 0)
+! 				break;
+X  			cp += n;
+! 			host.h_name = bp;
+! 			return(&host);
+X  		}
+! 		if (iquery || type != T_A)  {
+! #ifdef DEBUG
+! 			if (_res.options & RES_DEBUG)
+! 				printf("unexpected answer type %d, size %d\n",
+! 					type, n);
+! #endif
+! 			cp += n;
+! 			continue;
+! 		}
+! 		if (haveanswer) {
+! 			if (n != host.h_length) {
+X  				cp += n;
+! 				continue;
+X  			}
+! 			if (class != getclass) {
+X  				cp += n;
+! 				continue;
+X  			}
+! 		} else {
+! 			host.h_length = n;
+! 			getclass = class;
+! 			host.h_addrtype = (class == C_IN) ? AF_INET : AF_UNSPEC;
+! 			if (!iquery) {
+X  				host.h_name = bp;
+! 				bp += strlen(bp) + 1;
+X  			}
+- 		}
+X  
+! 		bp += sizeof(align) - ((u_int32_t)bp % sizeof(align));
+X  
+! 		if (bp + n >= &hostbuf[sizeof(hostbuf)]) {
+! #ifdef DEBUG
+! 			if (_res.options & RES_DEBUG)
+! 				printf("size (%d) too big\n", n);
+! #endif
+X  			break;
+! 		}
+! 		bcopy(cp, *hap++ = bp, n);
+! 		bp +=n;
+! 		cp += n;
+! 		haveanswer++;
+! 	}
+X  	if (haveanswer) {
+X  		*ap = NULL;
+- #if BSD >= 43 || defined(h_addr)	/* new-style hostent structure */
+X  		*hap = NULL;
+! #ifdef RESOLVSORT
+! 		if (_res.nsort)
+! 			qsort(host.h_addr_list, haveanswer,
+! 			    sizeof(struct in_addr), qcomp);
+! #endif
+X  #else
+X  		host.h_addr = h_addr_ptrs[0];
+X  #endif /*BSD*/
+X  		return (&host);
+X  	} else {
+X  		h_errno = TRY_AGAIN;
+! 		return ((struct hostent *) NULL);
+X  	}
+X  }
+--- 195,368 ----
+X  #endif
+X  	haveanswer = 0;
+! 	had_error = 0;
+! 	while (ancount-- > 0 && cp < eom && !had_error) {
+! 		n = dn_expand(answer->buf, eom, cp, bp, buflen);
+! 		if (n < 0) {
+! 			had_error++;
+! 			continue;
+! 		}
+! 		cp += n;			/* name */
+X  		type = _getshort(cp);
+!  		cp += INT16SZ;			/* type */
+X  		class = _getshort(cp);
+!  		cp += INT16SZ + INT32SZ;	/* class, TTL */
+X  		n = _getshort(cp);
+! 		cp += INT16SZ;			/* len */
+! 		if (class != qclass) {
+! 			/* XXX - debug? syslog? */
+X  			cp += n;
++ 			continue;		/* XXX - had_error++ ? */
++ 		}
++ 		if (qtype == T_A && type == T_CNAME) {
+X  			if (ap >= &host_aliases[MAXALIASES-1])
+X  				continue;
++ 			n = dn_expand(answer->buf, eom, cp, tbuf, sizeof tbuf);
++ 			if (n < 0) {
++ 				had_error++;
++ 				continue;
++ 			}
++ 			cp += n;
++ 			if (host.h_name && strcasecmp(host.h_name, bp) != 0) {
++ 				syslog(LOG_NOTICE|LOG_AUTH,
++ 		"gethostby*.getanswer: asked for \"%s\", got CNAME for \"%s\"",
++ 				       host.h_name, bp);
++ 				continue;	/* XXX - had_error++ ? */
++ 			}
++ 			/* Store alias. */
+X  			*ap++ = bp;
+! 			n = strlen(bp) + 1;	/* for the \0 */
+! 			bp += n;
+! 			buflen -= n;
+! 			/* Get canonical name. */
+! 			n = strlen(tbuf) + 1;	/* for the \0 */
+! 			if (n > buflen) {
+! 				had_error++;
+! 				continue;
+! 			}
+! 			strcpy(bp, tbuf);
+! 			host.h_name = bp;
+X  			bp += n;
+X  			buflen -= n;
+X  			continue;
+X  		}
+! 		if (type != qtype) {
+! 			syslog(LOG_NOTICE|LOG_AUTH,
+! 	       "gethostby*.getanswer: asked for \"%s %s %s\", got type \"%s\"",
+! 			       qname, p_class(qclass), p_type(qtype),
+! 			       p_type(type));
+X  			cp += n;
+! 			continue;		/* XXX - had_error++ ? */
+X  		}
+! 		switch (type) {
+! 		case T_PTR:
+! 			if (strcasecmp(qname, bp) != 0) {
+! 				syslog(LOG_NOTICE|LOG_AUTH,
+! 				       AskedForGot, qname, bp);
+X  				cp += n;
+! 				continue;	/* XXX - had_error++ ? */
+! 			}
+! 			n = dn_expand(answer->buf, eom, cp, bp, buflen);
+! 			if (n < 0) {
+! 				had_error++;
+! 				break;
+X  			}
+! #if MULTI_PTRS_ARE_ALIASES
+! 			cp += n;
+! 			if (!haveanswer)
+! 				host.h_name = bp;
+! 			else if (ap < &host_aliases[MAXALIASES-1])
+! 				*ap++ = bp;
+! 			else
+! 				n = -1;
+! 			if (n != -1) {
+! 				n = strlen(bp) + 1;	/* for the \0 */
+! 				bp += n;
+! 				buflen -= n;
+! 			}
+! 			break;
+! #else
+! 			host.h_name = bp;
+! 			h_errno = NETDB_SUCCESS;
+! 			return (&host);
+! #endif
+! 		case T_A:
+! 			if (strcasecmp(host.h_name, bp) != 0) {
+! 				syslog(LOG_NOTICE|LOG_AUTH,
+! 				       AskedForGot, host.h_name, bp);
+X  				cp += n;
+! 				continue;	/* XXX - had_error++ ? */
+X  			}
+! 			if (haveanswer) {
+! 				if (n != host.h_length) {
+! 					cp += n;
+! 					continue;
+! 				}
+! 			} else {
+! 				register int nn;
+! 
+! 				host.h_length = n;
+! 				host.h_addrtype = (class == C_IN)
+! 						  ? AF_INET
+! 						  : AF_UNSPEC;
+X  				host.h_name = bp;
+! 				nn = strlen(bp) + 1;	/* for the \0 */
+! 				bp += nn;
+! 				buflen -= nn;
+X  			}
+X  
+! 			bp += sizeof(align) - ((u_long)bp % sizeof(align));
+X  
+! 			if (bp + n >= &hostbuf[sizeof hostbuf]) {
+! 				dprintf("size (%d) too big\n", n);
+! 				had_error++;
+! 				continue;
+! 			}
+! 			if (hap >= &h_addr_ptrs[MAXADDRS-1]) {
+! 				if (!toobig++)
+! 					dprintf("Too many addresses (%d)\n",
+! 						MAXADDRS);
+! 				cp += n;
+! 				continue;
+! 			}
+! 			bcopy(cp, *hap++ = bp, n);
+! 			bp += n;
+! 			cp += n;
+X  			break;
+! 		default:
+! 			dprintf("Impossible condition (type=%d)\n", type);
+! 			h_errno = NO_RECOVERY;
+! 			return (NULL);
+! 		} /*switch*/
+! 		if (!had_error)
+! 			haveanswer++;
+! 	} /*while*/
+X  	if (haveanswer) {
+X  		*ap = NULL;
+X  		*hap = NULL;
+! # if defined(RESOLVSORT)
+! 		/*
+! 		 * Note: we sort even if host can take only one address
+! 		 * in its return structures - should give it the "best"
+! 		 * address in that case, not some random one
+! 		 */
+! 		if (_res.nsort && haveanswer > 1 &&
+! 		    qclass == C_IN && qtype == T_A)
+! 			addrsort(h_addr_ptrs, haveanswer);
+! # endif /*RESOLVSORT*/
+! #if BSD >= 43 || defined(h_addr)	/* new-style hostent structure */
+! 		/* nothing */
+X  #else
+X  		host.h_addr = h_addr_ptrs[0];
+X  #endif /*BSD*/
++ 		if (!host.h_name) {
++ 			n = strlen(qname) + 1;	/* for the \0 */
++ 			strcpy(bp, qname);
++ 			host.h_name = bp;
++ 		}
++ 		h_errno = NETDB_SUCCESS;
+X  		return (&host);
+X  	} else {
+X  		h_errno = TRY_AGAIN;
+! 		return (NULL);
+X  	}
+X  }
+***************
+*** 273,276 ****
+--- 378,389 ----
+X  
+X  	/*
++ 	 * if there aren't any dots, it could be a user-level alias.
++ 	 * this is also done in res_query() since we are not the only
++ 	 * function that looks up host names.
++ 	 */
++ 	if (!strchr(name, '.') && (cp = __hostalias(name)))
++ 		name = cp;
++ 
++ 	/*
+X  	 * disallow names consisting only of digits/dots, unless
+X  	 * they end in a dot.
+***************
+*** 288,292 ****
+X  				if (!inet_aton(name, &host_addr)) {
+X  					h_errno = HOST_NOT_FOUND;
+! 					return((struct hostent *) NULL);
+X  				}
+X  				host.h_name = (char *)name;
+--- 401,405 ----
+X  				if (!inet_aton(name, &host_addr)) {
+X  					h_errno = HOST_NOT_FOUND;
+! 					return (NULL);
+X  				}
+X  				host.h_name = (char *)name;
+***************
+*** 294,300 ****
+X  				host_aliases[0] = NULL;
+X  				host.h_addrtype = AF_INET;
+! 				host.h_length = sizeof(u_int32_t);
+X  				h_addr_ptrs[0] = (char *)&host_addr;
+! 				h_addr_ptrs[1] = (char *)0;
+X  #if BSD >= 43 || defined(h_addr)	/* new-style hostent structure */
+X  				host.h_addr_list = h_addr_ptrs;
+--- 407,413 ----
+X  				host_aliases[0] = NULL;
+X  				host.h_addrtype = AF_INET;
+! 				host.h_length = INT32SZ;
+X  				h_addr_ptrs[0] = (char *)&host_addr;
+! 				h_addr_ptrs[1] = NULL;
+X  #if BSD >= 43 || defined(h_addr)	/* new-style hostent structure */
+X  				host.h_addr_list = h_addr_ptrs;
+***************
+*** 302,305 ****
+--- 415,419 ----
+X  				host.h_addr = h_addr_ptrs[0];
+X  #endif
++ 				h_errno = NETDB_SUCCESS;
+X  				return (&host);
+X  			}
+***************
+*** 309,322 ****
+X  
+X  	if ((n = res_search(name, C_IN, T_A, buf.buf, sizeof(buf))) < 0) {
+! #ifdef DEBUG
+! 		if (_res.options & RES_DEBUG)
+! 			printf("res_search failed\n");
+! #endif
+X  		if (errno == ECONNREFUSED)
+X  			return (_gethtbyname(name));
+! 		else
+! 			return ((struct hostent *) NULL);
+X  	}
+! 	return (getanswer(&buf, n, 0));
+X  }
+X  
+--- 423,432 ----
+X  
+X  	if ((n = res_search(name, C_IN, T_A, buf.buf, sizeof(buf))) < 0) {
+! 		dprintf("res_search failed (%d)\n", n);
+X  		if (errno == ECONNREFUSED)
+X  			return (_gethtbyname(name));
+! 		return (NULL);
+X  	}
+! 	return (getanswer(&buf, n, name, C_IN, T_A));
+X  }
+X  
+***************
+*** 329,342 ****
+X  	querybuf buf;
+X  	register struct hostent *hp;
+! 	char qbuf[MAXDNAME];
+X  #ifdef SUNSECURITY
+X  	register struct hostent *rhp;
+X  	char **haddr;
+! 	u_int32_t old_options;
+! #endif
+X  	extern struct hostent *_gethtbyaddr();
+X  	
+! 	if (type != AF_INET)
+! 		return ((struct hostent *) NULL);
+X  	(void)sprintf(qbuf, "%u.%u.%u.%u.in-addr.arpa",
+X  		((unsigned)addr[3] & 0xff),
+--- 439,456 ----
+X  	querybuf buf;
+X  	register struct hostent *hp;
+! 	char qbuf[MAXDNAME+1];
+X  #ifdef SUNSECURITY
+X  	register struct hostent *rhp;
+X  	char **haddr;
+! 	u_long old_options;
+! 	char hname2[MAXDNAME+1];
+! #endif /*SUNSECURITY*/
+X  	extern struct hostent *_gethtbyaddr();
+X  	
+! 	if (type != AF_INET) {
+! 		errno = EAFNOSUPPORT;
+! 		h_errno = NETDB_INTERNAL;
+! 		return (NULL);
+! 	}
+X  	(void)sprintf(qbuf, "%u.%u.%u.%u.in-addr.arpa",
+X  		((unsigned)addr[3] & 0xff),
+***************
+*** 344,394 ****
+X  		((unsigned)addr[1] & 0xff),
+X  		((unsigned)addr[0] & 0xff));
+! 	n = res_query(qbuf, C_IN, T_PTR, (char *)&buf, sizeof(buf));
+X  	if (n < 0) {
+! #ifdef DEBUG
+! 		if (_res.options & RES_DEBUG)
+! 			printf("res_query failed\n");
+! #endif
+X  		if (errno == ECONNREFUSED)
+X  			return (_gethtbyaddr(addr, len, type));
+! 		return ((struct hostent *) NULL);
+X  	}
+! 	hp = getanswer(&buf, n, 1);
+! 	if (hp == NULL)
+! 		return ((struct hostent *) NULL);
+X  #ifdef SUNSECURITY
+X  	/*
+! 	 * Turn off search as the name should be absolute,
+! 	 * 'localhost' should be matched by defnames.
+X  	 */
+X  	old_options = _res.options;
+X  	_res.options &= ~RES_DNSRCH;
+! 	if ((rhp = gethostbyname(hp->h_name)) == NULL) {
+X  		syslog(LOG_NOTICE|LOG_AUTH,
+! 		    "gethostbyaddr: No A record for %s", hp->h_name);
+X  		_res.options = old_options;
+X  		return (NULL);
+X  	}
+X  	_res.options = old_options;
+! 	for (haddr = hp->h_addr_list; *haddr != NULL; haddr++)
+! 		if (!memcmp(*haddr, addr, len))
+X  			break;
+! 	if (*haddr == NULL) {
+X  		syslog(LOG_NOTICE|LOG_AUTH,
+! 		    "gethostbyaddr: A record of %s != PTR record [%s]",
+! 		    hp->h_name, inet_ntoa(*((struct in_addr *)addr)));
+X  		h_errno = HOST_NOT_FOUND;
+X  		return (NULL);
+X  	}
+! #endif
+X  	hp->h_addrtype = type;
+X  	hp->h_length = len;
+X  	h_addr_ptrs[0] = (char *)&host_addr;
+! 	h_addr_ptrs[1] = (char *)0;
+X  	host_addr = *(struct in_addr *)addr;
+! #if BSD < 43 && !defined(h_addr)	/* new-style hostent structure */
+! 	hp->h_addr = h_addr_ptrs[0];
+! #endif
+! 	return(hp);
+X  }
+X  
+--- 458,507 ----
+X  		((unsigned)addr[1] & 0xff),
+X  		((unsigned)addr[0] & 0xff));
+! 	n = res_query(qbuf, C_IN, T_PTR, (u_char *)buf.buf, sizeof buf.buf);
+X  	if (n < 0) {
+! 		dprintf("res_query failed (%d)\n", n);
+X  		if (errno == ECONNREFUSED)
+X  			return (_gethtbyaddr(addr, len, type));
+! 		return (NULL);
+X  	}
+! 	if (!(hp = getanswer(&buf, n, qbuf, C_IN, T_PTR)))
+! 		return (NULL);	/* h_errno was set by getanswer() */
+X  #ifdef SUNSECURITY
+X  	/*
+! 	 * turn off search as the name should be absolute,
+! 	 * 'localhost' should be matched by defnames
+X  	 */
++ 	strncpy(hname2, hp->h_name, MAXDNAME);
++ 	hname2[MAXDNAME] = '\0';
+X  	old_options = _res.options;
+X  	_res.options &= ~RES_DNSRCH;
+! 	_res.options |= RES_DEFNAMES;
+! 	if (!(rhp = gethostbyname(hp->h_name))) {
+X  		syslog(LOG_NOTICE|LOG_AUTH,
+! 		       "gethostbyaddr: No A record for %s (verifying [%s])",
+! 		       hname2, inet_ntoa(*((struct in_addr *)addr)));
+X  		_res.options = old_options;
++ 		h_errno = HOST_NOT_FOUND;
+X  		return (NULL);
+X  	}
+X  	_res.options = old_options;
+! 	for (haddr = rhp->h_addr_list; *haddr; haddr++)
+! 		if (!memcmp(*haddr, addr, INADDRSZ))
+X  			break;
+! 	if (!*haddr) {
+X  		syslog(LOG_NOTICE|LOG_AUTH,
+! 		       "gethostbyaddr: A record of %s != PTR record [%s]",
+! 		       hname2, inet_ntoa(*((struct in_addr *)addr)));
+X  		h_errno = HOST_NOT_FOUND;
+X  		return (NULL);
+X  	}
+! #endif /*SUNSECURITY*/
+X  	hp->h_addrtype = type;
+X  	hp->h_length = len;
+X  	h_addr_ptrs[0] = (char *)&host_addr;
+! 	h_addr_ptrs[1] = NULL;
+X  	host_addr = *(struct in_addr *)addr;
+! 	h_errno = NETDB_SUCCESS;
+! 	return (hp);
+X  }
+X  
+***************
+*** 397,401 ****
+X  	int f;
+X  {
+! 	if (hostf == NULL)
+X  		hostf = fopen(_PATH_HOSTS, "r" );
+X  	else
+--- 510,514 ----
+X  	int f;
+X  {
+! 	if (!hostf)
+X  		hostf = fopen(_PATH_HOSTS, "r" );
+X  	else
+***************
+*** 419,444 ****
+X  	register char *cp, **q;
+X  
+! 	if (hostf == NULL && (hostf = fopen(_PATH_HOSTS, "r" )) == NULL)
+X  		return (NULL);
+X  again:
+! 	if ((p = fgets(hostbuf, BUFSIZ, hostf)) == NULL)
+X  		return (NULL);
+X  	if (*p == '#')
+X  		goto again;
+! 	cp = strpbrk(p, "#\n");
+! 	if (cp == NULL)
+X  		goto again;
+X  	*cp = '\0';
+! 	cp = strpbrk(p, " \t");
+! 	if (cp == NULL)
+X  		goto again;
+X  	*cp++ = '\0';
+X  	/* THIS STUFF IS INTERNET SPECIFIC */
+X  #if BSD >= 43 || defined(h_addr)	/* new-style hostent structure */
+! 	host.h_addr_list = host_addrs;
+X  #endif
+! 	host.h_addr = hostaddr;
+! 	*((u_int32_t *)host.h_addr) = inet_addr(p);
+! 	host.h_length = sizeof (u_int32_t);
+X  	host.h_addrtype = AF_INET;
+X  	while (*cp == ' ' || *cp == '\t')
+--- 532,563 ----
+X  	register char *cp, **q;
+X  
+! 	if (!hostf && !(hostf = fopen(_PATH_HOSTS, "r" ))) {
+! 		h_errno = NETDB_INTERNAL;
+X  		return (NULL);
++ 	}
+X  again:
+! 	if (!(p = fgets(hostbuf, sizeof hostbuf, hostf))) {
+! 		h_errno = HOST_NOT_FOUND;
+X  		return (NULL);
++ 	}
+X  	if (*p == '#')
+X  		goto again;
+! 	if (!(cp = strpbrk(p, "#\n")))
+X  		goto again;
+X  	*cp = '\0';
+! 	if (!(cp = strpbrk(p, " \t")))
+X  		goto again;
+X  	*cp++ = '\0';
+X  	/* THIS STUFF IS INTERNET SPECIFIC */
++ 	if (!inet_aton(p, &host_addr))
++ 		goto again;
++ 	h_addr_ptrs[0] = (char *)&host_addr;
++ 	h_addr_ptrs[1] = NULL;
+X  #if BSD >= 43 || defined(h_addr)	/* new-style hostent structure */
+! 	host.h_addr_list = h_addr_ptrs;
+! #else
+! 	host.h_addr = h_addr_ptrs[0];
+X  #endif
+! 	host.h_length = INT32SZ;
+X  	host.h_addrtype = AF_INET;
+X  	while (*cp == ' ' || *cp == '\t')
+***************
+*** 446,451 ****
+X  	host.h_name = cp;
+X  	q = host.h_aliases = host_aliases;
+! 	cp = strpbrk(cp, " \t");
+! 	if (cp != NULL) 
+X  		*cp++ = '\0';
+X  	while (cp && *cp) {
+--- 565,569 ----
+X  	host.h_name = cp;
+X  	q = host.h_aliases = host_aliases;
+! 	if (cp = strpbrk(cp, " \t"))
+X  		*cp++ = '\0';
+X  	while (cp && *cp) {
+***************
+*** 456,464 ****
+X  		if (q < &host_aliases[MAXALIASES - 1])
+X  			*q++ = cp;
+! 		cp = strpbrk(cp, " \t");
+! 		if (cp != NULL)
+X  			*cp++ = '\0';
+X  	}
+X  	*q = NULL;
+X  	return (&host);
+X  }
+--- 574,582 ----
+X  		if (q < &host_aliases[MAXALIASES - 1])
+X  			*q++ = cp;
+! 		if (cp = strpbrk(cp, " \t"))
+X  			*cp++ = '\0';
+X  	}
+X  	*q = NULL;
++ 	h_errno = NETDB_SUCCESS;
+X  	return (&host);
+X  }
+***************
+*** 500,520 ****
+X  
+X  #ifdef RESOLVSORT
+! static int
+! qcomp(v1, v2)
+! 	void *v1, *v2;
+X  {
+! 	struct in_addr **a1 = (struct in_addr **)v1;
+! 	struct in_addr **a2 = (struct in_addr **)v2;
+! 	int pos1, pos2;
+! 
+! 	for (pos1 = 0; pos1 < _res.nsort; pos1++)
+! 		if (_res.sort_list[pos1].addr.s_addr == 
+! 		    ((*a1)->s_addr & _res.sort_list[pos1].mask))
+X  			break;
+! 	for (pos2 = 0; pos2 < _res.nsort; pos2++)
+! 		if (_res.sort_list[pos2].addr.s_addr == 
+! 		    ((*a2)->s_addr & _res.sort_list[pos2].mask))
+! 			break;
+! 	return (pos1 - pos2);
+X  }
+X  #endif
+--- 618,662 ----
+X  
+X  #ifdef RESOLVSORT
+! static void
+! addrsort(ap, num)
+! 	char **ap;
+! 	int num;
+X  {
+! 	int i, j;
+! 	char **p;
+! 	short aval[MAXADDRS];
+! 	int needsort = 0;
+! 
+! 	p = ap;
+! 	for (i = 0; i < num; i++, p++) {
+! 	    for (j = 0 ; j < _res.nsort; j++)
+! 		if (_res.sort_list[j].addr.s_addr == 
+! 		    (((struct in_addr *)(*p))->s_addr & _res.sort_list[j].mask))
+X  			break;
+! 	    aval[i] = j;
+! 	    if (needsort == 0 && i > 0 && j < aval[i-1])
+! 		needsort = i;
+! 	}
+! 	if (!needsort)
+! 	    return;
+! 
+! 	while (needsort < num) {
+! 	    for (j = needsort - 1; j >= 0; j--) {
+! 		if (aval[j] > aval[j+1]) {
+! 		    char *hp;
+! 
+! 		    i = aval[j];
+! 		    aval[j] = aval[j+1];
+! 		    aval[j+1] = i;
+! 
+! 		    hp = ap[j];
+! 		    ap[j] = ap[j+1];
+! 		    ap[j+1] = hp;
+! 
+! 		} else
+! 		    break;
+! 	    }
+! 	    needsort++;
+! 	}
+X  }
+X  #endif
+*** ../net-2.0b1/getnetbyaddr.c	Mon Nov  7 10:54:16 1994
+--- getnetbyaddr.c	Sun Dec 11 18:32:14 1994
+***************
+*** 36,39 ****
+--- 36,41 ----
+X  #if defined(LIBC_SCCS) && !defined(lint)
+X  static char sccsid[] = "@(#)getnetbyaddr.c	8.1 (Berkeley) 6/4/93";
++ static char sccsid_[] = "from getnetbyaddr.c	1.1 (Coimbra) 93/06/02";
++ static char rcsid[] = "=Id: getnetbyaddr.c,v 1.4 1993/11/12 01:23:34 vixie Exp =";
+X  #endif /* LIBC_SCCS and not lint */
+X  
+*** ../net-2.0b1/getnetbyname.c	Mon Nov  7 10:54:17 1994
+--- getnetbyname.c	Mon Dec 12 01:28:13 1994
+***************
+*** 36,39 ****
+--- 36,41 ----
+X  #if defined(LIBC_SCCS) && !defined(lint)
+X  static char sccsid[] = "@(#)getnetbyname.c	8.1 (Berkeley) 6/4/93";
++ static char sccsid_[] = "from getnetbyname.c	1.1 (Coimbra) 93/06/02";
++ static char rcsid[] = "=Id: getnetbyname.c,v 1.6 1994/05/31 01:49:35 vixie Exp =";
+X  #endif /* LIBC_SCCS and not lint */
+X  
+***************
+*** 52,59 ****
+X  	setnetent(_net_stayopen);
+X  	while (p = getnetent()) {
+! 		if (strcmp(p->n_name, name) == 0)
+X  			break;
+X  		for (cp = p->n_aliases; *cp != 0; cp++)
+! 			if (strcmp(*cp, name) == 0)
+X  				goto found;
+X  	}
+--- 54,61 ----
+X  	setnetent(_net_stayopen);
+X  	while (p = getnetent()) {
+! 		if (strcasecmp(p->n_name, name) == 0)
+X  			break;
+X  		for (cp = p->n_aliases; *cp != 0; cp++)
+! 			if (strcasecmp(*cp, name) == 0)
+X  				goto found;
+X  	}
+*** ../net-2.0b1/getnetnamadr.c	Mon Nov  7 10:54:21 1994
+--- getnetnamadr.c	Mon Dec 12 01:36:59 1994
+***************
+*** 43,47 ****
+X  #if defined(LIBC_SCCS) && !defined(lint)
+X  static char sccsid[] = "@(#)getnetnamadr.c	1.4 (Coimbra) 93/06/03";
+! static char rcsid[] = "=Id: getnetnamadr.c,v 1.3 1993/11/12 01:23:34 vixie Exp =";
+X  #endif /* LIBC_SCCS and not lint */
+X  
+--- 43,47 ----
+X  #if defined(LIBC_SCCS) && !defined(lint)
+X  static char sccsid[] = "@(#)getnetnamadr.c	1.4 (Coimbra) 93/06/03";
+! static char rcsid[] = "=Id: getnetnamadr.c,v 1.10 1994/12/01 09:38:18 vixie Exp vixie =";
+X  #endif /* LIBC_SCCS and not lint */
+X  
+***************
+*** 63,66 ****
+--- 63,68 ----
+X  struct netent *_getnetbyname __P((const char *name));
+X  
++ #define DEBUG 1
++ 
+X  #define BYADDR 0
+X  #define BYNAME 1
+***************
+*** 89,107 ****
+X  	int net_i;
+X  {
+X  	register HEADER *hp;
+X  	register u_char *cp;
+X  	register int n;
+X  	u_char *eom;
+! 	int type, class, buflen, ancount, qdcount;
+! 	int haveanswer, i, nchar;
+! 	int getclass = C_ANY;
+! 	int net_length = 0;
+! 	char aux1[30], aux2[30], ans[30];
+! 	char *in, *st, *pauxt, *bp, **ap;
+! 	char *paux1 = &aux1[0];
+! 	char *paux2 = &aux2[0];
+! 	char flag = 0;
+! 	static struct netent net_entry;
+! 	static char *net_aliases[MAXALIASES], netbuf[BUFSIZ+1];
+X  
+X  	/*
+--- 91,105 ----
+X  	int net_i;
+X  {
++ 
+X  	register HEADER *hp;
+X  	register u_char *cp;
+X  	register int n;
+X  	u_char *eom;
+! 	int type, class, buflen, ancount, qdcount, haveanswer, i, nchar,
+! 		getclass = C_ANY, net_length = 0;
+! 	char aux1[30], aux2[30], ans[30], *in, *st, *pauxt, *bp, **ap,
+! 		*paux1 = &aux1[0], *paux2 = &aux2[0], flag = 0;
+! static	struct netent net_entry;
+! static	char *net_aliases[MAXALIASES], netbuf[BUFSIZ+1];
+X  
+X  	/*
+***************
+*** 125,129 ****
+X  	bp = netbuf;
+X  	buflen = sizeof(netbuf);
+! 	cp = answer->buf + sizeof(HEADER);
+X  	if (!qdcount) {
+X  		if (hp->aa)
+--- 123,127 ----
+X  	bp = netbuf;
+X  	buflen = sizeof(netbuf);
+! 	cp = answer->buf + HFIXEDSZ;
+X  	if (!qdcount) {
+X  		if (hp->aa)
+***************
+*** 131,135 ****
+X  		else
+X  			h_errno = TRY_AGAIN;
+- 
+X  		return (NULL);
+X  	}
+--- 129,132 ----
+***************
+*** 141,159 ****
+X  	haveanswer = 0;
+X  	while (--ancount >= 0 && cp < eom) {
+! 		if ((n = dn_expand((u_char *)answer->buf, (u_char *)eom,
+! 		    (u_char *)cp, (u_char *)bp, buflen)) < 0)
+X  			break;
+X  		cp += n;
+X  		ans[0] = '\0';
+! 		strcpy(&ans[0], bp);
+X  		GETSHORT(type, cp);
+X  		GETSHORT(class, cp);
+! 		cp += sizeof(u_long);	/* TTL */
+X  		GETSHORT(n, cp);
+X  		if (class == C_IN && type == T_PTR) {
+! 			if ((n = dn_expand((u_char *)answer->buf,
+! 			    (u_char *)eom, (u_char *)cp, (u_char *)bp, buflen))
+! 			    < 0)
+! 			{
+X  				cp += n;
+X  				return (NULL);
+--- 138,154 ----
+X  	haveanswer = 0;
+X  	while (--ancount >= 0 && cp < eom) {
+! 		n = dn_expand(answer->buf, eom, cp, bp, buflen);
+! 		if (n < 0)
+X  			break;
+X  		cp += n;
+X  		ans[0] = '\0';
+! 		(void)strcpy(&ans[0], bp);
+X  		GETSHORT(type, cp);
+X  		GETSHORT(class, cp);
+! 		cp += INT32SZ;		/* TTL */
+X  		GETSHORT(n, cp);
+X  		if (class == C_IN && type == T_PTR) {
+! 			n = dn_expand(answer->buf, eom, cp, bp, buflen);
+! 			if (n < 0) {
+X  				cp += n;
+X  				return (NULL);
+***************
+*** 163,167 ****
+X  			bp += strlen(bp) + 1;
+X  			net_entry.n_addrtype =
+! 			    class == C_IN ? AF_INET : AF_UNSPEC;
+X  			haveanswer++;
+X  		}
+--- 158,162 ----
+X  			bp += strlen(bp) + 1;
+X  			net_entry.n_addrtype =
+! 				(class == C_IN) ? AF_INET : AF_UNSPEC;
+X  			haveanswer++;
+X  		}
+***************
+*** 172,176 ****
+X  		case BYADDR:
+X  			net_entry.n_name = *net_entry.n_aliases;
+! 			net_entry.n_net = NULL;
+X  			break;
+X  		case BYNAME:
+--- 167,171 ----
+X  		case BYADDR:
+X  			net_entry.n_name = *net_entry.n_aliases;
+! 			net_entry.n_net = 0L;
+X  			break;
+X  		case BYNAME:
+***************
+*** 180,190 ****
+X  			for (i = 0; i < 4; i++) {
+X  				for (st = in, nchar = 0;
+! 				    *st != '.';
+! 				    st++, nchar++)
+X  					;
+X  				if (nchar != 1 || *in != '0' || flag) {
+! 					flag=1;
+! 					strncpy(paux1, i == 0 ? in : in - 1,
+! 					    i == 0 ? nchar : nchar + 1);
+X  					pauxt = paux2;
+X  					paux2 = strcat(paux1, paux2);
+--- 175,187 ----
+X  			for (i = 0; i < 4; i++) {
+X  				for (st = in, nchar = 0;
+! 				     *st != '.';
+! 				     st++, nchar++)
+X  					;
+X  				if (nchar != 1 || *in != '0' || flag) {
+! 					flag = 1;
+! 					(void)strncpy(paux1,
+! 						      (i==0) ? in : in-1,
+! 						      (i==0) ?nchar : nchar+1);
+! 					paux1[(i==0) ? nchar : nchar+1] = '\0';
+X  					pauxt = paux2;
+X  					paux2 = strcat(paux1, paux2);
+***************
+*** 236,240 ****
+X  		break;
+X  	}
+! 	anslen = res_query(qbuf, C_IN, T_PTR, (char *)&buf, sizeof(buf));
+X  	if (anslen < 0) {
+X  #ifdef DEBUG
+--- 233,237 ----
+X  		break;
+X  	}
+! 	anslen = res_query(qbuf, C_IN, T_PTR, (u_char *)&buf, sizeof(buf));
+X  	if (anslen < 0) {
+X  #ifdef DEBUG
+***************
+*** 244,248 ****
+X  		if (errno == ECONNREFUSED)
+X  			return (_getnetbyaddr(net, net_type));
+! 		return (_getnetbyaddr(net, net_type));
+X  	}
+X  	net_entry = getnetanswer(&buf, anslen, BYADDR);
+--- 241,245 ----
+X  		if (errno == ECONNREFUSED)
+X  			return (_getnetbyaddr(net, net_type));
+! 		return (NULL);
+X  	}
+X  	net_entry = getnetanswer(&buf, anslen, BYADDR);
+***************
+*** 270,274 ****
+X  
+X  	strcpy(&qbuf[0],net);
+! 	anslen = res_search(qbuf, C_IN, T_PTR, (char *)&buf, sizeof(buf));
+X  	if (anslen < 0) {
+X  #ifdef DEBUG
+--- 267,271 ----
+X  
+X  	strcpy(&qbuf[0],net);
+! 	anslen = res_search(qbuf, C_IN, T_PTR, (u_char *)&buf, sizeof(buf));
+X  	if (anslen < 0) {
+X  #ifdef DEBUG
+*** ../net-2.0b1/herror.c	Mon Nov  7 10:54:29 1994
+--- herror.c	Sun Dec 11 23:35:40 1994
+***************
+*** 68,72 ****
+X  
+X  char	*h_errlist[] = {
+! 	"Error 0",
+X  	"Unknown host",				/* 1 HOST_NOT_FOUND */
+X  	"Host name lookup failure",		/* 2 TRY_AGAIN */
+--- 68,72 ----
+X  
+X  char	*h_errlist[] = {
+! 	"Resolver Error 0 (no error)",
+X  	"Unknown host",				/* 1 HOST_NOT_FOUND */
+X  	"Host name lookup failure",		/* 2 TRY_AGAIN */
+***************
+*** 74,78 ****
+X  	"No address associated with name",	/* 4 NO_ADDRESS */
+X  };
+! int	h_nerr = { sizeof(h_errlist)/sizeof(h_errlist[0]) };
+X  
+X  extern int	h_errno;
+--- 74,78 ----
+X  	"No address associated with name",	/* 4 NO_ADDRESS */
+X  };
+! int	h_nerr = { sizeof h_errlist / sizeof h_errlist[0] };
+X  
+X  extern int	h_errno;
+***************
+*** 97,102 ****
+X  		v++;
+X  	}
+! 	v->iov_base = (u_int)h_errno < h_nerr ?
+! 	    h_errlist[h_errno] : "Unknown error";
+X  	v->iov_len = strlen(v->iov_base);
+X  	v++;
+--- 97,101 ----
+X  		v++;
+X  	}
+! 	v->iov_base = hstrerror(h_errno);
+X  	v->iov_len = strlen(v->iov_base);
+X  	v++;
+***************
+*** 110,115 ****
+X  	int err;
+X  {
+! 
+! 	if ((u_int)err < h_nerr)
+X  		return (h_errlist[err]);
+X  	return ("Unknown resolver error");
+--- 109,115 ----
+X  	int err;
+X  {
+! 	if (err < 0)
+! 		return ("Resolver internal error");
+! 	else if (err < h_nerr)
+X  		return (h_errlist[err]);
+X  	return ("Unknown resolver error");
+*** ../net-2.0b1/res_comp.c	Mon Nov  7 10:54:47 1994
+--- res_comp.c	Sun Dec 11 21:01:14 1994
+***************
+*** 58,75 ****
+X  #if defined(LIBC_SCCS) && !defined(lint)
+X  static char sccsid[] = "@(#)res_comp.c	8.1 (Berkeley) 6/4/93";
+! static char rcsid[] = "=Id: res_comp.c,v 4.9.1.4 1993/11/12 01:23:34 vixie Exp =";
+X  #endif /* LIBC_SCCS and not lint */
+X  
+X  #include <sys/param.h>
+- #include <arpa/nameser.h>
+X  #include <netinet/in.h>
+X  
+X  #include <stdio.h>
+X  #include <resolv.h>
+! 
+X  #include <unistd.h>
+X  #include <string.h>
+X  
+! static int dn_find __P((u_char *, u_char *, u_char **, u_char **));
+X  
+X  /*
+--- 58,76 ----
+X  #if defined(LIBC_SCCS) && !defined(lint)
+X  static char sccsid[] = "@(#)res_comp.c	8.1 (Berkeley) 6/4/93";
+! static char rcsid[] = "=Id: res_comp.c,v 4.9.1.13 1994/12/05 18:59:22 vixie Exp =";
+X  #endif /* LIBC_SCCS and not lint */
+X  
+X  #include <sys/param.h>
+X  #include <netinet/in.h>
++ #include <arpa/nameser.h>
+X  
+X  #include <stdio.h>
+X  #include <resolv.h>
+! #include <ctype.h>
+X  #include <unistd.h>
+X  #include <string.h>
+X  
+! static int	dn_find __P((u_char *exp_dn, u_char *msg,
+! 			     u_char **dnptrs, u_char **lastdnptr));
+X  
+X  /*
+***************
+*** 80,95 ****
+X   * Return size of compressed name or -1 if there was an error.
+X   */
+X  dn_expand(msg, eomorig, comp_dn, exp_dn, length)
+X  	const u_char *msg, *eomorig, *comp_dn;
+! 	u_char *exp_dn;
+X  	int length;
+X  {
+! 	register u_char *cp, *dn;
+X  	register int n, c;
+! 	u_char *eom;
+X  	int len = -1, checked = 0;
+X  
+X  	dn = exp_dn;
+! 	cp = (u_char *)comp_dn;
+X  	eom = exp_dn + length;
+X  	/*
+--- 81,98 ----
+X   * Return size of compressed name or -1 if there was an error.
+X   */
++ int
+X  dn_expand(msg, eomorig, comp_dn, exp_dn, length)
+X  	const u_char *msg, *eomorig, *comp_dn;
+! 	char *exp_dn;
+X  	int length;
+X  {
+! 	register const u_char *cp;
+! 	register char *dn;
+X  	register int n, c;
+! 	char *eom;
+X  	int len = -1, checked = 0;
+X  
+X  	dn = exp_dn;
+! 	cp = comp_dn;
+X  	eom = exp_dn + length;
+X  	/*
+***************
+*** 118,122 ****
+X  				*dn++ = c;
+X  				if (cp >= eomorig)	/* out of range */
+! 					return(-1);
+X  			}
+X  			break;
+--- 121,125 ----
+X  				*dn++ = c;
+X  				if (cp >= eomorig)	/* out of range */
+! 					return (-1);
+X  			}
+X  			break;
+***************
+*** 125,131 ****
+X  			if (len < 0)
+X  				len = cp - comp_dn + 1;
+! 			cp = (u_char *)msg + (((n & 0x3f) << 8) | (*cp & 0xff));
+X  			if (cp < msg || cp >= eomorig)	/* out of range */
+! 				return(-1);
+X  			checked += 2;
+X  			/*
+--- 128,134 ----
+X  			if (len < 0)
+X  				len = cp - comp_dn + 1;
+! 			cp = msg + (((n & 0x3f) << 8) | (*cp & 0xff));
+X  			if (cp < msg || cp >= eomorig)	/* out of range */
+! 				return (-1);
+X  			checked += 2;
+X  			/*
+***************
+*** 143,146 ****
+--- 146,152 ----
+X  	}
+X  	*dn = '\0';
++ 	for (dn = exp_dn; (c = *dn) != '\0'; dn++)
++ 		if (isascii(c) && isspace(c))
++ 			return (-1);
+X  	if (len < 0)
+X  		len = cp - comp_dn;
+***************
+*** 160,165 ****
+X   * is NULL, we don't update the list.
+X   */
+X  dn_comp(exp_dn, comp_dn, length, dnptrs, lastdnptr)
+! 	const u_char *exp_dn;
+X  	u_char *comp_dn, **dnptrs, **lastdnptr;
+X  	int length;
+--- 166,172 ----
+X   * is NULL, we don't update the list.
+X   */
++ int
+X  dn_comp(exp_dn, comp_dn, length, dnptrs, lastdnptr)
+! 	const char *exp_dn;
+X  	u_char *comp_dn, **dnptrs, **lastdnptr;
+X  	int length;
+***************
+*** 173,176 ****
+--- 180,184 ----
+X  	cp = comp_dn;
+X  	eob = cp + length;
++ 	lpp = cpp = NULL;
+X  	if (dnptrs != NULL) {
+X  		if ((msg = *dnptrs++) != NULL) {
+***************
+*** 238,248 ****
+X   * Skip over a compressed domain name. Return the size or -1.
+X   */
+X  __dn_skipname(comp_dn, eom)
+X  	const u_char *comp_dn, *eom;
+X  {
+! 	register u_char *cp;
+X  	register int n;
+X  
+! 	cp = (u_char *)comp_dn;
+X  	while (cp < eom && (n = *cp++)) {
+X  		/*
+--- 246,257 ----
+X   * Skip over a compressed domain name. Return the size or -1.
+X   */
++ int
+X  __dn_skipname(comp_dn, eom)
+X  	const u_char *comp_dn, *eom;
+X  {
+! 	register const u_char *cp;
+X  	register int n;
+X  
+! 	cp = comp_dn;
+X  	while (cp < eom && (n = *cp++)) {
+X  		/*
+***************
+*** 266,269 ****
+--- 275,287 ----
+X  }
+X  
++ static int
++ mklower(ch)
++ 	register int ch;
++ {
++ 	if (isascii(ch) && isupper(ch))
++ 		return (tolower(ch));
++ 	return (ch);
++ }
++ 
+X  /*
+X   * Search for expanded name from a list of previously compressed names.
+***************
+*** 295,299 ****
+X  					if (*dn == '\\')
+X  						dn++;
+! 					if (*dn++ != *cp++)
+X  						goto next;
+X  				}
+--- 313,317 ----
+X  					if (*dn == '\\')
+X  						dn++;
+! 					if (mklower(*dn++) != mklower(*cp++))
+X  						goto next;
+X  				}
+***************
+*** 304,312 ****
+X  				goto next;
+X  
+- 			default:	/* illegal type */
+- 				return (-1);
+- 
+X  			case INDIR_MASK:	/* indirection */
+X  				cp = msg + (((n & 0x3f) << 8) | *cp);
+X  			}
+X  		}
+--- 322,331 ----
+X  				goto next;
+X  
+X  			case INDIR_MASK:	/* indirection */
+X  				cp = msg + (((n & 0x3f) << 8) | *cp);
++ 				break;
++ 
++ 			default:	/* illegal type */
++ 				return (-1);
+X  			}
+X  		}
+***************
+*** 328,332 ****
+X  u_int16_t
+X  _getshort(msgp)
+! 	register u_char *msgp;
+X  {
+X  	register u_int16_t u;
+--- 347,351 ----
+X  u_int16_t
+X  _getshort(msgp)
+! 	register const u_char *msgp;
+X  {
+X  	register u_int16_t u;
+***************
+*** 338,342 ****
+X  u_int32_t
+X  _getlong(msgp)
+! 	register u_char *msgp;
+X  {
+X  	register u_int32_t u;
+--- 357,361 ----
+X  u_int32_t
+X  _getlong(msgp)
+! 	register const u_char *msgp;
+X  {
+X  	register u_int32_t u;
+***************
+*** 348,352 ****
+X  void
+X  #if defined(__STDC__) || defined(__cplusplus)
+! __putshort(register u_short s, register u_char *msgp)
+X  #else
+X  __putshort(s, msgp)
+--- 367,371 ----
+X  void
+X  #if defined(__STDC__) || defined(__cplusplus)
+! __putshort(register u_int16_t s, register u_char *msgp)	/* must match proto */
+X  #else
+X  __putshort(s, msgp)
+*** ../net-2.0b1/res_debug.c	Mon Nov  7 10:54:49 1994
+--- res_debug.c	Mon Dec 12 00:07:34 1994
+***************
+*** 58,62 ****
+X  #if defined(LIBC_SCCS) && !defined(lint)
+X  static char sccsid[] = "@(#)res_debug.c	8.1 (Berkeley) 6/4/93";
+! static char rcsid[] = "=Id: res_debug.c,v 4.9.1.6 1993/11/12 01:23:34 vixie Exp =";
+X  #endif /* LIBC_SCCS and not lint */
+X  
+--- 58,62 ----
+X  #if defined(LIBC_SCCS) && !defined(lint)
+X  static char sccsid[] = "@(#)res_debug.c	8.1 (Berkeley) 6/4/93";
+! static char rcsid[] = "=Id: res_debug.c,v 4.9.1.21 1994/12/11 19:47:17 vixie Exp =";
+X  #endif /* LIBC_SCCS and not lint */
+X  
+***************
+*** 70,84 ****
+X  #include <string.h>
+X  
+! void __fp_query();
+! char *__p_class(), *__p_time(), *__p_type();
+! static char *p_cdname(), *p_fqname(), *p_rr();
+! static char *p_option __P((u_int32_t));
+X  
+! char *_res_opcodes[] = {
+X  	"QUERY",
+X  	"IQUERY",
+X  	"CQUERYM",
+! 	"CQUERYU",
+! 	"4",
+X  	"5",
+X  	"6",
+--- 70,81 ----
+X  #include <string.h>
+X  
+! #define DEBUG 1
+X  
+! const char *_res_opcodes[] = {
+X  	"QUERY",
+X  	"IQUERY",
+X  	"CQUERYM",
+! 	"CQUERYU",	/* experimental */
+! 	"NOTIFY",	/* experimental */
+X  	"5",
+X  	"6",
+***************
+*** 94,98 ****
+X  };
+X  
+! char *_res_resultcodes[] = {
+X  	"NOERROR",
+X  	"FORMERR",
+--- 91,95 ----
+X  };
+X  
+! const char *_res_resultcodes[] = {
+X  	"NOERROR",
+X  	"FORMERR",
+***************
+*** 115,198 ****
+X  static char retbuf[16];
+X  
+! static char *
+X  dewks(wks)
+X  	int wks;
+X  {
+X  	switch (wks) {
+! 	case 5: return("rje");
+! 	case 7: return("echo");
+! 	case 9: return("discard");
+! 	case 11: return("systat");
+! 	case 13: return("daytime");
+! 	case 15: return("netstat");
+! 	case 17: return("qotd");
+! 	case 19: return("chargen");
+! 	case 20: return("ftp-data");
+! 	case 21: return("ftp");
+! 	case 23: return("telnet");
+! 	case 25: return("smtp");
+! 	case 37: return("time");
+! 	case 39: return("rlp");
+! 	case 42: return("name");
+! 	case 43: return("whois");
+! 	case 53: return("domain");
+! 	case 57: return("apts");
+! 	case 59: return("apfs");
+! 	case 67: return("bootps");
+! 	case 68: return("bootpc");
+! 	case 69: return("tftp");
+! 	case 77: return("rje");
+! 	case 79: return("finger");
+! 	case 87: return("link");
+! 	case 95: return("supdup");
+! 	case 100: return("newacct");
+! 	case 101: return("hostnames");
+! 	case 102: return("iso-tsap");
+! 	case 103: return("x400");
+! 	case 104: return("x400-snd");
+! 	case 105: return("csnet-ns");
+! 	case 109: return("pop-2");
+! 	case 111: return("sunrpc");
+! 	case 113: return("auth");
+! 	case 115: return("sftp");
+! 	case 117: return("uucp-path");
+! 	case 119: return("nntp");
+! 	case 121: return("erpc");
+! 	case 123: return("ntp");
+! 	case 133: return("statsrv");
+! 	case 136: return("profile");
+! 	case 144: return("NeWS");
+! 	case 161: return("snmp");
+! 	case 162: return("snmp-trap");
+! 	case 170: return("print-srv");
+! 	default: (void) sprintf(retbuf, "%d", wks); return(retbuf);
+X  	}
+X  }
+X  
+! static char *
+X  deproto(protonum)
+X  	int protonum;
+X  {
+X  	switch (protonum) {
+! 	case 1: return("icmp");
+! 	case 2: return("igmp");
+! 	case 3: return("ggp");
+! 	case 5: return("st");
+! 	case 6: return("tcp");
+! 	case 7: return("ucl");
+! 	case 8: return("egp");
+! 	case 9: return("igp");
+! 	case 11: return("nvp-II");
+! 	case 12: return("pup");
+! 	case 16: return("chaos");
+! 	case 17: return("udp");
+! 	default: (void) sprintf(retbuf, "%d", protonum); return(retbuf);
+X  	}
+X  }
+X  
+! static char *
+X  do_rrset(msg, cp, cnt, pflag, file, hs)
+X  	int cnt, pflag;
+! 	char *cp,*msg, *hs;
+X  	FILE *file;
+X  {
+--- 112,196 ----
+X  static char retbuf[16];
+X  
+! static const char *
+X  dewks(wks)
+X  	int wks;
+X  {
+X  	switch (wks) {
+! 	case 5: return "rje";
+! 	case 7: return "echo";
+! 	case 9: return "discard";
+! 	case 11: return "systat";
+! 	case 13: return "daytime";
+! 	case 15: return "netstat";
+! 	case 17: return "qotd";
+! 	case 19: return "chargen";
+! 	case 20: return "ftp-data";
+! 	case 21: return "ftp";
+! 	case 23: return "telnet";
+! 	case 25: return "smtp";
+! 	case 37: return "time";
+! 	case 39: return "rlp";
+! 	case 42: return "name";
+! 	case 43: return "whois";
+! 	case 53: return "domain";
+! 	case 57: return "apts";
+! 	case 59: return "apfs";
+! 	case 67: return "bootps";
+! 	case 68: return "bootpc";
+! 	case 69: return "tftp";
+! 	case 77: return "rje";
+! 	case 79: return "finger";
+! 	case 87: return "link";
+! 	case 95: return "supdup";
+! 	case 100: return "newacct";
+! 	case 101: return "hostnames";
+! 	case 102: return "iso-tsap";
+! 	case 103: return "x400";
+! 	case 104: return "x400-snd";
+! 	case 105: return "csnet-ns";
+! 	case 109: return "pop-2";
+! 	case 111: return "sunrpc";
+! 	case 113: return "auth";
+! 	case 115: return "sftp";
+! 	case 117: return "uucp-path";
+! 	case 119: return "nntp";
+! 	case 121: return "erpc";
+! 	case 123: return "ntp";
+! 	case 133: return "statsrv";
+! 	case 136: return "profile";
+! 	case 144: return "NeWS";
+! 	case 161: return "snmp";
+! 	case 162: return "snmp-trap";
+! 	case 170: return "print-srv";
+! 	default: (void) sprintf(retbuf, "%d", wks); return (retbuf);
+X  	}
+X  }
+X  
+! static const char *
+X  deproto(protonum)
+X  	int protonum;
+X  {
+X  	switch (protonum) {
+! 	case 1: return "icmp";
+! 	case 2: return "igmp";
+! 	case 3: return "ggp";
+! 	case 5: return "st";
+! 	case 6: return "tcp";
+! 	case 7: return "ucl";
+! 	case 8: return "egp";
+! 	case 9: return "igp";
+! 	case 11: return "nvp-II";
+! 	case 12: return "pup";
+! 	case 16: return "chaos";
+! 	case 17: return "udp";
+! 	default: (void) sprintf(retbuf, "%d", protonum); return (retbuf);
+X  	}
+X  }
+X  
+! static const u_char *
+X  do_rrset(msg, cp, cnt, pflag, file, hs)
+X  	int cnt, pflag;
+! 	const u_char *cp, *msg;
+! 	const char *hs;
+X  	FILE *file;
+X  {
+***************
+*** 201,216 ****
+X  
+X  	/*
+! 	 * Print answer records
+X  	 */
+! 	sflag = _res.pfcode & pflag;
+X  	if (n = ntohs(cnt)) {
+! 		if (!_res.pfcode || sflag && _res.pfcode & RES_PRF_HEAD1)
+X  			fprintf(file, hs);
+X  		while (--n >= 0) {
+! 			cp = p_rr(cp, msg, file);
+! 			if ((cp-msg) > PACKETSZ)
+X  				return (NULL);
+X  		}
+! 		if (!_res.pfcode || sflag && _res.pfcode & RES_PRF_HEAD1)
+X  			putc('\n', file);
+X  	}
+--- 199,227 ----
+X  
+X  	/*
+! 	 * Print answer records.
+X  	 */
+! 	sflag = (_res.pfcode & pflag);
+X  	if (n = ntohs(cnt)) {
+! 		if ((!_res.pfcode) ||
+! 		    ((sflag) && (_res.pfcode & RES_PRF_HEAD1)))
+X  			fprintf(file, hs);
+X  		while (--n >= 0) {
+! 			if ((!_res.pfcode) || sflag) {
+! 				cp = p_rr(cp, msg, file);
+! 			} else {
+! 				unsigned int dlen;
+! 				cp += __dn_skipname(cp, cp + MAXCDNAME);
+! 				cp += INT16SZ;
+! 				cp += INT16SZ;
+! 				cp += INT32SZ;
+! 				dlen = _getshort((u_char*)cp);
+! 				cp += INT16SZ;
+! 				cp += dlen;
+! 			}
+! 			if ((cp - msg) > PACKETSZ)
+X  				return (NULL);
+X  		}
+! 		if ((!_res.pfcode) ||
+! 		    ((sflag) && (_res.pfcode & RES_PRF_HEAD1)))
+X  			putc('\n', file);
+X  	}
+***************
+*** 218,223 ****
+X  }
+X  
+X  __p_query(msg)
+! 	char *msg;
+X  {
+X  	__fp_query(msg, stdout);
+--- 229,235 ----
+X  }
+X  
++ void
+X  __p_query(msg)
+! 	const u_char *msg;
+X  {
+X  	__fp_query(msg, stdout);
+***************
+*** 233,245 ****
+X  	FILE *file;
+X  {
+! 	int bit;
+X  
+X  	fprintf(file, ";; res options:");
+X  	if (!statp)
+X  		statp = &_res;
+! 	for (bit = 0; bit < 32; bit++) {	/* XXX 32 - bad assumption! */
+! 		if (statp->options & 1 << bit)
+! 			fprintf(file, " %s", p_option(1 << bit));
+! 	}
+X  	putc('\n', file);
+X  }
+--- 245,256 ----
+X  	FILE *file;
+X  {
+! 	register u_long mask;
+X  
+X  	fprintf(file, ";; res options:");
+X  	if (!statp)
+X  		statp = &_res;
+! 	for (mask = 1;  mask != 0;  mask <<= 1)
+! 		if (statp->options & mask)
+! 			fprintf(file, " %s", p_option(mask));
+X  	putc('\n', file);
+X  }
+***************
+*** 250,274 ****
+X   */
+X  void
+! __fp_query(msg,file)
+! 	char *msg;
+X  	FILE *file;
+X  {
+! 	register char *cp;
+! 	register HEADER *hp;
+X  	register int n;
+X  
+X  	/*
+X  	 * Print header fields.
+X  	 */
+X  	hp = (HEADER *)msg;
+! 	cp = msg + sizeof(HEADER);
+! 	if (!_res.pfcode || _res.pfcode & RES_PRF_HEADX || hp->rcode) {
+X  		fprintf(file, ";; ->>HEADER<<- opcode: %s, status: %s, id: %d",
+! 		    _res_opcodes[hp->opcode], _res_resultcodes[hp->rcode],
+! 		    ntohs(hp->id));
+X  		putc('\n', file);
+X  	}
+X  	putc(';', file);
+! 	if (!_res.pfcode || _res.pfcode & RES_PRF_HEAD2) {
+X  		fprintf(file, "; flags:");
+X  		if (hp->qr)
+--- 261,291 ----
+X   */
+X  void
+! __fp_nquery(msg, len, file)
+! 	const u_char *msg;
+! 	int len;
+X  	FILE *file;
+X  {
+! 	register const u_char *cp, *endMark;
+! 	register const HEADER *hp;
+X  	register int n;
+X  
++ #define TruncTest(x) if (x >= endMark) goto trunc
++ #define	ErrorTest(x) if (x == NULL) goto error
++ 
+X  	/*
+X  	 * Print header fields.
+X  	 */
+X  	hp = (HEADER *)msg;
+! 	cp = msg + HFIXEDSZ;
+! 	endMark = cp + len;
+! 	if ((!_res.pfcode) || (_res.pfcode & RES_PRF_HEADX) || hp->rcode) {
+X  		fprintf(file, ";; ->>HEADER<<- opcode: %s, status: %s, id: %d",
+! 			_res_opcodes[hp->opcode],
+! 			_res_resultcodes[hp->rcode],
+! 			ntohs(hp->id));
+X  		putc('\n', file);
+X  	}
+X  	putc(';', file);
+! 	if ((!_res.pfcode) || (_res.pfcode & RES_PRF_HEAD2)) {
+X  		fprintf(file, "; flags:");
+X  		if (hp->qr)
+***************
+*** 285,289 ****
+X  			fprintf(file, " pr");
+X  	}
+! 	if (!_res.pfcode || _res.pfcode & RES_PRF_HEAD1) {
+X  		fprintf(file, "; Ques: %d", ntohs(hp->qdcount));
+X  		fprintf(file, ", Ans: %d", ntohs(hp->ancount));
+--- 302,306 ----
+X  			fprintf(file, " pr");
+X  	}
+! 	if ((!_res.pfcode) || (_res.pfcode & RES_PRF_HEAD1)) {
+X  		fprintf(file, "; Ques: %d", ntohs(hp->qdcount));
+X  		fprintf(file, ", Ans: %d", ntohs(hp->ancount));
+***************
+*** 291,318 ****
+X  		fprintf(file, ", Addit: %d", ntohs(hp->arcount));
+X  	}
+! #if 1
+! 	if (!_res.pfcode || _res.pfcode & 
+! 	    (RES_PRF_HEADX | RES_PRF_HEAD2 | RES_PRF_HEAD1))
+X  		putc('\n',file);
+! #endif
+X  	/*
+X  	 * Print question records.
+X  	 */
+X  	if (n = ntohs(hp->qdcount)) {
+! 		if (!_res.pfcode || _res.pfcode & RES_PRF_QUES)
+X  			fprintf(file, ";; QUESTIONS:\n");
+X  		while (--n >= 0) {
+X  			fprintf(file, ";;\t");
+X  			cp = p_cdname(cp, msg, file);
+! 			if (cp == NULL)
+! 				return;
+! 			if (!_res.pfcode || _res.pfcode & RES_PRF_QUES)
+X  				fprintf(file, ", type = %s",
+! 				    __p_type(_getshort(cp)));
+! 			cp += sizeof(u_int16_t);
+! 			if (!_res.pfcode || _res.pfcode & RES_PRF_QUES)
+X  				fprintf(file, ", class = %s\n",
+! 				    __p_class(_getshort(cp)));
+! 			cp += sizeof(u_int16_t);
+X  			putc('\n', file);
+X  		}
+--- 308,336 ----
+X  		fprintf(file, ", Addit: %d", ntohs(hp->arcount));
+X  	}
+! 	if ((!_res.pfcode) || (_res.pfcode & 
+! 		(RES_PRF_HEADX | RES_PRF_HEAD2 | RES_PRF_HEAD1))) {
+X  		putc('\n',file);
+! 	}
+X  	/*
+X  	 * Print question records.
+X  	 */
+X  	if (n = ntohs(hp->qdcount)) {
+! 		if ((!_res.pfcode) || (_res.pfcode & RES_PRF_QUES))
+X  			fprintf(file, ";; QUESTIONS:\n");
+X  		while (--n >= 0) {
+X  			fprintf(file, ";;\t");
++ 			TruncTest(cp);
+X  			cp = p_cdname(cp, msg, file);
+! 			ErrorTest(cp);
+! 			TruncTest(cp);
+! 			if ((!_res.pfcode) || (_res.pfcode & RES_PRF_QUES))
+X  				fprintf(file, ", type = %s",
+! 					__p_type(_getshort((u_char*)cp)));
+! 			cp += INT16SZ;
+! 			TruncTest(cp);
+! 			if ((!_res.pfcode) || (_res.pfcode & RES_PRF_QUES))
+X  				fprintf(file, ", class = %s\n",
+! 					__p_class(_getshort((u_char*)cp)));
+! 			cp += INT16SZ;
+X  			putc('\n', file);
+X  		}
+***************
+*** 321,346 ****
+X  	 * Print authoritative answer records
+X  	 */
+! 	cp = do_rrset(msg, cp, hp->ancount, RES_PRF_ANS, file, ";; ANSWERS:\n");
+! 	if (cp == NULL)
+! 		return;
+X  
+X  	/*
+X  	 * print name server records
+X  	 */
+X  	cp = do_rrset(msg, cp, hp->nscount, RES_PRF_AUTH, file,
+! 	    ";; AUTHORITY RECORDS:\n");
+! 	if (!cp)
+! 		return;
+X  
+X  	/*
+X  	 * print additional records
+X  	 */
+X  	cp = do_rrset(msg, cp, hp->arcount, RES_PRF_ADD, file,
+! 	    ";; ADDITIONAL RECORDS:\n");
+X  }
+X  
+! char *
+! p_cdname(cp, msg, file)
+! 	char *cp, *msg;
+X  	FILE *file;
+X  {
+--- 339,382 ----
+X  	 * Print authoritative answer records
+X  	 */
+! 	TruncTest(cp);
+! 	cp = do_rrset(msg, cp, hp->ancount, RES_PRF_ANS, file,
+! 		      ";; ANSWERS:\n");
+! 	ErrorTest(cp);
+X  
+X  	/*
+X  	 * print name server records
+X  	 */
++ 	TruncTest(cp);
+X  	cp = do_rrset(msg, cp, hp->nscount, RES_PRF_AUTH, file,
+! 		      ";; AUTHORITY RECORDS:\n");
+! 	ErrorTest(cp);
+X  
++ 	TruncTest(cp);
+X  	/*
+X  	 * print additional records
+X  	 */
+X  	cp = do_rrset(msg, cp, hp->arcount, RES_PRF_ADD, file,
+! 		      ";; ADDITIONAL RECORDS:\n");
+! 	ErrorTest(cp);
+! 	return;
+!  trunc:
+! 	fprintf(file, "\n;; ...truncated\n");
+! 	return;
+!  error:
+! 	fprintf(file, "\n;; ...malformed\n");
+X  }
+X  
+! void
+! __fp_query(msg, file)
+! 	const u_char *msg;
+! 	FILE *file;
+! {
+! 	fp_nquery(msg, PACKETSZ, file);
+! }
+! 
+! const u_char *
+! __p_cdnname(cp, msg, len, file)
+! 	const u_char *cp, *msg;
+! 	int len;
+X  	FILE *file;
+X  {
+***************
+*** 348,353 ****
+X  	int n;
+X  
+! 	if ((n = dn_expand((u_char *)msg, (u_char *)cp + MAXCDNAME,
+! 	    (u_char *)cp, (u_char *)name, sizeof(name))) < 0)
+X  		return (NULL);
+X  	if (name[0] == '\0')
+--- 384,388 ----
+X  	int n;
+X  
+! 	if ((n = dn_expand(msg, msg + len, cp, name, sizeof name)) < 0)
+X  		return (NULL);
+X  	if (name[0] == '\0')
+***************
+*** 358,364 ****
+X  }
+X  
+! char *
+! p_fqname(cp, msg, file)
+! 	char *cp, *msg;
+X  	FILE *file;
+X  {
+--- 393,410 ----
+X  }
+X  
+! const u_char *
+! __p_cdname(cp, msg, file)
+! 	const u_char *cp, *msg;
+! 	FILE *file;
+! {
+! 	return (p_cdnname(cp, msg, PACKETSZ, file));
+! }
+! 
+! /* XXX:	the rest of these functions need to become length-limited, too. (vix)
+!  */
+! 
+! const u_char *
+! __p_fqname(cp, msg, file)
+! 	const u_char *cp, *msg;
+X  	FILE *file;
+X  {
+***************
+*** 366,371 ****
+X  	int n, len;
+X  
+! 	if ((n = dn_expand((u_char *)msg, (u_char *)cp + MAXCDNAME,
+! 	    (u_char *)cp, (u_char *)name, sizeof(name))) < 0)
+X  		return (NULL);
+X  	if (name[0] == '\0') {
+--- 412,416 ----
+X  	int n, len;
+X  
+! 	if ((n = dn_expand(msg, cp + MAXCDNAME, cp, name, sizeof name)) < 0)
+X  		return (NULL);
+X  	if (name[0] == '\0') {
+***************
+*** 382,393 ****
+X   * Print resource record fields in human readable form.
+X   */
+! char *
+! p_rr(cp, msg, file)
+! 	char *cp, *msg;
+X  	FILE *file;
+X  {
+X  	int type, class, dlen, n, c;
+X  	struct in_addr inaddr;
+! 	char *cp1, *cp2;
+X  	u_int32_t tmpttl, t;
+X  	int lcnt;
+--- 427,438 ----
+X   * Print resource record fields in human readable form.
+X   */
+! const u_char *
+! __p_rr(cp, msg, file)
+! 	const u_char *cp, *msg;
+X  	FILE *file;
+X  {
+X  	int type, class, dlen, n, c;
+X  	struct in_addr inaddr;
+! 	const u_char *cp1, *cp2;
+X  	u_int32_t tmpttl, t;
+X  	int lcnt;
+***************
+*** 395,410 ****
+X  	if ((cp = p_fqname(cp, msg, file)) == NULL)
+X  		return (NULL);			/* compression error */
+! 	type = _getshort(cp);
+! 	cp += sizeof(u_int16_t);
+! 	class = _getshort(cp);
+! 	cp += sizeof(u_int16_t);
+! 	tmpttl = _getlong(cp);
+! 	cp += sizeof(u_int32_t);
+! 	dlen = _getshort(cp);
+! 	cp += sizeof(u_int16_t);
+X  	cp1 = cp;
+! 	if (!_res.pfcode || _res.pfcode & RES_PRF_TTLID)
+X  		fprintf(file, "\t%lu", tmpttl);
+! 	if (!_res.pfcode || _res.pfcode & RES_PRF_CLASS)
+X  		fprintf(file, "\t%s", __p_class(class));
+X  	fprintf(file, "\t%s", __p_type(type));
+--- 440,455 ----
+X  	if ((cp = p_fqname(cp, msg, file)) == NULL)
+X  		return (NULL);			/* compression error */
+! 	type = _getshort((u_char*)cp);
+! 	cp += INT16SZ;
+! 	class = _getshort((u_char*)cp);
+! 	cp += INT16SZ;
+! 	tmpttl = _getlong((u_char*)cp);
+! 	cp += INT32SZ;
+! 	dlen = _getshort((u_char*)cp);
+! 	cp += INT16SZ;
+X  	cp1 = cp;
+! 	if ((!_res.pfcode) || (_res.pfcode & RES_PRF_TTLID))
+X  		fprintf(file, "\t%lu", tmpttl);
+! 	if ((!_res.pfcode) || (_res.pfcode & RES_PRF_CLASS))
+X  		fprintf(file, "\t%s", __p_class(class));
+X  	fprintf(file, "\t%s", __p_type(type));
+***************
+*** 417,421 ****
+X  		case C_IN:
+X  		case C_HS:
+! 			bcopy(cp, (char *)&inaddr, sizeof(inaddr));
+X  			if (dlen == 4) {
+X  				fprintf(file, "\t%s", inet_ntoa(inaddr));
+--- 462,466 ----
+X  		case C_IN:
+X  		case C_HS:
+! 			bcopy(cp, (char *)&inaddr, INADDRSZ);
+X  			if (dlen == 4) {
+X  				fprintf(file, "\t%s", inet_ntoa(inaddr));
+***************
+*** 427,437 ****
+X  
+X  				address = inet_ntoa(inaddr);
+! 				cp += sizeof(inaddr);
+X  				protocol = *(u_char*)cp;
+X  				cp += sizeof(u_char);
+! 				port = _getshort(cp);
+! 				cp += sizeof(u_int16_t);
+X  				fprintf(file, "\t%s\t; proto %d, port %d",
+! 				    address, protocol, port);
+X  			}
+X  			break;
+--- 472,482 ----
+X  
+X  				address = inet_ntoa(inaddr);
+! 				cp += INADDRSZ;
+X  				protocol = *(u_char*)cp;
+X  				cp += sizeof(u_char);
+! 				port = _getshort((u_char*)cp);
+! 				cp += INT16SZ;
+X  				fprintf(file, "\t%s\t; proto %d, port %d",
+! 					address, protocol, port);
+X  			}
+X  			break;
+***************
+*** 451,462 ****
+X  
+X  	case T_HINFO:
+X  		if (n = *cp++) {
+X  			fprintf(file, "\t%.*s", n, cp);
+X  			cp += n;
+X  		}
+! 		if (n = *cp++) {
+X  			fprintf(file, "\t%.*s", n, cp);
+X  			cp += n;
+! 		}
+X  		break;
+X  
+--- 496,510 ----
+X  
+X  	case T_HINFO:
++ 	case T_ISDN:
++ 		cp2 = cp + dlen;
+X  		if (n = *cp++) {
+X  			fprintf(file, "\t%.*s", n, cp);
+X  			cp += n;
+X  		}
+! 		if ((cp < cp2) && (n = *cp++)) {
+X  			fprintf(file, "\t%.*s", n, cp);
+X  			cp += n;
+! 		} else if (type == T_HINFO)
+! 			fprintf(file, "\n;; *** Warning *** OS-type missing");
+X  		break;
+X  
+***************
+*** 467,479 ****
+X  		cp = p_fqname(cp, msg, file);	/* mail addr */
+X  		fputs(" (\n", file);
+! 		t = _getlong(cp);  cp += sizeof(u_int32_t);
+X  		fprintf(file, "\t\t\t%lu\t; serial\n", t);
+! 		t = _getlong(cp);  cp += sizeof(u_int32_t);
+X  		fprintf(file, "\t\t\t%lu\t; refresh (%s)\n", t, __p_time(t));
+! 		t = _getlong(cp);  cp += sizeof(u_int32_t);
+X  		fprintf(file, "\t\t\t%lu\t; retry (%s)\n", t, __p_time(t));
+! 		t = _getlong(cp);  cp += sizeof(u_int32_t);
+X  		fprintf(file, "\t\t\t%lu\t; expire (%s)\n", t, __p_time(t));
+! 		t = _getlong(cp);  cp += sizeof(u_int32_t);
+X  		fprintf(file, "\t\t\t%lu )\t; minimum (%s)", t, __p_time(t));
+X  		break;
+--- 515,527 ----
+X  		cp = p_fqname(cp, msg, file);	/* mail addr */
+X  		fputs(" (\n", file);
+! 		t = _getlong((u_char*)cp);  cp += INT32SZ;
+X  		fprintf(file, "\t\t\t%lu\t; serial\n", t);
+! 		t = _getlong((u_char*)cp);  cp += INT32SZ;
+X  		fprintf(file, "\t\t\t%lu\t; refresh (%s)\n", t, __p_time(t));
+! 		t = _getlong((u_char*)cp);  cp += INT32SZ;
+X  		fprintf(file, "\t\t\t%lu\t; retry (%s)\n", t, __p_time(t));
+! 		t = _getlong((u_char*)cp);  cp += INT32SZ;
+X  		fprintf(file, "\t\t\t%lu\t; expire (%s)\n", t, __p_time(t));
+! 		t = _getlong((u_char*)cp);  cp += INT32SZ;
+X  		fprintf(file, "\t\t\t%lu )\t; minimum (%s)", t, __p_time(t));
+X  		break;
+***************
+*** 481,490 ****
+X  	case T_MX:
+X  	case T_AFSDB:
+! 		fprintf(file, "\t%d ", _getshort(cp));
+! 		cp += sizeof(u_int16_t);
+X  		cp = p_fqname(cp, msg, file);
+X  		break;
+X  
+X    	case T_TXT:
+X  		(void) fputs("\t\"", file);
+X  		cp2 = cp1 + dlen;
+--- 529,548 ----
+X  	case T_MX:
+X  	case T_AFSDB:
+! 	case T_RT:
+! 		fprintf(file, "\t%d ", _getshort((u_char*)cp));
+! 		cp += INT16SZ;
+X  		cp = p_fqname(cp, msg, file);
+X  		break;
+X  
++         case T_PX:
++                 fprintf(file, "\t%d ", _getshort((u_char*)cp));
++                 cp += INT16SZ;
++                 cp = p_fqname(cp, msg, file);
++                 putc(' ', file);
++                 cp = p_fqname(cp, msg, file);
++                 break;
++ 
+X    	case T_TXT:
++ 	case T_X25:
+X  		(void) fputs("\t\"", file);
+X  		cp2 = cp1 + dlen;
+***************
+*** 492,496 ****
+X  			if (n = (unsigned char) *cp++) {
+X  				for (c = n; c > 0 && cp < cp2; c--)
+! 					if (*cp == '\n') {
+X  					    (void) putc('\\', file);
+X  					    (void) putc(*cp++, file);
+--- 550,554 ----
+X  			if (n = (unsigned char) *cp++) {
+X  				for (c = n; c > 0 && cp < cp2; c--)
+! 					if ((*cp == '\n') || (*cp == '"')) {
+X  					    (void) putc('\\', file);
+X  					    (void) putc(*cp++, file);
+***************
+*** 502,505 ****
+--- 560,568 ----
+X    		break;
+X  
++   	case T_NSAP:
++ 		(void) fprintf(file, "\t%s", inet_nsap_ntoa(dlen, cp, NULL));
++ 		cp += dlen;
++   		break;
++ 
+X  	case T_MINFO:
+X  	case T_RP:
+***************
+*** 512,516 ****
+X  	case T_UINFO:
+X  		putc('\t', file);
+! 		fputs(cp, file);
+X  		cp += dlen;
+X  		break;
+--- 575,579 ----
+X  	case T_UINFO:
+X  		putc('\t', file);
+! 		fputs((char *)cp, file);
+X  		cp += dlen;
+X  		break;
+***************
+*** 519,533 ****
+X  	case T_GID:
+X  		if (dlen == 4) {
+! 			fprintf(file, "\t%u", _getlong(cp));
+! 			cp += sizeof(int32_t);
+X  		}
+X  		break;
+X  
+X  	case T_WKS:
+! 		if (dlen < sizeof(u_int32_t) + 1)
+X  			break;
+! 		bcopy(cp, (char *)&inaddr, sizeof(inaddr));
+! 		cp += sizeof(u_int32_t);
+! 		fprintf(file, "\t%s %s ( ", inet_ntoa(inaddr), deproto(*cp));
+X  		cp += sizeof(u_char);
+X  		n = 0;
+--- 582,598 ----
+X  	case T_GID:
+X  		if (dlen == 4) {
+! 			fprintf(file, "\t%u", _getlong((u_char*)cp));
+! 			cp += INT32SZ;
+X  		}
+X  		break;
+X  
+X  	case T_WKS:
+! 		if (dlen < INT32SZ + 1)
+X  			break;
+! 		bcopy(cp, (char *)&inaddr, INADDRSZ);
+! 		cp += INT32SZ;
+! 		fprintf(file, "\t%s %s ( ",
+! 			inet_ntoa(inaddr),
+! 			deproto((int) *cp));
+X  		cp += sizeof(u_char);
+X  		n = 0;
+***************
+*** 555,564 ****
+X  		{
+X  			int NumBytes = 8;
+! 			char *DataPtr;
+X  			int i;
+X  
+X  			if (dlen < NumBytes) NumBytes = dlen;
+X  			fprintf(file, "\tFirst %d bytes of hex data:",
+! 			    NumBytes);
+X  			for (i = 0, DataPtr = cp; i < NumBytes; i++, DataPtr++)
+X  				fprintf(file, " %x", *DataPtr);
+--- 620,629 ----
+X  		{
+X  			int NumBytes = 8;
+! 			u_char *DataPtr;
+X  			int i;
+X  
+X  			if (dlen < NumBytes) NumBytes = dlen;
+X  			fprintf(file, "\tFirst %d bytes of hex data:",
+! 				NumBytes);
+X  			for (i = 0, DataPtr = cp; i < NumBytes; i++, DataPtr++)
+X  				fprintf(file, " %x", *DataPtr);
+***************
+*** 579,583 ****
+X  	if (cp - cp1 != dlen) {
+X  		fprintf(file, ";; packet size error (found %d, dlen was %d)\n",
+! 		    cp - cp1, dlen);
+X  		cp = NULL;
+X  	}
+--- 644,648 ----
+X  	if (cp - cp1 != dlen) {
+X  		fprintf(file, ";; packet size error (found %d, dlen was %d)\n",
+! 			cp - cp1, dlen);
+X  		cp = NULL;
+X  	}
+***************
+*** 590,652 ****
+X   * Return a string for the type
+X   */
+! char *
+X  __p_type(type)
+X  	int type;
+X  {
+X  	switch (type) {
+! 	case T_A:
+! 		return("A");
+! 	case T_NS:		/* authoritative server */
+! 		return("NS");
+! 	case T_CNAME:		/* canonical name */
+! 		return("CNAME");
+! 	case T_SOA:		/* start of authority zone */
+! 		return("SOA");
+! 	case T_MB:		/* mailbox domain name */
+! 		return("MB");
+! 	case T_MG:		/* mail group member */
+! 		return("MG");
+! 	case T_MR:		/* mail rename name */
+! 		return("MR");
+! 	case T_NULL:		/* null resource record */
+! 		return("NULL");
+! 	case T_WKS:		/* well known service */
+! 		return("WKS");
+! 	case T_PTR:		/* domain name pointer */
+! 		return("PTR");
+! 	case T_HINFO:		/* host information */
+! 		return("HINFO");
+! 	case T_MINFO:		/* mailbox information */
+! 		return("MINFO");
+! 	case T_MX:		/* mail routing info */
+! 		return("MX");
+! 	case T_TXT:		/* text */
+! 		return("TXT");
+! 	case T_RP:		/* responsible person */
+! 		return("RP");
+! 	case T_AFSDB:		/* AFS cell database */
+! 		return("AFSDB");
+! 	case T_AXFR:		/* zone transfer */
+! 		return("AXFR");
+! 	case T_MAILB:		/* mail box */
+! 		return("MAILB");
+! 	case T_MAILA:		/* mail address */
+! 		return("MAILA");
+! 	case T_ANY:		/* matches any type */
+! 		return("ANY");
+! 	case T_UINFO:
+! 		return("UINFO");
+! 	case T_UID:
+! 		return("UID");
+! 	case T_GID:
+! 		return("GID");
+X  #ifdef ALLOW_T_UNSPEC
+! 	case T_UNSPEC:
+! 		return("UNSPEC");
+X  #endif /* ALLOW_T_UNSPEC */
+! 
+! 	default:
+! 		(void)sprintf(nbuf, "%d", type);
+! 		return(nbuf);
+X  	}
+X  }
+--- 655,701 ----
+X   * Return a string for the type
+X   */
+! const char *
+X  __p_type(type)
+X  	int type;
+X  {
+X  	switch (type) {
+! 	case T_A:	return "A";
+! 	case T_NS:	return "NS";
+! 	case T_CNAME:	return "CNAME";
+! 	case T_SOA:	return "SOA";
+! 	case T_MB:	return "MB";
+! 	case T_MG:	return "MG";
+! 	case T_MR:	return "MR";
+! 	case T_NULL:	return "NULL";
+! 	case T_WKS:	return "WKS";
+! 	case T_PTR:	return "PTR";
+! 	case T_HINFO:	return "HINFO";
+! 	case T_MINFO:	return "MINFO";
+! 	case T_MX:	return "MX";
+! 	case T_TXT:	return "TXT";
+! 	case T_RP:	return "RP";
+! 	case T_AFSDB:	return "AFSDB";
+! 	case T_X25:	return "X25";
+! 	case T_ISDN:	return "ISDN";
+! 	case T_RT:	return "RT";
+! 	case T_NSAP:	return "NSAP";
+! 	case T_NSAP_PTR: return "NSAP_PTR";
+! 	case T_SIG:	return "SIG";
+! 	case T_KEY:	return "KEY";
+! 	case T_PX:	return "PX";
+! 	case T_GPOS:	return "GPOS";
+! 	case T_AAAA:	return "AAAA";
+! 	case T_LOC:	return "LOC";
+! 	case T_AXFR:	return "AXFR";
+! 	case T_MAILB:	return "MAILB";
+! 	case T_MAILA:	return "MAILA";
+! 	case T_ANY:	return "ANY";
+! 	case T_UINFO:	return "UINFO";
+! 	case T_UID:	return "UID";
+! 	case T_GID:	return "GID";
+X  #ifdef ALLOW_T_UNSPEC
+! 	case T_UNSPEC:	return "UNSPEC";
+X  #endif /* ALLOW_T_UNSPEC */
+! 	default:	(void)sprintf(nbuf, "%d", type); return (nbuf);
+X  	}
+X  }
+***************
+*** 655,673 ****
+X   * Return a mnemonic for class
+X   */
+! char *
+X  __p_class(class)
+X  	int class;
+X  {
+- 
+X  	switch (class) {
+! 	case C_IN:		/* internet class */
+! 		return("IN");
+! 	case C_HS:		/* hesiod class */
+! 		return("HS");
+! 	case C_ANY:		/* matches any class */
+! 		return("ANY");
+! 	default:
+! 		(void)sprintf(nbuf, "%d", class);
+! 		return(nbuf);
+X  	}
+X  }
+--- 704,716 ----
+X   * Return a mnemonic for class
+X   */
+! const char *
+X  __p_class(class)
+X  	int class;
+X  {
+X  	switch (class) {
+! 	case C_IN:	return "IN";
+! 	case C_HS:	return "HS";
+! 	case C_ANY:	return "ANY";
+! 	default:	(void)sprintf(nbuf, "%d", class); return (nbuf);
+X  	}
+X  }
+***************
+*** 676,682 ****
+X   * Return a mnemonic for an option
+X   */
+! static char *
+! p_option(option)
+! 	u_int32_t option;
+X  {
+X  	switch (option) {
+--- 719,725 ----
+X   * Return a mnemonic for an option
+X   */
+! const char *
+! __p_option(option)
+! 	u_long option;
+X  {
+X  	switch (option) {
+***************
+*** 691,694 ****
+--- 734,739 ----
+X  	case RES_STAYOPEN:	return "styopn";
+X  	case RES_DNSRCH:	return "dnsrch";
++ 	case RES_INSECURE1:	return "insecure1";
++ 	case RES_INSECURE2:	return "insecure2";
+X  	default:		sprintf(nbuf, "?0x%x?", option); return (nbuf);
+X  	}
+***************
+*** 707,711 ****
+X  	if (value == 0) {
+X  		strcpy(nbuf, "0 secs");
+! 		return(nbuf);
+X  	}
+X  
+--- 752,756 ----
+X  	if (value == 0) {
+X  		strcpy(nbuf, "0 secs");
+! 		return (nbuf);
+X  	}
+X  
+***************
+*** 742,745 ****
+X  		(void)sprintf(p, "%d sec%s", PLURALIZE(secs));
+X  	}
+! 	return(nbuf);
+X  }
+--- 787,790 ----
+X  		(void)sprintf(p, "%d sec%s", PLURALIZE(secs));
+X  	}
+! 	return (nbuf);
+X  }
+*** ../net-2.0b1/res_init.c	Mon Nov  7 10:54:50 1994
+--- res_init.c	Mon Dec 12 00:50:19 1994
+***************
+*** 58,62 ****
+X  #if defined(LIBC_SCCS) && !defined(lint)
+X  static char sccsid[] = "@(#)res_init.c	8.1 (Berkeley) 6/7/93";
+! static char rcsid[] = "=Id: res_init.c,v 4.9.1.8 1993/11/12 01:23:34 vixie Exp =";
+X  #endif /* LIBC_SCCS and not lint */
+X  
+--- 58,62 ----
+X  #if defined(LIBC_SCCS) && !defined(lint)
+X  static char sccsid[] = "@(#)res_init.c	8.1 (Berkeley) 6/7/93";
+! static char rcsid[] = "=Id: res_init.c,v 4.9.1.14 1994/12/05 18:59:22 vixie Exp =";
+X  #endif /* LIBC_SCCS and not lint */
+X  
+***************
+*** 68,71 ****
+--- 68,72 ----
+X  
+X  #include <stdio.h>
++ #include <ctype.h>
+X  #include <resolv.h>
+X  #include <unistd.h>
+***************
+*** 75,78 ****
+--- 76,83 ----
+X  static void res_setoptions __P((char *, char *));
+X  
++ #define RESOLVSORT 1
++ #define RFC1535 1
++ #define DEBUG 1
++ 
+X  #ifdef RESOLVSORT
+X  static u_int32_t net_mask __P((struct in_addr));
+***************
+*** 80,92 ****
+X  
+X  /*
+!  * Resolver state default settings
+X   */
+X  
+! struct __res_state _res = {
+! 	RES_TIMEOUT,               	/* retransmition time interval */
+! 	4,                         	/* number of times to retransmit */
+! 	RES_DEFAULT,			/* options flags */
+! 	1,                         	/* number of name servers */
+! };
+X  
+X  /*
+--- 85,92 ----
+X  
+X  /*
+!  * Resolver state default settings.
+X   */
+X  
+! struct __res_state _res;
+X  
+X  /*
+***************
+*** 95,99 ****
+X   * INADDR_ANY and the default domain name comes from the gethostname().
+X   *
+!  * An interim version of this code (BIND 4.9, pre-4.4BSD) used 127.0.0.1
+X   * rather than INADDR_ANY ("0.0.0.0") as the default name server address
+X   * since it was noted that INADDR_ANY actually meant ``the first interface
+--- 95,99 ----
+X   * INADDR_ANY and the default domain name comes from the gethostname().
+X   *
+!  * An interrim version of this code (BIND 4.9, pre-4.4BSD) used 127.0.0.1
+X   * rather than INADDR_ANY ("0.0.0.0") as the default name server address
+X   * since it was noted that INADDR_ANY actually meant ``the first interface
+***************
+*** 101,112 ****
+X   * it had to be "up" in order for you to reach your own name server.  It
+X   * was later decided that since the recommended practice is to always 
+!  * install local static routes through the loopback for all your network
+X   * interfaces, that we could solve this problem without a code change.
+-  * There is no requirement that the loopback use the address 127.1.
+X   *
+!  * The configuration file need not be used if the hostname is a fully-qualified
+!  * domain name (as it should be) and a server runs on the local system.
+!  * However, it may be desirable to set other options such as the list
+!  * of domains to be searched.
+X   *
+X   * Return 0 if completes successfully, -1 on error
+--- 101,111 ----
+X   * it had to be "up" in order for you to reach your own name server.  It
+X   * was later decided that since the recommended practice is to always 
+!  * install local static routes through 127.0.0.1 for all your network
+X   * interfaces, that we could solve this problem without a code change.
+X   *
+!  * The configuration file should always be used, since it is the only way
+!  * to specify a default domain.  If you are running a server on your local
+!  * machine, you should say "nameserver 0.0.0.0" or "nameserver 127.0.0.1"
+!  * in the configuration file.
+X   *
+X   * Return 0 if completes successfully, -1 on error
+***************
+*** 122,131 ****
+X  	int havesearch = 0;
+X  #ifdef RESOLVSORT
+- 	char buf2[BUFSIZ];
+X  	int nsort = 0;
+X  	char *net;
+- 	u_int32_t mask;
+X  #endif
+X  
+X  #ifdef USELOOPBACK
+X  	_res.nsaddr.sin_addr = inet_makeaddr(IN_LOOPBACKNET, 1);
+--- 121,148 ----
+X  	int havesearch = 0;
+X  #ifdef RESOLVSORT
+X  	int nsort = 0;
+X  	char *net;
+X  #endif
+X  
++ 	/*
++ 	 * These three fields used to be statically initialized.  This made
++ 	 * it hard to use this code in a shared library.  It is necessary,
++ 	 * now that we're doing dynamic initialization here, that we preserve
++ 	 * the old semantics: if an application modifies one of these three
++ 	 * fields of _res before res_init() is called, res_init() will not
++ 	 * alter them.  Of course, if an application is setting them to
++ 	 * _zero_ before calling res_init(), hoping to override what used
++ 	 * to be the static default, we can't detect it and unexpected results
++ 	 * will follow.  Zero for any of these fields would make no sense,
++ 	 * so one can safely assume that the applications were already getting
++ 	 * unexpected results.
++ 	 */
++ 	if (!_res.retrans)
++ 		_res.retrans = RES_TIMEOUT;
++ 	if (!_res.retry)
++ 		_res.retry = 4;
++ 	if (!_res.options)
++ 		_res.options = RES_DEFAULT;
++ 
+X  #ifdef USELOOPBACK
+X  	_res.nsaddr.sin_addr = inet_makeaddr(IN_LOOPBACKNET, 1);
+***************
+*** 256,279 ****
+X  
+X  		    cp = buf + sizeof("sortlist") - 1;
+! 		    while (*cp == ' ' || *cp == '\t')
+! 		        cp++;
+! 		    while (sscanf(cp, "%[0-9./]s", buf2) &&
+! 			nsort < MAXRESOLVSORT) {
+! 			if (net = strchr(buf2, '/'))
+! 			    *net = '\0';
+! 			if (inet_aton(buf2, &a)) {
+X  			    _res.sort_list[nsort].addr = a;
+! 			    if (net && inet_aton(net+1, &a))
+! 				_res.sort_list[nsort].mask = a.s_addr;
+! 			    else
+X  				_res.sort_list[nsort].mask = 
+X  				    net_mask(_res.sort_list[nsort].addr);
+X  			    nsort++;
+X  			}
+! 			if (net)
+! 				*net = '/';
+! 			cp += strlen(buf2);
+! 		        while (*cp == ' ' || *cp == '\t')
+! 				cp++;
+X  		    }
+X  		    continue;
+--- 273,309 ----
+X  
+X  		    cp = buf + sizeof("sortlist") - 1;
+! 		    while (nsort < MAXRESOLVSORT) {
+! 			while (*cp == ' ' || *cp == '\t')
+! 			    cp++;
+! 			if (*cp == '\0' || *cp == '\n' || *cp == ';')
+! 			    break;
+! 			net = cp;
+! 			while (*cp && *cp != '/' &&
+! 			       isascii(*cp) && !isspace(*cp))
+! 				cp++;
+! 			n = *cp;
+! 			*cp = 0;
+! 			if (inet_aton(net, &a)) {
+X  			    _res.sort_list[nsort].addr = a;
+! 			    if (n == '/') {
+! 				*cp++ = n;
+! 				net = cp;
+! 				while (*cp && isascii(*cp) && !isspace(*cp))
+! 				    cp++;
+! 				n = *cp;
+! 				*cp = 0;
+! 				if (inet_aton(net, &a)) {
+! 				    _res.sort_list[nsort].mask = a.s_addr;
+! 				} else {
+! 				    _res.sort_list[nsort].mask = 
+! 					net_mask(_res.sort_list[nsort].addr);
+! 				}
+! 			    } else {
+X  				_res.sort_list[nsort].mask = 
+X  				    net_mask(_res.sort_list[nsort].addr);
++ 			    }
+X  			    nsort++;
+X  			}
+! 			*cp++ = n;
+X  		    }
+X  		    continue;
+***************
+*** 292,300 ****
+X  	    (void) fclose(fp);
+X  	}
+! 	if (_res.defdname[0] == 0)
+! 		if (gethostname(buf, sizeof(_res.defdname) - 1) == 0 &&
+! 		    (cp = strchr(buf, '.')))
+! 			/* overlapping copy, result undefined */
+! 			(void)strcpy(_res.defdname, cp + 1);
+X  
+X  	/* find components of local domain that might be searched */
+--- 322,329 ----
+X  	    (void) fclose(fp);
+X  	}
+! 	if (_res.defdname[0] == 0 &&
+! 	    gethostname(buf, sizeof(_res.defdname) - 1) == 0 &&
+! 	    (cp = strchr(buf, '.')) != NULL)
+! 		strcpy(_res.defdname, cp + 1);
+X  
+X  	/* find components of local domain that might be searched */
+***************
+*** 307,312 ****
+X  		dots = 0;
+X  		for (cp = _res.defdname; *cp; cp++)
+! 			if (*cp == '.')
+! 				dots++;
+X  
+X  		cp = _res.defdname;
+--- 336,340 ----
+X  		dots = 0;
+X  		for (cp = _res.defdname; *cp; cp++)
+! 			dots += (*cp == '.');
+X  
+X  		cp = _res.defdname;
+***************
+*** 346,350 ****
+X  	if (_res.options & RES_DEBUG)
+X  		printf(";; res_setoptions(\"%s\", \"%s\")...\n",
+! 		    options, source);
+X  #endif
+X  	while (*cp) {
+--- 374,378 ----
+X  	if (_res.options & RES_DEBUG)
+X  		printf(";; res_setoptions(\"%s\", \"%s\")...\n",
+! 		       options, source);
+X  #endif
+X  	while (*cp) {
+***************
+*** 367,377 ****
+X  			if (!(_res.options & RES_DEBUG)) {
+X  				printf(";; res_setoptions(\"%s\", \"%s\")..\n",
+! 				    options, source);
+X  				_res.options |= RES_DEBUG;
+X  			}
+X  			printf(";;\tdebug\n");
+X  #endif
+X  		}
+- 		/* XXX - else print a warning here? */
+X  		/* skip to next run of spaces */
+X  		while (*cp && *cp != ' ' && *cp != '\t')
+--- 395,406 ----
+X  			if (!(_res.options & RES_DEBUG)) {
+X  				printf(";; res_setoptions(\"%s\", \"%s\")..\n",
+! 				       options, source);
+X  				_res.options |= RES_DEBUG;
+X  			}
+X  			printf(";;\tdebug\n");
+X  #endif
++ 		} else {
++ 			/* XXX - print a warning here? */
+X  		}
+X  		/* skip to next run of spaces */
+X  		while (*cp && *cp != ' ' && *cp != '\t')
+*** ../net-2.0b1/res_mkquery.c	Mon Nov  7 10:54:51 1994
+--- res_mkquery.c	Mon Dec 12 00:07:34 1994
+***************
+*** 58,62 ****
+X  #if defined(LIBC_SCCS) && !defined(lint)
+X  static char sccsid[] = "@(#)res_mkquery.c	8.1 (Berkeley) 6/4/93";
+! static char rcsid[] = "=Id: res_mkquery.c,v 4.9.1.4 1993/11/12 01:23:34 vixie Exp =";
+X  #endif /* LIBC_SCCS and not lint */
+X  
+--- 58,62 ----
+X  #if defined(LIBC_SCCS) && !defined(lint)
+X  static char sccsid[] = "@(#)res_mkquery.c	8.1 (Berkeley) 6/4/93";
+! static char rcsid[] = "=Id: res_mkquery.c,v 4.9.1.9 1994/12/05 22:50:51 vixie Exp =";
+X  #endif /* LIBC_SCCS and not lint */
+X  
+***************
+*** 69,103 ****
+X  #include <string.h>
+X  
+X  /*
+X   * Form all types of queries.
+X   * Returns the size of the result or -1.
+X   */
+X  res_mkquery(op, dname, class, type, data, datalen, newrr_in, buf, buflen)
+X  	int op;			/* opcode of query */
+X  	const char *dname;	/* domain name */
+X  	int class, type;	/* class and type of query */
+! 	const char *data;	/* resource record data */
+X  	int datalen;		/* length of data */
+! 	const char *newrr_in;	/* new rr for modify or append */
+! 	char *buf;		/* buffer to put query */
+X  	int buflen;		/* size of buffer */
+X  {
+X  	register HEADER *hp;
+! 	register char *cp;
+X  	register int n;
+X  	struct rrec *newrr = (struct rrec *) newrr_in;
+! 	char *dnptrs[10], **dpp, **lastdnptr;
+X  
+X  #ifdef DEBUG
+X  	if (_res.options & RES_DEBUG)
+X  		printf(";; res_mkquery(%d, %s, %d, %d)\n",
+! 		    op, dname, class, type);
+X  #endif
+X  	/*
+X  	 * Initialize header fields.
+X  	 */
+! 	if ((buf == NULL) || (buflen < sizeof(HEADER)))
+! 		return(-1);
+! 	bzero(buf, sizeof(HEADER));
+X  	hp = (HEADER *) buf;
+X  	hp->id = htons(++_res.id);
+--- 69,110 ----
+X  #include <string.h>
+X  
++ #define DEBUG 1
++ 
+X  /*
+X   * Form all types of queries.
+X   * Returns the size of the result or -1.
+X   */
++ int
+X  res_mkquery(op, dname, class, type, data, datalen, newrr_in, buf, buflen)
+X  	int op;			/* opcode of query */
+X  	const char *dname;	/* domain name */
+X  	int class, type;	/* class and type of query */
+! 	const u_char *data;	/* resource record data */
+X  	int datalen;		/* length of data */
+! 	const u_char *newrr_in;	/* new rr for modify or append */
+! 	u_char *buf;		/* buffer to put query */
+X  	int buflen;		/* size of buffer */
+X  {
+X  	register HEADER *hp;
+! 	register u_char *cp;
+X  	register int n;
+X  	struct rrec *newrr = (struct rrec *) newrr_in;
+! 	u_char *dnptrs[20], **dpp, **lastdnptr;
+X  
+X  #ifdef DEBUG
+X  	if (_res.options & RES_DEBUG)
+X  		printf(";; res_mkquery(%d, %s, %d, %d)\n",
+! 		       op, dname, class, type);
+X  #endif
++ 	if (!(_res.options & RES_INIT)) {
++ 		if (res_init() == -1)
++ 			return (-1);
++ 	}
+X  	/*
+X  	 * Initialize header fields.
+X  	 */
+! 	if ((buf == NULL) || (buflen < HFIXEDSZ))
+! 		return (-1);
+! 	bzero(buf, HFIXEDSZ);
+X  	hp = (HEADER *) buf;
+X  	hp->id = htons(++_res.id);
+***************
+*** 106,131 ****
+X  	hp->rd = (_res.options & RES_RECURSE) != 0;
+X  	hp->rcode = NOERROR;
+! 	cp = buf + sizeof(HEADER);
+! 	buflen -= sizeof(HEADER);
+X  	dpp = dnptrs;
+X  	*dpp++ = buf;
+X  	*dpp++ = NULL;
+! 	lastdnptr = dnptrs + sizeof(dnptrs)/sizeof(dnptrs[0]);
+X  	/*
+X  	 * perform opcode specific processing
+X  	 */
+X  	switch (op) {
+! 	case QUERY:
+X  		if ((buflen -= QFIXEDSZ) < 0)
+! 			return(-1);
+! 		if ((n = dn_comp((u_char *)dname, (u_char *)cp, buflen,
+! 		    (u_char **)dnptrs, (u_char **)lastdnptr)) < 0)
+X  			return (-1);
+X  		cp += n;
+X  		buflen -= n;
+! 		__putshort(type, (u_char *)cp);
+! 		cp += sizeof(u_int16_t);
+! 		__putshort(class, (u_char *)cp);
+! 		cp += sizeof(u_int16_t);
+X  		hp->qdcount = htons(1);
+X  		if (op == QUERY || data == NULL)
+--- 113,138 ----
+X  	hp->rd = (_res.options & RES_RECURSE) != 0;
+X  	hp->rcode = NOERROR;
+! 	cp = buf + HFIXEDSZ;
+! 	buflen -= HFIXEDSZ;
+X  	dpp = dnptrs;
+X  	*dpp++ = buf;
+X  	*dpp++ = NULL;
+! 	lastdnptr = dnptrs + sizeof dnptrs / sizeof dnptrs[0];
+X  	/*
+X  	 * perform opcode specific processing
+X  	 */
+X  	switch (op) {
+! 	case QUERY:	/*FALLTHROUGH*/
+! 	case NS_NOTIFY_OP:
+X  		if ((buflen -= QFIXEDSZ) < 0)
+! 			return (-1);
+! 		if ((n = dn_comp(dname, cp, buflen, dnptrs, lastdnptr)) < 0)
+X  			return (-1);
+X  		cp += n;
+X  		buflen -= n;
+! 		__putshort(type, cp);
+! 		cp += INT16SZ;
+! 		__putshort(class, cp);
+! 		cp += INT16SZ;
+X  		hp->qdcount = htons(1);
+X  		if (op == QUERY || data == NULL)
+***************
+*** 135,151 ****
+X  		 */
+X  		buflen -= RRFIXEDSZ;
+! 		if ((n = dn_comp((u_char *)data, (u_char *)cp, buflen,
+! 		    (u_char **)dnptrs, (u_char **)lastdnptr)) < 0)
+X  			return (-1);
+X  		cp += n;
+X  		buflen -= n;
+! 		__putshort(T_NULL, (u_char *)cp);
+! 		cp += sizeof(u_int16_t);
+! 		__putshort(class, (u_char *)cp);
+! 		cp += sizeof(u_int16_t);
+! 		__putlong(0, (u_char *)cp);
+! 		cp += sizeof(u_int32_t);
+! 		__putshort(0, (u_char *)cp);
+! 		cp += sizeof(u_int16_t);
+X  		hp->arcount = htons(1);
+X  		break;
+--- 142,158 ----
+X  		 */
+X  		buflen -= RRFIXEDSZ;
+! 		n = dn_comp((char *)data, cp, buflen, dnptrs, lastdnptr);
+! 		if (n < 0)
+X  			return (-1);
+X  		cp += n;
+X  		buflen -= n;
+! 		__putshort(T_NULL, cp);
+! 		cp += INT16SZ;
+! 		__putshort(class, cp);
+! 		cp += INT16SZ;
+! 		__putlong(0, cp);
+! 		cp += INT32SZ;
+! 		__putshort(0, cp);
+! 		cp += INT16SZ;
+X  		hp->arcount = htons(1);
+X  		break;
+***************
+*** 158,169 ****
+X  			return (-1);
+X  		*cp++ = '\0';	/* no domain name */
+! 		__putshort(type, (u_char *)cp);
+! 		cp += sizeof(u_int16_t);
+! 		__putshort(class, (u_char *)cp);
+! 		cp += sizeof(u_int16_t);
+! 		__putlong(0, (u_char *)cp);
+! 		cp += sizeof(u_int32_t);
+! 		__putshort(datalen, (u_char *)cp);
+! 		cp += sizeof(u_int16_t);
+X  		if (datalen) {
+X  			bcopy(data, cp, datalen);
+--- 165,176 ----
+X  			return (-1);
+X  		*cp++ = '\0';	/* no domain name */
+! 		__putshort(type, cp);
+! 		cp += INT16SZ;
+! 		__putshort(class, cp);
+! 		cp += INT16SZ;
+! 		__putlong(0, cp);
+! 		cp += INT32SZ;
+! 		__putshort(datalen, cp);
+! 		cp += INT16SZ;
+X  		if (datalen) {
+X  			bcopy(data, cp, datalen);
+***************
+*** 193,203 ****
+X  		cp += n;
+X  		__putshort(type, cp);
+! 		cp += sizeof(u_int16_t);
+X  		__putshort(class, cp);
+! 		cp += sizeof(u_int16_t);
+X  		__putlong(0, cp);
+! 		cp += sizeof(u_int32_t);
+X  		__putshort(datalen, cp);
+! 		cp += sizeof(u_int16_t);
+X  		if (datalen) {
+X  			bcopy(data, cp, datalen);
+--- 200,210 ----
+X  		cp += n;
+X  		__putshort(type, cp);
+! 		cp += INT16SZ;
+X  		__putshort(class, cp);
+! 		cp += INT16SZ;
+X  		__putlong(0, cp);
+! 		cp += INT32SZ;
+X  		__putshort(datalen, cp);
+! 		cp += INT16SZ;
+X  		if (datalen) {
+X  			bcopy(data, cp, datalen);
+***************
+*** 216,226 ****
+X  		cp += n;
+X  		__putshort(newrr->r_type, cp);
+! 		cp += sizeof(u_int16_t);
+X  		__putshort(newrr->r_class, cp);
+! 		cp += sizeof(u_int16_t);
+X  		__putlong(0, cp);
+! 		cp += sizeof(u_int32_t);
+X  		__putshort(newrr->r_size, cp);
+!                 cp += sizeof(u_int16_t);
+X  		if (newrr->r_size) {
+X  			bcopy(newrr->r_data, cp, newrr->r_size);
+--- 223,233 ----
+X  		cp += n;
+X  		__putshort(newrr->r_type, cp);
+! 		cp += INT16SZ;
+X  		__putshort(newrr->r_class, cp);
+! 		cp += INT16SZ;
+X  		__putlong(0, cp);
+! 		cp += INT32SZ;
+X  		__putshort(newrr->r_size, cp);
+! 		cp += INT16SZ;
+X  		if (newrr->r_size) {
+X  			bcopy(newrr->r_data, cp, newrr->r_size);
+***************
+*** 229,234 ****
+X  		hp->ancount = htons(0);
+X  		break;
+- 
+X  #endif /* ALLOW_UPDATES */
+X  	}
+X  	return (cp - buf);
+--- 236,242 ----
+X  		hp->ancount = htons(0);
+X  		break;
+X  #endif /* ALLOW_UPDATES */
++ 	default:
++ 		return (-1);
+X  	}
+X  	return (cp - buf);
+*** ../net-2.0b1/res_query.c	Mon Nov  7 10:54:52 1994
+--- res_query.c	Mon Dec 12 00:07:34 1994
+***************
+*** 58,62 ****
+X  #if defined(LIBC_SCCS) && !defined(lint)
+X  static char sccsid[] = "@(#)res_query.c	8.1 (Berkeley) 6/4/93";
+! static char rcsid[] = "=Id: res_query.c,v 4.9.1.6 1993/11/12 01:23:34 vixie Exp =";
+X  #endif /* LIBC_SCCS and not lint */
+X  
+--- 58,62 ----
+X  #if defined(LIBC_SCCS) && !defined(lint)
+X  static char sccsid[] = "@(#)res_query.c	8.1 (Berkeley) 6/4/93";
+! static char rcsid[] = "=Id: res_query.c,v 4.9.1.14 1994/12/01 09:38:18 vixie Exp =";
+X  #endif /* LIBC_SCCS and not lint */
+X  
+***************
+*** 74,77 ****
+--- 74,79 ----
+X  #include <string.h>
+X  
++ #define DEBUG 1
++ 
+X  #if PACKETSZ > 1024
+X  #define MAXPACKET	PACKETSZ
+***************
+*** 90,114 ****
+X   * Return the size of the response on success, -1 on error.
+X   * Error number is left in h_errno.
+X   * Caller must parse answer and determine whether it answers the question.
+X   */
+X  res_query(name, class, type, answer, anslen)
+! 	char *name;		/* domain name */
+X  	int class, type;	/* class and type of query */
+X  	u_char *answer;		/* buffer to put answer */
+X  	int anslen;		/* size of answer buffer */
+X  {
+! 	char buf[MAXPACKET];
+! 	HEADER *hp;
+X  	int n;
+X  
+! 	if ((_res.options & RES_INIT) == 0 && res_init() == -1)
+X  		return (-1);
+X  #ifdef DEBUG
+X  	if (_res.options & RES_DEBUG)
+X  		printf(";; res_query(%s, %d, %d)\n", name, class, type);
+X  #endif
+- 	n = res_mkquery(QUERY, name, class, type, (char *)NULL, 0, NULL,
+- 	    buf, sizeof(buf));
+X  
+X  	if (n <= 0) {
+X  #ifdef DEBUG
+--- 92,122 ----
+X   * Return the size of the response on success, -1 on error.
+X   * Error number is left in h_errno.
++  *
+X   * Caller must parse answer and determine whether it answers the question.
+X   */
++ int
+X  res_query(name, class, type, answer, anslen)
+! 	const char *name;	/* domain name */
+X  	int class, type;	/* class and type of query */
+X  	u_char *answer;		/* buffer to put answer */
+X  	int anslen;		/* size of answer buffer */
+X  {
+! 	u_char buf[MAXPACKET];
+! 	register HEADER *hp = (HEADER *) answer;
+X  	int n;
+X  
+! 	hp->rcode = NOERROR;	/* default */
+! 
+! 	if ((_res.options & RES_INIT) == 0 && res_init() == -1) {
+! 		h_errno = NETDB_INTERNAL;
+X  		return (-1);
++ 	}
+X  #ifdef DEBUG
+X  	if (_res.options & RES_DEBUG)
+X  		printf(";; res_query(%s, %d, %d)\n", name, class, type);
+X  #endif
+X  
++ 	n = res_mkquery(QUERY, name, class, type, NULL, 0, NULL,
++ 			buf, sizeof(buf));
+X  	if (n <= 0) {
+X  #ifdef DEBUG
+***************
+*** 119,123 ****
+X  		return (n);
+X  	}
+! 	n = res_send(buf, n, (char *)answer, anslen);
+X  	if (n < 0) {
+X  #ifdef DEBUG
+--- 127,131 ----
+X  		return (n);
+X  	}
+! 	n = res_send(buf, n, answer, anslen);
+X  	if (n < 0) {
+X  #ifdef DEBUG
+***************
+*** 126,133 ****
+X  #endif
+X  		h_errno = TRY_AGAIN;
+! 		return(n);
+X  	}
+X  
+- 	hp = (HEADER *) answer;
+X  	if (hp->rcode != NOERROR || ntohs(hp->ancount) == 0) {
+X  #ifdef DEBUG
+--- 134,140 ----
+X  #endif
+X  		h_errno = TRY_AGAIN;
+! 		return (n);
+X  	}
+X  
+X  	if (hp->rcode != NOERROR || ntohs(hp->ancount) == 0) {
+X  #ifdef DEBUG
+***************
+*** 137,159 ****
+X  #endif
+X  		switch (hp->rcode) {
+! 			case NXDOMAIN:
+! 				h_errno = HOST_NOT_FOUND;
+! 				break;
+! 			case SERVFAIL:
+! 				h_errno = TRY_AGAIN;
+! 				break;
+! 			case NOERROR:
+! 				h_errno = NO_DATA;
+! 				break;
+! 			case FORMERR:
+! 			case NOTIMP:
+! 			case REFUSED:
+! 			default:
+! 				h_errno = NO_RECOVERY;
+! 				break;
+X  		}
+X  		return (-1);
+X  	}
+! 	return(n);
+X  }
+X  
+--- 144,166 ----
+X  #endif
+X  		switch (hp->rcode) {
+! 		case NXDOMAIN:
+! 			h_errno = HOST_NOT_FOUND;
+! 			break;
+! 		case SERVFAIL:
+! 			h_errno = TRY_AGAIN;
+! 			break;
+! 		case NOERROR:
+! 			h_errno = NO_DATA;
+! 			break;
+! 		case FORMERR:
+! 		case NOTIMP:
+! 		case REFUSED:
+! 		default:
+! 			h_errno = NO_RECOVERY;
+! 			break;
+X  		}
+X  		return (-1);
+X  	}
+! 	return (n);
+X  }
+X  
+***************
+*** 162,188 ****
+X   * Return the size of the response on success, -1 on error.
+X   * If enabled, implement search rules until answer or unrecoverable failure
+!  * is detected.  Error number is left in h_errno.
+!  *
+!  * Only useful for queries in the same name hierarchy as the local host
+!  * (not, for example, for host address-to-name lookups in domain in-addr.arpa).
+X   */
+X  int
+X  res_search(name, class, type, answer, anslen)
+! 	char *name;		/* domain name */
+X  	int class, type;	/* class and type of query */
+X  	u_char *answer;		/* buffer to put answer */
+X  	int anslen;		/* size of answer */
+X  {
+! 	register char *cp, **domain;
+! 	int dots, trailing_dot, ret, got_nodata = 0;
+X  
+! 	if ((_res.options & RES_INIT) == 0 && res_init() == -1)
+X  		return (-1);
+! 
+X  	errno = 0;
+X  	h_errno = HOST_NOT_FOUND;	/* default, if we never query */
+! 	for (cp = name, dots = 0; *cp; cp++)
+! 		if (*cp == '.')
+! 			dots++;
+X  	trailing_dot = 0;
+X  	if (cp > name && *--cp == '.')
+--- 169,196 ----
+X   * Return the size of the response on success, -1 on error.
+X   * If enabled, implement search rules until answer or unrecoverable failure
+!  * is detected.  Error code, if any, is left in h_errno.
+X   */
+X  int
+X  res_search(name, class, type, answer, anslen)
+! 	const char *name;	/* domain name */
+X  	int class, type;	/* class and type of query */
+X  	u_char *answer;		/* buffer to put answer */
+X  	int anslen;		/* size of answer */
+X  {
+! 	register const char *cp, * const *domain;
+! 	HEADER *hp = (HEADER *) answer;
+! 	u_int dots;
+! 	int trailing_dot, ret, saved_herrno;
+! 	int got_nodata = 0, got_servfail = 0, tried_as_is = 0;
+X  
+! 	if ((_res.options & RES_INIT) == 0 && res_init() == -1) {
+! 		h_errno = NETDB_INTERNAL;
+X  		return (-1);
+! 	}
+X  	errno = 0;
+X  	h_errno = HOST_NOT_FOUND;	/* default, if we never query */
+! 	dots = 0;
+! 	for (cp = name; *cp; cp++)
+! 		dots += (*cp == '.');
+X  	trailing_dot = 0;
+X  	if (cp > name && *--cp == '.')
+***************
+*** 190,252 ****
+X  
+X  	/*
+! 	 * If there are no dots, it could be a user-level alias.
+X  	 */
+! 	if (dots == 0 && (cp = __hostalias(name)))
+X  		return (res_query(cp, class, type, answer, anslen));
+X  
+X  	/*
+! 	 * We do at least one level of search if
+! 	 *	- there is no dot and RES_DEFNAME is set, or
+! 	 *	- there is at least one dot, but no more than _res.ndots,
+! 	 *	  there is no trailing dot, and RES_DNSRCH is set.
+X  	 */
+! 	if ((dots == 0 && _res.options & RES_DEFNAMES) ||
+! 	   (dots && dots <= _res.ndots && !trailing_dot &&
+! 	   _res.options & RES_DNSRCH))
+! 	     for (domain = _res.dnsrch; *domain; domain++) {
+! 		ret = res_querydomain(name, *domain, class, type,
+! 		    answer, anslen);
+X  		if (ret > 0)
+X  			return (ret);
+! 		/*
+! 		 * If no server present, give up.
+! 		 * If name isn't found in this domain,
+! 		 * keep trying higher domains in the search list
+! 		 * (if that's enabled).
+! 		 * On a NO_DATA error, keep trying, otherwise
+! 		 * a wildcard entry of another type could keep us
+! 		 * from finding this entry higher in the domain.
+! 		 * If we get some other error (negative answer or
+! 		 * server failure), then stop searching up,
+! 		 * but try the input name below in case it's fully-qualified.
+! 		 */
+! 		if (errno == ECONNREFUSED) {
+! 			h_errno = TRY_AGAIN;
+! 			return (-1);
+! 		}
+! 		if (h_errno == NO_DATA)
+! 			got_nodata++;
+! 		if ((h_errno != HOST_NOT_FOUND && h_errno != NO_DATA) ||
+! 		    (_res.options & RES_DNSRCH) == 0)
+! 			break;
+X  	}
+X  
+X  	/*
+! 	 * If the search/default failed, try the name as fully-qualified,
+! 	 * but only if it contained at least one dot (even trailing).
+! 	 * This is purely a heuristic; we assume that any reasonable query
+! 	 * about a top-level domain (for servers, SOA, etc) will not use
+! 	 * res_search.
+X  	 */
+! 	if (dots && (ret = res_querydomain(name, (char *)NULL, class, type,
+! 	    answer, anslen)) > 0)
+! 		return (ret);
+! 	/*
+! 	 * If we got here, we didn't satisfy the search.
+! 	 * If we ever got a nodata, send that back as the reason.
+! 	 * Otherwise send back the h_errno from the last lookup we did.
+X  	 */
+! 	if (got_nodata)
+X  		h_errno = NO_DATA;
+X  	return (-1);
+X  }
+--- 198,307 ----
+X  
+X  	/*
+! 	 * if there aren't any dots, it could be a user-level alias
+X  	 */
+! 	if (!dots && (cp = __hostalias(name)) != NULL)
+X  		return (res_query(cp, class, type, answer, anslen));
+X  
+X  	/*
+! 	 * If there are dots in the name already, let's just give it a try
+! 	 * 'as is'.  The threshold can be set with the "ndots" option.
+X  	 */
+! 	saved_herrno = -1;
+! 	if (dots >= _res.ndots) {
+! 		ret = res_querydomain(name, NULL, class, type, answer, anslen);
+X  		if (ret > 0)
+X  			return (ret);
+! 		saved_herrno = h_errno;
+! 		tried_as_is++;
+X  	}
+X  
+X  	/*
+! 	 * We do at least one level of search if
+! 	 *	- there is no dot and RES_DEFNAME is set, or
+! 	 *	- there is at least one dot, there is no trailing dot,
+! 	 *	  and RES_DNSRCH is set.
+X  	 */
+! 	if ((!dots && (_res.options & RES_DEFNAMES)) ||
+! 	    (dots && !trailing_dot && (_res.options & RES_DNSRCH))) {
+! 		int done = 0;
+! 
+! 		for (domain = (const char * const *)_res.dnsrch;
+! 		     *domain && !done;
+! 		     domain++) {
+! 
+! 			ret = res_querydomain(name, *domain, class, type,
+! 					      answer, anslen);
+! 			if (ret > 0)
+! 				return (ret);
+! 
+! 			/*
+! 			 * If no server present, give up.
+! 			 * If name isn't found in this domain,
+! 			 * keep trying higher domains in the search list
+! 			 * (if that's enabled).
+! 			 * On a NO_DATA error, keep trying, otherwise
+! 			 * a wildcard entry of another type could keep us
+! 			 * from finding this entry higher in the domain.
+! 			 * If we get some other error (negative answer or
+! 			 * server failure), then stop searching up,
+! 			 * but try the input name below in case it's
+! 			 * fully-qualified.
+! 			 */
+! 			if (errno == ECONNREFUSED) {
+! 				h_errno = TRY_AGAIN;
+! 				return (-1);
+! 			}
+! 
+! 			switch (h_errno) {
+! 			case NO_DATA:
+! 				got_nodata++;
+! 				/* FALLTHROUGH */
+! 			case HOST_NOT_FOUND:
+! 				/* keep trying */
+! 				break;
+! 			case TRY_AGAIN:
+! 				if (hp->rcode == SERVFAIL) {
+! 					/* try next search element, if any */
+! 					got_servfail++;
+! 					break;
+! 				}
+! 				/* FALLTHROUGH */
+! 			default:
+! 				/* anything else implies that we're done */
+! 				done++;
+! 			}
+! 
+! 			/* if we got here for some reason other than DNSRCH,
+! 			 * we only wanted one iteration of the loop, so stop.
+! 			 */
+! 			if (!(_res.options & RES_DNSRCH))
+! 				done++;
+! 		}
+! 	}
+! 
+! 	/* if we have not already tried the name "as is", do that now.
+! 	 * note that we do this regardless of how many dots were in the
+! 	 * name or whether it ends with a dot.
+X  	 */
+! 	if (!tried_as_is) {
+! 		ret = res_querydomain(name, NULL, class, type, answer, anslen);
+! 		if (ret > 0)
+! 			return (ret);
+! 		saved_herrno = h_errno;
+! 	}
+! 
+! 	/* if we got here, we didn't satisfy the search.
+! 	 * if we did an initial full query, return that query's h_errno
+! 	 * (note that we wouldn't be here if that query had succeeded).
+! 	 * else if we ever got a nodata, send that back as the reason.
+! 	 * else send back meaningless h_errno, that being the one from
+! 	 * the last DNSRCH we did.
+! 	 */
+! 	if (saved_herrno != -1)
+! 		h_errno = saved_herrno;
+! 	else if (got_nodata)
+X  		h_errno = NO_DATA;
++ 	else if (got_servfail)
++ 		h_errno = TRY_AGAIN;
+X  	return (-1);
+X  }
+***************
+*** 256,261 ****
+X   * removing a trailing dot from name if domain is NULL.
+X   */
+X  res_querydomain(name, domain, class, type, answer, anslen)
+! 	char *name, *domain;
+X  	int class, type;	/* class and type of query */
+X  	u_char *answer;		/* buffer to put answer */
+--- 311,317 ----
+X   * removing a trailing dot from name if domain is NULL.
+X   */
++ int
+X  res_querydomain(name, domain, class, type, answer, anslen)
+! 	const char *name, *domain;
+X  	int class, type;	/* class and type of query */
+X  	u_char *answer;		/* buffer to put answer */
+***************
+*** 263,267 ****
+X  {
+X  	char nbuf[2*MAXDNAME+2];
+! 	char *longname = nbuf;
+X  	int n;
+X  
+--- 319,323 ----
+X  {
+X  	char nbuf[2*MAXDNAME+2];
+! 	const char *longname = nbuf;
+X  	int n;
+X  
+***************
+*** 269,273 ****
+X  	if (_res.options & RES_DEBUG)
+X  		printf(";; res_querydomain(%s, %s, %d, %d)\n",
+! 		    name, domain, class, type);
+X  #endif
+X  	if (domain == NULL) {
+--- 325,329 ----
+X  	if (_res.options & RES_DEBUG)
+X  		printf(";; res_querydomain(%s, %s, %d, %d)\n",
+! 		       name, domain?domain:"<Nil>", class, type);
+X  #endif
+X  	if (domain == NULL) {
+***************
+*** 277,281 ****
+X  		 */
+X  		n = strlen(name) - 1;
+! 		if (name[n] == '.' && n < sizeof(nbuf) - 1) {
+X  			bcopy(name, nbuf, n);
+X  			nbuf[n] = '\0';
+--- 333,337 ----
+X  		 */
+X  		n = strlen(name) - 1;
+! 		if (n != (0 - 1) && name[n] == '.' && n < sizeof(nbuf) - 1) {
+X  			bcopy(name, nbuf, n);
+X  			nbuf[n] = '\0';
+***************
+*** 283,288 ****
+X  			longname = name;
+X  	} else
+! 		(void)sprintf(nbuf, "%.*s.%.*s",
+! 		    MAXDNAME, name, MAXDNAME, domain);
+X  
+X  	return (res_query(longname, class, type, answer, anslen));
+--- 339,343 ----
+X  			longname = name;
+X  	} else
+! 		sprintf(nbuf, "%.*s.%.*s", MAXDNAME, name, MAXDNAME, domain);
+X  
+X  	return (res_query(longname, class, type, answer, anslen));
+*** ../net-2.0b1/res_send.c	Mon Nov  7 10:54:52 1994
+--- res_send.c	Mon Dec 12 00:10:04 1994
+***************
+*** 58,64 ****
+X  #if defined(LIBC_SCCS) && !defined(lint)
+X  static char sccsid[] = "@(#)res_send.c	8.1 (Berkeley) 6/4/93";
+! static char rcsid[] = "=Id: res_send.c,v 4.9.1.4 1993/11/12 01:23:34 vixie Exp =";
+X  #endif /* LIBC_SCCS and not lint */
+X  
+X  /*
+X   * Send query to name server and wait for reply.
+--- 58,73 ----
+X  #if defined(LIBC_SCCS) && !defined(lint)
+X  static char sccsid[] = "@(#)res_send.c	8.1 (Berkeley) 6/4/93";
+! static char rcsid[] = "=Id: res_send.c,v 4.9.1.14 1994/12/05 18:59:22 vixie Exp =";
+X  #endif /* LIBC_SCCS and not lint */
+X  
++ 	/* change this to "0"
++ 	 * if you talk to a lot
++ 	 * of multi-homed SunOS
++ 	 * ("broken") name servers.
++ 	 */
++ #define	CHECK_SRVR_ADDR	1	/* XXX - should be in options.h */
++ 
++ #define DEBUG 1
++ 
+X  /*
+X   * Send query to name server and wait for reply.
+***************
+*** 82,133 ****
+X  
+X  static int s = -1;	/* socket used for communications */
+X  
+X  #ifndef DEBUG
+! 
+! #define Dprint(cond, args) /*empty*/
+! #define DprintQ(cond, args, query) /*empty*/
+! #define Aerror(file, string, error, address) /*empty*/
+! #define Perror(file, string, error) /*empty*/
+! 
+X  #else
+! 
+! #define Dprint(cond, args) if (cond) { fprintf args; } else {}
+! #define DprintQ(cond, args, query) \
+! 	if (cond) { \
+! 		fprintf args; \
+! 		__p_query(query); \
+! 	} else {}
+! 
+! static void
+! Aerror(file, string, error, address)
+X  	FILE *file;
+X  	char *string;
+X  	int error;
+X  	struct sockaddr_in address;
+! {
+X  	int save = errno;
+X  
+! 	if (_res.options & RES_DEBUG)
+! 		fprintf(file, "res_send: %s ([%s].%d): %s\n",
+! 		    string,
+! 		    inet_ntoa(address.sin_addr),
+! 		    address.sin_port,
+! 		    strerror(error));
+X  	errno = save;
+! }
+! 
+! static void
+! Perror(file, string, error)
+X  	FILE *file;
+X  	char *string;
+X  	int error;
+! {
+X  	int save = errno;
+X  
+! 	if (_res.options & RES_DEBUG)
+! 		fprintf(file, "res_send: %s: %s\n", string, strerror(error));
+X  	errno = save;
+! }
+! 
+X  #endif
+X  
+--- 91,140 ----
+X  
+X  static int s = -1;	/* socket used for communications */
++ static int connected = 0;	/* is the socket connected */
++ static int vc = 0;	/* is the socket a virtual ciruit? */
+X  
+X  #ifndef DEBUG
+! #   define Dprint(cond, args) /*empty*/
+! #   define DprintQ(cond, args, query) /*empty*/
+! #   define Aerror(file, string, error, address) /*empty*/
+! #   define Perror(file, string, error) /*empty*/
+X  #else
+! #   define Dprint(cond, args) if (cond) {fprintf args;} else {}
+! #   define DprintQ(cond, args, query) if (cond) {\
+! 			fprintf args;\
+! 			__p_query(query);\
+! 		} else {}
+!     static void
+!     Aerror(file, string, error, address)
+X  	FILE *file;
+X  	char *string;
+X  	int error;
+X  	struct sockaddr_in address;
+!     {
+X  	int save = errno;
+X  
+! 	if (_res.options & RES_DEBUG) {
+! 		fprintf(file, "res_send: %s ([%s].%u): %s\n",
+! 			string,
+! 			inet_ntoa(address.sin_addr),
+! 			ntohs(address.sin_port),
+! 			strerror(error));
+! 	}
+X  	errno = save;
+!     }
+!     static void
+!     Perror(file, string, error)
+X  	FILE *file;
+X  	char *string;
+X  	int error;
+!     {
+X  	int save = errno;
+X  
+! 	if (_res.options & RES_DEBUG) {
+! 		fprintf(file, "res_send: %s: %s\n",
+! 			string, strerror(error));
+! 	}
+X  	errno = save;
+!     }
+X  #endif
+X  
+***************
+*** 135,139 ****
+X  static res_send_rhook Rhook = NULL;
+X  
+! static void
+X  res_send_setqhook(hook)
+X  	res_send_qhook hook;
+--- 142,146 ----
+X  static res_send_rhook Rhook = NULL;
+X  
+! void
+X  res_send_setqhook(hook)
+X  	res_send_qhook hook;
+***************
+*** 143,147 ****
+X  }
+X  
+! static void
+X  res_send_setrhook(hook)
+X  	res_send_rhook hook;
+--- 150,154 ----
+X  }
+X  
+! void
+X  res_send_setrhook(hook)
+X  	res_send_rhook hook;
+***************
+*** 151,178 ****
+X  }
+X  
+X  int
+X  res_send(buf, buflen, ans, anssiz)
+! 	const char *buf;
+X  	int buflen;
+! 	char *ans;
+X  	int anssiz;
+X  {
+X  	HEADER *hp = (HEADER *) buf;
+X  	HEADER *anhp = (HEADER *) ans;
+! 	int gotsomewhere = 0;
+! 	int connected = 0;
+! 	int connreset = 0;
+! 	int buf_malloced = 0;
+! 	int terrno = ETIMEDOUT;
+X  	register int n;
+- 	int try, v_circuit, resplen, ns;
+X  	u_int badns;	/* XXX NSMAX can't exceed #/bits in this var */
+X  
+! 	DprintQ(_res.options & RES_DEBUG || _res.pfcode & RES_PRF_QUERY,
+! 	    (stdout, ";; res_send()\n"), buf);
+! 	if (!(_res.options & RES_INIT))
+! 		if (res_init() == -1)
+! 			return (-1);
+X  	v_circuit = (_res.options & RES_USEVC) || buflen > PACKETSZ;
+X  	badns = 0;
+X  
+--- 158,288 ----
+X  }
+X  
++ /* int
++  * res_isourserver(ina)
++  *	looks up "ina" in _res.ns_addr_list[]
++  * returns:
++  *	0  : not found
++  *	>0 : found
++  * author:
++  *	paul vixie, 29may94
++  */
++ int
++ res_isourserver(inp)
++ 	const struct sockaddr_in *inp;
++ {
++ 	struct sockaddr_in ina;
++ 	register int ns, ret;
++ 
++ 	ina = *inp;
++ 	ret = 0;
++ 	for (ns = 0;  ns < _res.nscount;  ns++) {
++ 		register const struct sockaddr_in *srv = &_res.nsaddr_list[ns];
++ 
++ 		if (srv->sin_family == ina.sin_family &&
++ 		    srv->sin_port == ina.sin_port &&
++ 		    (srv->sin_addr.s_addr == INADDR_ANY ||
++ 		     srv->sin_addr.s_addr == ina.sin_addr.s_addr)) {
++ 			ret++;
++ 			break;
++ 		}
++ 	}
++ 	return (ret);
++ }
++ 
++ /* int
++  * res_nameinquery(name, type, class, buf, eom)
++  *	look for (name,type,class) in the query section of packet (buf,eom)
++  * returns:
++  *	-1 : format error
++  *	0  : not found
++  *	>0 : found
++  * author:
++  *	paul vixie, 29may94
++  */
++ int
++ res_nameinquery(name, type, class, buf, eom)
++ 	const char *name;
++ 	register int type, class;
++ 	const u_char *buf, *eom;
++ {
++ 	register const u_char *cp = buf + HFIXEDSZ;
++ 	int qdcount = ntohs(((HEADER*)buf)->qdcount);
++ 
++ 	while (qdcount-- > 0) {
++ 		char tname[MAXDNAME+1];
++ 		register int n, ttype, tclass;
++ 
++ 		n = dn_expand(buf, eom, cp, tname, sizeof tname);
++ 		if (n < 0)
++ 			return (-1);
++ 		cp += n;
++ 		ttype = _getshort(cp);	cp += INT16SZ;
++ 		tclass = _getshort(cp); cp += INT16SZ;
++ 		if (ttype == type &&
++ 		    tclass == class &&
++ 		    strcasecmp(tname, name) == 0)
++ 			return (1);
++ 	}
++ 	return (0);
++ }
++ 
++ /* int
++  * res_queriesmatch(buf1, eom1, buf2, eom2)
++  *	is there a 1:1 mapping of (name,type,class)
++  *	in (buf1,eom1) and (buf2,eom2)?
++  * returns:
++  *	-1 : format error
++  *	0  : not a 1:1 mapping
++  *	>0 : is a 1:1 mapping
++  * author:
++  *	paul vixie, 29may94
++  */
++ int
++ res_queriesmatch(buf1, eom1, buf2, eom2)
++ 	const u_char *buf1, *eom1;
++ 	const u_char *buf2, *eom2;
++ {
++ 	register const u_char *cp = buf1 + HFIXEDSZ;
++ 	int qdcount = ntohs(((HEADER*)buf1)->qdcount);
++ 
++ 	if (qdcount != ntohs(((HEADER*)buf2)->qdcount))
++ 		return (0);
++ 	while (qdcount-- > 0) {
++ 		char tname[MAXDNAME+1];
++ 		register int n, ttype, tclass;
++ 
++ 		n = dn_expand(buf1, eom1, cp, tname, sizeof tname);
++ 		if (n < 0)
++ 			return (-1);
++ 		cp += n;
++ 		ttype = _getshort(cp);	cp += INT16SZ;
++ 		tclass = _getshort(cp); cp += INT16SZ;
++ 		if (!res_nameinquery(tname, ttype, tclass, buf2, eom2))
++ 			return (0);
++ 	}
++ 	return (1);
++ }
++ 
+X  int
+X  res_send(buf, buflen, ans, anssiz)
+! 	const u_char *buf;
+X  	int buflen;
+! 	u_char *ans;
+X  	int anssiz;
+X  {
+X  	HEADER *hp = (HEADER *) buf;
+X  	HEADER *anhp = (HEADER *) ans;
+! 	int gotsomewhere, connreset, terrno, try, v_circuit, resplen, ns;
+X  	register int n;
+X  	u_int badns;	/* XXX NSMAX can't exceed #/bits in this var */
+X  
+! 	DprintQ((_res.options & RES_DEBUG) || (_res.pfcode & RES_PRF_QUERY),
+! 		(stdout, ";; res_send()\n"), buf);
+! 	if (!(_res.options & RES_INIT) && res_init() == -1)
+! 		return (-1);
+X  	v_circuit = (_res.options & RES_USEVC) || buflen > PACKETSZ;
++ 	gotsomewhere = 0;
++ 	connreset = 0;
++ 	terrno = ETIMEDOUT;
+X  	badns = 0;
+X  
+***************
+*** 184,189 ****
+X  		struct sockaddr_in *nsap = &_res.nsaddr_list[ns];
+X      same_ns:
+! 		if (badns & 1 << ns)
+X  			goto next_ns;
+X  
+X  		if (Qhook) {
+--- 294,301 ----
+X  		struct sockaddr_in *nsap = &_res.nsaddr_list[ns];
+X      same_ns:
+! 		if (badns & (1 << ns)) {
+! 			_res_close();
+X  			goto next_ns;
++ 		}
+X  
+X  		if (Qhook) {
+***************
+*** 193,198 ****
+X  				res_sendhookact act;
+X  
+! 				act = (*Qhook)(&nsap, &buf, &buflen, ans,
+! 				    anssiz, &resplen);
+X  				switch (act) {
+X  				case res_goahead:
+--- 305,310 ----
+X  				res_sendhookact act;
+X  
+! 				act = (*Qhook)(&nsap, &buf, &buflen,
+! 					       ans, anssiz, &resplen);
+X  				switch (act) {
+X  				case res_goahead:
+***************
+*** 200,206 ****
+X  					break;
+X  				case res_nextns:
+X  					goto next_ns;
+X  				case res_done:
+! 					return resplen;
+X  				case res_modified:
+X  					/* give the hook another try */
+--- 312,319 ----
+X  					break;
+X  				case res_nextns:
++ 					_res_close();
+X  					goto next_ns;
+X  				case res_done:
+! 					return (resplen);
+X  				case res_modified:
+X  					/* give the hook another try */
+***************
+*** 224,228 ****
+X  			struct iovec iov[2];
+X  			u_short len;
+! 			char *cp;
+X  
+X  			/*
+--- 337,341 ----
+X  			struct iovec iov[2];
+X  			u_short len;
+! 			u_char *cp;
+X  
+X  			/*
+***************
+*** 232,237 ****
+X  			try = _res.retry;
+X  			truncated = 0;
+! 			if (s < 0) {
+! 				s = socket(AF_INET, SOCK_STREAM, 0);
+X  				if (s < 0) {
+X  					terrno = errno;
+--- 345,353 ----
+X  			try = _res.retry;
+X  			truncated = 0;
+! 			if ((s < 0) || (!vc)) {
+! 				if (s >= 0)
+! 					_res_close();
+! 
+! 				s = socket(AF_INET, SOCK_STREAM, PF_UNSPEC);
+X  				if (s < 0) {
+X  					terrno = errno;
+***************
+*** 240,265 ****
+X  				}
+X  				if (connect(s, (struct sockaddr *)nsap,
+! 				    sizeof(struct sockaddr)) < 0) {
+X  					terrno = errno;
+X  					Aerror(stderr, "connect/vc",
+! 					    errno, *nsap);
+X  					_res_close();
+- 					badns |= 1 << ns;
+X  					goto next_ns;
+X  				}
+X  			}
+X  			/*
+X  			 * Send length & message
+X  			 */
+! 			len = htons((u_short)buflen);
+! 			iov[0].iov_base = (char *)&len;
+! 			iov[0].iov_len = sizeof(len);
+! 			iov[1].iov_base = (char *)buf;
+X  			iov[1].iov_len = buflen;
+! 			if (writev(s, iov, 2) != sizeof(len) + buflen) {
+X  				terrno = errno;
+X  				Perror(stderr, "write failed", errno);
+X  				_res_close();
+- 				badns |= 1 << ns;
+X  				goto next_ns;
+X  			}
+--- 356,382 ----
+X  				}
+X  				if (connect(s, (struct sockaddr *)nsap,
+! 					    sizeof(struct sockaddr)) < 0) {
+X  					terrno = errno;
+X  					Aerror(stderr, "connect/vc",
+! 					       errno, *nsap);
+! 					badns |= (1 << ns);
+X  					_res_close();
+X  					goto next_ns;
+X  				}
++ 				vc = 1;
+X  			}
+X  			/*
+X  			 * Send length & message
+X  			 */
+! 			putshort((u_short)buflen, (u_char*)&len);
+! 			iov[0].iov_base = (caddr_t)&len;
+! 			iov[0].iov_len = INT16SZ;
+! 			iov[1].iov_base = (caddr_t)buf;
+X  			iov[1].iov_len = buflen;
+! 			if (writev(s, iov, 2) != (INT16SZ + buflen)) {
+X  				terrno = errno;
+X  				Perror(stderr, "write failed", errno);
++ 				badns |= (1 << ns);
+X  				_res_close();
+X  				goto next_ns;
+X  			}
+***************
+*** 268,275 ****
+X  			 */
+X  			cp = ans;
+! 			len = sizeof(short);
+! 			while (len != 0 && (n = read(s, cp, len)) > 0) {
+X  				cp += n;
+! 				len -= n;
+X  			}
+X  			if (n <= 0) {
+--- 385,393 ----
+X  			 */
+X  			cp = ans;
+! 			len = INT16SZ;
+! 			while ((n = read(s, (char *)cp, (int)len)) > 0) {
+X  				cp += n;
+! 				if ((len -= n) <= 0)
+! 					break;
+X  			}
+X  			if (n <= 0) {
+***************
+*** 288,305 ****
+X  				if (terrno == ECONNRESET && !connreset) {
+X  					connreset = 1;
+X  					goto same_ns;
+X  				}
+X  				goto next_ns;
+X  			}
+! 			cp = ans;
+! 			resplen = ntohs(*(u_short *)cp);
+X  			if (resplen > anssiz) {
+X  				Dprint(_res.options & RES_DEBUG,
+! 				    (stdout, ";; response truncated\n"));
+! 				len = anssiz;
+X  				truncated = 1;
+X  			} else
+X  				len = resplen;
+! 			while (len != 0 && (n = read(s, cp, len)) > 0) {
+X  				cp += n;
+X  				len -= n;
+--- 406,427 ----
+X  				if (terrno == ECONNRESET && !connreset) {
+X  					connreset = 1;
++ 					_res_close();
+X  					goto same_ns;
+X  				}
++ 				_res_close();
+X  				goto next_ns;
+X  			}
+! 			resplen = _getshort(ans);
+X  			if (resplen > anssiz) {
+X  				Dprint(_res.options & RES_DEBUG,
+! 				       (stdout, ";; response truncated\n")
+! 				       );
+X  				truncated = 1;
++ 				len = anssiz;
+X  			} else
+X  				len = resplen;
+! 			cp = ans;
+! 			while (len != 0 &&
+! 			       (n = read(s, (char *)cp, (int)len)) > 0) {
+X  				cp += n;
+X  				len -= n;
+***************
+*** 319,326 ****
+X  				len = resplen - anssiz;
+X  				while (len != 0) {
+! 					char junk[512];
+X  
+! 					n = len > sizeof(junk) ? sizeof(junk)
+! 					    : len;
+X  					if ((n = read(s, junk, n)) > 0)
+X  						len -= n;
+--- 441,449 ----
+X  				len = resplen - anssiz;
+X  				while (len != 0) {
+! 					char junk[PACKETSZ];
+X  
+! 					n = (len > sizeof(junk)
+! 					     ? sizeof(junk)
+! 					     : len);
+X  					if ((n = read(s, junk, n)) > 0)
+X  						len -= n;
+***************
+*** 335,346 ****
+X  			struct timeval timeout;
+X  			fd_set dsmask;
+X  
+! 			if (s < 0) {
+! 				s = socket(AF_INET, SOCK_DGRAM, 0);
+X  				if (s < 0) {
+! 					terrno = errno;
+X  					Perror(stderr, "socket(dg)", errno);
+X  					return (-1);
+X  				}
+X  			}
+X  			/*
+--- 458,474 ----
+X  			struct timeval timeout;
+X  			fd_set dsmask;
++ 			struct sockaddr_in from;
++ 			int fromlen;
+X  
+! 			if ((s < 0) || vc) {
+! 				if (vc)
+! 					_res_close();
+! 				s = socket(AF_INET, SOCK_DGRAM, PF_UNSPEC);
+X  				if (s < 0) {
+!  bad_dg_sock:				terrno = errno;
+X  					Perror(stderr, "socket(dg)", errno);
+X  					return (-1);
+X  				}
++ 				connected = 0;
+X  			}
+X  			/*
+***************
+*** 361,375 ****
+X  			if (_res.nscount == 1 || (try == 0 && ns == 0)) {
+X  				/*
+! 				 * Don't use connect if we might
+! 				 * still receive a response
+! 				 * from another server.
+X  				 */
+! 				if (connected == 0) {
+X  					if (connect(s, (struct sockaddr *)nsap,
+! 					    sizeof(struct sockaddr)) < 0) {
+! 						Aerror(stderr, "connect(dg)",
+! 						    errno, *nsap);
+X  						_res_close();
+- 						badns |= 1 << ns;
+X  						goto next_ns;
+X  					}
+--- 489,504 ----
+X  			if (_res.nscount == 1 || (try == 0 && ns == 0)) {
+X  				/*
+! 				 * Connect only if we are sure we won't
+! 				 * receive a response from another server.
+X  				 */
+! 				if (!connected) {
+X  					if (connect(s, (struct sockaddr *)nsap,
+! 						    sizeof(struct sockaddr)
+! 						    ) < 0) {
+! 						Aerror(stderr,
+! 						       "connect(dg)",
+! 						       errno, *nsap);
+! 						badns |= (1 << ns);
+X  						_res_close();
+X  						goto next_ns;
+X  					}
+***************
+*** 378,383 ****
+X  				if (send(s, buf, buflen, 0) != buflen) {
+X  					Perror(stderr, "send", errno);
+X  					_res_close();
+- 					badns |= 1 << ns;
+X  					goto next_ns;
+X  				}
+--- 507,512 ----
+X  				if (send(s, buf, buflen, 0) != buflen) {
+X  					Perror(stderr, "send", errno);
++ 					badns |= (1 << ns);
+X  					_res_close();
+X  					goto next_ns;
+X  				}
+***************
+*** 388,391 ****
+--- 517,521 ----
+X  				 */
+X  				if (connected) {
++ #if defined(BSD) && (BSD >= 199103)
+X  					struct sockaddr_in no_addr;
+X  
+***************
+*** 393,406 ****
+X  					no_addr.sin_addr.s_addr = INADDR_ANY;
+X  					no_addr.sin_port = 0;
+! 					connect(s, (struct sockaddr *)&no_addr,
+! 					    sizeof(no_addr));
+X  					connected = 0;
+X  					errno = 0;
+X  				}
+X  				if (sendto(s, buf, buflen, 0,
+! 				    (struct sockaddr *)nsap,
+! 				    sizeof(struct sockaddr)) != buflen) {
+X  					Aerror(stderr, "sendto", errno, *nsap);
+! 					badns |= 1 << ns;
+X  					goto next_ns;
+X  				}
+--- 523,550 ----
+X  					no_addr.sin_addr.s_addr = INADDR_ANY;
+X  					no_addr.sin_port = 0;
+! 					(void) connect(s,
+! 						       (struct sockaddr *)
+! 						        &no_addr,
+! 						       sizeof(no_addr));
+! #else
+! 					int s1 = socket(AF_INET, SOCK_DGRAM,
+! 							PF_UNSPEC);
+! 					if (s1 < 0)
+! 						goto bad_dg_sock;
+! 					(void) dup2(s1, s);
+! 					(void) close(s1);
+! 					Dprint(_res.options & RES_DEBUG,
+! 					       (stdout, ";; new DG socket\n"))
+! #endif
+X  					connected = 0;
+X  					errno = 0;
+X  				}
+X  				if (sendto(s, buf, buflen, 0,
+! 					   (struct sockaddr *)nsap,
+! 					   sizeof(struct sockaddr))
+! 				    != buflen) {
+X  					Aerror(stderr, "sendto", errno, *nsap);
+! 					badns |= (1 << ns);
+! 					_res_close();
+X  					goto next_ns;
+X  				}
+***************
+*** 413,417 ****
+X  			if (try > 0)
+X  				timeout.tv_sec /= _res.nscount;
+! 			if (timeout.tv_sec <= 0)
+X  				timeout.tv_sec = 1;
+X  			timeout.tv_usec = 0;
+--- 557,561 ----
+X  			if (try > 0)
+X  				timeout.tv_sec /= _res.nscount;
+! 			if ((long) timeout.tv_sec <= 0)
+X  				timeout.tv_sec = 1;
+X  			timeout.tv_usec = 0;
+***************
+*** 420,424 ****
+X  			FD_SET(s, &dsmask);
+X  			n = select(s+1, &dsmask, (fd_set *)NULL,
+! 			    (fd_set *)NULL, &timeout);
+X  			if (n < 0) {
+X  				Perror(stderr, "select", errno);
+--- 564,568 ----
+X  			FD_SET(s, &dsmask);
+X  			n = select(s+1, &dsmask, (fd_set *)NULL,
+! 				   (fd_set *)NULL, &timeout);
+X  			if (n < 0) {
+X  				Perror(stderr, "select", errno);
+***************
+*** 431,439 ****
+X  				 */
+X  				Dprint(_res.options & RES_DEBUG,
+! 				    (stdout, ";; timeout\n"));
+X  				gotsomewhere = 1;
+X  				goto next_ns;
+X  			}
+! 			if ((resplen = recv(s, ans, anssiz, 0)) <= 0) {
+X  				Perror(stderr, "recvfrom", errno);
+X  				_res_close();
+--- 575,587 ----
+X  				 */
+X  				Dprint(_res.options & RES_DEBUG,
+! 				       (stdout, ";; timeout\n"));
+X  				gotsomewhere = 1;
++ 				_res_close();
+X  				goto next_ns;
+X  			}
+! 			fromlen = sizeof(struct sockaddr_in);
+! 			resplen = recvfrom(s, ans, anssiz, 0,
+! 					   (struct sockaddr *)&from, &fromlen);
+! 			if (resplen <= 0) {
+X  				Perror(stderr, "recvfrom", errno);
+X  				_res_close();
+***************
+*** 443,461 ****
+X  			if (hp->id != anhp->id) {
+X  				/*
+! 				 * response from old query, ignore it
+X  				 * XXX - potential security hazard could
+! 				 *	 be detected here
+X  				 */
+X  				DprintQ((_res.options & RES_DEBUG) ||
+! 				    (_res.pfcode & RES_PRF_REPLY),
+! 				    (stdout, ";; old answer:\n"), ans);
+X  				goto wait;
+X  			}
+! 			if (anhp->rcode == SERVFAIL || anhp->rcode == NOTIMP ||
+X  			    anhp->rcode == REFUSED) {
+X  				DprintQ(_res.options & RES_DEBUG,
+! 				    (stdout, "server rejected query:\n"), ans);
+! 				badns |= 1 << ns;
+! 				goto next_ns;
+X  			}
+X  			if (!(_res.options & RES_IGNTC) && anhp->tc) {
+--- 591,644 ----
+X  			if (hp->id != anhp->id) {
+X  				/*
+! 				 * response from old query, ignore it.
+X  				 * XXX - potential security hazard could
+! 				 *	 be detected here.
+X  				 */
+X  				DprintQ((_res.options & RES_DEBUG) ||
+! 					(_res.pfcode & RES_PRF_REPLY),
+! 					(stdout, ";; old answer:\n"),
+! 					ans);
+X  				goto wait;
+X  			}
+! #if CHECK_SRVR_ADDR
+! 			if (!(_res.options & RES_INSECURE1) &&
+! 			    !res_isourserver(&from)) {
+! 				/*
+! 				 * response from wrong server? ignore it.
+! 				 * XXX - potential security hazard could
+! 				 *	 be detected here.
+! 				 */
+! 				DprintQ((_res.options & RES_DEBUG) ||
+! 					(_res.pfcode & RES_PRF_REPLY),
+! 					(stdout, ";; not our server:\n"),
+! 					ans);
+! 				goto wait;
+! 			}
+! #endif
+! 			if (!(_res.options & RES_INSECURE2) &&
+! 			    !res_queriesmatch(buf, buf + buflen,
+! 					      ans, ans + anssiz)) {
+! 				/*
+! 				 * response contains wrong query? ignore it.
+! 				 * XXX - potential security hazard could
+! 				 *	 be detected here.
+! 				 */
+! 				DprintQ((_res.options & RES_DEBUG) ||
+! 					(_res.pfcode & RES_PRF_REPLY),
+! 					(stdout, ";; wrong query name:\n"),
+! 					ans);
+! 				goto wait;
+! 			}
+! 			if (anhp->rcode == SERVFAIL ||
+! 			    anhp->rcode == NOTIMP ||
+X  			    anhp->rcode == REFUSED) {
+X  				DprintQ(_res.options & RES_DEBUG,
+! 					(stdout, "server rejected query:\n"),
+! 					ans);
+! 				badns |= (1 << ns);
+! 				_res_close();
+! 				/* don't retry if called from dig */
+! 				if (!_res.pfcode)
+! 					goto next_ns;
+X  			}
+X  			if (!(_res.options & RES_IGNTC) && anhp->tc) {
+***************
+*** 465,476 ****
+X  				 */
+X  				Dprint(_res.options & RES_DEBUG,
+! 				    (stdout, ";; truncated answer\n"));
+! 				_res_close();
+X  				v_circuit = 1;
+X  				goto same_ns;
+X  			}
+! 		}
+! 		DprintQ(_res.options & RES_DEBUG || _res.pfcode & RES_PRF_REPLY,
+! 		    (stdout, ";; got answer:\n"), ans);
+X  		/*
+X  		 * If using virtual circuits, we assume that the first server
+--- 648,661 ----
+X  				 */
+X  				Dprint(_res.options & RES_DEBUG,
+! 				       (stdout, ";; truncated answer\n"));
+X  				v_circuit = 1;
++ 				_res_close();
+X  				goto same_ns;
+X  			}
+! 		} /*if vc/dg*/
+! 		DprintQ((_res.options & RES_DEBUG) ||
+! 			(_res.pfcode & RES_PRF_REPLY),
+! 			(stdout, ";; got answer:\n"),
+! 			ans);
+X  		/*
+X  		 * If using virtual circuits, we assume that the first server
+***************
+*** 481,487 ****
+X  		 * close the socket.
+X  		 */
+! 		if ((v_circuit &&
+! 		    ((_res.options & RES_USEVC) == 0 || ns != 0)) ||
+! 		    (_res.options & RES_STAYOPEN) == 0) {
+X  			_res_close();
+X  		}
+--- 666,671 ----
+X  		 * close the socket.
+X  		 */
+! 		if ((v_circuit && (!(_res.options & RES_USEVC) || ns != 0)) ||
+! 		    !(_res.options & RES_STAYOPEN)) {
+X  			_res_close();
+X  		}
+***************
+*** 492,497 ****
+X  				res_sendhookact act;
+X  
+! 				act = (*Rhook)(nsap, buf, buflen, ans, anssiz,
+! 				    &resplen);
+X  				switch (act) {
+X  				case res_goahead:
+--- 676,681 ----
+X  				res_sendhookact act;
+X  
+! 				act = (*Rhook)(nsap, buf, buflen,
+! 					       ans, anssiz, &resplen);
+X  				switch (act) {
+X  				case res_goahead:
+***************
+*** 500,503 ****
+--- 684,688 ----
+X  					break;
+X  				case res_nextns:
++ 					_res_close();
+X  					goto next_ns;
+X  				case res_modified:
+***************
+*** 516,524 ****
+X  		return (resplen);
+X      next_ns: ;
+! 	   }
+! 	}
+X  	_res_close();
+! 	if (v_circuit == 0)
+! 		if (gotsomewhere == 0)
+X  			errno = ECONNREFUSED;	/* no nameservers found */
+X  		else
+--- 701,709 ----
+X  		return (resplen);
+X      next_ns: ;
+! 	   } /*foreach ns*/
+! 	} /*foreach retry*/
+X  	_res_close();
+! 	if (!v_circuit)
+! 		if (!gotsomewhere)
+X  			errno = ECONNREFUSED;	/* no nameservers found */
+X  		else
+***************
+*** 542,545 ****
+--- 727,732 ----
+X  		(void) close(s);
+X  		s = -1;
++ 		connected = 0;
++ 		vc = 0;
+X  	}
+X  }
+*** ../net-2.0b1/resolver.3	Mon Nov  7 10:54:53 1994
+--- resolver.3	Sun Dec 11 23:58:08 1994
+***************
+*** 313,316 ****
+--- 313,317 ----
+X  .%T RFC1034 ,
+X  .%T RFC1035 ,
++ .%T RFC1535 ,
+X  .%T RFC974
+X  .Rs
+*** ../net-2.0b1/sethostent.c	Mon Nov  7 10:54:55 1994
+--- sethostent.c	Sun Dec 11 23:57:18 1994
+***************
+*** 34,37 ****
+--- 34,38 ----
+X  #if defined(LIBC_SCCS) && !defined(lint)
+X  static char sccsid[] = "@(#)sethostent.c	8.1 (Berkeley) 6/4/93";
++ static char rcsid[] = "=Id: sethostent.c,v 4.9.1.4 1994/04/09 07:11:54 vixie Exp vixie =";
+X  #endif /* LIBC_SCCS and not lint */
+X  
+***************
+*** 44,48 ****
+--- 45,51 ----
+X  void
+X  sethostent(stayopen)
++ 	int stayopen;
+X  {
++ 
+X  	if (stayopen)
+X  		_res.options |= RES_STAYOPEN | RES_USEVC;
+SHAR_EOF
+  $shar_touch -am 1212101594 'diffs' &&
+  chmod 0664 'diffs' ||
+  echo 'restore of diffs failed'
+  shar_count="`wc -c < 'diffs'`"
+  test 114437 -eq "$shar_count" ||
+    echo "diffs: original size 114437, current size $shar_count"
+fi
+# ============= nsap_addr.c ==============
+if test -f 'nsap_addr.c' && test X"$1" != X"-c"; then
+  echo 'x - skipping nsap_addr.c (file already exists)'
+else
+  echo 'x - extracting nsap_addr.c (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'nsap_addr.c' &&
+/*
+X * Copyright (c) 1989, 1993
+X *	The Regents of the University of California.  All rights reserved.
+X *
+X * Redistribution and use in source and binary forms, with or without
+X * modification, are permitted provided that the following conditions
+X * are met:
+X * 1. Redistributions of source code must retain the above copyright
+X *    notice, this list of conditions and the following disclaimer.
+X * 2. Redistributions in binary form must reproduce the above copyright
+X *    notice, this list of conditions and the following disclaimer in the
+X *    documentation and/or other materials provided with the distribution.
+X * 3. All advertising materials mentioning features or use of this software
+X *    must display the following acknowledgement:
+X *	This product includes software developed by the University of
+X *	California, Berkeley and its contributors.
+X * 4. Neither the name of the University nor the names of its contributors
+X *    may be used to endorse or promote products derived from this software
+X *    without specific prior written permission.
+X *
+X * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+X * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+X * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+X * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+X * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+X * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+X * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+X * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+X * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+X * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+X * SUCH DAMAGE.
+X */
+X
+#if defined(LIBC_SCCS) && !defined(lint)
+static char rcsid[] = "$Id: lib-libc-net,v 1.1.1.1 1999/10/04 22:24:38 wsanchez Exp $";
+#endif /* LIBC_SCCS and not lint */
+X
+#include <sys/param.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/nameser.h>
+#include <ctype.h>
+#include <resolv.h>
+X
+static char
+xtob(c)
+X	register int c;
+{
+X	return (c - (((c >= '0') && (c <= '9')) ? '0' : '7'));
+}
+X
+/* These have to be here for BIND and its utilities (DiG, nslookup, et al)
+X * but should not be promulgated since the calling interface is not pretty.
+X * (They do, however, implement the RFC standard way of representing ISO NSAPs
+X * and as such, are preferred over the more general iso_addr.c routines.
+X */
+X
+u_int
+inet_nsap_addr(ascii, binary, maxlen)
+X	const char *ascii;
+X	u_char *binary;
+X	int maxlen;
+{
+X	register u_char c, nib;
+X	u_char *start = binary;
+X	u_int len = 0;
+X
+X	while ((c = *ascii++) != '\0' && len < maxlen) {
+X		if (c == '.' || c == '+' || c == '/')
+X			continue;
+X		if (!isascii(c))
+X			return (0);
+X		if (islower(c))
+X			c = toupper(c);
+X		if (isxdigit(c)) {
+X			nib = xtob(c);
+X			if (c = *ascii++) {
+X				c = toupper(c);
+X				if (isxdigit(c)) {
+X					*binary++ = (nib << 4) | xtob(c);
+X					len++;
+X				} else
+X					return (0);
+X			}
+X			else
+X				return (0);
+X		}
+X		else
+X			return (0);
+X	}
+X	return (len);
+}
+X
+char *
+inet_nsap_ntoa(binlen, binary, ascii)
+X	int binlen;
+X	register const u_char *binary;
+X	register char *ascii;
+{
+X	register int nib;
+X	int i;
+X	static char tmpbuf[255*3];
+X	char *start;
+X
+X	if (ascii)
+X		start = ascii;
+X	else {
+X		ascii = tmpbuf;
+X		start = tmpbuf;
+X	}
+X
+X	if (binlen > 255)
+X		binlen = 255;
+X
+X	for (i = 0; i < binlen; i++) {
+X		nib = *binary >> 4;
+X		*ascii++ = nib + (nib < 10 ? '0' : '7');
+X		nib = *binary++ & 0x0f;
+X		*ascii++ = nib + (nib < 10 ? '0' : '7');
+X		if (((i % 2) == 0 && (i + 1) < binlen))
+X			*ascii++ = '.';
+X	}
+X	*ascii = '\0';
+X	return (start);
+}
+SHAR_EOF
+  $shar_touch -am 1212000394 'nsap_addr.c' &&
+  chmod 0664 'nsap_addr.c' ||
+  echo 'restore of nsap_addr.c failed'
+  shar_count="`wc -c < 'nsap_addr.c'`"
+  test 3693 -eq "$shar_count" ||
+    echo "nsap_addr.c: original size 3693, current size $shar_count"
+fi
+exit 0

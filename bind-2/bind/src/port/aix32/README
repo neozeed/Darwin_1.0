@@ -1,0 +1,27 @@
+AIX 32 port by Roy Nicholl, Roy.Nicholl@ASGtechnologies.com
+
+...though I really cannot take credit, it was a rather straight forward 
+exercise.  I have successfully built and installed this on two AIX 3.2.5.1
+systems [last patch release of V3.2].  You should be able to build this on
+any system running 3.2.[45]x [though I could be wrong].  It will not build
+on a 3.1 system without heroic measures, the likes of which have not been seen
+since Troy ;)
+
+The only real advice I can afford you is though IBM's C compiler [xlC] will
+work fine [provided you are up-to-date on your PTF's], gcc should be preferred.
+
+However, you will want to have a copy of GNU make installed as IBM's make is
+rather feeble and will choke on you.
+
+You also have a choice between AIX's lex [which seems to work] or GNU's flex 
+[which works much better...try 'flex -Ce' if you are daring].  If you opt 
+for 'classic' lex, you will want to set "SYSLIBS=-ll".  If you are
+using flex, then you will need to tell the compiler where to find libfl.a,
+[i.e. 'SYSLIBS=-L/usr/local/lib -lfl']... if you are using gcc, it  will likely 
+be capable of finding it on its own;)
+
+YACC - Yet Another Configuration Choice ;)  
+I have never been excited by IBM's yacc, thus, I suggest that you stroll 
+over to prep.ai.mit.edu and retrieve the latest edition of bison.  You could 
+give the AIX yacc a go -- YMMV.
+

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+uname=/bin/uname
+
+if [ -f $uname ]; then
+	case `$uname -r` in
+	4.5*)
+		make fix_includes
+		;;
+	esac
+fi
+
+exit 0

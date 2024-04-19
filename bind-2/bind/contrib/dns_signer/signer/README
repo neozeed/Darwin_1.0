@@ -1,0 +1,28 @@
+README January 20, 1998...snapshot 1
+
+This is a snapshot of a DNS zone signer.  The code in this release is thought
+to be functionally complete and has been through considerable (but not formally
+complete) testing.  The code is roughly compliant with RFC 2065 and the secext2
+draft, but delves deeper into detailed issues not yet resolved in the
+specifications.
+
+The installation process will require you to manually configure six path or
+file names, corresponding to the above list of files.  For installation
+information, see README-INSTALL.
+
+FUNCTIONAL HIGHLIGHTS
+The target executable of the signer is "dnssigner".  The details of using
+the signer are in README-USAGE.  The signer's job is to read the data of
+one zone of DNS data, and perform the necessary work to produce the data
+for a secured zone.  Signing is done on a zone-by-zone basis, regardless
+of the relationship of zones to name servers.
+
+The file README-OPERATING describes the way in which dnssigner is intended
+to be used.  The signer is designed to operate in a dynamic environment,
+including those in which secret keys are not available to all of those
+covering a zone, where information may be arriving after the beginning of
+the signing process, and makes efforts to retain valid signatures instead of
+computing new signatures.
+
+OTHER HIGHLIGHTS
+See README-COPYRIGHT for copyright statements.

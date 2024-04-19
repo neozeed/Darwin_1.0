@@ -1,0 +1,23 @@
+/Makefile/1.3/Thu Feb 24 07:41:16 2000//TStartup-27
+/Makefile.postamble/1.1.1.1/Wed Oct 27 01:47:41 1999//TStartup-27
+/Makefile.preamble/1.1.1.1/Wed Oct 27 01:47:41 1999//TStartup-27
+/PB.project/1.3/Thu Feb 24 07:41:16 2000//TStartup-27
+D/Accounting////
+D/Apache////
+D/AppServices////
+D/AppleShare////
+D/AppleTalk////
+D/AuthServer////
+D/Cleanup////
+D/Cron////
+D/DirectoryServices////
+D/Disks////
+D/IPServices////
+D/NFS////
+D/Network////
+D/NetworkTime////
+D/Portmap////
+D/QuickTimeServer////
+D/Sendmail////
+D/SystemLog////
+D/SystemTuning////

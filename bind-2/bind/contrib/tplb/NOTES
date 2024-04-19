@@ -1,0 +1,369 @@
+>>> bind/workers:582
+
+Date:    09 Jun 1994 16:26:21 PDT
+From:    brisco@hercules.rutgers.edu (Tp Brisco)
+Subject: Re: Using DNS to Load Balance
+
+> >     The upshot of the changes is that BIND can run a specific
+> > program to do the zone transfer.  The program should - of course -
+> > make various appropriate computations, and reorder the RRs as
+> > you see fit, then return an appropriate exit code to indicate
+> > the relative success of the zone transfer --- viola!  You can
+> > have the RRs reordered with as much frequency as you dare turn
+> > down the TTLs (I've gone as low as 5 minutes with no apparent
+> > ill effects).
+> > 
+> 
+> Maybe I'm missing something here but why not use the ROUND_ROBIN feature
+> to give one of a list of addresses. It works well for load balancing
+> here and doesn't require zone transfers. e.g
+> appl	IN	CNAME	sys1
+> 	IN	CNAME	sys2
+> sys1	IN	A	127.0.0.1
+> sys2	IN	A	127.0.0.2
+> 	IN	A	127.0.0.3
+> results in sys1 getting half the load and each address on sys2 getting
+> a quarter.
+> 
+> I don't know if ROUND_ROBIN is available in all implementations. I found it
+> in name 4.9.2.
+> 
+> Simon Hamilton
+
+    The problem that _we_ ran into was that ROUND_ROBIN works on
+everything with multiple similar record types -- which isn't
+necessarily what we wanted.
+
+    Particularly; I've seen other people "gripe" about the NS
+records getting shuffled.  Additionally, at Rutgers, we depend
+(*cringe* - don't flame) on the ordering -- in particular; we've
+got some "cluster" machines that have "private" networks for
+intra-cluster communications.  We'd prefer those A RR's to not be
+mucked with.  (BTW:  we do advertise the less preferential
+addresses, since we'd prefer that those be used - but only if the
+more preferential addresses are dead for some reason).
+
+    Also; the ROUND_ROBIN approach assumes that the ratios
+of distinction of "load" don't change - i.e. when that 
+big SAS user logs onto "sys2" and throws your statistical
+model out of whack.  The ``SETTRANSFER'' (my compilation
+conditional) can _react_ to actual load changes - if you
+so wish.
+
+    Don't get me wrong - if ROUND_ROBIN works for you - use it in
+good health.  [ Anyone know what happended to the "SHUFFLE_A"
+code?  Was is superceded by the ROUND_ROBIN?  ] ROUND_ROBIN does
+a fine statistical randomization (in fact, one of the early
+proposals I put forward was a _weighted_ statistical
+randomization technique).  ROUND_ROBIN did, however, have a
+couple of unpleasant surprises for us.
+
+    One of the drawbacks of *ALL* RR _ordering_ mechanisms is
+that the *&*^%^ "sortlist" qualifier (I think it's in the
+resolver - but may be in both) can really undo all the hard work
+we've all put into this ....  I _should_ point out that the
+SETTRANSFER doesn't *have* to return all RR's - though it is
+recommended (in general) - so if you want to *force* a particular
+address (in spite of the bloody sortlists out there), simply
+return only a single record - but that could have some nasty
+surprises also (e.g.  failed connections).
+
+    Lastly, with the low-TTL "SETTRANSFER", there's nothing to
+stop you from changing the *content* of the records either (just
+imagine the fun you can have with TXT records now!).
+
+    So far, I've not found something I _cannot_ do with the
+SETTRANSFER code and a shell script -- just for kicks I had BIND
+paging our sysadmin for a while ....  (though he didn't seem to
+see the humor in it).
+
+    Yes - there is more overhead associated with the zone
+transfers - but that the frequency of zone transfers and the
+computation incurred at each transfer is 100% under your control.
+*You* choose how often and how intensely.  Quite frankly, from
+the observations I've made, the extra CPU-expense incurred by the
+zone transfers still pales in comparison with the overhead of
+BIND in general (that's not a complaint - just an observation).
+
+    My next idea was to put PostScript (tm) into TXT RRs and
+have a little PostScript interpreter built into BIND.  SRA,
+however, recommended Lisp ....   Maybe FORTH would be a better
+idea ...  Hmmm... Perl anyone? ;->
+
+							    Tp.
+
+...!rutgers!brisco (UUCP)               brisco@pilot.njin.net (Internet)
+    brisco@ZODIAC (BITNET)              908-445-2351          (VOICE)
+
+Just say "Moo"
+
+
+
+>>> bind/workers:583
+
+Date:    Fri, 08 Apr 1994 13:55:10 EDT
+To:      Paul A Vixie <paul@vix.com>
+From:    Tp Brisco <brisco@hercules.rutgers.edu>
+Subject: Re: Appropriate time to ...
+
+
+    Hmm - I probably should've waited until I was in a better
+mood before I replied to you ...
+
+> i'd like you to consider my views on all this, even though you've
+> clearly got a lot invested in the way you're doing it now.  i do
+> not think that doing this in the zone transfer mechanism is at all
+> the right way.  reasons against it include:
+> 
+> (1)	transfer ordering is NOT deterministic unless all hosts do the
+> 	same (unspecified) thing with ordering and there are always the
+> 	same number of hosts in the path from primary-secondary-resolver
+> 	(consider older BIND versions that used LIFO ordering of cache
+> 	RR's).  the best thing you can guarantee, without changing the
+> 	protocol so that the ordering is _specified_, will be the same
+> 	as round robin: stochastic randomness.
+
+    Ah, under the ``TRANSFER'' scheme there are no primaries,
+just secondaries.  Each secondary should be doing it's own
+computation - so that primary->secondary reordering isn't really
+an issue.  There isn't even a way of defining "dynamic
+information" in a primary under my scheme.  Resolver code - at
+least the code that I've looked at in detail - is generally
+incredibly stupid (not to mention non-compliant).  Unfortunately,
+it appears that most people are using fairly ancient resolver
+code - and broken code at that.  Emperically I've noticed that
+the resolver code typically uses just the first RR anyway - most
+fail - a few will actually walk down the RRs if multiple A's are
+provided.  None (that I've noticed) make appropriate use of the
+"additional info" section of the responses.  The secondary ->
+resolver relationship is simple enough that it shouldn't be a
+concern about reordering inside of there.  Things like sortlists
+and such can be problematic, but you get what you asked for
+(whether thats what you intended or not).  Even sortlists provide
+minimal problems - sortlists typically sort based upon network
+number - and most cluster elements exist on the same LAN for
+pragmatic reasons.  In cases of sorting networks based on
+topology, then presumably the hop-count is more important than
+actual load-sharing anyway.
+
+    Anyway, without my editorializing on resolvers, the key
+point is that primaries don't exist for "dynamic zones" - but
+rather a series of one or more secondaries exist, and each
+calculates the information independantly.
+
+> (2)	when you begin to apply cluster-style balancing based on load
+> 	average or some other metric, you will quickly find that the
+> 	host metrics change much more often than you will be prepared
+> 	to do zone transfers.  are you prepared for 15-second MIN TTLs?
+> 	15-second refresh?  one minute would almost work right now, but
+> 	as hosts and networks keep getting faster at 2X every 18 months,
+> 	with many "sessions" being like WWW (connect, grab, disconnect;
+> 	repeat at intervals), 15 seconds will still end up being too
+> 	short.
+
+    I think we both need to admit that "balancing" based upon load
+averages is a fallacy - at least on systems that aren't prepared
+to dynamically move existing sessions between hosts without blowing
+the connection.  Nothing that I know of is capable of this today -
+and if that becomes the case - we're going to have to re-think DNS
+from the ground up.  The sad fact is that _any_ load balancing is
+going to be an approximation - simply because "load" isn't an
+easily measured fact (take a look at OPSTAT some time! Sheesh!).
+
+    I think I'm prepared for 15 second TTLs - but is BIND?  :-)
+If you look at the DIFFS (anonymous ftp to
+pilot.njin.net:pub/TRANSFER/*) and the README I indicate that I
+torqued down (apparently successfully) the hard-limit minTTL of 5
+minutes down to 1 minute.  For "most" load-balancing applications
+this should be sufficient.  The FYI (it isn't an RFC for a reason
+...)  talks about this as being "reasonable" (no, it's not
+impressive, but it does easily solve the bulk of the problems out
+there - with no mods to the protocol).  Undoubtedly the smallest
+safe granularity of measure CPU type loads is the 1 minute mark,
+anything less than that starts to be meaningless.  Let's face it,
+if you take the sample rate down to about 1 * 10^9 you start
+finding the load either 100% or 0% (I've faced a lot of these
+same problems in measuring networks - OPSTAT has run across a lot
+of these problems also).  I think I can safely claim that
+statistics just isn't prepared to deal with an overly small
+sample in order to extrapolate to such a large change.
+
+    Again, this is engineered to solve 90% of the existing needs
+today.  The other 10% are complex enough to warrant "special
+purpose nameservers" (I think the FYI states this blatantly).
+The truth of the matter is, is that if you _really_ want 100%
+accurate / 0TTL based information, you need a specialized
+nameserver for the time being (until we can figure out a better
+way of doing this altogether).  My FYI has generated about four
+copies (from random people out on the net) who have written
+"specialized nameservers" to deal with such problems when they
+have them.  The big problem is for the other 90% of the people
+who need a generalized mechanism for multitudes of problems where
+"reasonably accurate" is all they need.  I believe that this
+solves those problems in a general way, with reasonable CPU
+impact.  I don't claim that it is glossy, impressive, or
+otherwise technologically astounding - but pragmatic solutions
+rarely are.  (Which is probably why Bill Gates is rich, and I'm
+not).
+
+> the "right" way to do this, as i've said all along (though my words on this
+> are probably buried so far back in the namedroppers archive that most people
+> have never seen them), is to add some kind of weighting, via either SNMP or
+> new RR types, that the resolvers can use to make ``directed'' ordering choice
+s
+> after they receive a list of addresses.  probably using a new RR type is best
+> since this information will have to be cached lest we start melting wires.
+> i recognized this as a good aspect of your original CIP proposal, though i
+> wasn't completely please with the overall CIP approach since there was too
+> much that was new about it.
+> 
+> you just cannot do clustering on top of host-address information without some
+> kind of meta-data directing the clients.  the BIND resolver already does
+> address reordering based on network connectivity (preferring close addresses
+> to more distant ones) which would blow away any ordering you did manage to
+> achieve with the zone transfer ordering approach.
+
+    I certainly agree with you here - but maybe for different
+reasons.  As I see it, the clients will ultimately want to order
+information based upon their own criteria - so we should be (at
+least) shipping around vectors of information instead of points
+of information.  Then allow the client side to do all the
+computation they wish in order to select the appropriate record.
+I believe my next stab is going to be to put a PostScript
+interpreter inside of DNS and have TXT records shipped around
+with little programs inside of them in order to ascertain the
+appropriate RR to return - this 100% dynamic client-derived
+information is going to be the only ultimate solution.  This
+information could be cached, and re-executed as necessary to
+derive new information.
+
+    As far as I can _really_ tell what was wrong with the CIP
+proposal is that (from the DNS WG / IETF standpoint) it specified
+"different" RR handling - and was therefore a change to the DNS
+specification, and was therefore akin to helping the USSR get
+back together.  (Look, _I_ don't consider the DNS spec as
+something holy - the Internet/ARPAnet _used_ to be set up so that
+things evolved.)
+
+    See my notes above re: client-side reordering.
+
+> i know you've spent a lot of time shepparding this through the IETF, and i'm
+> sure you're ready to shoot me for suggesting a return to first principles.
+> but
+> while you've been doing what you've been doing, i've been considering the
+> implications of dynamic address assignment (distributed database updates sent
+> from terminal servers back to name servers), mobile hosts (ip address changes
+> as you pass through cell boundaries; a new "LOC" (location) RR that's updated
+> based on GPS data in the client); multi-homed hosts (not well solved yet);
+> variable width subnetting on non-octet boundaries (in-addr.arpa isn't enough,
+> and we're going to have to be able to express subnet boundaries and maps in
+> the DNS itself if OSPF and CIDR are really going to save us from running out
+> of IP address space).
+> 
+> in other words, i'm viewing the clustering issue as part of a much wider
+> problem set and i would like to find a common architectural principle that
+> will make all of these problems easier to solve.
+> 
+> doing it via zone transfers is not the answer i was hoping for.
+> 
+> sorry to be a pill about this.
+
+  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^<- Not a problem.  Let's just make
+sure and leave most of the fighting here.  I've seen your work for
+years, and appreciate 99.9% of it greatly.  While I'm willing to
+argue vehemently over this - I can't say the same for most of
+the other things I'm involved in :-).
+
+    Re; the shepparding through the IETF.  I really can't get too
+hot about it - frankly much of what you are saying is what I was
+saying when I first walked in.  To my own self, I've backed off
+on a number of design principals in order to get _some_ standard
+set.  What I do like about this approach is the near-insane level
+of flexibility it provides, and frankly it _is_ a bit of a
+"clever hack" (though I cannot claim to be the sole source of the
+idea).  I suspect that the kernel of the idea originated with Jon
+Postel, but so much "committee" was going on that it is difficult
+to trace back any single portion of it (which is why the FYI
+discusses so much of the history - both to give credit, and to
+avoid having someone else suffer through that much committee work
+again).
+
+    I suppose the worrisome thing about the IETF is that after
+you listen to it enough, it starts to make sense.  Look carefully
+at the problems you mention above:
+
+        1) load balancing
+        2) multi-homed hosts
+        3) dynamic addressing
+        4) mobile hosts
+        5) GPS "LOC" information
+        6) subnet masks
+        7) OSPF/CIDR
+
+    1&2 are essentially the same "class" of problem, as are 3&4.
+5&6 are yet another.  7 is, of course, a problem unto itself :-).
+1&2 are *descriptive* based problems - where we describe a given
+situation.  3&4 are *prescriptive* based problems - where only
+the hosts can really feed us the information.  5&6 (in a perfect
+world) could be fixed by relatively flexible TXT-like records.  5
+could conceivably be considered to be of the same class as 3&4.
+We can't really solve 7 until we're sure that it is the correct
+problem.
+
+    The FYI doesn't attempt to solve all of these.  In fact, I
+would guess that you'd get a considerable amount of friction if
+you tried to solve (2) inside of the DNS server.  In some sense,
+3/4/5 hinge around the ability for hosts (or some trusted third
+party) to update the server in a believable way (I can just
+imagine the fun if we tried to put in GPS LOC info in the
+existing records - we could make people appear all over the world
+:-).  3/4/5 is undoubtedly best addressed by the "dynamic update"
+people (and 4 only if we agree to treat mobileHosts along the
+lines that cellular phones are handled).
+
+    The upshot of what I learned is that (1) is not an atomic
+problem.  The closer I looked, the more problems I found.
+Statistical randomization (a'la CIP, RoundRobin, SA) is fine - if
+what you are trying to model can be done statistically.  Then I
+ran into one fine young gentleman who wanted A RRs ordered
+according to the RTT of packets - sounds insane doesn't it?
+Until I realized that I really wanted that also ...  It would be
+nice if Rutgers University had *one* nameserver (instead of the
+12 it has now) and the topologically closest address "happened"
+to be the one that was presented first.  That way, I could tell
+all of my users the same thing:  "Use this name" instead of the
+current "if you're over there, use that name.  But if you go up
+to Newark, use this name instead".  Ugh!  Or "normal users" (of
+which we could have many a long drunken rip-roaring laughter
+over) really shouldn't be subject to topological optimization
+information - they're just not up to it (Look, I do have _some_
+sympathy for them :-).
+
+    And yes, I had the "MobileIP" folks jumping on me to provide
+them with a solution via this mechanism also, but I saw that it
+really wasn't appropriate (and yes, I was there when we turned
+down their new RR request).  Yes I realize that this does not
+solve all of the problems - but it _does_ solve 1/7th of them,
+which is a helluva lot more than we've gotten out of the DNS WG
+in the last five years...  And no, this isn't the ultimate
+solution, but I do believe it is as close as we're going to be
+able to get with the current DNS mechanisms in place.  DNS simply
+just wasn't designed to handle extremely dynamic information.
+
+    Grab a copy of the draft FYI and read over it.  You may
+be pleasantly surprised by how humble it really is.  Its not
+exactly rocket science, but ...
+
+                                                        Tp.
+
+
+
+...!rutgers!brisco (UUCP)               brisco@pilot.njin.net (Internet)
+    brisco@ZODIAC (BITNET)              908-932-2351          (VOICE)
+                                        908-445-2351 as of 5/27/94 PM
+
+    T.P. Brisco, Associate Director for Network Operations,
+    Computing Services, Telecommunications Division
+    Rutgers University, Piscataway, NJ 08855-0879
+
+Just say "Moo"

@@ -1,0 +1,18 @@
+Make requires `dirname', which NeXT doesn't have.  In order to work around
+this, in .../src:
+
+ln -s port/next/dirname ./
+
+For this egregious kludge to work, . must be in PATH, so don't make as root.
+
+Then you can make.  NeXT doesn't support mkdep, so don't `make depend'.  If
+you have to edit any .h, run `make clean' before `make'.
+
+Don't try to make a multi-architecture binary, it won't work.
+
+`Make install' may require `mkdir -p', which NeXT doesn't have, to create
+all the non-existing parent directories first.  You can work around this by
+running `make -n install'.  For any `mkdir -p's in the output, manually run
+`mkdirs' with the same arguments.
+
+Then `make install' should work.

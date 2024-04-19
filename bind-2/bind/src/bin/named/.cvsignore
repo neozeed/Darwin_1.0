@@ -1,0 +1,7 @@
+tmp_version.c
+named
+pathnames
+pathnames.h
+ns_parser.c
+ns_parser.h
+.depend

@@ -1,0 +1,18 @@
+/.cvsignore/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/Makefile/1.2/Tue Oct  5 00:07:52 1999//Tbind-2
+/herror.c/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/res_comp.c/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/res_data.c/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/res_debug.c/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/res_debug.h/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/res_findprimary.c/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/res_init.c/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/res_mkquery.c/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/res_mkupdate.c/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/res_mkupdate.h/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/res_query.c/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/res_send.c/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/res_sendsigned.c/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/res_sendupdate.c/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/res_update.c/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+D

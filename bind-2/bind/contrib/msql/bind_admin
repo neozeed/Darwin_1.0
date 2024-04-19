@@ -1,0 +1,322 @@
+#!/usr/local/bin/perl
+#
+# RCS Id:	$Id: bind_admin,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+#
+# Name:		bind_admin
+# Purpose:	Perform administrative tasks on msql_dns db
+# Author:	Christopher L Seawood
+# Date:		16Jun95
+#
+# Usage:	bind_admin databasename [-hmsqlhost]
+# Description:	Add and remove rhit_dns entries, if a machine entry exists
+#
+# Tables Used:	msql_dns (read/write) & machines (read)
+# References:	model
+#
+# Change History:
+#
+# Date	   Who	Changes Made
+# -------  ---	------------------------------------------------------------
+# 16Jun95  cls	Original Version.
+# 21Jul95  cls	Redesigned for cmdline args. 
+# 26Jul95  cls  Added simplified db replication. (ie. msqldump...)
+{
+use Msql;
+
+$host = "";
+$MsqlDir = "/usr/local/Minerva";
+
+if ( @ARGV < 1 ) {
+    print "usage: bind_admin databasename [-hhost]\n";
+    exit(1);
+};
+
+$dbname = shift;
+
+while (@ARGV) {
+    $ack = shift;
+    if ( $ack =~ m/^-h\S+/ ) {
+	($host = $ack ) =~ s/^-h//;
+    };
+};
+
+($dbh = Connect Msql $host, $dbname)
+    or die("Can't connect: $Msql::db_errstr\n");
+
+do
+{
+    print <<EOD;
+
+1. List msql_dns entries
+2. Add msql_dns entry
+3. Delete msql_dns entry
+4. Edit msql_dns entry
+5. EXIT
+0. Update other msql servers
+
+EOD
+    do
+    {
+	print "Choice? (1-5) ";
+	chop ($choice = <STDIN>);
+    }
+    while ($choice !~ m/^[0-5]$/);
+
+    if	  ($choice == 1) { &list_msql_dns; }
+    elsif ($choice == 2) { &add_msql_dns; }
+    elsif ($choice == 3) { &delete_msql_dns; }
+    elsif ($choice == 4) { &edit_msql_dns; }
+    elsif ($choice == 0) { &update_msql_db };
+}
+until ($choice == 5);
+
+Msql::DESTROY $dbh;
+	
+}
+sub list_msql_dns {
+    local ($luck, $stmt,@row);
+    print "Enter search condition ('where' clause): ";
+    chop ($luck = <STDIN>);
+    $luck = "where $luck" if ($luck ne "");
+    $luck =~ tr/A-Z/a-z/;
+    $stmt = "select * from msql_dns $luck order by dns_entry";
+    ($luck = Query $dbh $stmt) or warn "Error $Msql::db_errstr\n$stmt\n";
+    print "\n";
+    if ($luck) {
+	$luck->DataSeek(0);
+	while (@row = $luck->FetchRow()){
+	    printf("%5d, %2d, %40s, %10s, %10s, %127s, %d, %d, %d\n",$row[0],$row[1],$row[2],$row[3],$row[4],$row[5],$row[6],$row[7],$row[8]);
+	};
+    };
+    return;
+};
+
+sub add_msql_dns {
+    local ($last,  $stmt, $name, $zoneid, $domain, $class, $type, $asstime, $import, $dynamic, @row, $id, $info);
+
+    $stmt = "select dns_entry from control where one_row = 'A'";
+    ($last = Query $dbh $stmt) or warn "Error $Msql::db_errstr\n$stmt\n";
+    $id = $row[0] if (@row=$last->FetchRow());
+    print "\nEnter the name of the machine to be added: ";
+    chop($name = <STDIN>);
+    while ($name ne "") {
+	print "Enter domain name (e.g. nextwork.rose-hulman.edu.): ";
+	chop($domain = <STDIN>);
+	$stmt = "select zoneid from msql_zones where name = '$domain'";
+	($last = Query $dbh $stmt) or warn "Error $Msql::db_errstr\n$stmt\n"; 
+	$zoneid = $row[0] if (@row=$last->FetchRow());
+	print "Enter class: ";
+	chop($class = <STDIN>);
+	$class =~ tr/a-z/A-Z/;
+	print "Enter type: ";
+	chop($type = <STDIN>);
+	$type =~ tr/a-z/A-Z/;
+	print "Enter info: ";
+	chop($info = <STDIN>);
+	print "Enter importance: ";
+	chop($import  = <STDIN>);
+	print "Dynamic? (y/n) ";
+	chop($ack=<STDIN>);
+	$dynamic = 0;
+	$dynamic = 1 if ($ack =~ /[yY]/);
+	$asstime = time();
+	
+	printf("\n\nMachine:       %s\n",$name);
+	printf("Domain:	       %s\n",$domain);
+	printf("Class:	       %s\n",$class);
+	printf("Type:	       %s\n",$type);
+	printf("Info:	       %s\n",$info);
+	printf("Assigned time: %d\n",$asstime);
+	printf("Importance:    %d\n",$import);
+	printf("Dynamic:       %d\n",$dynamic);
+	print "\n\nDo you accept these values? (Y/N) ";
+	chop($ack = <STDIN>);
+	if ($ack =~ /[Yy]/){
+	    $id++;
+	    $stmt = "insert into msql_dns (dns_entry, zoneid, machine, class, type, info, assigned_time, importance, dynamic) values ($id, $zoneid, '$name', '$class','$type','$info',$asstime,$import,$dynamic)";
+	    Query $dbh $stmt or warn "Error $Msql::db_errstr\n$stmt\n";
+	    print "MSQL_DNS entry $name.$domain added to $dbname.\n";
+	};
+    print "\nEnter the name of the machine to be added: ";
+    chop($name = <STDIN>);
+    };
+    $stmt = "update control set dns_entry = $id where one_row = 'A'";
+    Query $dbh $stmt or warn "Error $Msql::db_errstr\n$stmt\n";
+    return;
+}
+
+sub delete_msql_dns {
+    local ($last, @row, $stmt, $name, $ack, $entry );
+    do {
+	print "Enter the dns_entry of the machine to delete: ";
+	chop($entry=<STDIN>);
+	return if ($entry eq "");
+	$stmt = "select * from msql_dns where dns_entry = $entry";
+	($last = Query $dbh $stmt) or warn "Error $Msql::db_errstr\n$stmt\n";
+	if (@row=$last->FetchRow()){
+	    printf("\n\nMachine:       %s\n",$row[2]);
+	    printf("Zoneid:	   %s\n",$row[1]);
+	    printf("Class:	   %s\n",$row[3]);
+	    printf("Type:	   %s\n",$row[4]);
+	    printf("Info:	   %s\n",$row[5]);
+	    printf("Assigned time: %d\n",$row[6]);
+	    printf("Importance:	   %d\n",$row[7]);
+	    printf("Dynamic:	   %d\n",$row[8]);
+	    print "\n\nDo you really want to remove this msql_dns entry? (Y/N) ";
+	    chop($ack = <STDIN>);
+	    if ($ack =~ /[Yy]/){
+		$stmt = "delete from msql_dns where dns_entry = $entry";
+		Query $dbh $stmt or warn "Error $Msql::db_errstr\n$stmt\n";
+		print "MSQL_DNS entry $entry with machine $row[2] removed from $dbname.\n";
+	    };
+	} else {
+	    print "Invalid dns_entry. Nothing removed.\n";
+	}
+    } while ($entry ne ""); 
+    return;
+}
+
+sub edit_msql_dns {
+    local ($last,  @row, $stmt, $entry, $name, $domain, $zoneid, $class, $type, $asstime, $ack, $num, $done, $import, $dynamic, $info);
+    $num = "";
+    do {
+	print "\nEnter the dns_entry to edit: ";
+	chop($entry=<STDIN>);
+	return if ($entry eq "");
+	$stmt = "select * from msql_dns where dns_entry = $entry";
+	($last = Query $dbh $stmt) or warn "Error $Msql::db_errstr\n$stmt\n";
+	if (@row=$last->FetchRow()){
+	    $done = 'NO';
+	    $zoneid = $row[1];
+	    $name = $row[2];
+	    $class = $row[3];
+	    $type = $row[4];
+	    $info = $row[5];
+	    $asstime = $row[6];
+	    $import = $row[7];
+	    $dynamic = $row[8];
+	    $stmt = "select name from msql_zones where zoneid = $zoneid";
+	    ($last = Query $dbh $stmt) or warn "Error $Msql::db_errstr\n$stmt\n";	    
+	    $domain = $row[0] if (@row=$last->FetchRow());
+	    do {
+		do {
+		    printf("\n\n1. Change hostname:   %s\n",$name);
+		    printf("2. Change domain:	  %s\n",$domain); 
+		    printf("3. Change class:	  %s\n",$class); 
+		    printf("4. Change type:	  %s\n",$type);
+		    printf("5. Change info:	  %s\n",$info);
+		    printf("6. Change importance: %d\n",$import);
+		    printf("7. Dynamic?		  %d\n",$dynamic);
+		    printf("   Assigned time:	  %d\n",$asstime);
+		    print "9. Accept changes\n";
+		    print "0. Reject changes\n";
+		    print "\nChoice? (1-7,9-0) ";
+		    chop($num = <STDIN>);
+		} while ($num !~ /[123456790]/);
+		
+		if ($num eq "1"){
+		    do {
+			print "\nEnter new hostname: ";
+			chop($name = <STDIN>);
+		    } while ($name eq "");
+		} elsif ($num eq "2"){
+		    $olddom = $domain;
+		    do {		
+			print "\nEnter new domain: ";
+			chop($domain = <STDIN>);
+		    } while ($domain eq "");
+		    $stmt = "select zoneid from msql_zones where name = '$domain'";
+		    ($last = Query $dbh $stmt) or warn "Error $Msql::db_errstr\n$stmt\n"; 
+		    if (@row=$last->FetchRow()){
+			$zoneid = $row[0];
+		    } else {
+			print "Domain $domain not found. Using domain $olddom .\n";
+			$domain = $olddom;
+		    };	 
+		} elsif ($num eq "3"){
+		    do {
+			print "\nEnter new class: ";
+			chop($class=<STDIN>);
+		    } while ($class eq "");
+		    $class =~ tr/a-z/A-Z/;
+		} elsif ($num eq "4"){
+		    do {
+			print "\nEnter new type: ";
+			chop($type=<STDIN>);
+		    } while ($type eq "");
+		    $type =~ tr/a-z/A-Z/;
+		} elsif ($num eq "5"){
+		    do {
+			print "\nEnter new info: ";
+		    chop($info=<STDIN>);
+		} while ($info eq "");
+	    } elsif ($num eq "6"){
+		do {
+		    print "\nEnter new info: ";
+		    chop($info=<STDIN>);
+		} while ($info eq "");
+	    } elsif ($num eq "7"){
+		do {
+		    print "\nDynamic ";
+		    chop($ack=<STDIN>);
+		} while ($ack !~ /[yYnN]/);
+		if ($ack =~ /[yY]/ ){
+		   $dynamic = 1;
+	        } else { $dynamic = 0 };
+	    } elsif ($num eq "9"){
+		$done = 'YES';
+	    } elsif ($num eq "0"){
+		return;
+	    } else {
+		return;		# Should never be here
+	    }
+	} while ($done ne 'YES');
+	    
+	    $asstime = time();
+	    $stmt = "update msql_dns set machine='$name', zoneid=$zoneid, class='$class',type='$type',info = '$info', assigned_time = $asstime, importance=$import, dynamic=$dynamic where dns_entry = $entry";
+    Query $dbh $stmt or warn "Error $Msql::db_errstr\n$stmt\n";
+    print "MSQL_DNS entry $entry updated in $dbname.\n";
+	} else {
+	    print "\nNo such dns_entry. Nothing updated.\n";
+	};
+    } while ($entry ne "");
+    return;
+};
+
+sub update_msql_db{
+    local ($stmt, $name, @row);
+    print "Enter the name of the server to update: ";
+    chop($name=<STDIN>);
+    while ($name ne ""){
+	if ($host ne ""){
+	    open (ACK,"$MsqlDir/bin/msqldump -h $host $dbname msql_dns |");
+	} else {
+	    open (ACK,"$MsqlDir/bin/msqldump $dbname msql_dns |");
+	};
+
+	open (DOH, "|$MsqlDir/bin/msql -h $name $dbname >/dev/null");
+	print DOH "DROP TABLE msql_dns\\g\n";	
+	while (<ACK>){
+	    print DOH <ACK>;
+	};
+	close(<ACK>);
+
+	if ($host ne ""){
+	    open (JOY,"$MsqlDir/bin/msqldump -h $host $dbname msql_zones |");
+	} else {
+	    open (JOY,"$MsqlDir/bin/msqldump $dbname msql_zones |");
+	};
+
+	print DOH "DROP TABLE msql_zones\\g\n";	
+	while (<JOY>){
+	    print DOH <JOY>;
+	};
+	close(<JOY>);
+	$stmt = "select zoneid, dns_entry from control where one_row = 'A'";
+	($last = Query $dbh $stmt) or warn "Error $Msql::db_errstr\n$stmt\n";
+	print DOH "update control set zoneid = $row[0], dns_entry = $row[1] where one_row = 'A'\\g" if (@row=$last->FetchRow());
+	print DOH "\\q\n";
+	print "\n\nEnter the name of the server to update: ";
+	chop($name=<STDIN>);
+    };
+}

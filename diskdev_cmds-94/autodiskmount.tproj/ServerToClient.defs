@@ -1,0 +1,80 @@
+subsystem ServerToClient 0;
+
+#include <mach/std_types.defs>
+
+import "DiskArbitrationTypes.h";
+
+/*
+--	TYPES
+*/
+
+/* Beware: these definitions must be kept synchronized with DiskArbitrationTypes.h */
+
+type DiskArbitrationDiskIdentifier = c_string[*:1024];
+
+type DiskArbitrationMountpoint = c_string[*:1024];
+
+type DiskArbitrationIOContent = c_string[*:1024];
+
+/*
+--	Messages sent by the DiskArbitration Server to the Client
+*/
+
+/* Should be obsoleted */
+
+routine DiskArbDiskAppearedWithoutMountpoint_rpc(
+				dest: mach_port_t;
+			in	diskIdentifier: DiskArbitrationDiskIdentifier;
+			in	flags: unsigned;
+			out	errorCode: int);
+
+/* Will be obsoleted */
+
+routine DiskArbUnmountRequest(
+				dest: mach_port_t;
+			in	diskIdentifier: DiskArbitrationDiskIdentifier;
+			out	errorCode: int);
+
+/* Will be obsoleted */
+
+routine DiskArbUnmountAbort(
+				dest: mach_port_t;
+			in	diskIdentifier: DiskArbitrationDiskIdentifier;
+			out	errorCode: int);
+
+/* Will be obsoleted */
+
+routine DiskArbUnmountCommit_obsolete(
+				dest: mach_port_t;
+			in	diskIdentifier: DiskArbitrationDiskIdentifier;
+			out	errorCode: int);
+
+/* Will remain */
+
+routine DiskArbDiskAppearedWithMountpoint_rpc(
+				dest: mach_port_t;
+			in	diskIdentifier: DiskArbitrationDiskIdentifier;
+			in	flags: unsigned;
+			in	mountpoint: DiskArbitrationMountpoint;
+			out	errorCode: int);
+
+/* Will remain */
+
+routine DiskArbDiskAppeared_rpc(
+				dest: mach_port_t;
+			in	diskIdentifier: DiskArbitrationDiskIdentifier;
+			in	flags: unsigned;
+			in	mountpoint: DiskArbitrationMountpoint;
+			in	ioContent: DiskArbitrationIOContent;
+			out	errorCode: int);
+
+/* NEW */
+
+routine DiskArbUnmountNotification_rpc(
+				dest: mach_port_t;
+			in	diskIdentifier: DiskArbitrationDiskIdentifier;
+			in	pastOrFuture: int;
+			in	willEject: int;
+			out	errorCode: int);
+
+

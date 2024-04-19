@@ -1,0 +1,21 @@
+/Makefile/1.1.1.1/Mon Oct  4 22:25:52 1999//Tbind-2
+/WKS_n_RFC1700.c/1.1.1.1/Mon Oct  4 22:25:52 1999//Tbind-2
+/WKS_n_RFC1700.h/1.1.1.1/Mon Oct  4 22:25:52 1999//Tbind-2
+/bind_support.c/1.1.1.1/Mon Oct  4 22:25:52 1999//Tbind-2
+/bind_support.h/1.1.1.1/Mon Oct  4 22:25:52 1999//Tbind-2
+/dns_parse.h/1.1.1.1/Mon Oct  4 22:25:52 1999//Tbind-2
+/dns_support.c/1.1.1.1/Mon Oct  4 22:25:52 1999//Tbind-2
+/dns_support.h/1.1.1.1/Mon Oct  4 22:25:52 1999//Tbind-2
+/iip_support.c/1.1.1.1/Mon Oct  4 22:25:52 1999//Tbind-2
+/iip_support.h/1.1.1.1/Mon Oct  4 22:25:52 1999//Tbind-2
+/master_parse.c/1.1.1.1/Mon Oct  4 22:25:52 1999//Tbind-2
+/parse_error_message.c/1.1.1.1/Mon Oct  4 22:25:52 1999//Tbind-2
+/parse_get_token.c/1.1.1.1/Mon Oct  4 22:25:52 1999//Tbind-2
+/parse_get_token.h/1.1.1.1/Mon Oct  4 22:25:52 1999//Tbind-2
+/parse_number.c/1.1.1.1/Mon Oct  4 22:25:52 1999//Tbind-2
+/parse_otherstuff.c/1.1.1.1/Mon Oct  4 22:25:52 1999//Tbind-2
+/parse_rdata.c/1.1.1.1/Mon Oct  4 22:25:52 1999//Tbind-2
+/parse_record.c/1.1.1.1/Mon Oct  4 22:25:52 1999//Tbind-2
+/pkg_internal_dns_parse.h/1.1.1.1/Mon Oct  4 22:25:52 1999//Tbind-2
+/well-known-port-numbers/1.1.1.1/Mon Oct  4 22:25:52 1999//Tbind-2
+D

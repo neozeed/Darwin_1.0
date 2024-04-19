@@ -1,0 +1,90 @@
+#! /usr/local/bin/perl
+#
+# trnamed - Translate named.run log file to a summary format
+#
+# $Revision: 1.1.1.1 $
+# $Date: 1999/10/04 22:25:56 $
+#
+# $Id: trnamed,v 1.1.1.1 1999/10/04 22:25:56 wsanchez Exp $
+#
+# Mike Minnich
+# minnich@aladdin.es.dupont.com
+#
+
+#
+# Global variables
+#
+$namefile  = "named.byname";
+$addrfile  = "named.byaddr";
+
+$date = `date`;
+chop($date);
+
+
+printf "#\n";
+printf "# named run log summary \n";
+printf "#\n";
+printf "# timestamp\t\t\twho\t\tlookup\n";
+printf "#\n";
+
+#
+# main loop
+#
+while (<>) 
+{
+    next if /^$/;	# skip empty lines
+    chop;		# remove the trailing newline
+
+    if (/^datagram from/)
+    {
+	$beg = index($_, "[") + 1;
+	$end = index($_, "]") - 1;
+	$addr = substr($_, $beg, $end - $beg + 1);
+
+	$beg = index($_, "now ") + 4;
+	$date = substr($_, $beg, length($_) - $beg);
+
+	next;
+    }
+
+    if (/^req: nlookup/)
+    {
+	$beg = index($_, "(") + 1;
+	$end = index($_, ")") - 1;
+	$name = substr($_, $beg, $end - $beg + 1);
+
+	printf "$date\t$addr\t$name\n";
+
+        $namecount{$name}++;
+        $addrcount{$addr}++;
+    }
+
+}
+
+open(TEMP, ">$namefile")  || die "cannot open $namefile";
+printf TEMP "#\n";
+printf TEMP "# DNS lookups by name\n";
+printf TEMP "#\n";
+printf TEMP "# $date\n";
+printf TEMP "#\n";
+printf TEMP "# %38s   %s\n", "name", "count";
+printf TEMP "#\n";
+foreach $type (sort keys(%namecount))
+{
+    printf TEMP "%40s   %d\n", $type, $namecount{$type};
+}
+close(TEMP);
+
+open(TEMP, ">$addrfile") || die "cannot open $addrfile";
+printf TEMP "#\n";
+printf TEMP "# DNS lookups by client address\n";
+printf TEMP "#\n";
+printf TEMP "# $date\n";
+printf TEMP "#\n";
+printf TEMP "# %18s   %s\n", "who", "count";
+printf TEMP "#\n";
+foreach $type (sort keys(%addrcount))
+{
+    printf TEMP "%20s   %d\n", $type, $addrcount{$type};
+}
+close(TEMP);

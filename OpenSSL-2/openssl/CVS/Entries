@@ -1,0 +1,35 @@
+/CHANGES/1.1.1.1/Sun Mar  5 02:30:42 2000//TOpenSSL-2
+/CHANGES.SSLeay/1.1.1.1/Sun Mar  5 02:30:42 2000//TOpenSSL-2
+/Configure/1.2/Sun Mar  5 02:40:31 2000//TOpenSSL-2
+/INSTALL/1.1.1.1/Sun Mar  5 02:30:42 2000//TOpenSSL-2
+/INSTALL.VMS/1.1.1.1/Sun Mar  5 02:30:42 2000//TOpenSSL-2
+/INSTALL.W32/1.1.1.1/Sun Mar  5 02:30:42 2000//TOpenSSL-2
+/LICENSE/1.1.1.1/Sun Mar  5 02:30:42 2000//TOpenSSL-2
+/Makefile.org/1.2/Sun Mar  5 04:49:55 2000//TOpenSSL-2
+/Makefile.ssl/1.2/Sun Mar  5 03:45:43 2000//TOpenSSL-2
+/NEWS/1.1.1.1/Sun Mar  5 02:30:42 2000//TOpenSSL-2
+/README/1.1.1.1/Sun Mar  5 02:30:43 2000//TOpenSSL-2
+/config/1.2/Sun Mar  5 02:40:31 2000//TOpenSSL-2
+/e_os.h/1.1.1.1/Sun Mar  5 02:30:43 2000//TOpenSSL-2
+/e_os2.h/1.1.1.1/Sun Mar  5 02:30:43 2000//TOpenSSL-2
+/install.com/1.1.1.1/Sun Mar  5 02:30:43 2000//TOpenSSL-2
+/makevms.com/1.1.1.1/Sun Mar  5 02:30:43 2000//TOpenSSL-2
+/openssl.doxy/1.1.1.1/Sun Mar  5 02:30:43 2000//TOpenSSL-2
+D/VMS////
+D/apps////
+D/bugs////
+D/certs////
+D/crypto////
+D/demos////
+D/dep////
+D/doc////
+D/ms////
+D/mt////
+D/perl////
+D/rsaref////
+D/shlib////
+D/ssl////
+D/test////
+D/times////
+D/tools////
+D/util////

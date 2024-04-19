@@ -1,0 +1,26 @@
+/ChangeLog/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/Makefile/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/Makefile.in/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/VERSION/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/bindtextdom.c/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/cat-compat.c/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/dcgettext.c/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/dgettext.c/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/explodename.c/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/finddomain.c/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/gettext.c/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/gettext.h/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/gettextP.h/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/hash-string.h/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/intl-compat.c/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/l10nflist.c/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/libgettext.h/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/linux-msg.sed/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/loadinfo.h/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/loadmsgcat.c/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/localealias.c/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/po2tbl.sed/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/po2tbl.sed.in/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/textdomain.c/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+/xopen-msg.sed/1.1.1.1/Thu Sep 23 17:21:42 1999//Tfetchmail-2
+D

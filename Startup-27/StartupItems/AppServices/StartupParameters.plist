@@ -1,0 +1,15 @@
+{
+  Description     = "application services";
+  Provides        = ("DesktopDB",
+		     "AppleScript",
+		     "Pasteboard",
+		     "InputManagers",
+		     "Printing");
+  Requires        = ("Resolver");
+  OrderPreference = "None";
+  Messages =
+  {
+    start = "Starting application services.";
+    stop  = "Stopping application services.";
+  };
+}

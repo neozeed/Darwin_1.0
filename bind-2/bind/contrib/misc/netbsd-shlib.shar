@@ -1,0 +1,1152 @@
+Path: vixie!pa.dec.com!bind-redist-request
+From: matt@ibmoto.com (Matt Ragan)
+Newsgroups: local.mail.dns.bind
+Subject: Modifications to 4.9.3 shres for NetBSD shared libraries
+Date: 20 Sep 1994 15:44:56 -0700
+Organization: Vixie Enterprises
+Lines: 1119
+Sender: daemon@vix.com
+Distribution: local
+Message-ID: <199409202144.QAA10679@chaos.ibmoto.com>
+NNTP-Posting-Host: gw.home.vix.com
+X-Received: by gw.home.vix.com id AA21316; Tue, 20 Sep 94 15:44:42 -0700
+X-Received: from pobox1.pa.dec.com by inet-gw-1.pa.dec.com (5.65/10Aug94)
+	id AA24362; Tue, 20 Sep 94 15:38:02 -0700
+X-Received: by pobox1.pa.dec.com; id AA01411; Tue, 20 Sep 94 15:37:34 -0700
+X-Received: by pobox1.pa.dec.com; id AA01407; Tue, 20 Sep 94 15:37:32 -0700
+X-Received: from relay1.UU.NET by inet-gw-2.pa.dec.com (5.65/10Aug94)
+	id AA21672; Tue, 20 Sep 94 15:31:16 -0700
+X-Received: by relay1.UU.NET 
+	id QQxifo10749; Tue, 20 Sep 1994 18:09:47 -0400
+X-Received: from apple.com by relay1.UU.NET with SMTP 
+	id QQxifo10709; Tue, 20 Sep 1994 18:09:33 -0400
+X-Received: from [129.38.12.8] by apple.com with SMTP (5.61/8-Oct-1993-eef)
+	id AA20809; Tue, 20 Sep 94 14:47:10 -0700
+	for bind@uunet.uu.net
+X-Received: (from matt@localhost) by chaos.ibmoto.com (8.6.9/8.6.9) id QAA10679 for bind@uunet.uu.net; Tue, 20 Sep 1994 16:44:10 -0500
+X-To: bind@uunet.uu.net
+X-Mailer: ELM [version 2.4 PL23]
+X-Mime-Version: 1.0
+X-Content-Type: text/plain; charset=US-ASCII
+X-Content-Transfer-Encoding: 7bit
+X-Content-Length: 41677     
+
+Here is a shar file that contains a new shres directory and a diff to the
+main Makefile to add support for automatically building shared libraries
+on NetBSD for BIND 4.9.3.  The Makefile, 'makeshlib' script and installation
+instructions in 'shres' are capable of building shared libraries for both
+SunOS 4.x and for NetBSD 1.x (on the SPARC at least - I don't have a PC
+available to test out the Intel version, so it someone would like to try
+it and let me know if it works, or what changes need to be made, I'd be
+most appreciative)
+
+
+Here's the short and simple on installing it:
+
+Move your shres directory to a different name, such as shres.old.
+
+Unshar the file at the bottom of this message
+
+Run 'patch -p Makefile <Makefile.diff' to add four lines to the Makefile
+so it will build the shres/libresolv_pic.a library.
+
+Follow the installation instructions in shres/INSTALL.NetBSD.
+
+
+Please contact me if you have any problems, questions, or suggestions.
+-- 
+--------------------------------------------------------------------------
+Matt Ragan  (matt@ibmoto.com)  Motorola/IBM Somerset PowerPC Design Center
+Network Administrator          Systems/Network Engineering  (512) 795-7298
+9737 Great Hills Trail         Austin, Tx  78759        FAX (512) 795-7519
+--------------------------------------------------------------------------
+
+----- 8< --- Cut here --- >8 -----
+# This is a shell archive.  Save it in a file, remove anything before
+# this line, and then unpack it by entering "sh file".  Note, it may
+# create directories; files and directories will be owned by you and
+# have default permissions.
+#
+# This archive contains:
+#
+#	shres
+#	shres/INSTALL
+#	shres/INSTALL.NetBSD
+#	shres/ISSUES
+#	shres/Makefile
+#	shres/README.NetBSD
+#	shres/lorder-sparc.sed
+#	shres/makeshlib
+#	shres/shlibname.awk
+#	Makefile.diff
+#
+echo c - shres
+mkdir shres > /dev/null 2>&1
+echo x - shres/INSTALL
+sed 's/^X//' >shres/INSTALL << 'END-of-shres/INSTALL'
+XInstalling BIND 4.9.3 resolver code in SunOS 4.1.x shared libraries
+X===================================================================
+X
+X$Id: netbsd-shlib.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X
+Xby Chris Davis <ckd@kei.com>
+X
+Xbased on code and documentation by:
+X  Paul Balyoz <pab@naucse.cse.nau.edu>
+X  Piete Brooks <pb@cl.cam.ac.uk>
+X  Dave Morrison <drmorris@mit.edu>
+X  Hal Pomeranz <pomeranz@nas.nasa.gov>
+Xand probably others (apologies if I've forgotten you).
+X
+XNote that if you wish to modify this process, you should read and
+Xunderstand the file ISSUES in this directory.
+X
+X1.  Get and unpack a copy of BIND 4.9.3.  (This document is from that
+X    distribution, as shres/INSTALL.)  BIND's home site is
+X    gatekeeper.dec.com, and it lives in /pub/misc/vixie.
+X
+X    In the remainder of this document, $BINDSRC represents the directory
+X    you unpacked the BIND distribution into.
+X
+X2.  Configure it to your tastes by editing $BINDSRC/conf/options.h, using
+X    $BINDSRC/OPTIONS as a guide to the available choices.  SUNSECURITY
+X    must be on (and will be turned on automatically on Suns).  Not all of
+X    the options affect the resolver library, but you probably want the new
+X    named as well (the one Sun supplies is really, really old).
+X
+X3.  (Optional) Use "make DST=sun4.b links" to create a shadow source tree
+X    for the Sun4 architecture (see $BINDSRC/README for details).  This is
+X    particularly useful if you are building for more than one architecture
+X    or operating system (like, say, SunOS 4.1.x and Solaris 2.x).  If you
+X    do this, cd into the new build directory ("cd sun4.b", for example).
+X
+X4.  Uncomment the appropriate lines in $BINDSRC/sun4.b/Makefile (or
+X    $BINDSRC/Makefile if you didn't do step 3, shame shame) for SunOS 4.
+X    To build a shared library, uncomment the lines just after the one
+X    labeled "uncomment next line to build a shared library version of
+X    libresolv", in the SunOS 4.x section.  If you have gcc, use it, as it
+X    can share the read-only data (see $BINDSRC/shres/ISSUES for more
+X    details).
+X
+X    Note that there are some "common" lines in the Makefile that you will
+X    need to uncomment for SunOS 4 in addition to the ones specifically for
+X    SunOS 4; don't forget to uncomment those as well.
+X
+X5.  (Optional) Add $BINDSRC/bin to your path, and "make depend".
+X
+X6.  Type "make" to build named, the tools, the "normal" libresolv, and the
+X    position-independent code ("pic") libresolv.
+X
+X7.  Install the appropriate "jumbo libc patch" for your SunOS version, if
+X    you haven't already.  Among other things, this includes fixes for some
+X    bugs in the shared library building process.
+X
+X    At the time of this writing, the patch numbers and latest revisions of
+X    the "international" versions of these patches were:
+X
+X      4.1.3:    100891-10
+X      4.1.3_U1: 101558-02
+X
+X    Note that "international" means "has not installed the extra-cost 'US
+X    Encryption Kit'", so most sites, even in the US, will need these
+X    versions.  If you have installed the "US Encryption Kit" you will need
+X    to get the domestic versions.
+X
+X    As "recommended" patches, these patches are available for anonymous
+X    ftp to all Sun customers, even those without support contracts, from
+X    sunsolve1.sun.com in the /pub/patches directory.
+X
+XPerform the following steps to integrate the shareable resolver library
+Xcode (libresolv_pic.a) into the shared libc (for both BSD and SysV
+Xuniverses).  If you use the $BINDSRC/shres/makeshlib script, steps 8-16
+Xwill be done for you; in that case, you may want to skip ahead to step 17.
+X
+XThe makeshlib script does minimal error checking and is mostly a quick &
+Xdirty convenience for people tired of typing commands.
+X
+XNote that some or all of these steps may need to be done as root.  You
+Xshould read the makeshlib script carefully before running it as root.
+X
+XThe makeshlib script is not executable by default.  You may wish to use
+X"sh -x shres/makeshlib" to view the commands as they are executed as a
+Xprogress indicator.
+X
+X8.  Move into the shared-lib area and make a temporary directory:
+X
+X      cd /usr/lib/shlib.etc
+X      mkdir tmp
+X
+X9.  Move into this new directory, extract the pic (position independent
+X    code) object files from libc_pic.a and remove the SYMDEF file.  The
+X    renaming (mv commands) is done because the "ar" command truncates
+X    names to 16 characters.
+X
+X      cd tmp
+X      ar x ../libc_pic.a
+X      rm __.SYMDEF
+X      mv rpc_dtablesize. rpc_dtablesize.o
+X      mv rpc_commondata. rpc_commondata.o
+X      mv xccs.multibyte. xccs.multibyte.o
+X
+X10. Extract the shareable libresolv_pic.a into this target directory.  This
+X    will replace Sun's inet_addr.o, which is ok, this one is better.  It
+X    will also replace Sun's getnetent.o, which is ok, as long as you have
+X    DNS entries for your networks (as in RFC 1101).  Make sure that Sun's
+X    mktemp.o and strpbrk.o don't get stomped; you need to use Sun's.
+X
+X      ar x $BINDSRC/shres/libresolv_pic.a
+X      rm __.SYMDEF
+X
+X11. Make sure the old host resolver is not still lying around:
+X
+X       rm gethostent.o
+X
+X    (ignore error "rm: gethostent.o nonexistent" if you see it.)
+X
+X12. Go back up to the shared library building directory and duplicate the
+X    list of object files to use:
+X
+X      cd ..
+X      cp lorder-sparc lorder-sparc.orig
+X
+X13.  Edit this object file list and make the following modifications if
+X     they haven't already been done before to this file:
+X
+X             remove: gethostent.o
+X             add:    gethnamaddr.o
+X                     herror.o
+X                     sethostent.o
+X                     res_query.o
+X                     res_mkquery.o
+X                     res_send.o
+X                     res_debug.o
+X                     res_comp.o
+X                     res_init.o
+X                     getnetnamadr.o
+X                     getnetbyname.o
+X                     getnetbyaddr.o
+X                     strerror.o
+X
+X     If you don't want the getnet* routines (some sites want to use yp for
+X     getting networks), don't add the getnet* lines.  It isn't really
+X     kosher to hack the lorder-sparc file like this, but it isn't
+X     deadly either.  Other orderings may have different performance
+X     effects (could be better, could be worse...).
+X
+X     The easiest way to do this is to apply (using the 'patch' program)
+X     the patch file $BINDSRC/shres/sun-lorder-sparc.patches.
+X
+X14.  The Makefile in shlib.etc for building shared libraries has one
+X     problem when you run it as the super user if you don't have '.' in
+X     your path (and you shouldn't...).  So edit it and modify the
+X     definition of "OBJSORT" to read:
+X
+X       OBJSORT=./objsort
+X
+X     If you are using the SunOS 4.1.x unpatched shlib.etc, change the
+X     lines (there are two) in the Makefile which read
+X
+X       ld -assert pure-text `${OBJSORT} lorder-sparc tmp`
+X
+X     to read
+X
+X       ld -assert pure-text `${OBJSORT} lorder-sparc tmp` -ldl
+X
+X     The patched shlib.etc for 4.1.3 already has this fixed, but the
+X     patched shlib.etc for 4.1.3_U1 does not.  (Why?  I don't know...)
+X
+X     The easiest way to do this is to apply (using the 'patch' program)
+X     the patch file $BINDSRC/shres/sun-Makefile.patches.  If you have the
+X     4.1.3 version of the Makefile, the second chunk will fail; this can
+X     safely be ignored.
+X
+X15.  Now we can finally build the shared library.  Type:
+X       make libc.so
+X
+X     What kind of errors might you get?  Here's a couple:
+X
+X       a. It blows up on one of the .o files in tmp, saying that the
+X	  object file is in an inconsistent state.
+X
+X          SOLUTION: start over; you did something wrong when you compiled
+X	  libresolv_pic.a in step 4, above.  Make SURE you're using the
+X	  libresolv_pic.a that was built in $BINDSRC/shres, and not the
+X	  "normal" libresolv.a built in $BINDSRC/res.
+X
+X       b. It lists hundreds of error lines about offsets or addresses
+X	  being wrong in all your resolver .o files.
+X
+X          SOLUTION: start over; you needed to specify "-pic" or "-fpic" to
+X	  the C compiler when building shres/libresolv_pic.a.  Make sure
+X	  you're using libresolv_pic.a, and make sure that SHCC and PIC
+X	  were properly defined in $BINDSRC/Makefile.
+X
+X16.  To build the System V shared libc, repeat steps 8-11, using
+X     'libcs5_pic.a' instead of 'libc_pic.a', then 'make libcs5.so'.
+X
+XIf you used makeshlib, you should now 'cd /usr/lib/shlib.etc' for the
+Xfollowing tests. You will also have a symlink "tmp" and two directories
+X"tmp.s5" and "tmp.ucb" in this directory, all three of which can be
+Xdeleted.
+X
+X17.  If all goes well, you now have a "libc.so.x.y.z" in this directory
+X     (two, if you rebuilt the SysV shared library as well; the BSD one is
+X     libc.so.1.y.z, while the SysV one is libc.so.2.y.z).  Test it (or
+X     them) out before installing it (or them) systemwide!  You can do this
+X     by pointing the LD_LIBRARY_PATH environment variable to the current
+X     directory, then trying various networking commands.
+X
+X     In csh or tcsh:
+X       setenv LD_LIBRARY_PATH `pwd`
+X       ftp another.host.com
+X       telnet someone.else.ca
+X       unsetenv LD_LIBRARY_PATH
+X
+X     ping (or any other setuid/setgid program) will not work if you test
+X     it this way, because LD_LIBRARY_PATH is ignored for security reasons.
+X
+X     Make sure you have a valid /etc/resolv.conf, or it will not appear to
+X     work.  If you have been using DNS via NIS in the past, you might not
+X     have a resolv.conf file on the clients.
+X
+X     If anything in the library fails, you need to start section B over
+X     again.  Maybe you forgot to use Sun's versions of mktemp.o and
+X     strpbrk.o; things just won't work with BIND's new versions of these
+X     files.
+X
+X18.  When you are sure it's working OK, you can install it into the system
+X     library directory (you will need to be superuser to do this):
+X
+X       su
+X       cd /usr/lib/shlib.etc
+X       cp libc.so.x.y.z /usr/lib
+X       chmod 755 /usr/lib/libc.so.x.y.z
+X       # for sysv shared library
+X       cp libc.so.x.y.z /usr/5lib
+X       chmod 755 /usr/5lib/libc.so.x.y.z
+X       # for both
+X       ldconfig
+X
+X     Next you need to install the shared archive, which contains
+X     initialized global data.  If you skip this step, executables compiled
+X     on your machine since the new library was installed will not contain
+X     that data.  They still will be able to run (which is probably why
+X     this step has been missing from both the Internet and *Sun*
+X     instructions for years), as the data is replicated in the shared
+X     object.  A few preliminary tests indicate missing this step can
+X     marginally slow down processes, although it necessarily a depends on
+X     the program and the machine in question.  For more details on this,
+X     see $BINDSRC/shres/ISSUES.
+X
+X     The numbers x, y, and z must match the numbers in the shared object
+X     above.
+X
+X       cd /usr/lib
+X       cp libc.sa.x.y libc.sa.x.y.z
+X       ranlib libc.sa.x.y.z
+X       cd /usr/5lib
+X       cp libc.sa.x.y libc.sa.x.y.z
+X       ranlib libc.sa.x.y.z
+X
+X19.  You can prove that you're using the new library now, by watching the
+X     output of something like:
+X
+X       trace date
+X
+X     Look for the open() of libc.so.* and note the version number.
+X
+X     The latest BIND resolver is now installed in your system's shared C
+X     library.
+X
+X20.  Once you are fully confident of your new library, reboot your
+X     machine.  Until you do, running processes will continue to use the
+X     old shared library.
+X
+XYou may also want to modify the unshared system C library /usr/lib/libc.a;
+Xsee the item "Modifying the static libc" in shres/ISSUES for discussion of
+Xhow (and why) to do this.
+X
+END-of-shres/INSTALL
+echo x - shres/INSTALL.NetBSD
+sed 's/^X//' >shres/INSTALL.NetBSD << 'END-of-shres/INSTALL.NetBSD'
+XInstalling BIND 4.9.3 resolver code in NetBSD 1.x shared libraries
+X===================================================================
+X
+Xmodified for NetBSD by Matt Ragan <matt@ibmoto.com>
+X
+Xbased directly on documentation for installing SunOS shared libraries
+Xby Chris Davis <ckd@kei.com>
+X
+Xbased on code and documentation by:
+X  Paul Balyoz <pab@naucse.cse.nau.edu>
+X  Piete Brooks <pb@cl.cam.ac.uk>
+X  Dave Morrison <drmorris@mit.edu>
+X  Hal Pomeranz <pomeranz@nas.nasa.gov>
+Xand probably others (apologies if I've forgotten you).
+X
+XNote that if you wish to modify this process, you should read and
+Xunderstand the file ISSUES in this directory.
+X
+X1.  Get and unpack a copy of BIND 4.9.3.  (This document is from that
+X    distribution, as shres/INSTALL.)  BIND's home site is
+X    gatekeeper.dec.com, and it lives in /pub/misc/vixie.
+X
+X    In the remainder of this document, $BINDSRC represents the directory
+X    you unpacked the BIND distribution into.
+X
+X2.  Configure it to your tastes by editing $BINDSRC/conf/options.h, using
+X    $BINDSRC/OPTIONS as a guide to the available choices.  SUNSECURITY
+X    must be on (and will be turned on automatically on Suns).  Not all of
+X    the options affect the resolver library, but you probably want the new
+X    named as well.  The one supplied with NetBSD 1.0 is from BIND 4.8.3.
+X
+X3.  (Optional) Use "make DST=NetBSD links" to create a shadow source tree
+X    for the NetBSD architecture (see $BINDSRC/README for details).  This is
+X    particularly useful if you are building for more than one architecture
+X    or operating system (like, say, SunOS 4.1.x and Solaris 2.x).  If you
+X    do this, cd into the new build directory ("cd NetBSD", for example).
+X
+X4.  Uncomment the appropriate lines in $BINDSRC/NetBSD/Makefile (or
+X    $BINDSRC/Makefile if you didn't do step 3, shame shame) for NetBSD 1.x.
+X    To build a shared library, uncomment the lines just after the one
+X    labeled "uncomment next line to build a shared library version of
+X    libresolv", in the NetBSD section.
+X
+X5.  (Optional) run "make depend".
+X
+X6.  Type "make" to build named, the tools, the "normal" libresolv, and the
+X    position-independent code ("pic") libresolv.
+X
+X7.  Perform the following steps to integrate the shareable resolver library
+X    code (libresolv_pic.a) into the shared libc.  If you use the
+X	$BINDSRC/shres/makeshlib script, steps 8-14 will be done for you;
+X	in that case, you may want to skip ahead to step 17.
+X
+X    The makeshlib script does minimal error checking and is mostly a quick &
+X    dirty convenience for people tired of typing commands.
+X
+X    Note that some or all of these steps may need to be done as root.  You
+X    should read the makeshlib script carefully before running it as root.
+X
+X    The makeshlib script is not executable by default.  You may wish to use
+X    "sh -x shres/makeshlib" to view the commands as they are executed as a
+X    progress indicator.
+X
+X8.  Make a temporary directory underneath the shlib directory
+X
+X      mkdir tmp
+X
+X9.  Move into this new directory, extract the pic (position independent
+X    code) object files from libc_pic.a and remove the SYMDEF file.
+X
+X      cd tmp
+X      ar x /usr/lib/libc_pic.a
+X      rm __.SYMDEF
+X
+X10. The BIND 4.9.3 resolver will replace getnet*.o, which is ok, as long
+X	as you have DNS entries for your networks (as in RFC 1101).  If you do
+X	not want to use the BIND 4.9.3 getnet*.o, delete them out of the
+X	archive.
+X
+X		ar d ../libresolv_pic.a getnetbyaddr.o getnetbyname.o \
+X			getnetent.o getnetnamadr.o
+X		ranlib ../libresolv_pic.a
+X
+X11. Extract the shareable libresolv_pic.a into this target directory.  It
+X    will replace getnetent.o, which is ok, as long as you have DNS entries
+X	for your networks (as in RFC 1101).
+X
+X      ar x ../libresolv_pic.a
+X      rm __.SYMDEF
+X
+X12. Make sure the old host resolver is not still lying around:
+X
+X       rm gethostnamadr.o
+X
+X    (ignore error "rm: gethostnamadr.o nonexistent" if you see it.)
+X
+X13. Go back up to the shared library building directory and create the
+X    list of object files to use:
+X
+X      cd ..
+X      lorder tmp/*.so tmp/*.o | tsort > lorder.list
+X
+X	(ignore any nm: or lorder: warning/errors)
+X
+X14.	Use this command to make the new shared library:
+X
+X	ld -o libc.so.`/bin/ls /usr/lib/libc.so.* | awk -f shlibname.awk` \
+X	   -Bshareable -Bforcearchive `cat lorder.list`
+X
+X     What kind of errors might you get?  Here's a couple:
+X
+X       a. It blows up on one of the .o files in tmp, saying that the
+X	  object file is in an inconsistent state.
+X
+X          SOLUTION: start over; you did something wrong when you compiled
+X	  libresolv_pic.a in step 4, above.  Make SURE you're using the
+X	  libresolv_pic.a that was built in $BINDSRC/shres, and not the
+X	  "normal" libresolv.a built in $BINDSRC/res.
+X
+X       b. It lists hundreds of error lines about offsets or addresses
+X	  being wrong in all your resolver .o files.
+X
+X          SOLUTION: start over; you needed to specify "-pic" or "-fpic" to
+X	  the C compiler when building shres/libresolv_pic.a.  Make sure
+X	  you're using libresolv_pic.a, and make sure that SHCC and PIC
+X	  were properly defined in $BINDSRC/Makefile.
+X
+XIf you used makeshlib, you should make sure you are in $BINDSRC/shres for
+Xthe following tests. You will also have a directory "ucbtmp" which can be
+Xdeleted.
+X
+X15.  If all goes well, you now have a "libc.so.x.y.z" in this directory
+X     libc.so.1.y.z, while the SysV one is libc.so.2.y.z).  Test it out
+X	 before installing it systemwide!  You can do this by pointing the
+X	 LD_LIBRARY_PATH environment variable to the current directory, then
+X	 trying various networking commands.
+X
+X     In csh or tcsh:
+X       setenv LD_LIBRARY_PATH `pwd`
+X       ftp another.host.com
+X       telnet someone.else.ca
+X       unsetenv LD_LIBRARY_PATH
+X
+X     ping (or any other setuid/setgid program) will not work if you test
+X     it this way, because LD_LIBRARY_PATH is ignored for security reasons.
+X
+X     Make sure you have a valid /etc/resolv.conf, or it will not appear to
+X     work.  If you have been using DNS via NIS in the past, you might not
+X     have a resolv.conf file on the clients.
+X
+X16.  When you are sure it's working OK, you can install it into the system
+X     library directory (you will need to be superuser to do this):
+X
+X       su
+X       cp libc.so.x.y.z /usr/lib
+X       chmod 444 /usr/lib/libc.so.x.y.z
+X       ldconfig
+X
+X17.  You can prove that you're using the new library now, by watching the
+X     output of something like:
+X
+X       trace date
+X
+X     Look for the open() of libc.so.* and note the version number.
+X
+X     The latest BIND resolver is now installed in your system's shared C
+X     library.
+X
+X18.  Once you are fully confident of your new library, reboot your
+X     machine.  Until you do, running processes will continue to use the
+X     old shared library.
+X
+XYou may also want to modify the unshared system C library /usr/lib/libc.a;
+Xsee the item "Modifying the static libc" in shres/ISSUES for discussion of
+Xhow (and why) to do this.
+X
+END-of-shres/INSTALL.NetBSD
+echo x - shres/ISSUES
+sed 's/^X//' >shres/ISSUES << 'END-of-shres/ISSUES'
+XExpanded and updated for BIND 4.9.3 by Chris Davis <ckd@kei.com>
+X                                       1994: 6/6, 6/28, 7/6, 7/11
+XOriginally by  Dave Morrison <drmorris@mit.edu>, 2/3/94
+X
+XChanges to the shared library setup have lots of little pitfalls and
+Xmines.  This is an attempt to map the minefield, for those who feel
+Xthey've noticed something that they think should be done another way.
+X
+X
+X* What's shared, what's static
+X
+XThe purpose of these modifications to Sun's libc.so is to provide DNS
+Xlookup for gethostby* and if you desire, getnetby* (this requires
+Xinstalling RFC 1101 network entries in the DNS).  This involves replacing
+Xthe following SunOS libc routines.
+X
+X	gethostbyname			getnetbyname
+X	gethostbyaddr			getnetbyaddr
+X	gethostent			getnetent
+X	sethostent			setnetent
+X	endhostent			endnetent
+X
+XThe routines use the res_* routines from the resolv library to get their
+Xinformation from DNS.  Because it is most convenient, all these objects
+Xare linked into the shared library, meaning they are linkable without
+Xusing -lresolv.  Full details are given below, and unless you want to get
+Xinto the nitty gritty, obey the following rule.
+X
+XAnything which uses -lresolv routines other than the stock OS routines
+Xabove should link using -lresolv.
+X
+XThe symptom of not obeying this rule is finding that _res is unresolved at
+Xlink time.
+X
+X
+X* Modifying the static libc
+X
+XThe 4.9.3 libresolv uses two routines that are not in Sun's shipped libc
+X(inet_aton and strerror).  The BIND 4.9.3 shared library install procedure
+Xmerges the compatibility code for these routines into libc.so, but does
+Xnot modify libc.a, nor does it include these routines into the unshareable
+Xlibresolv.a.  This means code that is statically linked (cc -Bstatic or
+Xgcc -static) that uses -lresolv will fail to link unless also linked with
+Xthe compatibility library (lib44bsd.a).  Typical culprits are emacs and
+XBerkeley sendmail 8.6.x, since they're among the few things that are often
+Xlinked statically.
+X
+XSolutions for this dilemma include (but are probably not limited to) the
+Xfollowing:
+X
+X  - use 'ar' to integrate the needed compatibility code in libc.a
+X
+X  - use 'ar' to integrate the needed compatibility code in libresolv.a
+X
+X  - always link programs dynamically, even when using -lresolv
+X
+X  - link with -l44bsd when statically linking and using -lresolv
+X
+XThe needed compatibility modules are compat/lib/inet_addr.o and
+Xcompat/lib/strerror.o.  Note that inet_addr.o, if integrated into libc.a,
+Xwill replace Sun's supplied one, but as with the shared library code
+X"that's ok, this one is better".
+X
+XMy personal solution was to link them into libc.a, in order to have as few
+Xdifferences between statically and dynamically linked programs as possible.
+X
+XTo do this, first make a copy of libc.a (call it libcnew.a).
+X
+XThen, from the top of the BIND build tree (i.e. $BINDSRC/sun4.b if you did
+X"make links"):
+X
+X  ar rv /usr/lib/libcnew.a compat/lib/inet_addr.o compat/lib/strerror.o
+X
+X(you should see something like
+X  r - compat/lib/inet_addr.o
+X  a - compat/lib/strerror.o
+Xas the output from ar)
+X
+X  ranlib /usr/lib/libcnew.a
+X
+XMake sure nobody is using the static libc for anything, then
+X
+X  cd /usr/lib
+X  mv libc.a libc.a.old && mv libcnew.a libc.a
+X
+X
+X* Compiling with gcc
+X
+XCompiling resolv with gcc is highly preferable as it understands the
+Xconcept of making read only data shared.  Sun's 4.1.3 cc doesn't (simply
+Xto make read-only strings shared takes some nasty effort).
+X
+XCurrently (4.9.3 resolv and gcc 2.5.8), the resolv library uses does not
+Xcreate any special gcc references.  Specifically, there are no unresolved
+Xreferences in the resolv objects, that are present in libgcc.a.  This
+Xmeans that even if you compile with gcc, the objects created may be linked
+Xwith any compiler.  All is cool, use gcc.
+X
+XSHOULD THIS CHANGE (in a new release of gcc, or resolv - not likely to
+Xchange, but possible), you can still use gcc and create objects usable by
+Xany compiler.  You will need to add libgcc.a to the shared library link
+Xline (before -ldl).
+X
+X
+X* global variable collision
+X
+XThe global variable _res is particularly troublesome.  Any executables
+Xwhich were compiled with -lresolv before the shared library was installed
+Xhas in it _res staticly compiled in as a global data structure.
+XUnfortunately, the resolv library in 4.9.3 BIND has a global variable
+X_res, and it is defined slightly differently.  At run time, when the
+Xshared libraries are loaded up, some linking is done by ld.so.  The
+Xruntime linker notices that _res is statically defined and does not link
+Xin the dynamic version.  This means that if the shared libc resolver code
+Xever gets called from this executable, the _res defined there would
+Xoverwrite the static version.  Since the static version is a smaller data
+Xstructure, this could overwrite bits of memory.  Not good.  It turns out
+Xthe worst case is not a likely scenario, but I'd rather be safe then
+Xsorry.
+X
+XThis is why shres/Makefile does -D_res=_res_shlib.  The collision is
+Xremoved.  This means that _res is not accessible as a global variable in
+Xthe shared libc library.  To compile a program which accesses _res
+Xdirectly, libresolv must linked in statically.
+X
+XThis would not be a problem if you could recompile any code which used
+X_res.  This would mean recompiling some of SunOS and perhaps other vendor
+Xcode if you've obtained additional software.  Since people don't generally
+Xhave the source to everything on the machine, this isn't a viable option
+Xexcept for Sun and miscellaneous wizards.
+X
+XNote that because of this workaround, you cannot use libresolv_pic.a as
+X/usr/lib/libresolv.a, which would make things much simpler.  (If you try,
+Xprograms linked with -lresolv won't find _res, as it will be named
+X_res_shlib.)
+X
+X
+X* Having named and tools linked with a shared libc.
+X
+XIt is very tempting (and almost doable) to compile the entire BIND
+Xdistribution with a resolv in a shared libc.  There are dangers associated
+Xwith doing this.  First, there's the global variable collision problem
+Xmentioned above.  Second, there's a problem of maintaining the the shared
+Xlibrary version control.
+X
+XPeople have a tendency to copy tools like dig or the named server from
+Xmachine to machine.  If the new shared library (the one with *this*
+Xdistributions resolv) is not present on the machines to which these
+Xgoodies are copied TO, the user will be getting SUN'S copy of resolv.
+XThis could cause you to lose most heinously, and you will spend DAYS if
+Xnot WEEKS trying to figure out what the problem is.  It's debatable if
+Xthere's even a performance improvement by doing the sharing.  Compare that
+Xto the debugging and frustration time you are going to spend.
+X
+XYou also will need to replace libc everywhere when a new release when new
+Xreleases come out.  This isn't as big an issue for a production release of
+Xbind, but for the alpha test team, it means a few less things to worry
+Xabout, when there is already plenty to worry about.
+X
+XAgain, if you could recompile everything, there wouldn't be a problem.
+XVendors should release the tools and server shared, as they already have
+Xthe assurance that there is a standard libc, and users may want to handle
+Xsome problem routines by relinking the shared library.
+X
+X
+X* shared archives
+X
+XIn addition to a shared object (the libc.so files) which contain the
+Xexecutable libc code, there is also a shared archive (the libc.sa files).
+XThe shared archive contains global initialized data.  When a program is
+Xlinked, if it accesses any of this global initialized data, that data is
+Xincluded from the shared archive in the final executable.  Some examples
+Xinclude errno (intialzed to zero), the ctype.h tables, sys_errlist, and
+X_iob for stdio.
+X
+XIf this data is not accessible from a shared archive, but is accessible
+Xfrom the shared object (e.g. no libc.sa.x.y.z exists for libc.so.x.y.z),
+Xthe shared object copy will be used, but not linked into the executable.
+XThis results in a performance hit for executables which use that data.
+XSun's documentation claims this to be possibly degrading to the system as
+Xa whole on a heavily used library.  I have yet to observe anything besides
+Xa slight (max 10%) performance hit.
+X
+XThis is why it is important to copy+ranlib the old libc.sa.a.b.c, when
+Xcreating a new libc.so.x.y.z.  Sun's instructions in building a new shared
+Xlibc (shlib.etc package or patch) neglect to mention this.
+X
+XThere are 5 instances of global initialized data in -lresolv.  They are
+X_res (renamed to _res_shlib), _res_resultcodes, _res_opcodes, h_errlist,
+Xand h_nerr.  In principle, they should be added to libc.sa.x.y.z.
+XHowever, long as they are never referenced, it does not matter that they
+Xare not there.  Programs which use these variables should link with
+X-lresolv to get the static version, and the problem is solved.
+X
+XThe reason for not including them in the shared archive, is that there
+Xis a potential problem in that if this global data ever changed, as it
+Xmight in a future bind release, the MAJOR version of the library should
+Xchange.  By using the static versions with -lresolv, you allow yourself
+Xthe option to upgrade the -lresolv code without major fuss.
+X
+XUpdate: in 4.9.3, the resolver library no longer uses initialized static
+Xdata, so this should never be a problem again.  (You should still copy and
+Xre-ranlib the Sun-supplied libc.sa, however.)
+X
+X
+X* shared library revision numbers
+X
+XTechnically, the shared library changes are sufficient enough to warrent a
+Xminor revision change.  On SunOS 4.1.3, this would mean the shared library
+Xshould be numbered libc.so.1.9.  However, Sun has already used this for
+X4.1.3_U1.  If you upgrade, you will suddenly have two libc.so.1.9's.
+XPrograms would be compiled to use "libc.so.1.9" and would be no
+Xdistinction between those which want to use the SunOS libc.so.1.9 and
+Xthose which want the locally compiled libc.so.1.9.  At this point, the
+Xlocally compiled libc.so.1.9 should really be 1.10, and you have to
+Xrecompile everything you originally compiled, anyway.
+X
+XSo, for 4.1.3, stick with libc.so.1.8.x++; for 4.1.3_U1, libc.so.1.9.x++.
+XJust be aware that if you compile on a machine with this new shared
+Xlibrary, and you use the res_ routines directly without -lresolv (uncool,
+Xsee above) you will not be able to take it to a previous stock SunOS
+Xwithout a few problems.
+END-of-shres/ISSUES
+echo x - shres/Makefile
+sed 's/^X//' >shres/Makefile << 'END-of-shres/Makefile'
+XCFLAGS=	${CDEBUG} -I${INCL} -I${COMPINCL} ${DEFS} ${LOCDEFS}
+XLOCDEFS= -DUSE_OPTIONS_H
+XSRCS=	herror.c res_debug.c \
+X	res_comp.c res_init.c res_mkquery.c res_query.c res_send.c \
+X	getnetbyaddr.c getnetbyname.c getnetent.c getnetnamadr.c \
+X	gethnamaddr.c sethostent.c nsap_addr.c
+X
+XOBJS=	herror.o res_debug.o \
+X	res_comp.o res_init.o res_mkquery.o res_query.o res_send.o \
+X	getnetbyaddr.o getnetbyname.o getnetent.o getnetnamadr.o \
+X	gethnamaddr.o sethostent.o nsap_addr.o \
+X	inet_addr.o strerror.o
+X
+Xall: libresolv_pic.a
+X
+X$(OBJS):
+X	${SHCC} ${CFLAGS} ${PIC} -c $? -o $@
+X
+Xclean: FRC
+X	rm -f errs a.out core libresolv_pic.a tags *.o *.BAK *.CKP *~ *.orig
+X
+Xdepend: 
+X	@echo No dependancies in `pwd`
+X
+Xinstall:
+X	@echo '***  shres is *NOT* installed by make install  ***'
+X	@echo '*** Read shres/INSTALL for directions ***'
+X
+XFRC:
+X
+Xlibresolv_pic.a: ${OBJS}
+X	ar cru libresolv_pic.a ${OBJS}
+X	$(RANLIB) libresolv_pic.a
+X
+Xherror.o: ../res/herror.c
+Xres_comp.o: ../res/res_comp.c
+Xres_debug.o: ../res/res_debug.c
+Xres_init.o: ../res/res_init.c
+Xres_mkquery.o: ../res/res_mkquery.c
+Xres_query.o: ../res/res_query.c
+Xres_send.o: ../res/res_send.c
+Xgetnetbyaddr.o: ../res/getnetbyaddr.c
+Xgetnetbyname.o: ../res/getnetbyname.c
+Xgetnetent.o: ../res/getnetent.c
+Xgetnetnamadr.o: ../res/getnetnamadr.c
+Xgethnamaddr.o: ../res/gethnamaddr.c
+Xsethostent.o: ../res/sethostent.c
+Xnsap_addr.o: ../res/nsap_addr.c
+Xinet_addr.o: ../compat/lib/inet_addr.c
+Xstrerror.o: ../compat/lib/strerror.c
+END-of-shres/Makefile
+echo x - shres/README.NetBSD
+sed 's/^X//' >shres/README.NetBSD << 'END-of-shres/README.NetBSD'
+X1. makeshlib can now rebuild shared libraries for either SunOS or NetBSD.
+X
+X2. makeshlib determines the system type automatically by what 'uname' returns.
+X   Make sure that 'uname' is in your path.  (Shouldn't be a problem since
+X   it's in /usr/bin on both systems)
+X
+X3. If the script can't find your shared library object files or you haven't
+X   built libresolv_pic.a, it will exit immediately, instead of failing on
+X   later commands.
+X
+X4. The shared libraries are rebuilt in the current directory (and uses
+X   temporary directories underneath it), instead of in SHLIBDIR.  NetBSD
+X   uses /lib for SHLIBDIR, and rebuilding them under /lib did not seem
+X   like the appropriate place to do it.
+X
+X5. You have the option (by setting USELORDER at the top of the script) to
+X   dynamically generate an lorder-sparc file using lorder on a SunOS
+X   machine.  Using Sun's lorder-sparc file may arguably reduce the
+X   amount of paging of the shared library code, and doesn't take as long.
+X   On the other hand, since it is generated from the list of object files
+X   that are actually present, you don't have to worry too much about the
+X   file getting out of order somehow.  NetBSD will always dynamically
+X   generate this list, as this is the method it uses when the system shared
+X   libraries are built, so unsetting this variable on a NetBSD machine has
+X   no effect.
+X
+X6. Larry Wall's patch program is no longer require to make the modifications
+X   to the lorder-sparc file under SunOS if you use it or to the Makefile in 
+X   /usr/lib/shlib.etc.  A sed script will modify the lorder-sparc file,
+X   and the Makefile is no longer used.
+X
+END-of-shres/README.NetBSD
+echo x - shres/lorder-sparc.sed
+sed 's/^X//' >shres/lorder-sparc.sed << 'END-of-shres/lorder-sparc.sed'
+X/^gethostent.o/c\
+Xgethnamaddr.o\
+Xherror.o\
+Xsethostent.o\
+Xres_query.o\
+Xres_mkquery.o\
+Xres_send.o\
+Xres_debug.o\
+Xres_comp.o\
+Xres_init.o\
+Xgetnetnamadr.o\
+Xgetnetbyname.o\
+Xgetnetbyaddr.o\
+Xstrerror.o\
+END-of-shres/lorder-sparc.sed
+echo x - shres/makeshlib
+sed 's/^X//' >shres/makeshlib << 'END-of-shres/makeshlib'
+X#!/bin/sh
+X#
+X# makeshlib - installs a shareable libresolv_pic.a into SunOS 4.x or NetBSD
+X#             1.x libc.so
+X#
+X# by Chris Davis <ckd@kei.com>
+X# based on code by Piete Brooks <pb@cl.cam.ac.uk>
+X#              and Dave Morrison <drmorris@mit.edu>
+X# NetBSD support added by Matt Ragan <matt@ibmoto.com>
+X#
+X# $Id: netbsd-shlib.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X#
+X
+X#
+X# bindtree should be set to the root directory of the BIND distribution,
+X# or you can have this script attempt to determine the location dynamically
+X#
+X
+X#bindtree=/usr/obj/local/bind
+X
+X#
+X# SHLIBDIR should be set to the location of your shared object file
+X# (libc_pic.a and/or libcs5_pic.a).  If it is in the default location,
+X# they will be found automatically.
+X#
+X
+X#SHLIBDIR=/usr/lib/shlib.etc
+X
+X#
+X# USELORDER will determine whether, under SunOS, that the lorder-sparc
+X# file under SHLIBDIR will be user and modified (0), or whether the file
+X# will be regenerated dynamically (1).  Purists would say that modifying the
+X# lorder-sparc file will reduce paging, but regenerating the file with
+X# lorder will do an adequate job of arranging the objects.  Under NetBSD,
+X# this option doesn't do anything, since the shared libraries are
+X# arranged using lorder when they are built, anyways.
+X#
+XUSELORDER=0
+X
+X#
+X# END OF USER CONFIGURABLE OPTIONS
+X#
+X
+Xextract_arch () {
+X
+XARCHIVE=$1
+XDIRECTORY=$2
+X
+X
+Xif [ ! -r $SHLIBDIR/$ARCHIVE ]; then
+X	echo The shared object archive, $ARCHIVE, does not exist in the
+X	echo \$SHLIBDIR directory, $SHLIBDIR, or is not readable.  Please check
+X	echo the file and/or path and run this script again.
+X	exit 1
+Xfi
+X
+Xif [ ! -d $DIRECTORY ]; then
+X	rm -f $DIRECTORY
+Xelse
+X	echo Cleaning up $DIRECTORY directory
+X	rm -rf $DIRECTORY
+Xfi
+X
+Xif mkdir $DIRECTORY; then
+X	:
+Xelse
+X	echo Unable to create the \'$DIRECTORY\' directory under the current directory.
+Xfi
+X
+X#
+X# Extract the files to the tmp directory in a subshell
+X#
+X
+X(
+Xif cd $DIRECTORY; then
+X	:
+Xelse
+X	echo Unable to change directories to the \'$DIRECTORY\' directory.
+X	exit
+Xfi
+X
+Xecho Extracting object files from the shared object archive.
+X
+Xar x $SHLIBDIR/$ARCHIVE
+X
+X#
+X# Patch up the files and filenames that need patching up.
+X#
+X
+Xif [ $SunOS -eq 1 ]; then
+X	for i in *.; do
+X		mv $i ${i}o
+X	done
+Xfi
+X
+Xecho Deleting old resolver files.
+X
+Xrm -f $JUNKOBJS
+X
+X#
+X# Extract the shared objects from the BIND distribution
+X#
+X
+Xecho Unpacking new resolver files.
+X
+Xif [ -f $bindtree/shres/libresolv_pic.a ]; then
+X	ar x $bindtree/shres/libresolv_pic.a
+X	rm -f __.SYMDEF
+Xfi
+X)
+X
+X}
+X
+Xgenerate_lorder () {
+X
+Xif [ $SunOS -eq 1 ]; then
+X	if [ $USELORDER -eq 0 -a -f $SHLIBDIR/lorder-sparc ]; then
+X		sed -f lorder-sparc.sed /usr/lib/shlib.etc/lorder-sparc >lorder.tmp
+X		$SHLIBDIR/objsort lorder.tmp $1 > lorder.$1
+X		rm -f lorder.tmp
+X	else
+X		lorder $1/*.o | tsort > lorder.$1 2>/dev/null
+X	fi
+Xelif [ $NetBSD -eq 1 ]; then
+X	lorder $1/*.so $1/*.o | tsort > lorder.$1 2>/dev/null
+Xfi
+X}
+X
+XNetBSD=0
+XSunOS=0
+Xif [ `uname -s` = "NetBSD" ]; then
+X	NetBSD=1
+X	JUNKOBJS=gethostnamadr.o
+Xelif [ `uname -s` = "SunOS" ]; then
+X	SunOS=1
+X	JUNKOBJS=gethostent.o
+Xelse
+X	echo "Don't know what OS you are running.  Are you sure it's SunOS or NetBSD?"
+Xfi
+X
+X
+X#
+X# Try to determine where the root of the BIND tree is if $bindtree isn't
+X# set.  First, see if it is one directory above wherever the script is
+X# being run from, then check and see if it is around the current directory
+X# somewhere
+X#
+X
+Xthisdir=`pwd`
+Xcase "x${bindtree}" in
+X
+X'x')
+X	echo 'Attempting to determing BIND tree...'
+X	if [ -d "${thisdir}/shres" ]; then
+X		bindtree=$thisdir
+X    elif [ -d "${thisdir}/../shres" ]; then
+X        bindtree=${thisdir}/..
+X    fi
+X    ;;
+Xesac
+X
+Xcase "x${bindtree}" in
+X'x')
+X    echo "I can't find the bind tree, and you didn't set \$bindtree."
+X    echo "Please do so, and try again."
+X    exit 1
+Xesac
+X
+Xif [ ! -d $bindtree ]; then
+X	echo "Your \$bindtree variable is set incorrectly.  Please correct it"
+X	echo "and run this script again."
+X	exit 1
+Xfi
+X
+Xif [ ! -f $bindtree/shres/libresolv_pic.a ]; then
+X	echo
+X	echo Please build shres/libresolv_pic.a before running this script.
+X	echo See shres/INSTALL for more information.
+X	echo
+X	exit
+Xfi
+X
+X#
+X# Determine the directory to get the shared object archives from, if
+X# $SHLIBDIR is not set
+X#
+X
+Xif [ $SunOS -ne 0 ]; then
+X	SHLIBDIR=${SHLIBDIR-/usr/lib/shlib.etc}
+Xelif [ $NetBSD -ne 0 ]; then
+X	SHLIBDIR=${SHLIBDIR-/usr/lib}
+Xfi
+X
+X#
+X# Extract the UCB libraries on both SunOS and NetBSD
+X#
+X
+Xextract_arch libc_pic.a ucbtmp
+X
+X#
+X# Extract the SYSV libraries on SunOS
+X#
+X
+Xif [ $SunOS -eq 1 ]; then
+X	extract_arch libcs5_pic.a sysvtmp
+Xfi
+X
+X#
+X# Now that we have all of the objects we're going to need, generate an
+X# lorder listing of the objects that we have, or modify the current
+X# lorder-sparc file.
+X#
+X
+Xecho Generating new lorder file for UCB archive
+X
+Xgenerate_lorder ucbtmp
+X
+Xif [ $SunOS -eq 1 ]; then
+X	echo Generating new lorder file for UCB archive
+X	generate_lorder sysvtmp
+Xfi
+X
+XSHLIBNAME=libc.so.`/bin/ls /usr/lib/libc.so.* | awk -f shlibname.awk`
+X
+Xecho Generating new $SHLIBNAME shared library
+X
+Xif [ $SunOS -eq 1 ]; then
+X	ld -o $SHLIBNAME -assert pure-text `cat lorder.ucbtmp` -ldl
+X	SHLIBNAME=libcs5.so.`/bin/ls /usr/lib/libcs5.so.* | awk -f shlibname.awk`
+X	echo Generating new $SHLIBNAME shared library
+X	ld -o $SHLIBNAME -assert pure-text `cat lorder.sysvtmp` -ldl
+Xfi
+X
+Xif [ $NetBSD -eq 1 ]; then
+X	ld -o $SHLIBNAME -Bshareable -Bforcearchive `cat lorder.ucbtmp`
+Xfi
+X
+END-of-shres/makeshlib
+echo x - shres/shlibname.awk
+sed 's/^X//' >shres/shlibname.awk << 'END-of-shres/shlibname.awk'
+XBEGIN {
+X	FS = "."
+X	MAJOR = 0
+X	MINOR = 0
+X	CUSTOM = 0
+X}
+X
+X	{
+X		if ($3 > MAJOR)
+X			MAJOR = $3
+X		if ($4 > MINOR)
+X			MINOR = $4
+X		if ($5 > CUSTOM)
+X			CUSTOM = $5
+X	}
+XEND {
+X	CUSTOM = CUSTOM + 1
+X	printf "%d.%d.%d", MAJOR, MINOR, CUSTOM
+X}
+X		
+END-of-shres/shlibname.awk
+echo x - Makefile.diff
+sed 's/^X//' >Makefile.diff << 'END-of-Makefile.diff'
+X95a96,101
+X> #(NetBSD)
+X> #uncomment next 3 lines to build a shared library version of libresolv
+X> #SHRES = shres
+X> #SHCC = cc
+X> #PIC = -fpic -DPIC -D_res=_res_shlib
+X> 
+END-of-Makefile.diff
+exit
+

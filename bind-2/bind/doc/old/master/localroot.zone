@@ -1,0 +1,11 @@
+; $ORIGIN .
+@	IN	SOA	localhost root.localhost ( 1000 1000 1000 1000 1000 )
+		NS	localhost
+		NS	.
+		A	127.0.0.1
+localhost	NS	localhost
+localhost	A	127.0.0.1
+127.in-addr.arpa NS	localhost
+test		TXT	bar
+subdom		NS	baz
+baz		A	127.0.0.2

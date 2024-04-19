@@ -1,0 +1,7 @@
+LIBRARY_STYLE = STATIC
+STRIP_ON_INSTALL = NO
+BEFORE_INSTALL += static debug profile
+ifeq "$(BUILD_TYPE)" "static"
+OPTIONAL_CFLAGS += -static
+OFILE_DIR_SUFFIX := $(OFILE_DIR_SUFFIX)-static
+endif

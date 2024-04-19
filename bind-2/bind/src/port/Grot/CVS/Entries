@@ -1,0 +1,14 @@
+/Makefile.foo/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/aix-includes/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/daemon-foo/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/fdset-foo/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/getdtablesize-foo/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/path-foo/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/setlinebuf-foo/1.1.1.1/Mon Oct  4 22:24:50 1999//Tbind-2
+/setsid-foo/1.1.1.1/Mon Oct  4 22:24:51 1999//Tbind-2
+/setvbuf-foo/1.1.1.1/Mon Oct  4 22:24:51 1999//Tbind-2
+/svr4-foo/1.1.1.1/Mon Oct  4 22:24:51 1999//Tbind-2
+/utimes-foo/1.1.1.1/Mon Oct  4 22:24:51 1999//Tbind-2
+D/netbsd////
+D/solaris////
+D/ultrix////

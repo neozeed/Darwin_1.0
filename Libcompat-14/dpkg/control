@@ -1,0 +1,4 @@
+Package: libcompat
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Description: BSD compatibility library
+Build-Depends: build-base, project-makefiles

@@ -1,0 +1,32 @@
+Preliminary port of BIND 8.1 to SCO 3.2v4.2 (ODT 3.0).
+
+As of 13-Mar-97, it does compile and link on SCO 3.2v4.2, but some
+tricks are required. My solution will be not to explain these tricks
+in detail, but have shell script in this directory to drive the build
+process on SCO 3.2v4.2.
+
+Modification history:
+
+Date	  Who	What
+====	  ===	====
+
+03-Feb-97 E.V.	Eduard Vopicka, <eda@vse.cz>
+		Initial work. Performs some basic functions, but
+		mostly untested.
+15-Feb-97 E.V.	Fixed pathnames to better emulate SCO's named mimics.
+		Still untested in real life.
+13-Mar-97 E.V.	Lots of problems fixed and lots of things re-done.
+		Just it runs on one of our secondaries for about 24
+		hours.
+10-Apr-97 E.V.	moved *.sh to tools. Improved percentp.sh - thanks
+		to Bela Lubkin for suggestions.
+01-May-97 E.V.	Added BIND_4_COMPAT to include/port_after.h
+
+		NOTE: The last 3.2v4.2 based system I have access to
+		will be upgraded to SCO OSE 5.0.2 in the next week or
+		two. This de facto means that I will be no longer able
+		to maintain this port. As of T3B, this port worked well
+		on our secondary DNS machine, running also sendmail
+		8.8.5 linked with the updated (with 8.1 resolver
+		modules) libsocket.so.		Good luck, E.V.
+

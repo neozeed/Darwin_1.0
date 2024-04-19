@@ -1,0 +1,1 @@
+			setvbuf(ddt, NULL, _IOLBF, BUFSIZ);

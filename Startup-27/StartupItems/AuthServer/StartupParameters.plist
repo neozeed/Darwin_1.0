@@ -1,0 +1,11 @@
+{
+  Description     = "authentication service";
+  Provides        = ("AuthServer");
+  Requires        = ("NetInfo");
+  OrderPreference = "None";
+  Messages =
+  {
+    start = "Starting authentication service.";
+    stop  = "Stopping authentication service.";
+  };
+}

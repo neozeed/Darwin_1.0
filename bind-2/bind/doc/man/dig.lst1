@@ -1,0 +1,295 @@
+DIG(1)                       BSD Reference Manual                       DIG(1)
+
+NNAAMMEE
+     ddiigg - send domain name query packets to name servers
+
+SSYYNNOOPPSSIISS
+     ddiigg [@@_s_e_r_v_e_r] _d_o_m_a_i_n [<_q_u_e_r_y_-_t_y_p_e>] [<_q_u_e_r_y_-_c_l_a_s_s>] [++<_q_u_e_r_y_-_o_p_t_i_o_n>]
+         [--<_d_i_g_-_o_p_t_i_o_n>] [_%_c_o_m_m_e_n_t]
+
+DDEESSCCRRIIPPTTIIOONN
+     DDiigg (domain information groper) is a flexible command line tool which can
+     be used to gather information from the Domain Name System servers.  DDiigg
+     has two modes: simple interactive mode for a single query, and batch mode
+     which executes a query for each in a list of several query lines. All
+     query options are accessible from the command line.
+
+     The usual simple use of ddiigg will take the form:
+
+                 ddiigg @@_s_e_r_v_e_r _d_o_m_a_i_n _q_u_e_r_y_-_t_y_p_e _q_u_e_r_y_-_c_l_a_s_s
+
+     where:
+
+     _s_e_r_v_e_r      may be either a domain name or a dot-notation Internet ad-
+                 dress. If this optional field is omitted, ddiigg will attempt to
+                 use the default name server for your machine.
+
+                 _N_o_t_e_: If a domain name is specified, this will be resolved
+                 using the domain name system resolver (i.e., BIND). If your
+                 system does not support DNS, you may _h_a_v_e to specify a dot-
+                 notation address.  Alternatively, if there is a server at
+                 your disposal somewhere,  all that is required is that
+                 _/_e_t_c_/_r_e_s_o_l_v_._c_o_n_f be present and indicate where the default
+                 name servers reside,  so that _s_e_r_v_e_r itself can be resolved.
+                 See resolver(5) for information on _/_e_t_c_/_r_e_s_o_l_v_._c_o_n_f. WWAARRNNIINNGG::
+                 Changing _/_e_t_c_/_r_e_s_o_l_v_._c_o_n_f will affect both the standard re-
+                 solver library and (potentially) several programs which use
+                 it.  As an option, the user may set the environment variable
+                 LOCALRES to name a file which is to be used instead of
+                 _/_e_t_c_/_r_e_s_o_l_v_._c_o_n_f standard resolver (LOCALRESis specific to
+                 the ddiigg resolver and  is  not  referenced  by  the). If the
+                 LOCALRES variable is not set or the specified file is not
+                 readable, then _/_e_t_c_/_r_e_s_o_l_v_._c_o_n_f will be used.
+
+     _d_o_m_a_i_n      is the domain name for which you are requesting information.
+                 See the --xx option (documented in the _O_T_H_E_R _O_P_T_I_O_N_S subsection
+                 of this section) for convenient way to specify inverse ad-
+                 dress query.
+
+     _q_u_e_r_y_-_t_y_p_e  is the type of information (DNS query type) that you are re-
+                 questing. If omitted, the default is ``_a'' (T_A = _a_d_d_r_e_s_s).
+                 The following types are recognized:
+
+                 _a       T_A        network address
+                 _a_n_y     T_ANY      all/any information about specified domain
+                 _m_x      T_MX       mail exchanger for the domain
+                 _n_s      T_NS       name servers
+                 _s_o_a     T_SOA      zone of authority record
+                 _h_i_n_f_o   T_HINFO    host information
+                 _a_x_f_r    T_AXFR     zone transfer (must ask an authoritative
+                                    server)
+                 _t_x_t     T_TXT      arbitrary number of strings
+
+                 (See RFC 1035 for the complete list.)
+
+     _q_u_e_r_y_-_c_l_a_s_s
+                 is the network class requested in the query. If omitted, the
+                 default is ``_i_n'' (C_IN = _I_n_t_e_r_n_e_t). The following classes
+                 are recognized:
+
+                 _i_n      C_IN       Internet class domain
+                 _a_n_y     C_ANY      all/any class information
+
+                 (See RFC 1035 for the complete list.)
+
+                 _N_o_t_e_: ``_A_n_y'' can be used to specify a _c_l_a_s_s and/or a _t_y_p_e of
+                 query.  DDiigg will parse the first occurrence of ``_a_n_y'' to
+                 mean _q_u_e_r_y_-_t_y_p_e _= T_ANY. To specify _q_u_e_r_y_-_c_l_a_s_s _= C_ANY, you
+                 must either specify ``any'' twice, or set _q_u_e_r_y_-_c_l_a_s_s using
+                 the --cc option (see below).
+
+   OOTTHHEERR OOPPTTIIOONNSS
+
+     %_i_g_n_o_r_e_d_-_c_o_m_m_e_n_t
+                 ``%'' is used to included an argument that is simply not
+                 parsed.  This may be useful  if running ddiigg in batch mode.
+                 Instead of resolving every _@_s_e_r_v_e_r_-_d_o_m_a_i_n_-_n_a_m_e in a list of
+                 queries, you can avoid the overhead of doing so, and still
+                 have the domain name on the command line as a reference. Ex-
+                 ample:
+
+                             ddiigg @@112288..99..00..3322 %%vveenneerraa..iissii..eedduu mmxx iissii..eedduu
+
+     --<_d_i_g _o_p_t_i_o_n>
+                 ``--'' is used to specify an option which affects the opera-
+                 tion of ddiigg. The following options are currently available
+                 (although not guaranteed to be useful):
+
+                 --xx _d_o_t_-_n_o_t_a_t_i_o_n_-_a_d_d_r_e_s_s
+                             Convenient form to specify inverse address map-
+                             ping.  Instead of ``ddiigg 3322..00..99..112288..iinn--
+                             aaddddrr..aarrppaa'', one can simply ``ddiigg --xx
+                             112288..99..00..3322''.
+
+                 --ff _f_i_l_e     File for ddiigg batch mode. The file contains a list
+                             of query specifications ( ddiigg command lines)
+                             which are to be executed successively.  Lines be-
+                             ginning with `;', `#', or `\n' are ignored.  Oth-
+                             er options may still appear on command line, and
+                             will be in effect for each batch query.
+
+                 --TT _t_i_m_e     Time in seconds between start of successive
+                             queries when running in batch mode. Can be used
+                             to keep two or more batch ddiigg commands running
+                             roughly in sync.  Default is zero.
+
+                 --pp _p_o_r_t     Port number. Query a name server listening to a
+                             non-standard port number.  Default is 53.
+
+                 --PP[_p_i_n_g_-_s_t_r_i_n_g]
+                             After query returns, execute a ping(8) command
+                             for response time comparison.  This rather unele-
+                             gantly makes a call to the shell.  The last three
+                             lines of statistics is printed for the command:
+
+                                         ppiinngg --ss --sseerrvveerr__nnaammee --5566 --33
+
+                             If the optional ``_p_i_n_g___s_t_r_i_n_g'' is present, it
+                             replaces ``ppiinngg --ss'' in the shell command.
+
+                 --tt _q_u_e_r_y_-_t_y_p_e
+                             Specify type of query.  May specify either an in-
+                             teger value to be included in the type field or
+                             use the abbreviated mnemonic as discussed above
+                             (i.e., _m_x _= T_MX).
+
+                 --cc _q_u_e_r_y_-_c_l_a_s_s
+                             Specify class of query. May specify either an in-
+                             teger value to be included in the class field or
+                             use the abbreviated mnemonic as discussed above
+                             (i.e., in = C_IN).
+
+                 --eennvvssaavv     This flag specifies that the ddiigg environment (de-
+                             faults, print options, etc.), after all of the
+                             arguments are parsed, should be saved to a file
+                             to become the default environment.  This is use-
+                             ful if you do not like the standard set of de-
+                             faults and do not desire to include a large num-
+                             ber of options each time ddiigg is used.  The envi-
+                             ronment consists of resolver state variable
+                             flags, timeout, and retries as well as the flags
+                             detailing ddiigg output (see below).  If the shell
+                             environment variable LOCALDEF is set to the name
+                             of a file, this is where the default ddiigg environ-
+                             ment is saved.  If not, the file ``_D_i_G_._e_n_v'' is
+                             created in the current working directory.
+
+                             _N_o_t_e_: LOCALDEF is specific to the ddiigg resolver,
+                             and will not affect operation of the standard re-
+                             solver library.
+
+                             Each time ddiigg is executed, it looks for
+                             ``_._/_D_i_G_._e_n_v'' or the file specified by the shell
+                             environment variable LOCALDEF. If such file ex-
+                             ists and is readable, then the environment is re-
+                             stored from this file before any arguments are
+                             parsed.
+
+                 --eennvvsseett     This flag only affects batch query runs. When
+                             ``--eennvvsseett'' is specified on a line in a ddiigg batch
+                             file, the ddiigg environment after the arguments are
+                             parsed becomes the default environment for the
+                             duration of the batch file, or until the next
+                             line which specifies ``--eennvvsseett''.
+
+                 --[nnoo] ssttiicckk
+                             This flag only affects batch query runs.  It
+                             specifies that the ddiigg environment (as read ini-
+                             tially or set by ``--eennvvsseett'' switch) is to be re-
+                             stored before each query (line) in a ddiigg batch
+                             file.  The default ``--nnoossttiicckk'' means that the
+                             ddiigg environment does not stick, hence options
+                             specified on a single line in a ddiigg batch file
+                             will remain in effect for subsequent lines (i.e.
+                             they are not restored to the ``sticky'' default).
+
+     ++<_q_u_e_r_y_-_o_p_t_i_o_n>
+                 ``+'' is used to specify an option to be changed in the query
+                 packet or to change ddiigg output specifics. Many of these are
+                 the same parameters accepted by nslookup(8).  If an option
+                 requires a parameter, the form is as follows:
+
+                             ++ _k_e_y_w_o_r_d [=_v_a_l_u_e]
+
+                 Most keywords can be abbreviated.  Parsing of the ``+'' op-
+                 tions  is very  simplistic -- a value must not be separated
+                 from its keyword by white space. The following keywords are
+                 currently available:
+
+                 Keyword      Abbrev.  Meaning [default]
+
+                 [nnoo] ddeebbuugg     (ddeebb)    turn on/off debugging mode [ddeebb]
+                 [nnoo] dd22                 turn on/off extra debugging mode
+                                         [nnoodd22]
+                 [nnoo] rreeccuurrssee   (rreecc)    use/don't use recursive lookup [rreecc]
+                 rreettrryy==_#       (rreett)     set number of retries to # [4]
+                 ttiimmee==_#        (ttii)      set timeout length to # seconds [4]
+                 [nnoo] kkoo                 keep open option (implies vc) [nnookkoo]
+                 [nnoo] vvcc                 use/don't use virtual circuit [nnoovvcc]
+                 [nnoo] ddeeffnnaammee   (ddeeff)    use/don't use default domain name
+                                         [ddeeff]
+                 [nnoo] sseeaarrcchh    (sseeaa)    use/don't use domain search list
+                                         [sseeaa]
+                 ddoommaaiinn==_N_A_M_E   (ddoo)      set default domain name to _N_A_M_E
+                 [nnoo] iiggnnoorree    (ii)      ignore/don't ignore trunc. errors
+                                         [nnooii]
+                 [nnoo] pprriimmaarryy   (pprr)     use/don't use primary server [nnoopprr]
+                 [nnoo] aaaaoonnllyy    (aaaa)     authoritative query only flag [nnooaaaa]
+                 [nnoo] ccmmdd                echo parsed arguments [ccmmdd]
+                 [nnoo] ssttaattss     (sstt)     print query statistics [sstt]
+                 [nnoo] HHeeaaddeerr    (HH)      print basic header [HH]
+                 [nnoo] hheeaaddeerr    (hhee)     print header flags [hhee]
+                 [nnoo] ttttlliidd     (tttt)     print TTLs [tttt]
+                 [nnoo] ccll                 print class info [nnooccll]
+                 [nnoo] qqrr                 print outgoing query [nnooqqrr]
+                 [nnoo] rreeppllyy     (rreepp)    print reply [rreepp]
+                 [nnoo] qquueess      (qquu)     print question section [qquu]
+                 [nnoo] aannsswweerr    (aann)     print answer section [aann]
+                 [nnoo] aauutthhoorr    (aauu)     print authoritative section [aauu]
+                 [nnoo] aaddddiitt     (aadd)     print additional section [aadd]
+                 ppffddeeff                   set to default print flags
+                 ppffmmiinn                   set to minimal default print flags
+                 ppffsseett==_#                 set print flags to # (# can be
+                                         hex/octal/decimal)
+                 ppffaanndd==_#                 bitwise and print flags with #
+                 ppffoorr==_#                  bitwise or print flags with #
+
+                 The rreettrryy and ttiimmee options affect the retransmission strategy
+                 used by the resolver library when sending datagram queries.
+                 The algorithm is as follows:
+
+                       for i = 0 to retry - 1
+                           for j = 1 to num_servers
+                               send_query
+                               wait((time * (2**i)) / num_servers)
+                           end
+                       end
+
+                 (Note: ddiigg always uses a value of 1 for ``num_servers''.)
+
+   DDEETTAAIILLSS
+     DDiigg once required a slightly modified version of the BIND resolver(3) li-
+     brary.  As of BIND 4.9, BIND's resolver has been augmented to work prop-
+     erly with ddiigg. Essentially, ddiigg is a straight-forward (albeit not pretty)
+     effort of parsing arguments and setting appropriate parameters.  DDiigg uses
+     resolver(3) routines rreess__iinniitt(), rreess__mmkkqquueerryy(), rreess__sseenndd() as well as ac-
+     cessing the ___r_e_s structure.
+
+EENNVVIIRROONNMMEENNTT
+     LOCALRES    file to use in place of Pa /etc/resolv.conf
+     LOCALDEF    default environment file
+
+     See also the explanation of the --eennvvssaavv, --eennvvsseett, and --[nnoo] ssttiicckk op-
+     tions, above.
+
+FFIILLEESS
+     /etc/resolv.conf
+                         initial domain name and name server addresses
+     ./DiG.env           default save file for default options
+
+SSEEEE AALLSSOO
+     named(8),  resolver(3),  resolver(5),  nslookup(8).
+
+SSTTAANNDDAARRDDSS
+     RFC 1035.
+
+AAUUTTHHOORR
+     Steve Hotz hotz@isi.edu
+
+AACCKKNNOOWWLLEEDDGGMMEENNTTSS
+     DDiigg uses functions from nslookup(8) authored by Andrew Cherenson.
+
+BBUUGGSS
+     DDiigg has a serious case of "creeping featurism" -- the result of consider-
+     ing several potential uses during it's development.  It would probably
+     benefit from a rigorous diet.  Similarly, the print flags and granularity
+     of the items they specify make evident their rather ad hoc genesis.
+
+     DDiigg does not consistently exit nicely (with appropriate status) when a
+     problem occurs somewhere in the resolver (NNOOTTEE::most of the common exit
+     cases are handled). This is particularly annoying when running in batch
+     mode.  If it exits abnormally (and is not caught), the entire batch
+     aborts; when such an event is trapped, ddiigg simply continues with the next
+     query.
+
+4th Berkeley Distribution       August 30, 1990                              5

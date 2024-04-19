@@ -1,0 +1,113 @@
+Path: vixie!news1.digital.com!nntp-hub2.barrnet.net!hookup!news.mathworks.com!gatech!news.sprintlink.net!demon!doc.news.pipex.net!pipex!sunic!sunic.sunet.se!umdac!fizban.solace.mh.se!vampire.xinit.se!newsfeed.tip.net!snoop.uni.net!newsmaster
+From: Paolo Bevilacqua <pab@rmnet.it>
+Newsgroups: comp.protocols.tcp-ip.domains
+Subject: nscount - A small DNS tool.
+Date: 21 May 1995 19:00:53 GMT
+Organization: RMnet Communications
+Lines: 97
+Distribution: inet
+Message-ID: <3po2l5$ri5@snoop.uni.net>
+NNTP-Posting-Host: malcolm.rmnet.it
+Mime-Version: 1.0
+Content-Type: multipart/mixed;
+	boundary="-------------------------------183241065221292338711929778377"
+X-Mailer: Mozilla 1.1N (X11; I; Linux 1.2.8 i486)
+X-URL: file:/root/nscount
+
+This is a multi-part message in MIME format.
+
+---------------------------------183241065221292338711929778377
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+
+Hello.
+
+Because a similar tool is missing from the contrib stuff in the standard BIND
+distribution, I wrote it, and because it's short, here it is.
+Basically, it tells you what are the nameservers servicing more domains under a
+given domain - realistically, a TLD.
+
+-- 
+# RMnet Communications   *********    Via Taro 56 #
+# Paolo Bevilacqua    *****   00199 - Rome, Italy #
+# Service Manager   ****  Ph/Fax:  +39 6 85302737 #
+# The Finest Internet Access  http://www.rmnet.it #
+
+---------------------------------183241065221292338711929778377
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+
+#! /usr/local/bin/perl -w
+#  
+# Perl script to count how many domains are served by nameservers.
+#
+# Options:
+# -f file           Examine a file output from 'nslookup' or 'host'.
+# -s server domain  Runs 'host', asking server to list NS records for domain.
+# -c count          Prints count nameservers, 10 by default. Use 0 to print all.
+# -v                Verbosely list domains served by each nameserver.
+#
+#                   May 95 by Paolo Bevilacqua <pab@uni.net>
+
+require ("open2.pl");
+require ("getopts.pl");
+
+Getopts('f:s:c:v');
+(defined $opt_f xor defined $opt_s) || die "must use either -f or -s options\n";
+(defined $opt_s and $#ARGV != 0) && die "must specify domain for -s option\n";
+
+if (defined $opt_f) {
+	open(FILE, $opt_f) || die "Can't open $opt_f for reading\n";
+} else {
+	&open2('FILE', 'NOTUSED', "host -l -t ns $ARGV[0] $opt_s");
+}
+
+# throw first five lines
+for (1..5) {
+	<FILE>;
+}
+
+while(<FILE>) {
+	@_ = split;
+	(defined $svrs{$_[$#_]}) || push @servers, $_[$#_];
+	++$svrs{$_[$#_]};	
+	++$dmns{$_[0]};
+
+	if (defined $opt_v) {
+		$_[$#_] =~ tr/-.0-9/a-k/d;
+               eval "push(\@$_[$#_], '$_[0]');";
+	}
+}
+
+# sort by number of domains served
+@servers = sort{$svrs{$a} < $svrs{$b}} @servers;
+@domains = keys %dmns;
+
+if (defined $opt_c) {
+  $count = $opt_c;
+} else {
+  $count = 10;
+}
+
+($count == 0) && ($count = $#servers);
+
+print "$#servers servers, $#domains domains\n";
+
+if (defined $opt_v) {
+	for ($c = 0; $c < $count; ++$c) {
+		print "Domains served by $servers[$c] ($svrs{$servers[$c]}):\n";
+		($arrname = $servers[$c]) =~ tr/-.0-9/a-k/d;
+		eval "\@$arrname = sort {\$b cmp \$a} \@$arrname;";
+		while ($svrs{$servers[$c]}--) {
+			print "   ", eval "pop(\@$arrname);", "\n";
+		}
+	}
+} else {
+	print "Top $count name servers for domains:\n";
+	for ($i = 0; $i < $count; $i++) {
+		printf "%-30.30s%d\n",  $servers[$i], $svrs{$servers[$i]};
+	}
+}
+
+
+---------------------------------183241065221292338711929778377--

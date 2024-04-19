@@ -1,0 +1,22 @@
+#!/bin/sh
+
+niload -r /config/NetBootServer . <<EOT
+{
+  "name" = ( "NetBootServer" );
+  "hostname_format" = ( "macnc%03d" );
+  "afp_user_format" = ( "Mac NC #%d" );
+  "afp_group_name" = ( "Mac NC Group" );
+  "volumes" = ( "Server_HD1" );
+  "private_image_name" = ( "Applications HD.img" );
+  "private_image_volume" = ( "Server_HD1" );
+  "shared_image_name" = ( "NetBoot HD.img" );
+  "shared_image_volume" = ( "Server_HD1" );
+  "default_bootdir" = ( "/private/tftpboot" );
+  "default_bootfile" = ( "Mac OS ROM" );
+  "image_directory" = ( "SharedImages" );
+  "client_image_directory" = ( "ClientImages" );
+  "sharepoint_suffix" = ( "_NBS" );
+  "shadow_size_meg" = ( "0" );
+  "shadow_suffix" = ( "_s" );
+}
+EOT

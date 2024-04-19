@@ -1,0 +1,28 @@
+*** ../../../include/resolv.h	Sun Sep 13 00:16:19 1998
+--- resolv.h	Wed Sep 16 09:51:37 1998
+***************
+*** 132,135 ****
+--- 132,137 ----
+  #define	RES_MAXRETRY		5	/* only for resolv.conf/RES_OPTIONS */
+  
++ #define _RES_MAXDBSLOTS		3
++ 
+  struct __res_state {
+  	int	retrans;	 	/* retransmition time interval */
+***************
+*** 147,150 ****
+--- 149,154 ----
+  	unsigned nsort:4;		/* number of elements in sort_list[] */
+  	char	unused[3];
++ 	char	dborder[_RES_MAXDBSLOTS];	/* Database search order */
++ 	char	unused2[1];		/* pad */
+  	struct {
+  		struct in_addr	addr;
+***************
+*** 156,160 ****
+  	int	_sock;			/* PRIVATE: for res_send i/o */
+  	u_int	_flags;			/* PRIVATE: see below */
+- 	char	pad[52];		/* On an i386 this means 512b total. */
+  };
+  
+--- 160,163 ----

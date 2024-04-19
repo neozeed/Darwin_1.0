@@ -1,0 +1,216 @@
+Received: by gw.home.vix.com id KAA06353; Tue, 25 Jun 1996 10:54:08 -0700 (PDT)
+Received: from hpnmcnc.cup.hp.com by hp.com with ESMTP
+	(1.37.109.16/15.5+ECS 3.3) id AA036065228; Tue, 25 Jun 1996 10:53:48 -0700
+Received: by hpnmcnc.cup.hp.com
+	(1.39.111.2/15.5+IOS 3.20+cup+OMrelay) id AA225025395; Tue, 25 Jun 1996 10:56:35 -0700
+From: nigelc@cup.hp.com (Nigel Campbell)
+Message-Id: <9606251056.ZM22500@hpnmcnc.cup.hp.com>
+Date: Tue, 25 Jun 1996 10:56:35 -0700
+X-Face: .Aj{|K~N!ik\v<Rc=bsiJ4F"^u-1QWc.C{Up%}"(fnWXPW,XX@A,cg.:Z03pMK7?"=+o(Hk<6*1/VVx83mlqfzH?vek2'n+a!'~`Bm^&qF|&X6Ccm%NCFZ/3I\Wq2^.{"{'tt!>Qg5RG=WB|w9SWfaIY/3(U#][68\Povq}b;.|Q7z}F(yH&V^|BtEPw53PG@';xpn~=$dleJZo$~}$
+X-Mailer: Z-Mail (3.2.1 10oct95)
+To: paul@vix.com
+Subject: Stats graphing script : Could be useful?...
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+
+
+
+Hi Paul,
+
+I developed this script to help monitor the load on a 4.9.3 server I
+was testing.  I thought it could possibly be of use to others.
+
+The script uses awk and sed to analyze syslog XSTATS entries for the
+currently running named process.
+
+The results are formatted for an X11 graphing utility called "xgraph".
+I've located a couple of sites that carry the source for xgraph:
+
+	http://sir.univ-rennes1.fr/pub/X11/contrib/
+	http://138.253.42.172/hpux/X11/Graphics/xgraph-1.1.html (HP-UX port)
+
+It would be quite simple to modify the script output for any other
+utility that reads in ASCII files containing "X Y" data pairs.  The
+format of the script output is currently:
+
+	"<Data Name>
+	Xval Yval
+	Xval Yval
+
+Where '"<Data Name>' is the xgraph specific data item.  Double line graph
+data consists of two data groups separated by a single blank line:
+
+	"Req per min
+	Xval Yval
+	Xval Yval
+
+	"Avg.
+	Xval Yval
+	Xval Yval
+
+
+Currently the script produces data for two graphs:
+
+	*  Requests per minute
+	*  Percentage of received requests forwarded
+
+The X axis in both graphs is time, in days.  The "forwarded" graph
+also plots an averaged line to show the overall trend.
+
+
+Take Care,
+
+Nigel.
+
+-------------------------------- Cut Here ------------------------------------
+#! /usr/bin/ksh
+##############################################################################
+#
+# Script Name : "bindgraph"
+# Version     : 2.1P
+# Author      : Nigel Campbell (nigelc@cup.hp.com)
+# Date        : 6/7/96
+#
+#############################################################################
+#
+# Note : This script uses sed, awk and requires a shell that can deal
+#        with the backslash line continuation character "\".
+#
+#        Paths to the syslog file and named.pid file may need modification
+#        for your platform.  This script is useful for named 4.9.3
+#        compiled with the XSTATS option.                    =====
+#
+# Please send any comments, enhancements, or suggestions to nigelc@cup.hp.com
+#
+##############################################################################
+
+##############################################################################
+#
+# User Modifiable Variables
+#
+##############################################################################
+
+PIDFILE="/var/run/named.pid"
+SYSLOG="/var/adm/syslog/syslog.log"
+
+REQ_GRAPH="/tmp/req_graph"
+FWD_GRAPH="/tmp/fwd_graph"
+
+##############################################################################
+#
+# Non User Modifiable Variables
+#
+##############################################################################
+
+PID=`cat $PIDFILE`
+PIDPATTERN=$PID]
+
+##############################################################################
+#
+#  Analyze the XSTATS entries recorded for the running named process to
+#  calculate the number of Requests received between XSTATS events (logged
+#  hourly) over time.  Gives a feel for how busy the server is over time.
+#  The XSTATS entries are logged in the syslog file.
+#
+#  XSTATS parameters: $7 = Current time (in seconds since epoch)
+#		      $8 = named process start time (in seconds since epoch)
+#		      $9 = Cumulative number of Queries (RQ) rcvd since start.
+#
+#  The results file will contain final data for Requests Per Min over
+#  time (in days).  Again, the results are formatted for a graphing utility
+#  called "xgraph":
+#
+#  "Data
+#  0 0
+#  <time in days> <requests per min>
+#  <time in days> <requests per min>
+#
+##############################################################################
+
+echo "\042Data" > $REQ_GRAPH
+echo "0 0" >> $REQ_GRAPH
+fgrep XSTATS $SYSLOG | grep $PIDPATTERN |                                     \
+ sed "s/RQ=//" |                                                              \
+ awk '{nowtime=$7}
+      {starttime=$8}
+      {querytotal=$9}
+      {mins=(nowtime-starttime)/60}
+      {print ((mins/60)/24), int(((querytotal-oldtot)/((mins-oldmins)/60)/60))}
+      {oldmins=mins}
+      {oldtot=querytotal}' >> $REQ_GRAPH
+
+##############################################################################
+#
+#  Using the XSTATS data for the running named process, calculate what
+#  percentage of Requests received (see above) had to be forwarded
+#  (answer wasn't available in cache/locally).
+#  May give an idea of how well the cache is performing.  This data is
+#  also averaged to provide a separate "trend" line.
+#
+#  XSTATS parameters: $7 = Current time (in seconds since epoch)
+#                     $8 = named process start time (in seconds since epoch)
+#		      $9 = Cumulative number of Queries (RQ) rcvd since start.
+#		     $13 = Cumulative number of Queries forwarded (RFwdQ)
+#			   since start.
+#
+#  The results file will contain final data of % of incoming requests
+#  forwarded over time (in days).  A running average is also calculated
+#  (based on an average of the current and previous 9 data points)
+#  to produce a second, smoother, trend line.  The x axis is shifted
+#  the required amount to take account of the averaging process used.
+#  In this case, (10 samples/2), which is 5 hrs since an XSTATS entry
+#  is logged every hour.
+#
+#  The results file is formatted for use with the "xgraph" utility and
+#  has the format:
+#
+#  "Data
+#  0 0
+#  <time in days since named started> <% of requests forwarded>
+#  <time in days since named started> <% of requests forwarded>
+#
+#  "Avg.
+#  <time in days since named started> <% of requests forwarded, averaged>
+#  <time in days since named started> <% of requests forwarded, averaged>
+#
+#
+##############################################################################
+
+echo "\042Data" > $FWD_GRAPH
+echo "0 0" >> $FWD_GRAPH
+fgrep XSTATS $SYSLOG | grep $PIDPATTERN |                                     \
+       sed "s/RFwdQ=//" | sed "s/RQ=//" |                                     \
+       awk '{mins=($7-$8)/60}
+            {percent=(($13-oldforwardedtot)/($9-oldqueriestot))*100}
+            {print ((mins/60)/24), percent}
+	    {oldmins=mins}
+	    {oldforwardedtot=$13}
+	    {oldqueriestot=$9}' >> $FWD_GRAPH
+
+echo ""  >> $FWD_GRAPH
+
+echo "\042Avg." >> $FWD_GRAPH
+fgrep XSTATS $SYSLOG | grep $PIDPATTERN |                                     \
+        sed "s/RFwdQ=//" | sed "s/RQ=//" |                                    \
+        awk '{mins=($7-$8)/60}
+	     {percent=(($13-oldforwardedtot)/($9-oldqueriestot))*100}
+	     {if (samples==0) samples=2}
+             {if (samples>10) samples=10}
+	     {if ((((mins/60)-5)/24) > 0)
+	      print (((mins/60)-5)/24), ((percent+e+f+g+h+i+j+k+l+m)/samples)}
+             {samples++}
+	     {oldmins=mins}
+	     {oldforwardedtot=$13}
+	     {oldqueriestot=$9}
+	     {m=l}
+	     {l=k}
+	     {k=j}
+	     {j=i}
+	     {i=h}
+	     {h=g}
+             {g=f}
+	     {f=e}
+	     {e=percent}' >> $FWD_GRAPH
+
+##############################################################################
+

@@ -1,0 +1,25 @@
+$Id: README,v 1.1.1.1 1999/10/04 22:24:40 wsanchez Exp $
+
+These are a few of ISC's local config files.
+Use them as templates or idea-generators.
+No warranty expressed or implied.
+
+workstation/
+
+	this is what we run on most workstations in our main development
+	facility.  there are local zones for LOCALHOST and 127.IN-ADDR.ARPA,
+	which means X11's "localhost:0" works even when the LAN is down.
+	there's a current (as of june 1999) set of root hints, so we can
+	reach the internet's name servers.  and there's a set of stubs for
+	our building nets and domains so that we can still reach the local
+	NFS and other servers when the WAN is down.
+
+recursive/
+
+	this is for a LAN resolver, which is one of multiple name servers
+	running on the same host (each with its own lo0 alias address).  it
+	has more or less what workstation/ (see above) has plus some stubs
+	for our RFC1918 addresses, some stubs for our PAIX networks, and a
+	shell script called "keep-running" that will restart named after a
+	small delay if it should happen to run out of memory and dump core.
+	(we're not using it on this host at this time, but we have used it.)

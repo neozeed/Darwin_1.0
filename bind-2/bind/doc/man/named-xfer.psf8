@@ -1,0 +1,259 @@
+%!PS-Adobe-3.0
+%%Creator: groff version 1.10
+%%CreationDate: Mon Jun 21 14:21:59 1999
+%%DocumentNeededResources: font Times-Roman
+%%DocumentSuppliedResources: procset grops 1.10 0
+%%Pages: 1
+%%PageOrder: Ascend
+%%Orientation: Portrait
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset grops 1.10 0
+/setpacking where{
+pop
+currentpacking
+true setpacking
+}if
+/grops 120 dict dup begin
+/SC 32 def
+/A/show load def
+/B{0 SC 3 -1 roll widthshow}bind def
+/C{0 exch ashow}bind def
+/D{0 exch 0 SC 5 2 roll awidthshow}bind def
+/E{0 rmoveto show}bind def
+/F{0 rmoveto 0 SC 3 -1 roll widthshow}bind def
+/G{0 rmoveto 0 exch ashow}bind def
+/H{0 rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/I{0 exch rmoveto show}bind def
+/J{0 exch rmoveto 0 SC 3 -1 roll widthshow}bind def
+/K{0 exch rmoveto 0 exch ashow}bind def
+/L{0 exch rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/M{rmoveto show}bind def
+/N{rmoveto 0 SC 3 -1 roll widthshow}bind def
+/O{rmoveto 0 exch ashow}bind def
+/P{rmoveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/Q{moveto show}bind def
+/R{moveto 0 SC 3 -1 roll widthshow}bind def
+/S{moveto 0 exch ashow}bind def
+/T{moveto 0 exch 0 SC 5 2 roll awidthshow}bind def
+/SF{
+findfont exch
+[exch dup 0 exch 0 exch neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/MF{
+findfont
+[5 2 roll
+0 3 1 roll
+neg 0 0]makefont
+dup setfont
+[exch/setfont cvx]cvx bind def
+}bind def
+/level0 0 def
+/RES 0 def
+/PL 0 def
+/LS 0 def
+/MANUAL{
+statusdict begin/manualfeed true store end
+}bind def
+/PLG{
+gsave newpath clippath pathbbox grestore
+exch pop add exch pop
+}bind def
+/BP{
+/level0 save def
+1 setlinecap
+1 setlinejoin
+72 RES div dup scale
+LS{
+90 rotate
+}{
+0 PL translate
+}ifelse
+1 -1 scale
+}bind def
+/EP{
+level0 restore
+showpage
+}bind def
+/DA{
+newpath arcn stroke
+}bind def
+/SN{
+transform
+.25 sub exch .25 sub exch
+round .25 add exch round .25 add exch
+itransform
+}bind def
+/DL{
+SN
+moveto
+SN
+lineto stroke
+}bind def
+/DC{
+newpath 0 360 arc closepath
+}bind def
+/TM matrix def
+/DE{
+TM currentmatrix pop
+translate scale newpath 0 0 .5 0 360 arc closepath
+TM setmatrix
+}bind def
+/RC/rcurveto load def
+/RL/rlineto load def
+/ST/stroke load def
+/MT/moveto load def
+/CL/closepath load def
+/FL{
+currentgray exch setgray fill setgray
+}bind def
+/BL/fill load def
+/LW/setlinewidth load def
+/RE{
+findfont
+dup maxlength 1 index/FontName known not{1 add}if dict begin
+{
+1 index/FID ne{def}{pop pop}ifelse
+}forall
+/Encoding exch def
+dup/FontName exch def
+currentdict end definefont pop
+}bind def
+/DEFS 0 def
+/EBEGIN{
+moveto
+DEFS begin
+}bind def
+/EEND/end load def
+/CNT 0 def
+/level1 0 def
+/PBEGIN{
+/level1 save def
+translate
+div 3 1 roll div exch scale
+neg exch neg exch translate
+0 setgray
+0 setlinecap
+1 setlinewidth
+0 setlinejoin
+10 setmiterlimit
+[]0 setdash
+/setstrokeadjust where{
+pop
+false setstrokeadjust
+}if
+/setoverprint where{
+pop
+false setoverprint
+}if
+newpath
+/CNT countdictstack def
+userdict begin
+/showpage{}def
+}bind def
+/PEND{
+clear
+countdictstack CNT sub{end}repeat
+level1 restore
+}bind def
+end def
+/setpacking where{
+pop
+setpacking
+}if
+%%EndResource
+%%IncludeResource: font Times-Roman
+grops begin/DEFS 1 dict def DEFS begin/u{.001 mul}bind def end/RES 72
+def/PL 792 def/LS false def/ENC0[/asciicircum/asciitilde/Scaron/Zcaron
+/scaron/zcaron/Ydieresis/trademark/quotesingle/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/space/exclam/quotedbl/numbersign/dollar/percent
+/ampersand/quoteright/parenleft/parenright/asterisk/plus/comma/hyphen
+/period/slash/zero/one/two/three/four/five/six/seven/eight/nine/colon
+/semicolon/less/equal/greater/question/at/A/B/C/D/E/F/G/H/I/J/K/L/M/N/O
+/P/Q/R/S/T/U/V/W/X/Y/Z/bracketleft/backslash/bracketright/circumflex
+/underscore/quoteleft/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y
+/z/braceleft/bar/braceright/tilde/.notdef/quotesinglbase/guillemotleft
+/guillemotright/bullet/florin/fraction/perthousand/dagger/daggerdbl
+/endash/emdash/ff/fi/fl/ffi/ffl/dotlessi/dotlessj/grave/hungarumlaut
+/dotaccent/breve/caron/ring/ogonek/quotedblleft/quotedblright/oe/lslash
+/quotedblbase/OE/Lslash/.notdef/exclamdown/cent/sterling/currency/yen
+/brokenbar/section/dieresis/copyright/ordfeminine/guilsinglleft
+/logicalnot/minus/registered/macron/degree/plusminus/twosuperior
+/threesuperior/acute/mu/paragraph/periodcentered/cedilla/onesuperior
+/ordmasculine/guilsinglright/onequarter/onehalf/threequarters
+/questiondown/Agrave/Aacute/Acircumflex/Atilde/Adieresis/Aring/AE
+/Ccedilla/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute/Icircumflex
+/Idieresis/Eth/Ntilde/Ograve/Oacute/Ocircumflex/Otilde/Odieresis
+/multiply/Oslash/Ugrave/Uacute/Ucircumflex/Udieresis/Yacute/Thorn
+/germandbls/agrave/aacute/acircumflex/atilde/adieresis/aring/ae/ccedilla
+/egrave/eacute/ecircumflex/edieresis/igrave/iacute/icircumflex/idieresis
+/eth/ntilde/ograve/oacute/ocircumflex/otilde/odieresis/divide/oslash
+/ugrave/uacute/ucircumflex/udieresis/yacute/thorn/ydieresis]def
+/Times-Roman@0 ENC0/Times-Roman RE
+%%EndProlog
+%%Page: 1 1
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF 2.549(|i)72 12 S 2.549(sa)-2.549 G 2.549(na)
+-2.549 G .049(ncillary program e)-2.549 F -.15(xe)-.15 G .049
+(cuted by to perform an inbound zone transfer).15 F 5.048(.I)-.55 G
+2.548(ti)-5.048 G 2.548(sr)-2.548 G .048(arely e)-2.548 F -.15(xe)-.15 G
+.048(cuted directly).15 F 2.548(,a)-.65 G .048(nd then on-)-2.548 F .478
+(ly by system administrators who are trying to deb)72 24 R .478
+(ug a zone transfer problem.)-.2 F .478(See RFC')5.478 F 2.978(s1)-.55 G
+.478(033, 1034, and 1035 for)-2.978 F 1.309
+(more information on the Internet name-domain system.)72 36 R 1.308
+(Options are: speci\214es the name of the zone to be trans-)6.308 F
+2.696(ferred. speci\214es)72 48 R .196
+(the name of the into which the zone should be dumped when it is recei)
+2.696 F -.15(ve)-.25 G 2.696(df).15 G .196(rom the primary serv)-2.696 F
+(er)-.15 E(.)-.55 E .624
+(speci\214es the serial number of our current cop)72 60 R 3.123(yo)-.1 G
+3.123(ft)-3.123 G .623(his zone.)-3.123 F .623
+(If the we get from the primary serv)5.623 F .623(er does not ha)-.15 F
+.923 -.15(ve a)-.2 H .988
+(serial number higher than this, the transfer will be aborted.)72 72 R
+.988(Print deb)5.988 F .988(ugging information.)-.2 F .989
+(The is a number deter)5.988 F(-)-.2 E .369(mines the le)72 84 R -.15
+(ve)-.25 G 2.869(lo).15 G 2.869(fm)-2.869 G .368(essages printed.)-2.869
+F .368(Speci\214es a log \214le for deb)5.368 F .368(ugging messages.)
+-.2 F .368(The def)5.368 F .368(ault is system- dependent)-.1 F -.2(bu)
+72 96 S 3.53(ti).2 G 3.53(su)-3.53 G 1.03
+(sually in or Note that this only applies if is also speci\214ed.)-3.53
+F 1.031(Speci\214es the name of the into which the zone)6.031 F 1.24
+(changes from Incremental Zone T)72 108 R 1.24
+(ransfer \(IXFR\) should be dumped when it is recei)-.35 F -.15(ve)-.25
+G 3.74(df).15 G 1.24(rom the primary serv)-3.74 F(er)-.15 E(.)-.55 E
+.681
+(Speci\214es a which will contain a protocol trace of the zone transfer)
+72 120 R 5.682(.T)-.55 G .682
+(his is probably only of interest to people de-)-5.682 F -.2(bu)72 132 S
+.273(gging the name serv).2 F .273(er itself.)-.15 F .273(Use a dif)
+5.273 F .273(ferent port number)-.25 F 5.273(.T)-.55 G .273(he def)
+-5.273 F .272(ault is the standard port number as returned by)-.1 F .327
+(for the service Perform a restricted transfer of only the SO)72 144 R
+.328(A, NS records and glue A records for the zone. The SO)-.35 F(A)-.35
+E .73(record will not be loaded by b)72 156 R .73
+(ut will be used to determine when to v)-.2 F .729
+(erify the NS records.)-.15 F .729(See the directi)5.729 F 1.029 -.15
+(ve i)-.25 H 3.229(nf).15 G(or)-3.229 E .06(more information.)72 168 R
+.06(Additional ar)5.06 F .06(guments are tak)-.18 F .06(en as name serv)
+-.1 F .061(er addresses in so-called syntax no host name are al-)-.15 F
+(lo)72 180 Q .444(wed here.)-.25 F .444
+(At least one address must be speci\214ed.)5.444 F(An)5.444 E 2.944(ya)
+-.15 G .443(dditional addresses will be tried, in order)-2.944 F 2.943
+(,i)-.4 G 2.943(ft)-2.943 G .443(he \214rst one)-2.943 F -.1(fa)72 192 S
+.299(ils to transfer to us successfully).1 F 5.299(.T)-.65 G .299
+(he or after name serv)-5.299 F .3
+(er address designates the type of zone transfer to perform.)-.15 F .145
+(Use for a full zone transfer or for an incremental zone transfer)72 204
+R 5.144(.R)-.55 G .144(FC 882, RFC 883, RFC 973, RFC 974, RFC 1033,)
+-5.144 F(RFC 1034, RFC 1035, RFC 1123, RFC 1995)72 216 Q EP
+%%Trailer
+end
+%%EOF

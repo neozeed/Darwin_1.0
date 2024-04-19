@@ -1,0 +1,4 @@
+Package: libc
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Description: C library
+Build-Depends: build-base, libinfo-hdrs, project-makefiles

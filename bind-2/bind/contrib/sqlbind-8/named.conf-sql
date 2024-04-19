@@ -1,0 +1,59 @@
+/*
+ * A simple BIND 8 configuration
+ */
+
+options {
+        directory "/etc/named";
+};
+
+zone "." in {
+        type hint;
+        file "root.cache";
+};
+
+zone "0.0.127.in-addr.arpa" in {
+   type master;
+   sql {
+      db-host "localhost";
+      db-user "bind";
+      db-pass "bindpass";
+      db-mbox "bind.linuxos.net";
+      db-refresh 555;
+      db-retry 666;
+      db-expire 777;
+      db-minttl 888;
+      db-serial 14;
+   };
+};
+
+zone "test.org" in {
+   type master;
+   sql {
+      db-host "localhost";
+      db-user "bind";
+      db-pass "bindpass";
+      db-mbox "bind.linuxos.net";
+      db-refresh 111;
+      db-retry 222;
+      db-expire 333;
+      db-minttl 444;
+      db-serial 19;
+   };
+}; 
+
+zone "123.123.123.in-addr.arpa" in {
+   type master;
+   sql {
+      db-host "localhost";
+      db-user "bind";
+      db-pass "bindpass";
+      db-mbox "bind.linuxos.net";
+      db-refresh 555;
+      db-retry 666;
+      db-expire 777;
+      db-minttl 888;
+      db-serial 12223;
+   };
+};
+
+

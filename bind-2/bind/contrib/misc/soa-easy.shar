@@ -1,0 +1,1177 @@
+Received: by gw.home.vix.com id AA17996; Tue, 1 Nov 94 23:03:36 -0800
+Received: from mimas.ccs.deakin.edu.au (mimas.ccs.deakin.edu.au [128.184.19.3]) by hestia.ccs.deakin.edu.au (8.6.9/8.6.9) with ESMTP id SAA13173 for <vixie@vix.com>; Wed, 2 Nov 1994 18:03:33 +1100
+From: Tim Cook <tim@deakin.edu.au>
+Received: (tim@localhost) by mimas.ccs.deakin.edu.au (8.6.8.1/8.6.9) id SAA01533 for vixie@vix.com; Wed, 2 Nov 1994 18:03:28 +1100
+Date: Wed, 2 Nov 1994 18:03:28 +1100
+Message-Id: <199411020703.SAA01533@mimas.ccs.deakin.edu.au>
+To: paul@vix.com
+Subject: soa-easy.shar
+
+#!/bin/sh
+# This is a shell archive (shar 3.32)
+# made 11/02/1994 01:38 UTC by tim@mimas.ccs.deakin.edu.au
+# Source directory /tmp_mnt/home/tim/tim/src/soa-easy
+#
+# existing files WILL be overwritten
+#
+# This shar contains:
+# length  mode       name
+# ------ ---------- ------------------------------------------
+#   2583 -rw-rw---- README
+#   5246 -rw-rw---- TIPS
+#   3390 -rw-rw---- Makefile
+#   4107 -rw-rw---- make-SOA
+#   1045 -rw-rw---- make-depend
+#    725 -rw-rw---- 0.0.127.IN-ADDR.ARPA.zone
+#    536 -rw-rw---- 1.254.191.IN-ADDR.ARPA.zone
+#    488 -rw-rw---- 16.254.191.IN-ADDR.ARPA.zone
+#    410 -rw-rw---- 17.254.191.IN-ADDR.ARPA.zone
+#    312 -rw-rw---- 253.191.IN-ADDR.ARPA.zone
+#    360 -rw-rw---- 254.191.IN-ADDR.ARPA.zone
+#    569 -rw-rw---- client.org.au.zone
+#    625 -rw-rw---- example.org.au.zone
+#    648 -rw-rw---- localhost.zone
+#    542 -rw-rw---- net.example.org.au.zone
+#    873 -rw-rw---- sub.example.org.au.zone
+#    378 -rw-rw---- MX.generic
+#    317 -rw-rw---- NS.generic
+#    416 -rw-rw---- sub-pcs.example.org.au.inc
+#
+if touch 2>&1 | fgrep 'amc' > /dev/null
+ then TOUCH=touch
+ else TOUCH=true
+fi
+# ============= README ==============
+echo "x - extracting README (Text)"
+sed 's/^X//' << 'SHAR_EOF' > README &&
+XThis is my solution to a couple of problems we had with DNS at Deakin
+XUniversity, namely:
+X
+X    - Remembering always to update the SOA serial number is just not
+X      possible, especially if you want to allow half a dozen or more
+X      people, of various experience, to edit your DNS.
+X
+X    - Changing NS records for 198 zones can take a bit of time,
+X      expecially if you are using RCS. 
+X
+X    - Changing MX records for 400 zones is not any easier.
+X
+XBasically, all of the above were solved by using BIND's "$INCLUDE"
+Xfeature.  For the latter two, it just meant deciding to use this
+Xfeature for all NS and MX records.  For the first problem, it meant
+Xalso "$INCLUDE"-ing a file containing the SOA record, and updating
+Xthat file automatically when any files for that zone are updated
+X(including other "$INCLUDE"-ed files).
+X
+XThe whole system is run (from the point of view of your DNS
+Xadministrators) using two simple tools; "make" and RCS (but see below
+Xif you hate RCS).  Your DNS administrator simply checks out the file
+Xthey wish to change, makes the change, checks in the file and does a
+X"make configure" (or "make install" if they just want to update the
+Xproduction DNS files, but not reload named).  If any file containing
+Xdata for a zone is updated, the .SOA file for that zone (and it's
+Xserial number) is re-generated.  There is also a "make-depend" program
+Xto keep dependencies in the Makefile up-to-date.
+X
+XThe re-generation of SOA serial numbers uses the RCS "Id" header.
+XThis means you need to use RCS for the maintenance of _ALL_ your DNS
+Xfiles.  However, if you really hate RCS, you could probably modify
+X"make-SOA" so that it uses file modification times instead.
+X
+XThe two programs which update the .SOA files (make-SOA) and the
+XMakefile (make-depend) require Perl version 4, and you will need to
+Xcustomise make-SOA, the Makefile and, of course, your domain files.
+X
+XI can't think of any more details to mention here.  There are some
+Xcomments in the files, and your DNS administrators should read the
+XTIPS file (it is actually the README file in our DNS source area),
+Xwhich covers a couple of important things other than SOA serial
+Xnumbers that can get overlooked.
+X
+XEven if you aren't interested in the software here, peruse the data.
+XI have configured an "example" DNS zone, which might contain just
+Xenough hints to get you started in configuring your own zone(s).
+X
+XI recommend the other DNS tools that come with BIND.  There is nothing
+Xbetter than using a computer to do your administrivia.
+X
+X--
+XTim Cook
+XSystems Engineer
+XDeakin University
+X<tim@deakin.edu.au>
+X2 Nov 1994
+SHAR_EOF
+$TOUCH -am 1102122894 README &&
+chmod 0660 README ||
+echo "restore of README failed"
+set `wc -c README`;Wc_c=$1
+if test "$Wc_c" != "2583"; then
+	echo original size 2583, current size $Wc_c
+fi
+# ============= TIPS ==============
+echo "x - extracting TIPS (Text)"
+sed 's/^X//' << 'SHAR_EOF' > TIPS &&
+XSteps to take when undertaking DNS modifications:
+X
+X   - No need to worry about SOA serial numbers -- these are updated
+X     automatically (using RCS revision information) if any relative
+X     data has been modified.
+X
+X   - Use RCS for all modifications.  The automatic SOA serial number
+X     generation depends on _all_ DNS config files containing an RCS
+X     "Id" string.
+X
+X   - Are you adding a zone? -- If so, your file should be called
+X     <something>.zone, and it should $INCLUDE a file called
+X     <something>.SOA, and probably at least NS.generic.  Then you need
+X     to add some "nameserver delegations" (NS entries for
+X     authoritative nameservers) to the parent zone (see 
+X     example.org.au/top.zone for more information).  Use another .zone
+X     file as an example.
+X
+X     You will need to add mention of your zone file to the Makefile.
+X     Also, you will need to add it to named.boot.
+X
+X   - Do you want to add the "standard" set of MX records for a node?
+X     -- Use an $INCLUDE like the following:
+X
+X	; ORIGIN is currently sub.example.org.au.
+X	red		IN	A	191.254.1.10
+X			IN	HINFO	Sun-SS2 SunOS
+X	$INCLUDE MX.generic		red
+X
+X     The "red" on the end of the $INCLUDE statement sets the ORIGIN
+X     to "red.sub.example.org.au." for the contents of the INCLUDE-ed
+X     file.
+X
+X   - Have you added any new files? -- add them to the correct
+X     variable(s) in the Makefile and run "make depend".
+X
+X   - Have you added/removed/changed any $INCLUDE directives in any of
+X     the files?  -- Run "make depend".
+X
+X   - Do you want to install your changes? -- Run "make install".  This
+X     will install any files that have been modified since the last
+X     "make install".
+X
+X   - Do you want "named" to start using your changes? -- Run
+X     "make configure".  The "configure" target does an implicit
+X     "install", so if you want to install and configure, you only need
+X     to use "make configure".
+X
+X     You should check the startup/reload messages from named to check
+X     that your changes are OK.  Use the following command on your
+X     primary server:
+X
+X	$ grep named /var/adm/messages | tail -50
+X
+X     If everything is OK, you should (eventually) see something like:
+X
+X	Jul 21 12:53:27 ns named[103]: reloading nameserver
+X	Jul 21 12:53:43 ns named[103]: Ready to answer queries.
+X
+X   - Do you want to clean up any temporary files? -- Run "make clean".
+X
+X
+XRules for DNS data:
+X
+X   - If a particular zone ("red.sub.example.org.au", "sub.example.org.au"
+X     and "example.org.au" are all zones) is to have a CNAME entry, it
+X     can not have any other entries (as this would not make sense).
+X     If you want "sub.example.org.au" to be an alias for
+X     "white.sub.example.org.au" use the following:
+X
+X	; ORIGIN is currently "sub.example.org.au."
+X	@		IN	A	(the IP-address for white)
+X			IN	HINFO	CNAME white.sub.example.org.au.
+X
+X   - All A records should have corresponding PTR records in an
+X     IN-ADDR.ARPA zone.  In other words, software using DNS should be
+X     able to find retrieve any hostname, given a valid IP address.
+X
+X   - All PTR records should refer to an A record that exists.  In
+X     other words, if you are given a valid IP address, you should be
+X     able to fetch a hostname via a PTR lookup, then re-fetch any IP
+X     addresses via an A lookup.
+X
+X     PTR records that refer to CNAME's are bogus.
+X
+X   - All CNAME records _should_ refer to a zone that has an A record.
+X     I don't know whether it is useful to have an alias for a zone
+X     that does not have any A records, but they should at least refer
+X     to a valid zone.
+X
+X   - If a host has more than one IP address (perhaps it is a
+X     gateway), all PTR records for those addresses should refer to the
+X     same hostname, which is the offical name for that host.  If a
+X     specific interface on a host needs to be referred to, a seperate A
+X     record can be used to do this, but the corresponding PTR record
+X     should still refer to the official hostname.
+X
+X     You may find instances where software does not like this
+X     configuration (NIS on Sun's, which can only return one address
+X     for a hostname can cause problems - use DNS if you have Solaris
+X     2), but it is recognised on the Internet as the proper thing to
+X     do.
+X
+X     An example, for illustration:
+X
+X     ; ORIGIN is currently sub.example.org.au
+X     yellow			IN	A	191.254.16.1
+X				IN	A	191.254.17.1
+X     yellow-i1			IN	A	191.254.16.1
+X     yellow-i2			IN	A	191.254.17.1
+X     ;
+X     1.16.254.191.IN-ADDR.ARPA.	IN	PTR	yellow
+X     1.17.254.191.IN-ADDR.ARPA.	IN	PTR	yellow
+X
+X   - "named" is picky about HINFO records.  They must contain two
+X     values (which are usually interpreted as make/model followed by
+X     operating-system), separated by whitespace.  If you want to put
+X     whitespace in one of the values, quote it.  If you have a HINFO
+X     record that does not match this format, named will get messed up.
+X     Here are some examples:
+X
+X	; These are OK
+X	foo		IN	HINFO	Sun-SS2 SunOS
+X	bar		IN	HINFO	Spagthorpe "GSZXBRRF2 750RR"
+X	snafu		IN	HINFO	Sun-3/60 Sun-Xkernel
+X	; These are NOT
+X	ding		IN	HINFO	Microwave
+X	hiss		IN	HINFO	Stainless-Steel Hot Water Urn
+X	ahhhhh		IN	HINFO	Coin-operated Coke Vending-Machine
+X
+X--
+XTim Cook
+XSystems Engineer
+XComputing & Communications Services
+XDeakin University
+SHAR_EOF
+$TOUCH -am 1101173494 TIPS &&
+chmod 0660 TIPS ||
+echo "restore of TIPS failed"
+set `wc -c TIPS`;Wc_c=$1
+if test "$Wc_c" != "5246"; then
+	echo original size 5246, current size $Wc_c
+fi
+# ============= Makefile ==============
+echo "x - extracting Makefile (Text)"
+sed 's/^X//' << 'SHAR_EOF' > Makefile &&
+X# Makefile -	For updating/installing DNS data files
+X#
+X# $Id: soa-easy.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X# $Source: /cvs/Darwin/Services/bind/bind/contrib/misc/soa-easy.shar,v $
+X#
+X# DESCRIPTION
+X#	If you add a new file, you must add it to the appropriate
+X#	macro below.  If the file is a ".zone" file, you should
+X#	also add a ".SOA" file to one of the SOA macros below, and do
+X#	a "make depend".  This will ensure the ".SOA" file is
+X#	generated and updated properly.
+X#
+X#	If you add or remove an $INCLUDE directive in any file,
+X#	do a "make depend".
+X#
+X# NOTE
+X#	Part of the contents of this file are modified by the "depend"
+X#	target.
+X
+X
+XDIR =		/local/domain
+XUSER =		root
+XGROUP =		root
+XMODE =		440
+X
+X#
+X# Name of an authoritative root nameserver
+X#
+XAUTH_ROOT_NS =	NIC.NORDU.NET
+X
+X#
+X# These may need customisation
+X#
+XINSTALL =	op install -o $(USER) -g $(GROUP) -m $(MODE)
+XCONFIGURE =	op named.reload
+X
+X
+XMISC =	named.boot root.cache localhost.zone \
+X	0.0.127.IN-ADDR.ARPA.zone
+X
+X#
+X# These macros will have to be customised
+X#
+XFORWARD = \
+X	example.org.au.zone \
+X	sub.example.org.au.zone net.example.org.au.zone \
+X	client.org.au.zone
+X
+XFORWARD_SOA = \
+X	example.org.au.SOA \
+X	sub.example.org.au.SOA net.example.org.au.SOA \
+X	client.org.au.SOA
+X
+XREVERSE = \
+X	254.191.IN-ADDR.ARPA.zone \
+X	1.254.191.IN-ADDR.ARPA.zone 16.254.191.IN-ADDR.ARPA.zone \
+X	16.254.191.IN-ADDR.ARPA.zone \
+X	253.191.IN-ADDR.ARPA.zone
+X
+XREVERSE_SOA = \
+X	254.191.IN-ADDR.ARPA.SOA \
+X	1.254.191.IN-ADDR.ARPA.SOA 16.254.191.IN-ADDR.ARPA.SOA \
+X	16.254.191.IN-ADDR.ARPA.SOA \
+X	253.191.IN-ADDR.ARPA.SOA
+X
+XINCLUDE = \
+X	NS.generic MX.generic \
+X	sub-pcs.example.org.au.inc
+X
+XZONES =	$(FORWARD) $(REVERSE)
+X
+XSOAS =	$(FORWARD_SOA) $(REVERSE_SOA)
+X
+X#
+X# These files are considered removable
+X#
+XCLEAN = $(ZONES) $(SOAS) $(MISC)
+X
+X#
+X# This order is important (in case named is restarted during install)
+X#
+XDEPENDANT =	$(INCLUDES) $(ZONES)
+XFILES =		$(MISC) $(DEPENDANT) $(SOAS)
+X
+X
+X#
+X# Custom make rules
+X#
+X.SUFFIXES: .zone .SOA $(SUFFIXES)
+X
+X.zone.SOA:
+X	./make-SOA -o $@ $<
+X
+X.DEFAULT:
+X	co $@
+X
+X
+X
+Xall : $(FILES)
+X
+X#
+X# To get an up-to-date root.cache, we ask an authoritative root
+X# nameserver.
+X#
+Xroot.cache :
+X	dig @$(AUTH_ROOT_NS) . NS > dig.out && mv -f dig.out $@
+X
+Xinstall : install.timestamp
+X
+X#
+X# By using $?, only those files changed since last install are
+X# installed.  This can save a lot of time.
+X#
+Xinstall.timestamp : $(FILES)
+X	@for f in $? ;\
+X	do \
+X		echo "$(INSTALL) $$f $(DIR)/$$f" ;\
+X		$(INSTALL) $$f $(DIR)/$$f ;\
+X	done
+X	@touch $@
+X	@chmod 660 2>/dev/null || true $@
+X
+X#
+X# Target that makes changes take effect
+X#
+Xconfigure : install
+X	$(CONFIGURE)
+X
+X#
+X# clean is tidy; clobbered is very tidy, but will cause work to regenerate
+X#
+Xclean :
+X	rm -f *~ core
+X	
+Xclobber : clean
+X	rm -f $(CLEAN) install.timestamp
+X
+Xdepend : $(DEPENDANT)
+X	sed '/^# --MAKEDEPEND--.*DO NOT DELETE/q' < Makefile > Makefile.new
+X	./make-depend $(SOAS) >> Makefile.new
+X	mv -f Makefile Makefile.old
+X	mv -f Makefile.new Makefile
+X
+X#
+X# --MAKEDEPEND--	DO NOT DELETE THIS LINE, or modify anything below it
+Xexample.org.au.SOA :	NS.generic MX.generic
+Xsub.example.org.au.SOA :	NS.generic MX.generic sub-pcs.example.org.au.inc
+Xnet.example.org.au.SOA :	NS.generic MX.generic
+Xclient.org.au.SOA :	NS.generic MX.generic
+X254.191.IN-ADDR.ARPA.SOA :	NS.generic
+X1.254.191.IN-ADDR.ARPA.SOA :	NS.generic
+X16.254.191.IN-ADDR.ARPA.SOA :	NS.generic
+X16.254.191.IN-ADDR.ARPA.SOA :	NS.generic
+X253.191.IN-ADDR.ARPA.SOA :	NS.generic
+SHAR_EOF
+$TOUCH -am 1102123594 Makefile &&
+chmod 0660 Makefile ||
+echo "restore of Makefile failed"
+set `wc -c Makefile`;Wc_c=$1
+if test "$Wc_c" != "3390"; then
+	echo original size 3390, current size $Wc_c
+fi
+# ============= make-SOA ==============
+echo "x - extracting make-SOA (Text)"
+sed 's/^X//' << 'SHAR_EOF' > make-SOA &&
+X#!/usr/local/bin/perl
+X# make-SOA -	Generate a DNS SOA record for a domain
+X#
+X# $Id: soa-easy.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X# $Source: /cvs/Darwin/Services/bind/bind/contrib/misc/soa-easy.shar,v $
+X#
+X# SYNOPSIS
+X#	make-SOA -o SOA-file domain-file
+X
+X
+X#
+X# Values for the SOA record.  See RFC1035 for info.
+X#
+X
+X#
+X# The <domain-name> of the name server that was the original or
+X# primary source of data for this zone.
+X$SOA_MNAME =	'ns.example.org.au.';
+X
+X#
+X# A <domain-name> which specifies the mailbox of the person
+X# responsible for this zone
+X$SOA_RNAME =	'hostmaster.example.org.au.';
+X
+X#
+X# A 32 bit time interval (in seconds) before the zone should be
+X# refreshed
+X$SOA_REFRESH =	10800;		# 3 hours
+X
+X#
+X# A 32 bit time interval that should elapse before a failed refresh
+X# should be retried
+X$SOA_RETRY =	3600;		# 1 hour
+X
+X#
+X# A 32 bit time value that specifies the upper limit on the time
+X# interval that can elapse before the zone is no longer authoritative.
+X$SOA_EXPIRE =	2592000;	# 30 days
+X
+X#
+X# The unsigned 32 bit minimum time-to-live field that should be
+X# exported with any resource record from this zone.
+X$SOA_MINIMUM =	86400;		# 24 hours
+X
+X
+X$prog = 'make-SOA';
+X
+X$usage = 'usage: ' . $prog . ' -o SOA-file domain-file';
+X
+Xif (($#ARGV != 2) || ($ARGV[0] ne '-o')) {
+X    die $usage . "\n";
+X}
+X
+X$soa_file = $ARGV[1];
+X$domain_file = $ARGV[2];
+X
+X
+X#
+X# Read current serial number from SOA-file, if any
+X#
+Xif (-f $soa_file) {
+X    open (SOA, $soa_file) || die "$prog: can't open $soa_file: $!\n";
+X    while (<SOA>) {
+X	if (/; -SERIAL- \(make-SOA\)/) {
+X	    s/^\s*//;
+X	    ($old_serial, $dummy) = split;
+X	    last;
+X	}
+X    }
+X    close (SOA);
+X    if (! length ($old_serial)) {
+X	warn "$prog: warning: can't find SERIAL in SOA-file\n";
+X    }
+X} else {
+X    warn "$prog: warning: no existing SOA-file\n";
+X}
+X
+X#
+X# Starting with the domain file, read it, obtain any RCS Id keywords,
+X# and repeat for any $INCLUDE files
+X#
+X
+X&get_rcs ($domain_file);
+X
+X#
+X# Calculate serial number
+X#
+X
+X#print (join ("\n", "RCS ID data:", @rcs_ids, ""));
+X
+X#
+X# Discard all but the date
+Xforeach (@rcs_ids) {
+X    s/^\s*//;
+X    @fields = split;
+X    $_ = $fields[2];
+X}
+X
+X@rcs_ids = sort (@rcs_ids);
+X$most_recent = pop (@rcs_ids);
+X$most_recent =~ s/\///g;		# Remove slashes
+X
+X#
+X# Sanity check
+X#
+Xif (! ($most_recent =~ /^[0-9]+$/)
+X    || ($most_recent > 99999999))
+X{
+X    die "$prog: generated SERIAL is too big\n";
+X}
+X
+X$serial = $most_recent * 100;
+X
+Xwhile (1) {
+X    last if ($serial > $old_serial);
+X    $serial++;
+X    if ($serial >> 9999999999) {
+X	die "$prog: generated SERIAL is too big\n";
+X    }
+X}
+X
+X#
+X# Backup existing SOA-file, if any
+X#
+X$backup_file = $soa_file . '.backup';
+X
+Xunlink ($backup_file);
+Xrename ($soa_file, $backup_file);
+X
+X
+X#
+X# Write new SOA-file
+X#
+Xopen (SOA, '>' . $soa_file) || die "$prog: can't open $soa_file: $!\n";
+Xprint (SOA
+X"; $soa_file -	SOA record for inclusion in $domain_file
+X;
+X; NOTE:  This file is generated by $prog -- DO NOT EDIT
+X;
+X@  IN  SOA  $SOA_MNAME $SOA_RNAME (
+X            $serial	; -SERIAL- (make-SOA)
+X            $SOA_REFRESH	; REFRESH
+X            $SOA_RETRY	; RETRY
+X            $SOA_EXPIRE	; EXPIRE
+X            $SOA_MINIMUM	; MINIMUM
+X            )
+X") || die "$prog: can't write to $soa_file: $!\n";
+Xclose (SOA) || die "$prog: can't close $soa_file: $!\n";
+X
+X#
+X# Remove backup SOA-file
+X#
+Xunlink ($backup_file);
+X
+X#
+X# EXIT
+X#
+Xexit (0);
+X
+X
+X###############################################################
+X# get_rcs -	Obtain RCS Id keywords, handling $INCLUDE files
+X#
+X# GLOBALS
+X#	@rcs_ids
+X#
+Xsub get_rcs {
+X    local ($file_name) = shift (@_);
+X
+X    local ($_);
+X    local (@includes);
+X    local (@parts);
+X
+X    open (FILE, $file_name) || die "$prog: can't open $file_name: $!\n";
+X
+X    while (<FILE>) {
+X	#
+X	# The [I] is to prevent RCS thinking it is an RCS keyword
+X	#
+X	if (/\$[I]d:\s.*$/) {
+X	    $_ = substr ($_, index ($_, '$Id:') + 4);
+X	    s/\$.*\n*$//;
+X	    push (@rcs_ids, $_);
+X	}
+X	s/;.*$//;
+X	if (/\$INCLUDE\s/) {
+X	    @parts = split; $_ = $parts[1];
+X	    if (length ($_) && (! /\.SOA$/)) {
+X		push (@includes, $parts[1]); }
+X	}
+X    }
+X    close (FILE);
+X
+X    #
+X    # Recurse on $INCLUDE-ed files
+X    #
+X    foreach (@includes) {
+X	&get_rcs ($_);
+X    }
+X}
+SHAR_EOF
+$TOUCH -am 1102121894 make-SOA &&
+chmod 0660 make-SOA ||
+echo "restore of make-SOA failed"
+set `wc -c make-SOA`;Wc_c=$1
+if test "$Wc_c" != "4107"; then
+	echo original size 4107, current size $Wc_c
+fi
+# ============= make-depend ==============
+echo "x - extracting make-depend (Text)"
+sed 's/^X//' << 'SHAR_EOF' > make-depend &&
+X#!/usr/local/bin/perl
+X# make-depend -	Output SOA-file dependencies, in make(1) format
+X#
+X# $Id: soa-easy.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X# $Source: /cvs/Darwin/Services/bind/bind/contrib/misc/soa-easy.shar,v $
+X#
+X# SYNOPSIS
+X#	make-depend SOA-file ...
+X
+X
+X$prog = 'make-depend';
+X
+Xforeach $file (@ARGV) {
+X    $zone_file = $file;
+X    $zone_file =~ s/\.SOA$/.zone/;
+X    @dependencies = &find_includes ($zone_file);
+X    @dependencies = grep (! /\.SOA$/, @dependencies);
+X    print ($file, " :	", join (' ', @dependencies), "\n");
+X}
+X
+X
+X#######################################################################
+X# find_includes -	Look for $INCLUDE-ed files
+X#
+Xsub find_includes {
+X    local ($file) = shift (@_);
+X
+X    local (@parts);
+X    local (@includes);
+X
+X    if (! open (FILE, $file)) {
+X	warn "$prog: warning: can't open $file: $!\n";
+X	return ();
+X    }
+X
+X    while (<FILE>) {
+X	s/;.*$//;
+X	if (/\$INCLUDE\s/) {
+X	    @parts = split;
+X	    if (! grep ($_ eq $parts[1], @includes)) {
+X		push (@includes, $parts[1]); }
+X	}
+X    }
+X    close (FILE);
+X
+X    return (@includes);
+X}
+SHAR_EOF
+$TOUCH -am 1101172094 make-depend &&
+chmod 0660 make-depend ||
+echo "restore of make-depend failed"
+set `wc -c make-depend`;Wc_c=$1
+if test "$Wc_c" != "1045"; then
+	echo original size 1045, current size $Wc_c
+fi
+# ============= 0.0.127.IN-ADDR.ARPA.zone ==============
+echo "x - extracting 0.0.127.IN-ADDR.ARPA.zone (Text)"
+sed 's/^X//' << 'SHAR_EOF' > 0.0.127.IN-ADDR.ARPA.zone &&
+X; 0.0.127.IN-ADDR.ARPA.zone -	DNS zone for resolving 127.0.0.1 address
+X;
+X; $Id: soa-easy.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X; $Source: /cvs/Darwin/Services/bind/bind/contrib/misc/soa-easy.shar,v $
+X;
+X
+X;
+X; There should never be a need to change this file.  It just contains
+X; enough information for any system running named to masquerade as an
+X; authoritative nameserver for 1.0.0.127.IN-ADDR.ARPA.
+X;
+X
+X$ORIGIN		0.0.127.IN-ADDR.ARPA.
+X
+X@		IN	SOA	ns.example.org.au. hostmaster.example.org.au. (
+X		1993090300	; serial
+X		10800		; refresh
+X		3600		; retry
+X		2592000		; expire
+X		86400		; minimum
+X		)
+X
+X@		IN	NS	ns.example.org.au.
+X
+X
+X;
+X; The PTR record to resolve 127.0.0.1 to "localhost"
+X;
+X
+X1		IN	PTR	localhost.
+SHAR_EOF
+$TOUCH -am 1102120794 0.0.127.IN-ADDR.ARPA.zone &&
+chmod 0660 0.0.127.IN-ADDR.ARPA.zone ||
+echo "restore of 0.0.127.IN-ADDR.ARPA.zone failed"
+set `wc -c 0.0.127.IN-ADDR.ARPA.zone`;Wc_c=$1
+if test "$Wc_c" != "725"; then
+	echo original size 725, current size $Wc_c
+fi
+# ============= 1.254.191.IN-ADDR.ARPA.zone ==============
+echo "x - extracting 1.254.191.IN-ADDR.ARPA.zone (Text)"
+sed 's/^X//' << 'SHAR_EOF' > 1.254.191.IN-ADDR.ARPA.zone &&
+X; 1.254.191.IN-ADDR.ARPA.zone -	DNS data for 1.254.191.IN-ADDR.ARPA.
+X;
+X; $Id: soa-easy.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X; $Source: /cvs/Darwin/Services/bind/bind/contrib/misc/soa-easy.shar,v $
+X;
+X
+X$INCLUDE 1.254.191.SOA
+X
+X$INCLUDE NS.generic
+X
+X;
+X; Addresses
+X;
+X
+X1		IN	PTR	ns.example.org.au.
+X2		IN	PTR	mailhub.example.org.au.
+X
+X3		IN	PTR	red.sub.example.org.au.
+X4		IN	PTR	white.sub.example.org.au.
+X5		IN	PTR	blue.sub.example.org.au.
+X
+X50		IN	PTR	black.net.example.org.au.
+X
+X254		IN	PTR	cerise.net.example.org.au.
+SHAR_EOF
+$TOUCH -am 1102120794 1.254.191.IN-ADDR.ARPA.zone &&
+chmod 0660 1.254.191.IN-ADDR.ARPA.zone ||
+echo "restore of 1.254.191.IN-ADDR.ARPA.zone failed"
+set `wc -c 1.254.191.IN-ADDR.ARPA.zone`;Wc_c=$1
+if test "$Wc_c" != "536"; then
+	echo original size 536, current size $Wc_c
+fi
+# ============= 16.254.191.IN-ADDR.ARPA.zone ==============
+echo "x - extracting 16.254.191.IN-ADDR.ARPA.zone (Text)"
+sed 's/^X//' << 'SHAR_EOF' > 16.254.191.IN-ADDR.ARPA.zone &&
+X; 16.254.191.IN-ADDR.ARPA.zone -	DNS data for 16.254.191.IN-ADDR.ARPA.
+X;
+X; $Id: soa-easy.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X; $Source: /cvs/Darwin/Services/bind/bind/contrib/misc/soa-easy.shar,v $
+X;
+X
+X$INCLUDE 16.254.191.SOA
+X
+X$INCLUDE NS.generic
+X
+X;
+X; Addresses
+X;
+X
+X1		IN	PTR	yellow.sub.example.org.au.
+X
+X100		IN	PTR	groucho.sub.example.org.au.
+X101		IN	PTR	harpo.sub.example.org.au.
+X102		IN	PTR	chico.sub.example.org.au.
+X
+X254		IN	PTR	cerise.net.example.org.au.
+SHAR_EOF
+$TOUCH -am 1102120794 16.254.191.IN-ADDR.ARPA.zone &&
+chmod 0660 16.254.191.IN-ADDR.ARPA.zone ||
+echo "restore of 16.254.191.IN-ADDR.ARPA.zone failed"
+set `wc -c 16.254.191.IN-ADDR.ARPA.zone`;Wc_c=$1
+if test "$Wc_c" != "488"; then
+	echo original size 488, current size $Wc_c
+fi
+# ============= 17.254.191.IN-ADDR.ARPA.zone ==============
+echo "x - extracting 17.254.191.IN-ADDR.ARPA.zone (Text)"
+sed 's/^X//' << 'SHAR_EOF' > 17.254.191.IN-ADDR.ARPA.zone &&
+X; 17.254.191.IN-ADDR.ARPA.zone -	DNS data for 17.254.191.IN-ADDR.ARPA.
+X;
+X; $Id: soa-easy.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X; $Source: /cvs/Darwin/Services/bind/bind/contrib/misc/soa-easy.shar,v $
+X;
+X
+X$INCLUDE 17.254.191.SOA
+X
+X$INCLUDE NS.generic
+X
+X;
+X; Addresses
+X;
+X
+X1		IN	PTR	yellow.sub.example.org.au.
+X
+X100		IN	PTR	zeppo.sub.example.org.au.
+X
+X254		IN	PTR	cerise.net.example.org.au.
+SHAR_EOF
+$TOUCH -am 1102120794 17.254.191.IN-ADDR.ARPA.zone &&
+chmod 0660 17.254.191.IN-ADDR.ARPA.zone ||
+echo "restore of 17.254.191.IN-ADDR.ARPA.zone failed"
+set `wc -c 17.254.191.IN-ADDR.ARPA.zone`;Wc_c=$1
+if test "$Wc_c" != "410"; then
+	echo original size 410, current size $Wc_c
+fi
+# ============= 253.191.IN-ADDR.ARPA.zone ==============
+echo "x - extracting 253.191.IN-ADDR.ARPA.zone (Text)"
+sed 's/^X//' << 'SHAR_EOF' > 253.191.IN-ADDR.ARPA.zone &&
+X; 253.191.IN-ADDR.ARPA.zone -	DNS data for 254.191.IN-ADDR.ARPA.
+X;
+X; $Id: soa-easy.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X; $Source: /cvs/Darwin/Services/bind/bind/contrib/misc/soa-easy.shar,v $
+X;
+X
+X$INCLUDE 253.191.SOA
+X
+X$INCLUDE NS.generic
+X
+X;
+X; Addresses
+X;
+X
+X1		IN	PTR	mailhub.client.org.au.
+SHAR_EOF
+$TOUCH -am 1102120794 253.191.IN-ADDR.ARPA.zone &&
+chmod 0660 253.191.IN-ADDR.ARPA.zone ||
+echo "restore of 253.191.IN-ADDR.ARPA.zone failed"
+set `wc -c 253.191.IN-ADDR.ARPA.zone`;Wc_c=$1
+if test "$Wc_c" != "312"; then
+	echo original size 312, current size $Wc_c
+fi
+# ============= 254.191.IN-ADDR.ARPA.zone ==============
+echo "x - extracting 254.191.IN-ADDR.ARPA.zone (Text)"
+sed 's/^X//' << 'SHAR_EOF' > 254.191.IN-ADDR.ARPA.zone &&
+X; 254.191.IN-ADDR.ARPA.zone -	DNS data for 254.191.IN-ADDR.ARPA.
+X;
+X; $Id: soa-easy.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X; $Source: /cvs/Darwin/Services/bind/bind/contrib/misc/soa-easy.shar,v $
+X;
+X
+X$INCLUDE 254.191.SOA
+X
+X$INCLUDE NS.generic
+X
+X;
+X; Sub-zone delegations
+X;
+X$INCLUDE NS.generic		1
+X$INCLUDE NS.generic		16
+X$INCLUDE NS.generic		17
+SHAR_EOF
+$TOUCH -am 1102120794 254.191.IN-ADDR.ARPA.zone &&
+chmod 0660 254.191.IN-ADDR.ARPA.zone ||
+echo "restore of 254.191.IN-ADDR.ARPA.zone failed"
+set `wc -c 254.191.IN-ADDR.ARPA.zone`;Wc_c=$1
+if test "$Wc_c" != "360"; then
+	echo original size 360, current size $Wc_c
+fi
+# ============= client.org.au.zone ==============
+echo "x - extracting client.org.au.zone (Text)"
+sed 's/^X//' << 'SHAR_EOF' > client.org.au.zone &&
+X; client.org.au.zone -	DNS data for client.org.au
+X;
+X; $Id: soa-easy.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X; $Source: /cvs/Darwin/Services/bind/bind/contrib/misc/soa-easy.shar,v $
+X;
+X; example.org.au provides DNS services to client.org.au
+X;
+X
+X$INCLUDE client.org.au.SOA
+X
+X$INCLUDE NS.generic
+X
+X;
+X; MX - most preferred MX is their server, but add our MX entries as
+X; well, as we are their gateway.
+X;
+X@		IN	MX 5	mailhub.client.org.au.
+X$INCLUDE MX.generic
+X
+Xmailhub		IN	A	191.253.1.1
+X		IN	A	Sun-3/60	SunOS-4
+X		IN	MX 5	mailhub.client.org.au.
+X$INCLUDE MX.generic		mailhub
+SHAR_EOF
+$TOUCH -am 1102120794 client.org.au.zone &&
+chmod 0660 client.org.au.zone ||
+echo "restore of client.org.au.zone failed"
+set `wc -c client.org.au.zone`;Wc_c=$1
+if test "$Wc_c" != "569"; then
+	echo original size 569, current size $Wc_c
+fi
+# ============= example.org.au.zone ==============
+echo "x - extracting example.org.au.zone (Text)"
+sed 's/^X//' << 'SHAR_EOF' > example.org.au.zone &&
+X; example.org.au.zone -	DNS data for example.org.au
+X;
+X; $Id: soa-easy.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X; $Source: /cvs/Darwin/Services/bind/bind/contrib/misc/soa-easy.shar,v $
+X;
+X
+X$INCLUDE example.org.au.SOA
+X
+X$INCLUDE NS.generic
+X
+X$INCLUDE MX.generic
+X
+X;
+X; Sub-zone delegation(s)
+X;
+X$INCLUDE NS.generic		sub
+X
+X
+X;
+X; Hosts
+X;
+Xns		IN	A	191.254.1.1
+X		IN	HINFO	Sun-SS10	SunOS-5
+X$INCLUDE MX.generic		ns
+X
+Xmailhub		IN	A	191.254.1.2
+X		IN	HINFO	Sun-SS2		SunOS-5
+X$INCLUDE MX.generic		mailhub
+X
+X;
+X; Aliases
+X;
+Xred		IN	CNAME	red.sub.example.org.au.
+Xwhite		IN	CNAME	white.sub.example.org.au.
+Xblue		IN	CNAME	blue.sub.example.org.au.
+SHAR_EOF
+$TOUCH -am 1102122994 example.org.au.zone &&
+chmod 0660 example.org.au.zone ||
+echo "restore of example.org.au.zone failed"
+set `wc -c example.org.au.zone`;Wc_c=$1
+if test "$Wc_c" != "625"; then
+	echo original size 625, current size $Wc_c
+fi
+# ============= localhost.zone ==============
+echo "x - extracting localhost.zone (Text)"
+sed 's/^X//' << 'SHAR_EOF' > localhost.zone &&
+X; localhost.zone -	DNS data for resolving "localhost" to 127.0.0.1
+X;
+X; $Id: soa-easy.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X; $Source: /cvs/Darwin/Services/bind/bind/contrib/misc/soa-easy.shar,v $
+X;
+X
+X;
+X; There should never be a need to change this file.  It just contains
+X; enough information for any system running named to masquerade as an
+X; authoritative nameserver for "localhost.".
+X;
+X
+Xlocalhost.	IN	SOA	ns.example.org.au. hostmaster.example.org.au. (
+X		1993090300	; serial
+X		10800		; refresh
+X		3600		; retry
+X		2592000		; expire
+X		86400		; minimum
+X		)
+X 
+X@		IN	NS	ns.example.org.au.
+X
+X;
+X; The A record to resolve "localhost" to 127.0.0.1
+X;
+X
+X@		IN	A	127.0.0.1
+SHAR_EOF
+$TOUCH -am 1102123894 localhost.zone &&
+chmod 0660 localhost.zone ||
+echo "restore of localhost.zone failed"
+set `wc -c localhost.zone`;Wc_c=$1
+if test "$Wc_c" != "648"; then
+	echo original size 648, current size $Wc_c
+fi
+# ============= net.example.org.au.zone ==============
+echo "x - extracting net.example.org.au.zone (Text)"
+sed 's/^X//' << 'SHAR_EOF' > net.example.org.au.zone &&
+X; net.example.org.au.zone -	DNS data for net.example.org.au
+X;
+X; $Id: soa-easy.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X; $Source: /cvs/Darwin/Services/bind/bind/contrib/misc/soa-easy.shar,v $
+X;
+X
+X$INCLUDE net.example.org.au.SOA
+X
+X$INCLUDE NS.generic
+X
+X$INCLUDE MX.generic
+X
+X
+X;
+X; Hosts
+X;
+Xcerise		IN	A	191.254.1.254
+X		IN	A	191.254.16.254
+X		IN	A	191.254.17.254
+X		IN	HINFO	Router		Router
+X
+Xgw-1		IN	A	191.254.1.254
+Xgw-16		IN	A	191.254.16.254
+Xgw-17		IN	A	191.254.17.254
+X
+Xblack		IN	A	191.254.1.50
+X		IN	HINFO	Postscript-Printer	etherprint
+SHAR_EOF
+$TOUCH -am 1102120794 net.example.org.au.zone &&
+chmod 0660 net.example.org.au.zone ||
+echo "restore of net.example.org.au.zone failed"
+set `wc -c net.example.org.au.zone`;Wc_c=$1
+if test "$Wc_c" != "542"; then
+	echo original size 542, current size $Wc_c
+fi
+# ============= sub.example.org.au.zone ==============
+echo "x - extracting sub.example.org.au.zone (Text)"
+sed 's/^X//' << 'SHAR_EOF' > sub.example.org.au.zone &&
+X; sub.example.org.au.zone -	DNS data for sub.example.org.au
+X;
+X; $Id: soa-easy.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X; $Source: /cvs/Darwin/Services/bind/bind/contrib/misc/soa-easy.shar,v $
+X;
+X
+X$INCLUDE sub.example.org.au.SOA
+X
+X$INCLUDE NS.generic
+X
+X$INCLUDE MX.generic
+X
+X
+X;
+X; Hosts
+X;
+Xred		IN	A	191.254.1.3
+X		IN	HINFO	Sun-SS5		SunOS-5
+X$INCLUDE MX.generic		red
+X
+Xwhite		IN	A	191.254.1.4
+X		IN	HINFO	Sun-SS5		SunOS-5
+X$INCLUDE MX.generic		white
+X
+Xblue		IN	A	191.254.1.5
+X		IN	HINFO	Sun-SS5		SunOS-5
+X$INCLUDE MX.generic		blue
+X
+Xyellow		IN	A	191.254.16.1
+X		IN	A	191.254.17.1
+X		IN	HINFO	Sun-SS5		SunOS-5
+X$INCLUDE MX.generic		yellow
+Xyellow-i1	IN	A	191.254.16.1
+Xyellow-i2	IN	A	191.254.17.1
+X
+X
+X;
+X; Aliases
+X;
+Xns		IN	CNAME	ns.example.org.au.
+Xmailhub		IN	CNAME	mailhub.example.org.au.
+Xloghost		IN	CNAME	white.sub.example.org.au.
+X
+X
+X;
+X; PC's
+X;
+X$INCLUDE sub-pcs.example.org.au.inc
+SHAR_EOF
+$TOUCH -am 1102120794 sub.example.org.au.zone &&
+chmod 0660 sub.example.org.au.zone ||
+echo "restore of sub.example.org.au.zone failed"
+set `wc -c sub.example.org.au.zone`;Wc_c=$1
+if test "$Wc_c" != "873"; then
+	echo original size 873, current size $Wc_c
+fi
+# ============= MX.generic ==============
+echo "x - extracting MX.generic (Text)"
+sed 's/^X//' << 'SHAR_EOF' > MX.generic &&
+X; MX.generic -	A list of MX entries for $INCLUDE-ing anywhere
+X;
+X; $Id: soa-easy.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X; $Source: /cvs/Darwin/Services/bind/bind/contrib/misc/soa-easy.shar,v $
+X;
+X
+X@	IN	MX	10	mailhub.example.org.au.
+X@	IN	MX	100	white.sub.example.org.au.
+X;
+X; Only an example.  I have no idea what UUNET think of this.
+X;
+X;@	IN	MX	200	relay1.uu.net
+X;@	IN	MX	200	relay2.uu.net
+SHAR_EOF
+$TOUCH -am 1102123394 MX.generic &&
+chmod 0660 MX.generic ||
+echo "restore of MX.generic failed"
+set `wc -c MX.generic`;Wc_c=$1
+if test "$Wc_c" != "378"; then
+	echo original size 378, current size $Wc_c
+fi
+# ============= NS.generic ==============
+echo "x - extracting NS.generic (Text)"
+sed 's/^X//' << 'SHAR_EOF' > NS.generic &&
+X; NS.generic -	Generic NS records, to be $INCLUDE-ed in all zones
+X;
+X; $Id: soa-easy.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X; $Source: /cvs/Darwin/Services/bind/bind/contrib/misc/soa-easy.shar,v $
+X;
+X
+X;
+X; Primary
+X;
+X@	IN	NS	ns.example.org.au.
+X
+X;
+X; Secondaries
+X;
+X@	IN	NS	white.sub.example.org.au.
+X@	IN	NS	blue.sub.example.org.au.
+SHAR_EOF
+$TOUCH -am 1102123394 NS.generic &&
+chmod 0660 NS.generic ||
+echo "restore of NS.generic failed"
+set `wc -c NS.generic`;Wc_c=$1
+if test "$Wc_c" != "317"; then
+	echo original size 317, current size $Wc_c
+fi
+# ============= sub-pcs.example.org.au.inc ==============
+echo "x - extracting sub-pcs.example.org.au.inc (Text)"
+sed 's/^X//' << 'SHAR_EOF' > sub-pcs.example.org.au.inc &&
+X; sub-pcs.example.org.au.inc -	PC's in sub.example.org.au.
+X;
+X; $Id: soa-easy.shar,v 1.1.1.1 1999/10/04 22:25:54 wsanchez Exp $
+X; $Source: /cvs/Darwin/Services/bind/bind/contrib/misc/soa-easy.shar,v $
+X;
+X
+Xgroucho		IN	A	191.254.16.100
+X		IN	HINFO	IBM-PC	DOS
+X
+Xharpo		IN	A	191.254.16.101
+X		IN	HINFO	IBM-PC	DOS
+X
+Xchico		IN	A	191.254.16.102
+X		IN	HINFO	IBM-PC	DOS
+X
+Xzeppo		IN	A	191.254.17.100
+X		IN	HINFO	IBM-PC	DOS
+SHAR_EOF
+$TOUCH -am 1102123394 sub-pcs.example.org.au.inc &&
+chmod 0660 sub-pcs.example.org.au.inc ||
+echo "restore of sub-pcs.example.org.au.inc failed"
+set `wc -c sub-pcs.example.org.au.inc`;Wc_c=$1
+if test "$Wc_c" != "416"; then
+	echo original size 416, current size $Wc_c
+fi
+exit 0

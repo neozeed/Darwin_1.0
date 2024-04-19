@@ -1,0 +1,22 @@
+
+README for BIND 8-1 port for UnixWare 2.0x
+------------------------------------------
+
+This port is based on port for UW 2.1.2 by Larry Rosenman
+(ler@lerami.lerctr.org)
+
+This port was compiled and tested on UnixWare 2.03 using GNU C 2.7.2.1
+It also can be compiled with native C compiler (default, not tested).
+To install it just follow the instructions in src/INSTALL file.
+To use GNU C do:
+
+	make CC=gcc depend
+
+after
+	make ... links
+	make clean
+
+--------------------
+Konstantin Katuev.
+katuev@feb.marine.ru
+

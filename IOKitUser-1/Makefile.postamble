@@ -1,0 +1,34 @@
+IOKit_HEADERS = $(DSTROOT)$(PUBLIC_HDR_INSTALLDIR)$(PUBLIC_HEADER_DIR_SUFFIX)
+SYSTEM_FRAMEWORK = $(DSTROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework
+SYSTEM_HEADERS = $(SYSTEM_FRAMEWORK)/Versions/B/Headers
+KEXT_INFO = Info-macos.plist
+KEXT_PATH = "/System/Library/Extensions/System.kext/Contents"
+
+.PHONY: scaffold_headers
+
+installhdrs: scaffold_headers
+
+scaffold_headers:
+	$(SILENT)$(ECHO) "Constructing iokit scafold headers";		\
+	(cd $(IOKit_HEADERS); 						\
+	$(FIND) . -type f -name '*.h' | while read headerName; 		\
+	do								\
+	    baseName=`expr "$$headerName" : '\./\(.*\)'`;		\
+	    targetName=iokit/$$baseName;				\
+	    target="$(SYSTEM_HEADERS)/$$targetName";			\
+	    targetdir=`dirname $$target`;				\
+	    if [ ! -d $$targetdir -o ! -f $$target ]; then		\
+		$(MKDIRS) $$targetdir;					\
+                realName=IOKit/$$baseName;				\
+		$(ECHO) "#warning $$targetName deprecated: use $$realName" \
+		    > $$target;						\
+		$(ECHO) "#include <$$realName>" >> $$target;		\
+	    fi;								\
+	done)
+
+after_install::
+	-mkdir -p ${DSTROOT}$(KEXT_PATH)
+	-rm -f ${DSTROOT}$(KEXT_PATH)/$(KEXT_INFO)
+	cp $(KEXT_INFO) ${DSTROOT}$(KEXT_PATH)/$(KEXT_INFO)
+	chmod og-w ${DSTROOT}$(KEXT_PATH)/$(KEXT_INFO)
+

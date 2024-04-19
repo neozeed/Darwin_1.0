@@ -1,0 +1,5 @@
+# Created and modified by checkpoint; do not edit
+# $Id: CVSVersionInfo.txt,v 1.4 2000/04/07 21:52:45 wsanchez Exp $
+# $Name: binutils-10-1 $
+ProjectName: binutils
+ProjectVersion: 10.1

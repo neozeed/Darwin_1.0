@@ -1,0 +1,4 @@
+Package: csu
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Description: C startup library
+Build-Depends: build-base

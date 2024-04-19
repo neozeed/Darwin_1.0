@@ -1,0 +1,24 @@
+/Makefile/1.1.1.2/Thu Oct 14 21:09:06 1999//TLibc-132-2
+/Makefile.postamble/1.1.1.2/Thu Oct 14 21:09:06 1999//TLibc-132-2
+/Makefile.preamble/1.1.1.2/Thu Oct 14 21:09:07 1999//TLibc-132-2
+/NXCType.c/1.2/Thu Oct 14 21:19:06 1999//TLibc-132-2
+/NXCType.h/1.2/Thu Oct 14 21:19:07 1999//TLibc-132-2
+/NXIsAlNum.c/1.2/Thu Oct 14 21:19:07 1999//TLibc-132-2
+/NXIsAlpha.c/1.2/Thu Oct 14 21:19:07 1999//TLibc-132-2
+/NXIsAscii.c/1.2/Thu Oct 14 21:19:07 1999//TLibc-132-2
+/NXIsCntrl.c/1.2/Thu Oct 14 21:19:07 1999//TLibc-132-2
+/NXIsDigit.c/1.2/Thu Oct 14 21:19:07 1999//TLibc-132-2
+/NXIsGraph.c/1.2/Thu Oct 14 21:19:07 1999//TLibc-132-2
+/NXIsLower.c/1.2/Thu Oct 14 21:19:07 1999//TLibc-132-2
+/NXIsPrint.c/1.2/Thu Oct 14 21:19:07 1999//TLibc-132-2
+/NXIsPunct.c/1.2/Thu Oct 14 21:19:07 1999//TLibc-132-2
+/NXIsSpace.c/1.2/Thu Oct 14 21:19:07 1999//TLibc-132-2
+/NXIsUpper.c/1.2/Thu Oct 14 21:19:07 1999//TLibc-132-2
+/NXIsXDigit.c/1.2/Thu Oct 14 21:19:07 1999//TLibc-132-2
+/NXToAscii.c/1.2/Thu Oct 14 21:19:07 1999//TLibc-132-2
+/NXToLower.c/1.2/Thu Oct 14 21:19:07 1999//TLibc-132-2
+/NXToUpper.c/1.2/Thu Oct 14 21:19:07 1999//TLibc-132-2
+/PB.project/1.1.1.2/Thu Oct 14 21:09:08 1999//TLibc-132-2
+/_NXToLower.c/1.2/Thu Oct 14 21:19:07 1999//TLibc-132-2
+/_NXToUpper.c/1.2/Thu Oct 14 21:19:07 1999//TLibc-132-2
+D

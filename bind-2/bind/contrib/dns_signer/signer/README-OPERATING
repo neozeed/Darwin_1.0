@@ -1,0 +1,370 @@
+README-OPERATING 2/4/99
+
+Introduction
+
+This document describes scenarios in which dnssigner can be used.  The
+scenarios in this document are meant to serve as examples of what can
+be done, they do not specify all of the possibilities.  Examples in
+here are simple to be clear, the code has been tested on more complex
+situations.
+
+Scenario 1.
+
+The simplest "normal" case is a zone which has no delegations, and is
+to be signed with a single zone key.  Assume that the parent zone
+is secured and is able to sign the public zone key.
+
+The first step in signing a zone is to generate a private-public key pair.
+This can be done using the dnskeygen executable (supplied elsewhere).  This
+will generate a DNS zone master file version of the public key in a file with
+the suffix ".key".
+
+Key generation example:
+    # dnskeygen -D 768 -z -c -n zz.test.
+
+    This result in the generation of two files, the names of which
+    reflect the key owner, algorithm, and footprint.  The names end
+    in ".key" and ".private".  The ".key" file contains the DNS RR
+    holding the public key, the ".private" file has the data defining
+    the private key.  The latter file is set to be read/write only
+    by the file's owner.
+
+    Inside Kzz.test.+003+06750.key:
+
+    zz.test. IN KEY 16641 3 3 AQPIc...key represented in base64 characters
+
+    Inside Kzz.test.+003+06750.private:
+
+    Private-key-format: v1.1
+    Algorithm: 3 (DSA)
+    Prime(p): <base 64 characters>
+    Subprime(q): <base 64 characters>
+    Base(g): <base 64 characters>
+    Private_value(x): <base 64 characters>
+    Public_value(y): <base 64 characters>
+
+    Note that the two numeric fields in the key filenames will be different
+    for each time dnskeygen is run.  Also note that the ".private" key's
+    format will depend on the algorithm used to derive the key.
+
+EXAMPLE.
+
+    contents of file zone.1
+    $ORIGIN zz.test.
+    @       IN  SOA a.test. a.a.test. 1 360 36 60480 12
+                NS  a.test.
+                NS  b.test.
+    one         A   10.10.10.10
+    two         A   10.10.10.100
+                MX  10 one.zz.test.
+    a.test.     A   10.11.12.13
+    b.test.     A   10.13.12.11
+  
+The public key (from the .key file) file is sent two different ways.  One
+copy of the public key is sent to the parent zone for signing with the
+parent's zone key.  The public key is also copied (or even $INCLUDEd) into
+the zone.1 file.  Signing may begin prior to receiving a response from 
+the parent zone (which contains, among other things, the signed public key).
+
+Although the public key is going to arrive from the parent at some time
+packaged with the signature, the unsigned key must be placed into the unsigned
+zone master file.  The presence of the public key record alerts the signer to
+perform certain functions, such as generating NXT records and generating
+parent files for its delegation points.
+
+IMPORTANT:  Although the signer is flexible enough to withstand missing private
+keys, and late arriving parent files, the signer cannot be expected to behave
+correctly if the data used to derive the zone master file changes during the
+execution of the signing process.  In accordance with this, the public key
+should be adde to the zone even though the key will also arrive from the parent
+later.  The signer will remove duplicate records.  (Also note that you can get
+away with changing data at certain points during the signing process.  However,
+documenting when and where this will succeed exceeds the benefit of this
+feature.)
+
+The next step is to run the signer over the data.  To make things simple,
+all files involved will be considered to be in the current working directory
+unless otherwise stated.  In the directory where the file zone.1 resides
+there should be a ".private" file for the key used for signing.
+
+EXAMPLE.
+    > which dnssigner
+    /home/elvis/dnssigner
+
+    > ls
+    Kzz.test.+003+06750.private  zone.1
+
+    > dnssigner -zi zone.1 -k1 zz.test 3 6750 -zo zone.2
+
+The result of the run will be a new zone file, zone.2 will appear very
+close to the following (the file is simplified for the document):
+
+EXAMPLE.
+
+    zone.2:
+
+    $ORIGIN zz.test.
+    zz.test. 12    IN   SOA   a.test. a.a.test. 1 6M 36S 16h48m 12S 
+             SIG   SOA 1 12 19980223163147 19980123163147 6750 zz.test. (...)
+    zz.test. KEY   0x4101 3 1 (...)
+    zz.test. NS    a.test.
+             NS    b.test.
+             SIG   NS 1 12 19980223163147 19980123163147 6750 zz.test. (...)
+    zz.test. NXT   one.zz.test. NS SOA SIG KEY NXT
+             SIG   NXT 1 12 19980223163147 19980123163147 6750 zz.test. (...)
+    one      A     10.10.10.10
+             SIG   A 1 12 19980223163147 19980123163147 6750 zz.test. (...)
+    one      NXT   two.zz.test. A SIG NXT
+             SIG   NXT 1 12 19980223163147 19980123163147 6750 zz.test. (...)
+    two      A     10.10.10.100
+             SIG   A 1 12 19980223163147 19980123163147 6750 zz.test. (...)
+    two      MX    10 one.zz.test.
+             SIG   MX 1 12 19980223163147 19980123163147 6750 zz.test. (...)
+    two      NXT   zz.test. A MX SIG NXT
+             SIG   NXT 1 12 19980223163147 19980123163147 6750 zz.test. (...)
+    a.test.  A     10.11.12.13
+    b.test.  A     10.13.12.11
+    
+All of the "(...)" fields are base64 encoded values.  This file is complete
+except for the missing signature by test. over the zz.test./KEY record.  If
+this file is sent to a secured name server, the zone data will be rejected
+unless the zone key happens to have been configured.  (It is wise not to
+configure the zone key for a zone unless the parent will not be signing
+the zone key.)
+
+Eventually, the parent file will arrive.  After obtaining the file, the
+dnssigner needs to be run again to include the new data.
+
+EXAMPLE.
+
+    parent.1:
+
+    zz.test. NXT   zzz.test. NS SIG KEY NXT
+    zz.test. SIG   NXT 1 12 19980229163147 19980129163147 12345 test. (...)
+    zz.test. KEY   0x401 3 1 (...)
+    zz.test. SIG   KEY 1 12 19980229163147 19980129163147 12345 test. (...)
+
+The final run of the signer is:
+
+    > dnssigner -zi zone.2 -pi parent.1 -zo zone.3
+
+Note that the specification of the key is no longer needed.  However,
+now that the records are signed, the signer will verify all the
+existing signatures.
+
+In the case that a signature fails during these checks, the action taken
+by the signer depends on whether the key of the signature is specified as
+a signer during the run.  In the example, failing signatures are just dropped.
+If the run command included "-k1 zz.test. 3 6750" then failing signatures
+would be replaced.
+
+The result of the second run of the dnssigner leaves zone.3 to be passed
+onto named.  zone.3 is a merger of zone.2 and parent.1, minus the records
+which appear in both files. (I.e., duplicates are removed.)
+
+Scenario 2
+
+A more complicated scenario is one in which there are multiple signers of
+data involved.
+
+EXAMPLE.
+
+The zone zz.test. has a domain name, three.zz.test., which owns a KEY
+record capable of signing data.  Three.zz.test. has an A, TXT, and an
+MX record to sign.  The holder of three.zz.test's private key is different
+from the holder of the zz.test. private key, which means that the two
+private keys are never available simultaneously.  (Assume the key id of
+three's key is 7.  Ordinarily, the id will be 4 to 5 digits long, but a
+short one is used here to fit into 80 columns.)
+
+The dnssigner is used in this situation by running the code multiply over
+the zone data.  There is an implicit assumption that all holders of private
+keys in a zone will not interfere with each other.  (If this isn't the case,
+separate zones are strongly recommended.)
+
+The procedure for signing this zone is that the signer is run in a location
+where one of the two private keys are visible, then the entire zone data is
+transferred to another location where the other private key is visible to
+the signer.  This may be as simple as a file copy on the same host, or it may
+require a file to be moved across systems.
+
+Assuming that the zone authority signs first (based on the observation that
+the source of the data creating the master file resides with the zone
+authority), the following may occur:
+
+1) dnssigner -zi zone.1 -zo zone.2 -k1 zz.test. 3 6750
+
+2) cp zone.2 to a directory where Kthree.zz.test.+003+7.private sits.
+
+3) dnssigner -zi zone.2 -zo zone.3 -k1 three.zz.test. 3 7
+
+4) cp zone.3 to a directory where the parent file will be available.
+
+5) dnssigner -zi zone.3 -pi parent.1 -zo zone.4
+
+The signing is complete.  In steps 3 and 5, the signatures by zz.test. are
+verified, in step 5, the three.zz.test. signatures are verified.  If there
+were previous signatures, those are also tested.
+
+Scenario 3
+
+If a parent file arrives early, it need only be added once.  Assuming the
+events of the previous scenario occur in a different order, the three
+runs may be:
+
+1) dnssigner -zi zone.1 -zo zone.2 -k1 zz.test. 3 6750
+
+3) dnssigner -zi zone.2 -pi parent.1 -zo zone.3
+
+5) dnssigner -zi zone.3 -zo zone.4 -k1 three.zz.test. 3 7
+
+(Steps 2 and 4 are the same as in scenario 2.)
+
+Scenario 4
+
+If a zone has delegations, then there is a decision of how to handle the 
+parent files to be generated for its delegations (as opposed to the inclusion
+of the parent file passed down to the zone, described in the first three
+scenarios).  The dnssigner generates parent file(s) under certain conditions
+and in two output manners.
+
+dnssigner decides to make parent files a little optimistically.  Ideally, the
+parent files are made only during the last run (to limit the chance that
+multiple copies are floating around).  dnssigner cannot determine when it is
+being run for the final time from the data it is signing.
+
+Parent files are allowed to be generated as soon as all of the known data is
+established.  For the DOWN policy (the default policy), a parent file
+will contain the zone apex's KEY, SIG(KEY) by parent, the upper NXT, and the
+SIG(NXT) for the upper NXT, also signed by the parent.  For the UP policy,
+this data is supplemented by the unsigned KEY of the parent, the unsigned
+parent's NS and the glue data for the parent's NS set.
+
+The decision to make the parent files hinges on the presence of the data to
+do so.  The way in which the signer determines if all signatures are
+present (as required in the KEY and NXT) is that it checks the data
+structure for outstanding signing orders.  If there are some, the
+parent files are not generated, otherwise the ok is given to make the files.
+
+It is possible that a zone may not be completely signed, yet the data required
+for making the parent files exists.  In scenario 3, during step 3, this was
+true.  In that case, there would be two versions of the parent files -
+hopefully both identical. 
+
+The two ways in which parent files are generated is all-in-one and individual
+files.  All-in-one refers to the use of a single file for all the parent
+data, with delegation points separated by lines of like:
+                     #end c.zz.test..PARENT
+                     #start d.zz.test..PARENT
+Individual files refers to the creation of a file for each delegation point.
+
+The two methods are independent of each other in dnssigner.  Either can be
+used, both can be used, or neither can be used.  The advantage of the
+all-in-one is that, for large delegation zones, such as .COM., the number
+of indivdual files is too great for many filesystems to convienently handle.
+A simple script can be written (not supplied) to read through the all-in-one
+file and generate mail messages to the appropriate place to report the
+results to the delegations.
+
+The individual files are easier to distribute and are ready-made for zones
+signed on the same machine.  The signer defaults to all-in-one purely
+for convienence.  During testing, deleting the 100,000+ .NET delegations
+took a long time.  (In addition, opening and closing one file is much
+less of a performance drain than many file opens and closes).
+
+The flags -p1 and -no-p1 turn all-in-one parent files on and off, -po
+specifies the name the file is given.
+
+The flags -ps and -no-ps turn individual parent files on and off, -pd
+specifies the directory into which each file is placed.  The individual
+files bear the name of the delegation point within the filename to
+prevent duplication.
+
+Scenario 5
+
+Signing a zone is not necessarily a one time event.  Signing may occur
+whenever data changes (disregarding dynamic update for the moment), or
+on a calendar basis - weekly, for instance.  Since the signatures have
+lifetimes, by default 1 month, and the time required to generate a
+signature is much more than the time to verify one, dnssigner makes
+every effort to recycle signatures, even those of NXT's.
+
+(Recycling NXT's is not done, generating an NXT is faster than checking one.)
+
+For example,
+
+    two      A     10.10.10.100
+             SIG   A 1 12 19980213163147 19980123163147 6750 zz.test. (...)
+    two      MX    10 one.zz.test.
+             SIG   MX 1 12 19980218163147 19980123163147 6750 zz.test. (...)
+    two      NXT   zz.test. A MX SIG NXT
+             SIG   NXT 1 12 19980223163147 19980123163147 6750 zz.test. (...)
+
+The three sigs expire on the 13th, the 18th, and the 23rd, respectively.  If
+the signer is being run on the 14th, with a purge period of 5 days, the signer
+will through away the first signature (it has expired), and the second
+signature because it will expire within the next 5 days.  The latter signature
+is retained.
+
+After the initial phase of the signer is done (parsing, assembling the zone
+data, assigning keys), the above 6 lines of data will be reduced to this:
+
+    two      A     10.10.10.100
+    two      MX    10 one.zz.test.
+             SIG   NXT 1 12 19980223163147 19980123163147 6750 zz.test. (...)
+
+The NXT records is thrown out along with the bad signatures.
+
+Signing proceeds, adding back the two signatures for the A and MX records.
+Assuming the same key is used for signing and the duration is 28 days (makes
+figuring the expiration date easy for this example), the first two signatures
+become:
+
+    two      A     10.10.10.100
+             SIG   A 1 12 19980314163147 19980123163147 6750 zz.test. (...)
+    two      MX    10 one.zz.test.
+             SIG   MX 1 12 19980314163147 19980123163147 6750 zz.test. (...)
+
+Both are set to expire 28 days after Feb 14th (today), which is March 14th.
+
+The NXT is a bit different.  If the NXT record would not have changed for this
+owner, i.e., the record we through out is still right, the new record is
+generated.  (Having retained the old one and now comparing the two does not
+save time, it would cost more - and more storage overhead.)  The old signature
+is then used to verify the new NXT, and, in this case, it succeeds, so
+the final two records are:
+
+    two      NXT   zz.test. A MX SIG NXT
+             SIG   NXT 1 12 19980223163147 19980123163147 6750 zz.test. (...)
+
+Note the expiration date has not changed.
+
+However, if the NXT was to change to, say:
+
+    two      NXT   unicorn.test. A MX SIG NXT
+
+Then the old signature would now fail, be deleted as being invalid, and the
+new NXT signed with the new expiration date.  The new signature would look
+something like:
+
+             SIG   MX 1 12 19980314163147 19980123163147 6750 zz.test. (...)
+
+The unusual rule concerning NXT's - dropping them regardless of their validity
+- is based upon the following assumption.  Although verifying a signature is
+cheaper than generating one, the cost of comparing (verifying) an NXT is
+greater than just generating one.  This is because in comparing/verifying
+the NXT, you have to have already generated the new one.
+
+Other Scenarios
+
+dnssigner can be used without any signing requested.  NXTs will be generated
+without signatures, parent files are not generated.  (There is no need for
+parent files.)  The use of a non-signing run of the signer could be to
+sequence the names in a zone alphabetically or to merge an incoming parent
+file.  (If a zone is unsigned, a NULL key is advertised for the zone at
+the parent and thus a parent file is prepared at the parent for the child.)
+
+More complex situations include using multiple zone keys or signing with
+more than one available key at a time.  dnssigner may be given as input
+a zone which has already been signed just to make sure the signatures
+verify.

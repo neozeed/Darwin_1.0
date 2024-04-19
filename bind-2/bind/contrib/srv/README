@@ -1,0 +1,38 @@
+The files in this directory are a simple hack to do SRV lookups, and a
+test program for it.
+
+The getsrv() function goes from a (domain, service, protocol) triplet
+such as (gulbrandsen.priv.no, test, tcp) to a list of servers for that
+service for that domain.  It does not have particularly good error
+checking, and it's blocking.
+
+The freesrvhost() frees the srvhost struct returned by the first
+function.
+
+There are test/tcp SRV RRs in the gulbrandsen.priv.no domain, so that
+"./srvtest test gulbrandsen.priv.no" should always give output
+somewhat like this:
+
+	$ ./srvtest test gulbrandsen.priv.no
+	   10     3 lupinella.troll.no:3
+	   10     1 lupinella.troll.no:1
+	   20     4 lupinella.troll.no:400
+	   20     2 lupinella.troll.no:200
+	   20     2 lupinella.troll.no:201
+
+Five SRVs is a bit over the top and those port numbers aren't what I'd
+really use, but hey, it's meant as a test.
+
+Since the public domain does not exist as a concept in Norwegian law,
+we cannot release this hack into the public domain.  So:
+
+	Copyright 1998 Troll Tech.  Use, modification and distribution
+	is allowed without limitation, warranty, or liability of any
+	kind.
+
+Good luck.  You may well need to change it - my first change was to
+c++-ize it and make it nonblocking.  (These changes had the side
+effect of making it too complex for use as an example and dependent on
+too much to be distributed in this contrib directory.)
+
+--Arnt

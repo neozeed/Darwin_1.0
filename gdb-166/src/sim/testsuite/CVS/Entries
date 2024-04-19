@@ -1,0 +1,13 @@
+/ChangeLog/1.1.1.1/Thu Mar 16 19:56:39 2000//Tgdb-166
+/Makefile.in/1.1.1.1/Thu Mar 16 19:56:39 2000//Tgdb-166
+/configure/1.1.1.1/Thu Mar 16 19:56:39 2000//Tgdb-166
+/configure.in/1.1.1.1/Thu Mar 16 19:56:39 2000//Tgdb-166
+D/common////
+D/config////
+D/d10v-elf////
+D/d30v-elf////
+D/fr30-elf////
+D/lib////
+D/m32r-elf////
+D/mips64el-elf////
+D/sim////

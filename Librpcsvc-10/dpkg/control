@@ -1,0 +1,4 @@
+Package: librpcsvc
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Description: Remote procedure call library
+Build-Depends: build-base, libinfo-hdrs, project-makefiles

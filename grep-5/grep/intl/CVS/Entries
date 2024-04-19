@@ -1,0 +1,24 @@
+/ChangeLog/1.1.1.2/Thu Sep  2 06:13:38 1999//Tgrep-5
+/Makefile.in/1.1.1.2/Thu Sep  2 06:13:38 1999//Tgrep-5
+/VERSION/1.1.1.2/Thu Sep  2 06:13:38 1999//Tgrep-5
+/bindtextdom.c/1.1.1.2/Thu Sep  2 06:13:38 1999//Tgrep-5
+/cat-compat.c/1.1.1.1/Fri Apr 23 01:07:48 1999//Tgrep-5
+/dcgettext.c/1.1.1.2/Thu Sep  2 06:13:38 1999//Tgrep-5
+/dgettext.c/1.1.1.2/Thu Sep  2 06:13:38 1999//Tgrep-5
+/explodename.c/1.1.1.2/Thu Sep  2 06:13:38 1999//Tgrep-5
+/finddomain.c/1.1.1.2/Thu Sep  2 06:13:38 1999//Tgrep-5
+/gettext.c/1.1.1.2/Thu Sep  2 06:13:38 1999//Tgrep-5
+/gettext.h/1.1.1.2/Thu Sep  2 06:13:39 1999//Tgrep-5
+/gettextP.h/1.1.1.2/Thu Sep  2 06:13:39 1999//Tgrep-5
+/hash-string.h/1.1.1.2/Thu Sep  2 06:13:39 1999//Tgrep-5
+/intl-compat.c/1.1.1.1/Fri Apr 23 01:07:48 1999//Tgrep-5
+/l10nflist.c/1.1.1.2/Thu Sep  2 06:13:39 1999//Tgrep-5
+/libgettext.h/1.1.1.2/Thu Sep  2 06:13:39 1999//Tgrep-5
+/linux-msg.sed/1.1.1.1/Fri Apr 23 01:07:48 1999//Tgrep-5
+/loadinfo.h/1.1.1.2/Thu Sep  2 06:13:39 1999//Tgrep-5
+/loadmsgcat.c/1.1.1.2/Thu Sep  2 06:13:39 1999//Tgrep-5
+/localealias.c/1.1.1.2/Thu Sep  2 06:13:39 1999//Tgrep-5
+/po2tbl.sed.in/1.1.1.1/Fri Apr 23 01:07:49 1999//Tgrep-5
+/textdomain.c/1.1.1.2/Thu Sep  2 06:13:40 1999//Tgrep-5
+/xopen-msg.sed/1.1.1.1/Fri Apr 23 01:07:49 1999//Tgrep-5
+D

@@ -1,0 +1,6 @@
+Package: corefoundation
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Vendor: Apple
+Version: 163
+Description: Core Foundation tool kit
+Build-Depends: build-base, corefoundation-hdrs

@@ -1,0 +1,23 @@
+/ChangeLog/1.1.1.2/Thu Sep  2 05:35:21 1999//Temacs-33
+/Imakefile/1.1.1.1/Sun May  2 02:43:33 1999//Temacs-33
+/Makefile.in/1.1.1.2/Thu Sep  2 05:35:22 1999//Temacs-33
+/README/1.1.1.1/Sun May  2 02:43:33 1999//Temacs-33
+/dispatch.c/1.1.1.1/Sun May  2 02:43:33 1999//Temacs-33
+/dispatch.h/1.1.1.1/Sun May  2 02:43:33 1999//Temacs-33
+/lwlib-Xaw.c/1.1.1.1/Sun May  2 02:43:33 1999//Temacs-33
+/lwlib-Xaw.h/1.1.1.1/Sun May  2 02:43:33 1999//Temacs-33
+/lwlib-Xlw.c/1.1.1.1/Sun May  2 02:43:33 1999//Temacs-33
+/lwlib-Xlw.h/1.1.1.1/Sun May  2 02:43:33 1999//Temacs-33
+/lwlib-Xm.c/1.1.1.2/Thu Sep  2 05:35:23 1999//Temacs-33
+/lwlib-Xm.h/1.1.1.1/Sun May  2 02:43:33 1999//Temacs-33
+/lwlib-int.h/1.1.1.1/Sun May  2 02:43:33 1999//Temacs-33
+/lwlib-utils.c/1.1.1.1/Sun May  2 02:43:34 1999//Temacs-33
+/lwlib-utils.h/1.1.1.1/Sun May  2 02:43:34 1999//Temacs-33
+/lwlib.c/1.1.1.2/Thu Sep  2 05:35:24 1999//Temacs-33
+/lwlib.h/1.1.1.1/Sun May  2 02:43:34 1999//Temacs-33
+/xlwmenu.c/1.1.1.1/Sun May  2 02:43:34 1999//Temacs-33
+/xlwmenu.h/1.1.1.1/Sun May  2 02:43:34 1999//Temacs-33
+/xlwmenuP.h/1.1.1.1/Sun May  2 02:43:34 1999//Temacs-33
+/xrdb-cpp.c/1.1.1.1/Sun May  2 02:43:34 1999//Temacs-33
+/xrdb.c/1.1.1.1/Sun May  2 02:43:34 1999//Temacs-33
+D

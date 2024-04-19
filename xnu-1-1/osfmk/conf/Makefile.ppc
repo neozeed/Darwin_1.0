@@ -1,0 +1,30 @@
+######################################################################
+#BEGIN	Machine dependent Makefile fragment for ppc
+######################################################################
+
+#
+# mace driver for MACH_BSD 
+#
+if_en.o_CFLAGS=-DKERNEL 
+if_en.o_INCFLAGS= -I$(OBJROOT)/EXPORT_HDRS/bsd/bsd -I$(SRCROOT)/bsd
+
+mace.o_CFLAGS=-DKERNEL
+mace.o_INCFLAGS= -I$(OBJROOT)/EXPORT_HDRS/bsd/bsd -I$(SRCROOT)/bsd
+
+#
+# KDB support
+#
+.ORDER: makedis ppc_disasm.c
+.ORDER: ppc_disasm.c db_disasm.o
+
+makedis: $(SRCROOT)/osfmk/ddb/makedis.c
+	$(CC) -o $@ $<
+
+ppc_disasm.o_CFLAGS = -Dperror=db_printf -Dexit=db_error -Dmalloc=db_disasm_malloc
+
+ppc_disasm.c: $(SRCROOT)/osfmk/ppc/ppc_disasm.i makedis
+	./makedis -w -h ./ppc_disasm.h $(SOURCE_DIR)/osfmk/ppc/ppc_disasm.i > ./ppc_disasm.c
+
+######################################################################
+#END	Machine dependent Makefile fragment for ppc
+######################################################################

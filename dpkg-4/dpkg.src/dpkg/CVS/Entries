@@ -1,0 +1,22 @@
+/Makefile.am/1.1.1.1/Mon May 10 02:22:28 1999//Tdpkg-4
+/Makefile.in/1.1.1.1/Mon May 10 02:22:28 1999//Tdpkg-4
+/archives.c/1.1.1.1/Mon May 10 02:22:28 1999//Tdpkg-4
+/archives.h/1.1.1.1/Mon May 10 02:22:28 1999//Tdpkg-4
+/cleanup.c/1.1.1.1/Mon May 10 02:22:28 1999//Tdpkg-4
+/configure.c/1.1.1.1/Mon May 10 02:22:28 1999//Tdpkg-4
+/depcon.c/1.1.1.1/Mon May 10 02:22:28 1999//Tdpkg-4
+/dpkg-int.h/1.1.1.1/Mon May 10 02:22:28 1999//Tdpkg-4
+/dpkg.8/1.1.1.1/Mon May 10 02:22:28 1999//Tdpkg-4
+/enquiry.c/1.1.1.1/Mon May 10 02:22:28 1999//Tdpkg-4
+/errors.c/1.1.1.1/Mon May 10 02:22:28 1999//Tdpkg-4
+/filesdb.c/1.1.1.1/Mon May 10 02:22:29 1999//Tdpkg-4
+/filesdb.h/1.1.1.1/Mon May 10 02:22:29 1999//Tdpkg-4
+/help.c/1.1.1.1/Mon May 10 02:22:29 1999//Tdpkg-4
+/main.c/1.1.1.1/Mon May 10 02:22:29 1999//Tdpkg-4
+/main.h/1.1.1.1/Mon May 10 02:22:29 1999//Tdpkg-4
+/packages.c/1.1.1.1/Mon May 10 02:22:29 1999//Tdpkg-4
+/processarc.c/1.1.1.1/Mon May 10 02:22:29 1999//Tdpkg-4
+/remove.c/1.1.1.1/Mon May 10 02:22:29 1999//Tdpkg-4
+/select.c/1.1.1.1/Mon May 10 02:22:29 1999//Tdpkg-4
+/update.c/1.1.1.1/Mon May 10 02:22:29 1999//Tdpkg-4
+D

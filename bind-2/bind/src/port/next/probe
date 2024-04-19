@@ -1,0 +1,10 @@
+#!/bin/sh
+
+if [ -f /usr/bin/hostinfo ]; then
+	if /usr/bin/hostinfo | grep -s NeXT >/dev/null; then
+		exit 0;
+	else exit 1;
+	fi
+fi
+
+exit 1

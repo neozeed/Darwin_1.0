@@ -1,0 +1,4 @@
+Package: objc4
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Description: Objective-C runtime
+Build-Depends: build-base, libstreams-hdrs, architecture-hdrs, objc4-hdrs

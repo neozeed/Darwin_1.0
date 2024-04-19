@@ -1,0 +1,18 @@
+/conf.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/cons.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/cons.h/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/ffs.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/ffs.s/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/kern_machdep.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/km.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/machdep.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/mem.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/memmove.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/nvram.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/ppc_init.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/stubs.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/systemcalls.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/unix_signal.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/unix_startup.c/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+/xsumas.s/1.1.1.1/Sat Mar 25 21:02:16 2000//Txnu-1-1
+D

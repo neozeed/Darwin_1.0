@@ -1,0 +1,498 @@
+[ this is too big to put into 4.9.3 and still get it out on time;
+  therefore i am putting it here in contrib/misc for now.  i feel
+  rather strongly that settransfer is the wrong approach to the
+  problem it solves, but given that the code is clean and that there
+  is an FYI out for it, i do plan to put it in as a default-"off"
+  option as soon as possible.				--vix ]
+
+Date: Thu, 1 Dec 94 20:04:14 EST
+From: brisco@hercules.rutgers.edu (Thomas P. Brisco)
+Message-Id: <9412020104.AA19390@hercules.rutgers.edu>
+To: paul@vix.com
+Subject: ``SETTRANSFER'' mods to 4.9.3.b10
+Cc: brisco@hercules.rutgers.edu
+
+
+    Paul; included below (in shar format) are a set of diffs to
+implement the "transfer" keyword in BIND.  These changes also include
+modifications to a few other areas -- you may want to look over
+README.TRANSFER and SETTRANSFER_CHANGES (the latter is aimed mostly
+at you).  The changes file details as closely as I could the
+modifications I made to make the dynamics of subzones work as
+intended.
+
+    You'll obviously want to look over the code rather closely, as
+there are changes in a few non-intuitive places.  The #ifdef's also
+seek to make sure that ROUND_ROBIN and SETTRANSFER are mutually
+exclusive options - since ROUND_ROBIN tends to mess with the ordering
+of RRs, while SETTRANSFER needs them left in order.  Similarly; all
+calls to sort_response() are ifdef'd out - as they also modify the
+ordering of the RRs.  For "fast" subzones, I've also turned down
+maint_interval to 60 seconds (from 15 minutes) and min_cache_ttl to
+60 seconds (from 5 minutes).  I've actually ran subzones with 60
+second TTLs with no horrific side effects (other than increased CPU
+utiliziation :-).
+
+    I've not included diffs for (a) the Makefile (ns_xfr.[co]
+needs to be added), and for (b) the conf.h file (though a
+"conf.h-additions" is included).  In both of these, I thought
+you might have a preferable style, and since the changes are
+minimal, it's a bit briefer this way ...
+
+    I'll be at the San Jose' IETF next week - are you going to be
+there?  If so, I'll keep my eye open to say "hi".  I'm hoping that
+the draft FYI will (finally) make it through, so I can lay this to
+rest.  Though, if I do "get it to bed", I'll probably lend a hand
+with some of the other current activities for DNS (BTW: Thanks for
+putting me on the developer's list).  Ah!  Before I forget, this
+**does not** include the very latest change from Simon Leinen
+(re: BOGUSNS modifications).
+
+								Tp.
+
+========================================================================
+:	This is a shell archive.
+:	Remove everything above this line and
+:	run the following text with /bin/sh to create:
+:	README.TRANSFER
+:	SETTRANSFER_CHANGES
+:	conf.h-addition
+:	db_glob.h-DIFFS
+:	ns_glob.h-DIFFS
+:	ns_init.c-DIFFS
+:	ns_maint.c-DIFFS
+:	ns_req.c-DIFFS
+:	ns_resp.c-DIFFS
+:	ns_xfr.c
+: This archive created: Thu Dec  1 19:51:59 1994
+echo shar: extracting README.TRANSFER
+sed 's/^XX//' << 'SHAR_EOF' > README.TRANSFER
+XX    Any questions -> brisco@pilot.njin.net
+XX
+XX    This is the PRODUCTION distribution of the SETTRANSFER code.  The
+XXSETTRANSFER code permits the use of the keyword "transfer" to specify
+XXalternate programs to do the zone transfer if the current named is a
+XXsecondary nameserver for a zone.
+XX
+XX    The details on using alternative zone transfer mechanisms as a
+XXmeans for achieving load balancing is described in an internet draft
+XX"draft-ietf-dns-lb-00.txt", and is currently (12/1/94) under review
+XXfor publishing as an informational RFC.  The draft is available from
+XXds.internic.net via anonymous ftp.
+XX
+XX    Primarily the code changes adds enough syntax to do a database
+XXstyle lookup based on the zone name (nothing fancy, just an array),
+XXand to execute that program.  Some necessary other changes were done
+XXin order to support ordered, quickly changing address records -
+XXprimarily this had to do with lowering the value of static variables
+XXputting rather high minimum values in for the minimum zone refresh
+XXperiod, and minimum TTL associated with records.  Additionally, in
+XXorder to preserve the ordering of the records, all references to RR
+XXordering are ifdef'd out.  Also note that this, and Round Robin
+XXordering are mutually exclusive.
+XX
+XX    Specific changes are detailed in the file SETTRANSFER_CHANGES.
+XX
+XX    Example configurations (and diffs to older versions of BIND) are
+XXavailable via anonymous ftp from pilot.njin.net:pub/TRANSFER.
+XX
+XX
+XX    Currently (as of 2/22/94) there is a "fast" subdomain
+XXeden.rutgers.edu running on the NS for eden.rutgers.edu ("eden" is a
+XXsubzone of rutgers.edu).  It uses the code from the LOADSAMP.shar to
+XXbalance the load amongst seven SparcCenter 1000s.  This is in active
+XXuse in the Rutgers University domain.
+SHAR_EOF
+if test 1737 -ne "`wc -c README.TRANSFER`"
+then
+echo shar: error transmitting README.TRANSFER '(should have been 1737 characters)'
+fi
+echo shar: extracting SETTRANSFER_CHANGES
+sed 's/^XX//' << 'SHAR_EOF' > SETTRANSFER_CHANGES
+XX
+XX
+XXdb_glob.h       line 71
+XX                Set a realistic hard-coded minimum_cache_ttl
+XX                (60 seconds, not 5 minutes)
+XX
+XXns_glob.h       line 103
+XX                Set a realistic hard-coded maint_interval
+XX                (60 seconds, not 15 minutes)
+XX
+XXns_init.c       line 226
+XX                Define ``transfer'' keyword, and make
+XX                entries into the database of transfer programs
+XX
+XXns_maint.c      line 406
+XX                Transfering a zone from ourselves is ok -- if
+XX                we've got a ``different'' zone transfer program.
+XX
+XX                line 449
+XX                Before starting zone transfer, look up to see
+XX                if there is a "different" program to run.  If
+XX                so, run that instead.  If not, run the default
+XX                _PATH_XFER program.
+XX
+XX                line 271
+XX                line 227
+XX                Add code that bypasses serial number checking for
+XX                a zone _if and only if_ our own address is in the
+XX                list of addresses as authoritative for that zone.
+XX                (i.e. there's a good chance that we're handling a
+XX                dynamic zone.  Later checks ensure that there is
+XX                a ``different'' program to do that zone transfer).
+XX
+XXns_req.c        line 705
+XX                Disable sort_response() call.  (This messes
+XX                up the prioritization of the responses).
+XX
+XXns_resp.c       line 745
+XX                Disable sort_response() call.
+XX
+XX
+XXns_xfr.c        new file
+XX                ``transfer'' programs database manipulation routines.
+XX
+XX
+SHAR_EOF
+if test 1566 -ne "`wc -c SETTRANSFER_CHANGES`"
+then
+echo shar: error transmitting SETTRANSFER_CHANGES '(should have been 1566 characters)'
+fi
+echo shar: extracting conf.h-addition
+sed 's/^XX//' << 'SHAR_EOF' > conf.h-addition
+XX#define SETTRANSFER	/* permit alternative zone transfer mechanisms (tpb) */
+SHAR_EOF
+if test 76 -ne "`wc -c conf.h-addition`"
+then
+echo shar: error transmitting conf.h-addition '(should have been 76 characters)'
+fi
+echo shar: extracting db_glob.h-DIFFS
+sed 's/^XX//' << 'SHAR_EOF' > db_glob.h-DIFFS
+XX*** ../vixie/named/db_glob.h	Tue Apr 12 04:57:51 1994
+XX--- db_glob.h	Thu Dec  1 11:00:58 1994
+XX***************
+XX*** 65,72 ****
+XX--- 65,80 ----
+XX  	/* ONE_WEEK maximum ttl */
+XX  DECL	int		max_cache_ttl INIT(7*24*60*60);
+XX  
+XX+ #if defined(SETTRANSFER) && !defined(ROUND_ROBIN)
+XX+ 
+XX+ 	/* 1 minute minimum ttl */
+XX+ DECL	int		min_cache_ttl INIT(60);
+XX+ 
+XX+ #else 
+XX  	/* 5 minute minimum ttl */
+XX  DECL	int		min_cache_ttl INIT(5*60);
+XX+ 
+XX+ #endif /* SETTRANSFER && !ROUND_ROBIN */
+XX  
+XX  	/* current line number */
+XX  DECL	int		lineno;
+SHAR_EOF
+if test 515 -ne "`wc -c db_glob.h-DIFFS`"
+then
+echo shar: error transmitting db_glob.h-DIFFS '(should have been 515 characters)'
+fi
+echo shar: extracting ns_glob.h-DIFFS
+sed 's/^XX//' << 'SHAR_EOF' > ns_glob.h-DIFFS
+XX*** ../vixie/named/ns_glob.h	Sat Jun 11 18:04:53 1994
+XX--- ns_glob.h	Thu Dec  1 11:00:58 1994
+XX***************
+XX*** 99,105 ****
+XX--- 99,109 ----
+XX  
+XX  	/* how often does ns_maint() need to be called, in seconds? */
+XX  	/* (beware: this is also the upper bound on named_xfer real time) */
+XX+ #if defined(SETTRANSFER) && !defined(ROUND_ROBIN)
+XX+ DECL	int			maint_interval	INIT(60);
+XX+ #else
+XX  DECL	int			maint_interval	INIT(15*60);
+XX+ #endif /* SETTRANSFER && !ROUND_ROBIN */
+XX  
+XX  	/* need to reload secondary zone(s) */
+XX  DECL	int			needzoneload	INIT(0);
+SHAR_EOF
+if test 544 -ne "`wc -c ns_glob.h-DIFFS`"
+then
+echo shar: error transmitting ns_glob.h-DIFFS '(should have been 544 characters)'
+fi
+echo shar: extracting ns_init.c-DIFFS
+sed 's/^XX//' << 'SHAR_EOF' > ns_init.c-DIFFS
+XX*** ../vixie/named/ns_init.c	Wed Aug 24 17:29:52 1994
+XX--- ns_init.c	Thu Dec  1 11:00:59 1994
+XX***************
+XX*** 223,228 ****
+XX--- 223,243 ----
+XX  				exit(1);
+XX  			}
+XX  			continue;
+XX+ #if defined(SETTRANSFER) && !defined(ROUND_ROBIN)
+XX+                 } else if (strcasecmp(buf, "transfer") == 0) {
+XX+ 		        char tzone[128];
+XX+ 			char txfr[128];
+XX+ 			(void) getword(buf, sizeof(buf), fp);
+XX+ 			strcpy(tzone, buf);
+XX+ 			(void) getword(buf, sizeof(buf), fp);
+XX+ 			strcpy(txfr, buf);
+XX+ 			if (debug)
+XX+ 			  fprintf(ddt,"Zone: %s transfer by %s\n",tzone,txfr);
+XX+ 			setXfer(tzone, txfr);
+XX+ 			continue;
+XX+ #endif /* SETTRANSFER && !ROUND_ROBIN */
+XX+ 		} else if (strcasecmp(buf, "sortlist") == 0) {
+XX+ 
+XX  		} else if (strcasecmp(buf, "sortlist") == 0) {
+XX  			get_netlist(fp, enettab, ALLOW_NETS, buf);
+XX  			continue;
+SHAR_EOF
+if test 811 -ne "`wc -c ns_init.c-DIFFS`"
+then
+echo shar: error transmitting ns_init.c-DIFFS '(should have been 811 characters)'
+fi
+echo shar: extracting ns_maint.c-DIFFS
+sed 's/^XX//' << 'SHAR_EOF' > ns_maint.c-DIFFS
+XX*** ../vixie/named/ns_maint.c	Thu Dec  1 04:38:07 1994
+XX--- ns_maint.c	Thu Dec  1 17:41:57 1994
+XX***************
+XX*** 90,95 ****
+XX--- 90,99 ----
+XX  
+XX  #define	qserial_qfull()	(qserials_running == MAXQSERIAL)
+XX  
+XX+ #if defined(SETTRANSFER) && !defined(ROUND_ROBIN)
+XX+ extern char * getXfer();
+XX+ #endif /* SETTRANSFER && !ROUND_ROBIN */
+XX+ 
+XX  #ifdef CLEANCACHE
+XX  static time_t cache_time;
+XX  #endif
+XX***************
+XX*** 268,276 ****
+XX--- 272,309 ----
+XX  	struct zoneinfo *zp;
+XX  {
+XX  	struct qinfo *qp;
+XX+ #if defined(SETTRANSFER) && !defined(ROUND_ROBIN)
+XX+ 	int mcntr; /* looping variable */
+XX+ #endif /* SETTRANSFER && !ROUND_ROBIN */
+XX  
+XX  	dprintf(1, (ddt, "qserial_query(%s)\n", zp->z_origin));
+XX  
+XX+ #if defined(SETTRANSFER) && !defined(ROUND_ROBIN)
+XX+        /* if zp->z_xaddr or zp->z_addr has our own address in it,
+XX+ 	* then we may be dealing with a ``dynamic'' zone - i.e.
+XX+ 	* calculating this information via an external program
+XX+ 	* (e.g. for load balancing benefits).  The serial number
+XX+ 	* won't change until _after_ we call the zone transfer
+XX+ 	* program.
+XX+ 	*/
+XX+ 	dprintf(1, (ddt, "qserial: checking myself\n"));
+XX+ 
+XX+ 	if (zp->z_xaddr.s_addr == netloop.my_addr.s_addr) {
+XX+ 	    dprintf(1, (ddt, "qserial_query(%s) found me.\n",zp->z_origin));
+XX+ 	    addxfer(zp);
+XX+ 	    return;
+XX+ 	}
+XX+ 	for (mcntr=0; mcntr < NSMAX; mcntr++) {
+XX+ 	    dprintf(1, (ddt, "qserial_query - checking [%s]\n",
+XX+ 			inet_ntoa(zp->z_addr[mcntr])));
+XX+ 	    if (zp->z_addr[mcntr].s_addr == netloop.addr) {
+XX+ 		dprintf(1, (ddt, "qserial_query(%s) found me.\n",zp->z_origin));
+XX+ 		addxfer(zp);
+XX+ 		return;
+XX+ 	    }
+XX+ 	}
+XX+ #endif /* SETTRANSFER && !ROUND_ROBIN */
+XX+ 
+XX  	if (qserial_qfull())
+XX  		return;
+XX  
+XX***************
+XX*** 402,408 ****
+XX  			a = zp->z_addr[cnt];
+XX  			if (aIsUs(a)
+XX  			    && !haveComplained(zp->z_origin,
+XX! 					       (char*)startxfer)) {
+XX  				syslog(LOG_ERR,
+XX  				   "attempted to fetch zone %s from self (%s)",
+XX  				       zp->z_origin, inet_ntoa(a));
+XX--- 435,445 ----
+XX  			a = zp->z_addr[cnt];
+XX  			if (aIsUs(a)
+XX  			    && !haveComplained(zp->z_origin,
+XX! 					       (char*)startxfer)
+XX! #if defined(SETTRANSFER) && !defined(ROUND_ROBIN)
+XX! 			    && (!getXfer(zp->z_origin))
+XX! #endif /* SETTRANSFER && !ROUND_ROBIN */
+XX! 			    ) {
+XX  				syslog(LOG_ERR,
+XX  				   "attempted to fetch zone %s from self (%s)",
+XX  				       zp->z_origin, inet_ntoa(a));
+XX***************
+XX*** 442,448 ****
+XX--- 479,494 ----
+XX  
+XX  	if (pid == 0) {
+XX  		/* child */
+XX+ #if defined(SETTRANSFER) && !defined(ROUND_ROBIN)
+XX+ 	        char * pathXfer;
+XX+ 		pathXfer = getXfer(zp->z_origin);
+XX+ 		if (pathXfer != (char *)NULL)
+XX+ 		  execv(pathXfer, argv);
+XX+ 		else 
+XX+ 		  execv(_PATH_XFER, argv);
+XX+ #else /* SETTRANSFER && !ROUND_ROBIN */
+XX  		execv(_PATH_XFER, argv);
+XX+ #endif /* SETTRANSFER && !ROUND_ROBIN */
+XX  		syslog(LOG_ERR, "can't exec %s: %m", _PATH_XFER);
+XX  		_exit(XFER_FAIL);	/* avoid duplicate buffer flushes */
+XX  	}
+SHAR_EOF
+if test 2884 -ne "`wc -c ns_maint.c-DIFFS`"
+then
+echo shar: error transmitting ns_maint.c-DIFFS '(should have been 2884 characters)'
+fi
+echo shar: extracting ns_req.c-DIFFS
+sed 's/^XX//' << 'SHAR_EOF' > ns_req.c-DIFFS
+XX*** ../vixie/named/ns_req.c	Thu Dec  1 04:38:10 1994
+XX--- ns_req.c	Thu Dec  1 15:19:49 1994
+XX***************
+XX*** 702,709 ****
+XX--- 702,711 ----
+XX  		    "req: foundname=%d, count=%d, founddata=%d, cname=%d\n",
+XX  		    foundname, count, founddata, cname));
+XX  
+XX+ #if !defined(SETTRANSFER) || defined(ROUND_ROBIN)
+XX  	if ((lp = local(from)) != NULL) 
+XX  		sort_response(answers, count, lp, *cpp);
+XX+ #endif /* !SETTRANSFER || ROUND_ROBIN */
+XX  #ifdef BIND_NOTIFY
+XX  	if (type == T_SOA && ntohs(from->sin_port) == ns_port && np->n_data) {
+XX  		int zn = np->n_data->d_zone;
+SHAR_EOF
+if test 559 -ne "`wc -c ns_req.c-DIFFS`"
+then
+echo shar: error transmitting ns_req.c-DIFFS '(should have been 559 characters)'
+fi
+echo shar: extracting ns_resp.c-DIFFS
+sed 's/^XX//' << 'SHAR_EOF' > ns_resp.c-DIFFS
+XX*** ../vixie/named/ns_resp.c	Thu Dec  1 04:38:14 1994
+XX--- ns_resp.c	Thu Dec  1 15:20:44 1994
+XX***************
+XX*** 742,749 ****
+XX--- 742,751 ----
+XX  	 *  If there are addresses and this is a local query,
+XX  	 *  sort them appropriately for the local context.
+XX  	 */
+XX+ #if !defined(SETTRANSFER) || defined(ROUND_ROBIN)
+XX  	if (ancount > 1 && (lp = local(&qp->q_from)) != NULL) 
+XX  		sort_response(tp, ancount, lp, eom);
+XX+ #endif /* !SETTRANSFER || ROUND_ROBIN */
+XX  
+XX  	/*
+XX  	 * An answer to a T_ANY query or a successful answer to a
+SHAR_EOF
+if test 525 -ne "`wc -c ns_resp.c-DIFFS`"
+then
+echo shar: error transmitting ns_resp.c-DIFFS '(should have been 525 characters)'
+fi
+echo shar: extracting ns_xfr.c
+sed 's/^XX//' << 'SHAR_EOF' > ns_xfr.c
+XX#if !defined(line) && !defined(SABER)
+XXstatic char sccsid[] = "@(#)ns_xfr.c	1.1 (Rutgers) 7/16/93";
+XXstatic char rcsid[] = "$Id:";
+XX#endif /* not lint */
+XX/*
+XX *
+XX * ns_xfr.c - support for specifying the program to be used to do
+XX * zone transfers.  This isn't obvious, but this is actually support
+XX * for shuffling address records, cnames, etc - anything you want.
+XX *
+XX * Note that if this code is turned on, then the sorting of responses
+XX * is actively turned off -- since these are order dependent - then
+XX * such things as sorting responses tends to bung things up a bit.
+XX *
+XX * This codes enables the "transfer" keyword in the named.boot
+XX * file.  There you may use the syntax:
+XX *	    transfer	    <zone-name>	    <program name>
+XX *
+XX * Of course, inside of that program, you can do *anything* you
+XX * want to do.  Currently I'm actually using a shell script that
+XX * does a "round robin" ordering of addresses.  With the right
+XX * ancillary programs - you could even have it page you everytime
+XX * it does a zone transfer.
+XX *
+XX * This is the result of a long and arduous trek through the IETF,
+XX * a working group, and a lot of frustration.  All of this for
+XX * load-balancing. - TpB (brisco@noc.rutgers.edu)
+XX */
+XX
+XX#include <sys/param.h>
+XX#include <sys/socket.h>
+XX#include <sys/time.h>
+XX#include <sys/stat.h>
+XX#include <netinet/in.h>
+XX#include <arpa/nameser.h>
+XX#include <syslog.h>
+XX#include <signal.h>
+XX#include <resolv.h>
+XX#include <stdio.h>
+XX#include <errno.h>
+XX#include <ctype.h>
+XX#include "named.h"
+XX
+XX#ifdef SETTRANSFER
+XX#define MAXTRANDEFS 128
+XXstruct xfr_element {
+XX    char * domain;
+XX    char * prog;
+XX};
+XXstatic struct xfr_element xfr_table[MAXTRANDEFS];
+XXstatic int no_xfrs;
+XX
+XXsetXfer(dname, progname)
+XXchar * dname;
+XXchar * progname;
+XX{
+XX    char *d, *p;
+XX    extern int debug;
+XX    if (no_xfrs >= MAXTRANDEFS) {
+XX	if (debug)
+XX	    dprintf(1, (ddt,"Set Transfer:  max# exceeded.  Dropping.\n"));
+XX	return;
+XX    }
+XX    d = xfr_table[no_xfrs].domain = malloc(strlen(dname)+1);
+XX    p = xfr_table[no_xfrs].prog = malloc(strlen(progname)+1);
+XX    strcpy(d, dname);
+XX    strcpy(p, progname);
+XX    if (debug) fprintf(ddt,"Set transfer[%d] for domain %s to %s\n",
+XX		    no_xfrs,d,p);
+XX    no_xfrs++;
+XX}
+XX
+XXchar *
+XXgetXfer(dname)
+XXchar * dname;
+XX{
+XX    char * p;
+XX    int i;
+XX    p = (char *)NULL;
+XX    for (i=0; i<no_xfrs && p==(char*)NULL; i++) {
+XX	if (!strcasecmp(xfr_table[i].domain,dname))
+XX	    p = xfr_table[i].prog;
+XX    }
+XX    if (debug) fprintf(ddt,"Transfer for domain %s is %s\n",
+XX		    dname,p?p:_PATH_XFER);
+XX    return(p);
+XX}
+XX#endif SETTRANSFER
+SHAR_EOF
+if test 2497 -ne "`wc -c ns_xfr.c`"
+then
+echo shar: error transmitting ns_xfr.c '(should have been 2497 characters)'
+fi
+:	End of shell archive
+exit 0
+

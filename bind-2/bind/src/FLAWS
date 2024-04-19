@@ -1,0 +1,12 @@
+# $Id: FLAWS,v 1.1.1.1 1999/10/04 22:24:37 wsanchez Exp $
+
+2. need a way to export the h_errno from hidden resolver contexts through
+   the irs interface.  given that h_errno is a bad idea and that having it
+   in the resolver rather than in netdb is a really bad idea, what can we
+   actually do?  (note that all of irs needs at most one resolver context,
+   but there's nowhere to hang it in the current pvt structures.)
+
+1. need to inherit resolver options from global context if they are not
+   set in the ninit function somehow.  need to think about the effects
+   of the various environment variables if they fail to mention something
+   which was also inherited.  need a sticky bit per option?

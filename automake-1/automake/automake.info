@@ -1,0 +1,109 @@
+This is automake.info, produced by Makeinfo version 3.12b from
+automake.texi.
+
+INFO-DIR-SECTION GNU admin
+START-INFO-DIR-ENTRY
+* automake: (automake).		Making Makefile.in's
+END-INFO-DIR-ENTRY
+
+INFO-DIR-SECTION Individual utilities
+START-INFO-DIR-ENTRY
+* aclocal: (automake)Invoking aclocal.          Generating aclocal.m4
+END-INFO-DIR-ENTRY
+
+   This file documents GNU automake 1.4
+
+   Copyright (C) 1995, 96, 97, 98 Free Software Foundation, Inc.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Foundation.
+
+
+Indirect:
+automake.info-1: 1109
+automake.info-2: 50014
+automake.info-3: 98452
+
+Tag Table:
+(Indirect)
+Node: Top1109
+Node: Introduction2718
+Node: Generalities4136
+Node: General Operation4669
+Node: Depth6981
+Node: Strictness7985
+Node: Uniform9432
+Node: Canonicalization12729
+Node: Examples13400
+Node: Complete13725
+Node: Hello15695
+Node: etags18353
+Node: Invoking Automake19923
+Node: configure24544
+Node: Requirements25464
+Node: Optional27840
+Node: Invoking aclocal33379
+Node: Macros35320
+Node: Extending aclocal39879
+Node: Top level40855
+Node: Programs43097
+Node: A Program43920
+Node: A Library48263
+Node: LIBOBJS49376
+Node: A Shared Library50014
+Node: Program variables51864
+Node: Yacc and Lex53173
+Node: C++ Support57219
+Node: Fortran 77 Support57995
+Node: Preprocessing Fortran 7759678
+Node: Compiling Fortran 77 Files60270
+Node: Mixing Fortran 77 With C and C++60831
+Node: How the Linker is Chosen63498
+Node: Fortran 77 and Autoconf66046
+Node: Support for Other Languages66461
+Node: ANSI66874
+Node: Dependencies69308
+Node: Other objects71790
+Node: Scripts72381
+Node: Headers73230
+Node: Data73893
+Node: Sources74457
+Node: Other GNU Tools75183
+Node: Emacs Lisp75670
+Node: gettext76728
+Node: Guile77374
+Node: Libtool77923
+Node: Java78169
+Node: Documentation78828
+Node: Texinfo79129
+Node: Man pages81460
+Node: Install82828
+Node: Clean85180
+Node: Dist85660
+Node: Tests88143
+Node: Options90190
+Node: Miscellaneous93607
+Node: Tags93939
+Node: Suffixes95259
+Node: Include95884
+Node: Conditionals96325
+Node: Gnits98452
+Node: Cygnus100154
+Node: Extending101553
+Node: Distributing103207
+Node: Future103721
+Node: Macro and Variable Index104451
+Node: General Index112722
+
+End Tag Table

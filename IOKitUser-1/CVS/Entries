@@ -1,0 +1,45 @@
+/APPLE_LICENSE/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+/FireWireTest.cpp/1.1.1.1/Tue Mar 21 03:06:11 2000//TIOKitUser-1
+/IOBundle.c/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+/IOCFBundle.c/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+/IOCFBundle.h/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+/IOCFPlugIn.h/1.1.1.1/Tue Mar 21 03:06:11 2000//TIOKitUser-1
+/IOCFSerialize.c/1.1.1.1/Tue Mar 21 03:06:11 2000//TIOKitUser-1
+/IOCFSerialize.h/1.1.1.1/Tue Mar 21 03:06:11 2000//TIOKitUser-1
+/IOCFSerializeTest.c/1.1.1.1/Tue Mar 21 03:06:11 2000//TIOKitUser-1
+/IOCFURLAccess.c/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+/IOCFURLAccess.h/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+/IOCFUnserialize.h/1.1.1.1/Tue Mar 21 03:06:11 2000//TIOKitUser-1
+/IOCFUnserialize.tab.c/1.1.1.1/Tue Mar 21 03:06:11 2000//TIOKitUser-1
+/IOCFUnserialize.yacc/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+/IOKitInternal.h/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+/IOKitLib.c/1.1.1.1/Tue Mar 21 03:06:11 2000//TIOKitUser-1
+/IOKitLib.h/1.1.1.1/Tue Mar 21 03:06:11 2000//TIOKitUser-1
+/IOKitLibPrivate.h/1.1.1.1/Tue Mar 21 03:06:11 2000//TIOKitUser-1
+/IOSharedLock.s/1.1.1.1/Tue Mar 21 03:06:11 2000//TIOKitUser-1
+/Info-macos.plist/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+/Makefile/1.1.1.1/Tue Mar 21 03:06:11 2000//TIOKitUser-1
+/Makefile.postamble/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+/Makefile.preamble/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+/PB.project/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+/Tests.c/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+/alloccount.c/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+/classcount.c/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+/clockfreq.c/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+/evsTest.c/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+/iodisplayregistry.c/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+/iokitmig.defs/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+/ionotify.c/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+/ionotifyCB.c/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+/termclass.c/1.1.1.1/Tue Mar 21 03:06:12 2000//TIOKitUser-1
+D/adb.subproj////
+D/audio.subproj////
+D/dpkg////
+D/graphics.subproj////
+D/hidsystem.subproj////
+D/kext.subproj////
+D/kmod////
+D/kmodc++////
+D/network.subproj////
+D/pwr_mgt.subproj////
+D/usb.subproj////

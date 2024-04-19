@@ -1,0 +1,38 @@
+dnl Process this file with autoconf to produce a configure script.
+dnl
+
+AC_INIT(nslint.c)
+
+AC_CANONICAL_SYSTEM
+
+AC_PROG_CC
+
+umask 002
+
+if test -z "$PWD" ; then
+	PWD=`pwd`
+fi
+
+AC_LBL_C_INIT(V_CCOPT, V_INCLS)
+
+AC_CHECK_HEADERS(malloc.h)
+
+AC_REPLACE_FUNCS(strerror)
+AC_CHECK_LIB(nsl, main)
+AC_CHECK_LIB(socket, main)
+
+AC_LBL_DEVEL(V_CCOPT)
+
+if test -r lbl/gnuc.h ; then
+	rm -f gnuc.h
+	ln -s lbl/gnuc.h gnuc.h
+fi
+
+AC_SUBST(V_CCOPT)
+AC_SUBST(V_INCLS)
+
+AC_PROG_INSTALL
+
+AC_OUTPUT(Makefile)
+
+exit 0

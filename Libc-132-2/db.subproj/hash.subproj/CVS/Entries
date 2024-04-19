@@ -1,0 +1,17 @@
+/Makefile/1.1.1.2/Thu Oct 14 21:08:34 1999//TLibc-132-2
+/Makefile.postamble/1.1.1.2/Thu Oct 14 21:08:34 1999//TLibc-132-2
+/Makefile.preamble/1.1.1.2/Thu Oct 14 21:08:34 1999//TLibc-132-2
+/PB.project/1.1.1.2/Thu Oct 14 21:08:34 1999//TLibc-132-2
+/extern.h/1.2/Thu Oct 14 21:18:53 1999//TLibc-132-2
+/hash.c/1.2/Thu Oct 14 21:18:53 1999//TLibc-132-2
+/hash.h/1.2/Thu Oct 14 21:18:53 1999//TLibc-132-2
+/hash_bigkey.c/1.2/Thu Oct 14 21:18:53 1999//TLibc-132-2
+/hash_buf.c/1.2/Thu Oct 14 21:18:53 1999//TLibc-132-2
+/hash_func.c/1.2/Thu Oct 14 21:18:53 1999//TLibc-132-2
+/hash_log2.c/1.2/Thu Oct 14 21:18:53 1999//TLibc-132-2
+/hash_page.c/1.2/Thu Oct 14 21:18:53 1999//TLibc-132-2
+/hsearch.c/1.2/Thu Oct 14 21:18:53 1999//TLibc-132-2
+/ndbm.c/1.2/Thu Oct 14 21:18:53 1999//TLibc-132-2
+/page.h/1.2/Thu Oct 14 21:18:53 1999//TLibc-132-2
+/search.h/1.2/Thu Oct 14 21:18:54 1999//TLibc-132-2
+D

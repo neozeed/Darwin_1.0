@@ -1,0 +1,21 @@
+/Makefile.dep/1.1.1.1/Fri Apr 23 01:12:24 1999//Tgroff-8
+/Makefile.sub/1.1.1.1/Fri Apr 23 01:12:24 1999//Tgroff-8
+/TODO/1.1.1.1/Fri Apr 23 01:12:24 1999//Tgroff-8
+/common.cc/1.1.1.1/Fri Apr 23 01:12:24 1999//Tgroff-8
+/common.h/1.1.1.1/Fri Apr 23 01:12:24 1999//Tgroff-8
+/depend/1.1.1.1/Fri Apr 23 01:12:24 1999//Tgroff-8
+/lex.cc/1.1.1.1/Fri Apr 23 01:12:24 1999//Tgroff-8
+/main.cc/1.1.1.1/Fri Apr 23 01:12:24 1999//Tgroff-8
+/object.cc/1.1.1.1/Fri Apr 23 01:12:24 1999//Tgroff-8
+/object.h/1.1.1.1/Fri Apr 23 01:12:24 1999//Tgroff-8
+/output.h/1.1.1.1/Fri Apr 23 01:12:24 1999//Tgroff-8
+/pic.cc/1.1.1.3/Thu Sep  2 06:19:46 1999//Tgroff-8
+/pic.h/1.1.1.1/Fri Apr 23 01:12:24 1999//Tgroff-8
+/pic.man/1.1.1.1/Fri Apr 23 01:12:24 1999//Tgroff-8
+/pic.tab.h/1.1.1.3/Thu Sep  2 06:19:47 1999//Tgroff-8
+/pic.y/1.1.1.1/Fri Apr 23 01:12:24 1999//Tgroff-8
+/position.h/1.1.1.1/Fri Apr 23 01:12:25 1999//Tgroff-8
+/tex.cc/1.1.1.1/Fri Apr 23 01:12:25 1999//Tgroff-8
+/text.h/1.1.1.1/Fri Apr 23 01:12:25 1999//Tgroff-8
+/troff.cc/1.1.1.1/Fri Apr 23 01:12:25 1999//Tgroff-8
+D

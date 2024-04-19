@@ -1,0 +1,740 @@
+Doc-2.1.1: doc isi.edu
+Doc-2.1.1: Starting test of isi.edu.   parent is edu.
+Doc-2.1.1: Test date - Sat May 27 23:43:13 EDT 1995
+soa @aos.arl.army.mil. for edu. has serial: 1995052600
+soa @c.psi.net. for edu. has serial: 1995052600
+soa @nic.nordu.net. for edu. has serial: 1995052400
+soa @ns.internic.net. for edu. has serial: 1995052600
+soa @ns.isc.org. for edu. has serial: 1995052600
+soa @ns.nasa.gov. for edu. has serial: 1995052600
+soa @ns.nic.ddn.mil. for edu. has serial: 1995052600
+soa @ns1.isi.edu. for edu. has serial: 1995052600
+soa @terp.umd.edu. for edu. has serial: 1995052600
+WARNING: Found 2 unique SOA serial #'s for edu.
+Found 3 NS and 3 glue records for isi.edu. @aos.arl.army.mil. (non-AUTH)
+Found 3 NS and 3 glue records for isi.edu. @c.psi.net. (non-AUTH)
+Found 3 NS and 3 glue records for isi.edu. @nic.nordu.net. (non-AUTH)
+Found 3 NS and 3 glue records for isi.edu. @ns.internic.net. (non-AUTH)
+Found 3 NS and 3 glue records for isi.edu. @ns.isc.org. (non-AUTH)
+Found 3 NS and 3 glue records for isi.edu. @ns.nasa.gov. (non-AUTH)
+Found 3 NS and 3 glue records for isi.edu. @ns.nic.ddn.mil. (non-AUTH)
+Found 3 NS and 3 glue records for isi.edu. @ns1.isi.edu. (non-AUTH)
+Found 3 NS and 3 glue records for isi.edu. @terp.umd.edu. (non-AUTH)
+DNServers for edu.
+   === 0 were also authoritatve for isi.edu.
+   === 9 were non-authoritative for isi.edu.
+Servers for edu. (not also authoritative for isi.edu.)
+   === agree on NS records for isi.edu.
+NS list summary for isi.edu. from parent (edu.) servers
+  == ns.isi.edu. vax.darpa.mil. venera.isi.edu.
+soa @ns.isi.edu. for isi.edu. serial: 1995052000
+soa @vax.darpa.mil. for isi.edu. serial: 1995052000
+soa @venera.isi.edu. for isi.edu. serial: 1995052000
+SOA serial #'s agree for isi.edu.
+WARN: SOA records differ for isi.edu. from authoritative servers
+Authoritative domain (isi.edu.) servers agree on NS for isi.edu.
+NS list from isi.edu. authoritative servers matches list from
+  ===  parent (edu.) servers not authoritative for isi.edu.
+Checking 1 potential addresses for hosts at isi.edu.
+  == 128.9.0.32
+in-addr PTR record found for 128.9.0.32
+Summary:
+   WARNINGS issued for isi.edu. (count: 2)
+Done testing isi.edu.  Sat May 27 23:43:29 EDT 1995
+
+
+######## Query Log ########
+
+## Nameservers for edu. (dig ns edu.):
+
+aos.arl.army.mil.
+c.psi.net.
+nic.nordu.net.
+ns.internic.net.
+ns.isc.org.
+ns.nasa.gov.
+ns.nic.ddn.mil.
+ns1.isi.edu.
+terp.umd.edu.
+===================
+
+## SOA record for edu. domain from nameserver aos.arl.army.mil.
+
+; (2 servers found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr aa
+;;	edu
+edu.	in	soa	ns.internic.net. hostmaster.internic.net. (
+			1995052600	; serial
+			10800	; refresh (3 hours)
+			900	; retry (15 mins)
+			604800	; expire (7 days)
+			86400 )	; minimum (1 day)
+
+===================
+
+## SOA record for edu. domain from nameserver c.psi.net.
+
+; (1 server found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr aa
+;;	edu
+edu.	in	soa	ns.internic.net. hostmaster.internic.net. (
+			1995052600	; serial
+			10800	; refresh (3 hours)
+			900	; retry (15 mins)
+			604800	; expire (7 days)
+			86400 )	; minimum (1 day)
+edu.	in	ns	ns.internic.net.
+edu.	in	ns	aos.arl.army.mil.
+edu.	in	ns	ns1.isi.edu.
+edu.	in	ns	c.psi.net.
+edu.	in	ns	terp.umd.edu.
+edu.	in	ns	ns.nasa.gov.
+edu.	in	ns	nic.nordu.net.
+edu.	in	ns	ns.isc.org.
+edu.	in	ns	ns.nic.ddn.mil.
+ns.internic.net.	in	a	198.41.0.4
+aos.arl.army.mil.	in	a	192.5.25.82
+aos.arl.army.mil.	in	a	128.63.4.82
+ns1.isi.edu.	in	a	128.9.0.107
+c.psi.net.	in	a	192.33.4.12
+terp.umd.edu.	in	a	128.8.10.90
+ns.nasa.gov.	in	a	128.102.16.10
+ns.nasa.gov.	in	a	192.52.195.10
+nic.nordu.net.	in	a	192.36.148.17
+ns.isc.org.	in	a	192.5.5.241
+ns.nic.ddn.mil.	in	a	192.112.36.4
+
+===================
+
+## SOA record for edu. domain from nameserver nic.nordu.net.
+
+; (1 server found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr aa
+;;	edu
+edu.	in	soa	ns.internic.net. hostmaster.internic.net. (
+			1995052400	; serial
+			10800	; refresh (3 hours)
+			900	; retry (15 mins)
+			604800	; expire (7 days)
+			86400 )	; minimum (1 day)
+edu.	in	ns	nic.nordu.net.
+edu.	in	ns	ns.isc.org.
+edu.	in	ns	ns.nic.ddn.mil.
+edu.	in	ns	ns.internic.net.
+edu.	in	ns	aos.arl.army.mil.
+edu.	in	ns	ns1.isi.edu.
+edu.	in	ns	c.psi.net.
+edu.	in	ns	terp.umd.edu.
+edu.	in	ns	ns.nasa.gov.
+nic.nordu.net.	in	a	192.36.148.17
+ns.isc.org.	in	a	192.5.5.241
+ns.nic.ddn.mil.	in	a	192.112.36.4
+ns.internic.net.	in	a	198.41.0.4
+aos.arl.army.mil.	in	a	128.63.4.82
+aos.arl.army.mil.	in	a	192.5.25.82
+ns1.isi.edu.	in	a	128.9.0.107
+c.psi.net.	in	a	192.33.4.12
+terp.umd.edu.	in	a	128.8.10.90
+ns.nasa.gov.	in	a	192.52.195.10
+ns.nasa.gov.	in	a	128.102.16.10
+
+===================
+
+## SOA record for edu. domain from nameserver ns.internic.net.
+
+; (1 server found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr aa
+;;	edu
+edu.	in	soa	ns.internic.net. hostmaster.internic.net. (
+			1995052600	; serial
+			10800	; refresh (3 hours)
+			900	; retry (15 mins)
+			604800	; expire (7 days)
+			86400 )	; minimum (1 day)
+edu.	in	ns	ns.internic.net.
+edu.	in	ns	aos.arl.army.mil.
+edu.	in	ns	ns1.isi.edu.
+edu.	in	ns	c.psi.net.
+edu.	in	ns	terp.umd.edu.
+edu.	in	ns	ns.nasa.gov.
+edu.	in	ns	nic.nordu.net.
+edu.	in	ns	ns.isc.org.
+edu.	in	ns	ns.nic.ddn.mil.
+ns.internic.net.	in	a	198.41.0.4
+aos.arl.army.mil.	in	a	128.63.4.82
+aos.arl.army.mil.	in	a	192.5.25.82
+ns1.isi.edu.	in	a	128.9.0.107
+c.psi.net.	in	a	192.33.4.12
+terp.umd.edu.	in	a	128.8.10.90
+ns.nasa.gov.	in	a	128.102.16.10
+ns.nasa.gov.	in	a	192.52.195.10
+nic.nordu.net.	in	a	192.36.148.17
+ns.isc.org.	in	a	192.5.5.241
+ns.nic.ddn.mil.	in	a	192.112.36.4
+
+===================
+
+## SOA record for edu. domain from nameserver ns.isc.org.
+
+; (1 server found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr aa
+;;	edu
+edu.	in	soa	ns.internic.net. hostmaster.internic.net. (
+			1995052600	; serial
+			10800	; refresh (3 hours)
+			900	; retry (15 mins)
+			604800	; expire (7 days)
+			86400 )	; minimum (1 day)
+edu.	in	ns	ns1.isi.edu.
+edu.	in	ns	c.psi.net.
+edu.	in	ns	terp.umd.edu.
+edu.	in	ns	ns.nasa.gov.
+edu.	in	ns	nic.nordu.net.
+edu.	in	ns	ns.isc.org.
+edu.	in	ns	ns.nic.ddn.mil.
+edu.	in	ns	ns.internic.net.
+edu.	in	ns	aos.arl.army.mil.
+ns1.isi.edu.	in	a	128.9.0.107
+c.psi.net.	in	a	192.33.4.12
+terp.umd.edu.	in	a	128.8.10.90
+ns.nasa.gov.	in	a	192.52.195.10
+ns.nasa.gov.	in	a	128.102.16.10
+nic.nordu.net.	in	a	192.36.148.17
+ns.isc.org.	in	a	192.5.5.241
+ns.nic.ddn.mil.	in	a	192.112.36.4
+ns.internic.net.	in	a	198.41.0.4
+aos.arl.army.mil.	in	a	192.5.25.82
+aos.arl.army.mil.	in	a	26.3.0.29
+aos.arl.army.mil.	in	a	192.5.239.193
+aos.arl.army.mil.	in	a	128.63.4.82
+
+===================
+
+## SOA record for edu. domain from nameserver ns.nasa.gov.
+
+; (2 servers found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr aa
+;;	edu
+edu.	in	soa	ns.internic.net. hostmaster.internic.net. (
+			1995052600	; serial
+			10800	; refresh (3 hours)
+			900	; retry (15 mins)
+			604800	; expire (7 days)
+			86400 )	; minimum (1 day)
+edu.	in	ns	ns.internic.net.
+edu.	in	ns	aos.arl.army.mil.
+edu.	in	ns	ns1.isi.edu.
+edu.	in	ns	c.psi.net.
+edu.	in	ns	terp.umd.edu.
+edu.	in	ns	ns.nasa.gov.
+edu.	in	ns	nic.nordu.net.
+edu.	in	ns	ns.isc.org.
+edu.	in	ns	ns.nic.ddn.mil.
+ns.internic.net.	in	a	198.41.0.4
+aos.arl.army.mil.	in	a	128.63.4.82
+aos.arl.army.mil.	in	a	192.5.25.82
+ns1.isi.edu.	in	a	128.9.0.107
+c.psi.net.	in	a	192.33.4.12
+terp.umd.edu.	in	a	128.8.10.90
+ns.nasa.gov.	in	a	128.102.16.10
+nic.nordu.net.	in	a	192.36.148.17
+ns.isc.org.	in	a	192.5.5.241
+ns.nic.ddn.mil.	in	a	192.112.36.4
+
+===================
+
+## SOA record for edu. domain from nameserver ns.nic.ddn.mil.
+
+; (1 server found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr aa
+;;	edu
+edu.	in	soa	ns.internic.net. hostmaster.internic.net. (
+			1995052600	; serial
+			10800	; refresh (3 hours)
+			900	; retry (15 mins)
+			604800	; expire (7 days)
+			86400 )	; minimum (1 day)
+edu.	in	ns	ns.internic.net.
+edu.	in	ns	aos.arl.army.mil.
+edu.	in	ns	ns1.isi.edu.
+edu.	in	ns	c.psi.net.
+edu.	in	ns	terp.umd.edu.
+edu.	in	ns	ns.nasa.gov.
+edu.	in	ns	nic.nordu.net.
+edu.	in	ns	ns.isc.org.
+edu.	in	ns	ns.nic.ddn.mil.
+ns.internic.net.	in	a	198.41.0.4
+aos.arl.army.mil.	in	a	128.63.4.82
+aos.arl.army.mil.	in	a	192.5.25.82
+ns1.isi.edu.	in	a	128.9.0.107
+c.psi.net.	in	a	192.33.4.12
+terp.umd.edu.	in	a	128.8.10.90
+ns.nasa.gov.	in	a	128.102.16.10
+ns.nasa.gov.	in	a	192.52.195.10
+nic.nordu.net.	in	a	192.36.148.17
+ns.isc.org.	in	a	192.5.5.241
+ns.nic.ddn.mil.	in	a	192.112.36.4
+
+===================
+
+## SOA record for edu. domain from nameserver ns1.isi.edu.
+
+; (1 server found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr aa
+;;	edu
+edu.	in	soa	ns.internic.net. hostmaster.internic.net. (
+			1995052600	; serial
+			10800	; refresh (3 hours)
+			900	; retry (15 mins)
+			604800	; expire (7 days)
+			86400 )	; minimum (1 day)
+edu.	in	ns	ns.nasa.gov.
+edu.	in	ns	nic.nordu.net.
+edu.	in	ns	ns.isc.org.
+edu.	in	ns	ns.nic.ddn.mil.
+edu.	in	ns	ns.internic.net.
+edu.	in	ns	aos.arl.army.mil.
+edu.	in	ns	ns1.isi.edu.
+edu.	in	ns	c.psi.net.
+edu.	in	ns	terp.umd.edu.
+ns.nasa.gov.	in	a	128.102.16.10
+ns.nasa.gov.	in	a	192.52.195.10
+nic.nordu.net.	in	a	192.36.148.17
+ns.isc.org.	in	a	192.5.5.241
+ns.nic.ddn.mil.	in	a	192.112.36.4
+ns.internic.net.	in	a	198.41.0.4
+aos.arl.army.mil.	in	a	128.63.4.82
+aos.arl.army.mil.	in	a	192.5.25.82
+ns1.isi.edu.	in	a	128.9.0.107
+c.psi.net.	in	a	192.33.4.12
+terp.umd.edu.	in	a	128.8.10.90
+
+===================
+
+## SOA record for edu. domain from nameserver terp.umd.edu.
+
+; (1 server found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr aa
+;;	edu
+edu.	in	soa	ns.internic.net. hostmaster.internic.net. (
+			1995052600	; serial
+			10800	; refresh (3 hours)
+			900	; retry (15 mins)
+			604800	; expire (7 days)
+			86400 )	; minimum (1 day)
+edu.	in	ns	ns.nasa.gov.
+edu.	in	ns	nic.nordu.net.
+edu.	in	ns	ns.isc.org.
+edu.	in	ns	ns.nic.ddn.mil.
+edu.	in	ns	ns.internic.net.
+edu.	in	ns	aos.arl.army.mil.
+edu.	in	ns	ns1.isi.edu.
+edu.	in	ns	c.psi.net.
+edu.	in	ns	terp.umd.edu.
+ns.nasa.gov.	in	a	192.52.195.10
+ns.nasa.gov.	in	a	128.102.16.10
+nic.nordu.net.	in	a	192.36.148.17
+ns.isc.org.	in	a	192.5.5.241
+ns.nic.ddn.mil.	in	a	192.112.36.4
+ns.internic.net.	in	a	198.41.0.4
+aos.arl.army.mil.	in	a	128.63.4.82
+aos.arl.army.mil.	in	a	192.5.25.82
+ns1.isi.edu.	in	a	128.9.0.107
+c.psi.net.	in	a	192.33.4.12
+terp.umd.edu.	in	a	128.8.10.90
+
+===================
+
+## NS records for isi.edu. domain from nameserver aos.arl.army.mil.
+
+; (2 servers found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr; ques: 1, ans: 3, auth: 3, addit: 4
+;;	isi.edu
+;; answers:
+isi.edu.	172800	in	ns	venera.isi.edu.
+isi.edu.	172800	in	ns	ns.isi.edu.
+isi.edu.	172800	in	ns	vax.darpa.mil.
+
+;; authority records:
+isi.edu.	172800	in	ns	venera.isi.edu.
+isi.edu.	172800	in	ns	ns.isi.edu.
+isi.edu.	172800	in	ns	vax.darpa.mil.
+
+;; additional records:
+venera.isi.edu.	518400	in	a	128.9.0.32
+ns.isi.edu.	518400	in	a	128.9.128.127
+vax.darpa.mil.	518400	in	a	192.5.18.99
+vax.darpa.mil.	518400	in	a	192.48.218.99
+
+
+===================
+
+## NS records for isi.edu. domain from nameserver c.psi.net.
+
+; (1 server found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr; ques: 1, ans: 3, auth: 3, addit: 4
+;;	isi.edu
+;; answers:
+isi.edu.	172800	in	ns	venera.isi.edu.
+isi.edu.	172800	in	ns	ns.isi.edu.
+isi.edu.	172800	in	ns	vax.darpa.mil.
+
+;; authority records:
+isi.edu.	172800	in	ns	venera.isi.edu.
+isi.edu.	172800	in	ns	ns.isi.edu.
+isi.edu.	172800	in	ns	vax.darpa.mil.
+
+;; additional records:
+venera.isi.edu.	172800	in	a	128.9.0.32
+ns.isi.edu.	172800	in	a	128.9.128.127
+vax.darpa.mil.	518400	in	a	192.48.218.99
+vax.darpa.mil.	518400	in	a	192.5.18.99
+
+
+===================
+
+## NS records for isi.edu. domain from nameserver nic.nordu.net.
+
+; (1 server found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr; ques: 1, ans: 3, auth: 3, addit: 4
+;;	isi.edu
+;; answers:
+isi.edu.	172800	in	ns	venera.isi.edu.
+isi.edu.	172800	in	ns	ns.isi.edu.
+isi.edu.	172800	in	ns	vax.darpa.mil.
+
+;; authority records:
+isi.edu.	172800	in	ns	venera.isi.edu.
+isi.edu.	172800	in	ns	ns.isi.edu.
+isi.edu.	172800	in	ns	vax.darpa.mil.
+
+;; additional records:
+venera.isi.edu.	172800	in	a	128.9.0.32
+ns.isi.edu.	172800	in	a	128.9.128.127
+vax.darpa.mil.	518400	in	a	192.5.18.99
+vax.darpa.mil.	518400	in	a	192.48.218.99
+
+
+===================
+
+## NS records for isi.edu. domain from nameserver ns.internic.net.
+
+; (1 server found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr; ques: 1, ans: 3, auth: 3, addit: 4
+;;	isi.edu
+;; answers:
+isi.edu.	172800	in	ns	venera.isi.edu.
+isi.edu.	172800	in	ns	ns.isi.edu.
+isi.edu.	172800	in	ns	vax.darpa.mil.
+
+;; authority records:
+isi.edu.	172800	in	ns	venera.isi.edu.
+isi.edu.	172800	in	ns	ns.isi.edu.
+isi.edu.	172800	in	ns	vax.darpa.mil.
+
+;; additional records:
+venera.isi.edu.	172800	in	a	128.9.0.32
+ns.isi.edu.	172800	in	a	128.9.128.127
+vax.darpa.mil.	518400	in	a	192.5.18.99
+vax.darpa.mil.	518400	in	a	192.48.218.99
+
+
+===================
+
+## NS records for isi.edu. domain from nameserver ns.isc.org.
+
+; (1 server found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr; ques: 1, ans: 3, auth: 0, addit: 4
+;;	isi.edu
+;; answers:
+isi.edu.	172800	in	ns	vax.darpa.mil.
+isi.edu.	172800	in	ns	venera.isi.edu.
+isi.edu.	172800	in	ns	ns.isi.edu.
+
+;; additional records:
+vax.darpa.mil.	518400	in	a	192.48.218.99
+vax.darpa.mil.	518400	in	a	192.5.18.99
+venera.isi.edu.	172800	in	a	128.9.0.32
+ns.isi.edu.	172800	in	a	128.9.128.127
+
+
+===================
+
+## NS records for isi.edu. domain from nameserver ns.nasa.gov.
+
+; (2 servers found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr; ques: 1, ans: 3, auth: 0, addit: 4
+;;	isi.edu
+;; answers:
+isi.edu.	172800	in	ns	venera.isi.edu.
+isi.edu.	172800	in	ns	ns.isi.edu.
+isi.edu.	172800	in	ns	vax.darpa.mil.
+
+;; additional records:
+venera.isi.edu.	172800	in	a	128.9.0.32
+ns.isi.edu.	172800	in	a	128.9.128.127
+vax.darpa.mil.	518400	in	a	192.5.18.99
+vax.darpa.mil.	518400	in	a	192.48.218.99
+
+
+===================
+
+## NS records for isi.edu. domain from nameserver ns.nic.ddn.mil.
+
+; (1 server found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr; ques: 1, ans: 3, auth: 3, addit: 4
+;;	isi.edu
+;; answers:
+isi.edu.	172800	in	ns	venera.isi.edu.
+isi.edu.	172800	in	ns	ns.isi.edu.
+isi.edu.	172800	in	ns	vax.darpa.mil.
+
+;; authority records:
+isi.edu.	172800	in	ns	venera.isi.edu.
+isi.edu.	172800	in	ns	ns.isi.edu.
+isi.edu.	172800	in	ns	vax.darpa.mil.
+
+;; additional records:
+venera.isi.edu.	172800	in	a	128.9.0.32
+ns.isi.edu.	172800	in	a	128.9.128.127
+vax.darpa.mil.	518400	in	a	192.5.18.99
+vax.darpa.mil.	518400	in	a	192.48.218.99
+
+
+===================
+
+## NS records for isi.edu. domain from nameserver ns1.isi.edu.
+
+; (1 server found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr; ques: 1, ans: 3, auth: 3, addit: 4
+;;	isi.edu
+;; answers:
+isi.edu.	172800	in	ns	venera.isi.edu.
+isi.edu.	172800	in	ns	ns.isi.edu.
+isi.edu.	172800	in	ns	vax.darpa.mil.
+
+;; authority records:
+isi.edu.	172800	in	ns	venera.isi.edu.
+isi.edu.	172800	in	ns	ns.isi.edu.
+isi.edu.	172800	in	ns	vax.darpa.mil.
+
+;; additional records:
+venera.isi.edu.	518400	in	a	128.9.0.32
+ns.isi.edu.	518400	in	a	128.9.128.127
+vax.darpa.mil.	518400	in	a	192.5.18.99
+vax.darpa.mil.	518400	in	a	192.48.218.99
+
+
+===================
+
+## NS records for isi.edu. domain from nameserver terp.umd.edu.
+
+; (1 server found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr; ques: 1, ans: 3, auth: 0, addit: 4
+;;	isi.edu
+;; answers:
+isi.edu.	172800	in	ns	venera.isi.edu.
+isi.edu.	172800	in	ns	ns.isi.edu.
+isi.edu.	172800	in	ns	vax.darpa.mil.
+
+;; additional records:
+venera.isi.edu.	172800	in	a	128.9.0.32
+ns.isi.edu.	172800	in	a	128.9.128.127
+vax.darpa.mil.	518400	in	a	192.48.218.99
+vax.darpa.mil.	518400	in	a	192.5.18.99
+
+
+===================
+
+## SOA record for isi.edu. domain from nameserver ns.isi.edu.
+
+; (1 server found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr aa ra
+;;	isi.edu
+isi.edu.	in	soa	venera.isi.edu. koda.venera.isi.edu. (
+			1995052000	; serial
+			7200	; refresh (2 hours)
+			3600	; retry (1 hour)
+			3600000	; expire (41 days 16 hours)
+			432000 )	; minimum (5 days)
+isi.edu.	in	ns	venera.isi.edu.
+isi.edu.	in	ns	ns.isi.edu.
+isi.edu.	in	ns	vax.darpa.mil.
+venera.isi.edu.	in	a	128.9.0.32
+ns.isi.edu.	in	a	128.9.128.127
+vax.darpa.mil.	in	a	192.48.218.99
+vax.darpa.mil.	in	a	192.5.18.99
+
+===================
+
+## SOA record for isi.edu. domain from nameserver vax.darpa.mil.
+
+; (2 servers found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr aa ra
+;;	isi.edu
+isi.edu.	in	soa	venera.isi.edu. koda.venera.isi.edu. (
+			1995052000	; serial
+			7200	; refresh (2 hours)
+			3600	; retry (1 hour)
+			3600000	; expire (41 days 16 hours)
+			432000 )	; minimum (5 days)
+
+===================
+
+## SOA record for isi.edu. domain from nameserver venera.isi.edu.
+
+; (1 server found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr aa ra
+;;	isi.edu
+isi.edu.	in	soa	venera.isi.edu. koda.venera.isi.edu. (
+			1995052000	; serial
+			7200	; refresh (2 hours)
+			3600	; retry (1 hour)
+			3600000	; expire (41 days 16 hours)
+			432000 )	; minimum (5 days)
+isi.edu.	in	ns	venera.isi.edu.
+isi.edu.	in	ns	ns.isi.edu.
+isi.edu.	in	ns	vax.darpa.mil.
+venera.isi.edu.	in	a	128.9.0.32
+ns.isi.edu.	in	a	128.9.128.127
+vax.darpa.mil.	in	a	192.48.218.99
+vax.darpa.mil.	in	a	192.5.18.99
+
+===================
+
+## NS records for isi.edu. domain from nameserver ns.isi.edu.
+
+; (1 server found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr aa ra; ques: 1, ans: 3, auth: 3, addit: 4
+;;	isi.edu
+;; answers:
+isi.edu.	432000	in	ns	ns.isi.edu.
+isi.edu.	432000	in	ns	vax.darpa.mil.
+isi.edu.	432000	in	ns	venera.isi.edu.
+
+;; authority records:
+isi.edu.	432000	in	ns	ns.isi.edu.
+isi.edu.	432000	in	ns	vax.darpa.mil.
+isi.edu.	432000	in	ns	venera.isi.edu.
+
+;; additional records:
+ns.isi.edu.	432000	in	a	128.9.128.127
+vax.darpa.mil.	432000	in	a	192.48.218.99
+vax.darpa.mil.	432000	in	a	192.5.18.99
+venera.isi.edu.	432000	in	a	128.9.0.32
+
+
+===================
+
+## NS records for isi.edu. domain from nameserver vax.darpa.mil.
+
+; (2 servers found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr aa ra; ques: 1, ans: 3, auth: 0, addit: 4
+;;	isi.edu
+;; answers:
+isi.edu.	431349	in	ns	venera.isi.edu.
+isi.edu.	431349	in	ns	ns.isi.edu.
+isi.edu.	431349	in	ns	vax.darpa.mil.
+
+;; additional records:
+venera.isi.edu.	431349	in	a	128.9.0.32
+ns.isi.edu.	431349	in	a	128.9.128.127
+vax.darpa.mil.	432000	in	a	192.5.18.99
+vax.darpa.mil.	432000	in	a	192.48.218.99
+
+
+===================
+
+## NS records for isi.edu. domain from nameserver venera.isi.edu.
+
+; (1 server found)
+;; res options: init defnam dnsrch
+;; got answer:
+;; flags: qr aa ra; ques: 1, ans: 3, auth: 3, addit: 4
+;;	isi.edu
+;; answers:
+isi.edu.	432000	in	ns	ns.isi.edu.
+isi.edu.	432000	in	ns	vax.darpa.mil.
+isi.edu.	432000	in	ns	venera.isi.edu.
+
+;; authority records:
+isi.edu.	432000	in	ns	ns.isi.edu.
+isi.edu.	432000	in	ns	vax.darpa.mil.
+isi.edu.	432000	in	ns	venera.isi.edu.
+
+;; additional records:
+ns.isi.edu.	432000	in	a	128.9.128.127
+vax.darpa.mil.	255144	in	a	192.48.218.99
+vax.darpa.mil.	255144	in	a	192.5.18.99
+venera.isi.edu.	432000	in	a	128.9.0.32
+
+
+===================
+
+### Queries for nameserver address in-addr.arpa. records
+
+
+; <<>> DiG 2.1 <<>> +pfset=0x2738 -x 
+;; res options: init recurs defnam dnsrch
+;; got answer:
+;; flags: qr rd ra; Ques: 1, Ans: 1, Auth: 3, Addit: 4
+;; QUESTIONS:
+;;	32.0.9.128.in-addr.arpa, type = ANY, class = IN
+
+;; ANSWERS:
+32.0.9.128.in-addr.arpa.	431802	PTR	venera.isi.edu.
+
+9.128.IN-ADDR.ARPA.	518321	NS	venera.isi.edu.
+9.128.IN-ADDR.ARPA.	518321	NS	NS.isi.edu.
+9.128.IN-ADDR.ARPA.	518321	NS	VAX.DARPA.MIL.
+venera.isi.edu.	155879	A	128.9.0.32
+NS.isi.edu.	155879	A	128.9.128.127
+VAX.DARPA.MIL.	518318	A	192.5.18.99
+VAX.DARPA.MIL.	518318	A	192.48.218.99
+

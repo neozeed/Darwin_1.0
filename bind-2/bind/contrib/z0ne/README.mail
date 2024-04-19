@@ -1,0 +1,11 @@
+Yet another script kiddie tried some of my servers today, and I finally
+found a hacked box with source for z0ne.  I was incorrect in my assumption
+that it just connected to your server.  It's a bit more general that that.
+What it seems to do is find the name servers for a zone, and attempt AXFRs
+with each of those name servers until one succeeds.  When it successfully
+does an AXFR, it outputs a list of all the IPs for the A records in the
+zone.  It seems the more aggressive crackers are using it to grab all the
+A records in com net and org (thus all the DNS servers), and since NetSol
+blocks AXFR, the crackers end up picking it up from F.
+
+[anon]

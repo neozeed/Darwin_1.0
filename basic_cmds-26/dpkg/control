@@ -1,0 +1,4 @@
+Package: basic-cmds
+Maintainer: Darwin Developers <darwin-development@public.lists.apple.com>
+Build-Depends: build-base, libcompat
+Description: Basic user commands

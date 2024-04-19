@@ -1,0 +1,36 @@
+/IOBufferMemoryDescriptor.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOCPU.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOCatalogue.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOCommandGate.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOCommandQueue.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOConditionLock.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IODeviceMemory.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IODeviceTreeSupport.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOEventSource.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOFilterInterruptEventSource.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOInterruptController.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOInterruptEventSource.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOKitDebug.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOLib.c/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOLocks.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOMemoryCursor.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOMemoryDescriptor.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOPMchangeNoteList.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOPMinformee.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOPMinformeeList.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOPMpmChild.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOPlatformExpert.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IORangeAllocator.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IORegistryEntry.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOService.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOServicePM.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOServicePrivate.h/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOStartIOKit.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOStringFuncs.c/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOSyncer.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOTimerEventSource.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOUserClient.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/IOWorkLoop.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+/PMmisc.cpp/1.1.1.1/Sat Mar 25 21:02:47 2000//Txnu-1-1
+D/i386////
+D/ppc////

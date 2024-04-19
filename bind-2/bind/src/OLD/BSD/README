@@ -1,0 +1,43 @@
+README
+Paul Vixie
+paul@vix.com
+12-Dec-94 - original
+$Id: README,v 1.1.1.1 1999/10/04 22:24:37 wsanchez Exp $
+
+To integrate BIND into a 4.4BSD or 4.4BSD-Lite system, you need to perform the
+following steps.  You might be doing this if you are maintaining one of the
+BNR2- or 4.4L-based BSD's (BSD/OS, FreeBSD, NetBSD), or if you are running
+4.4BSD and you want to get the newest BIND cleanly integrated into it.
+
+1. Apply the diffs in Diffs/lib-libc-net to your lib/libc/net tree, and
+   apply the diffs in Diffs/include(*) to your include tree.  These are roughly
+   the changes that will appear in 4.4BSD-Lite++ so you're on the right track.
+
+2. Rid your system of all vestiges of named, named-xfer, dig, nslookup, or the
+   utility scripts, named.reload and named.restart.  Don't forget to update the
+   parent directory Makefiles when you remove source directories.
+
+3. Unpack the BIND kit, or move the one you have already unpacked, to someplace
+   like contrib/BIND in your tree (which might or might not be /usr/src).
+
+4. Move, or preferrably copy, the contrib/BIND/BSD directory to some place like
+   usr.sbin/named or usr.bin/bind or whatever pleases you.  Update the parent
+   directory's Makefile to include this new directory.
+
+5. In usr.sbin/named (or whatever you chose in #4), remove the BIND symlink and
+   make a new one pointing to ../../contrib/BIND (or whatever you chose in #3).
+
+6. Do the dance that makes and installs includes, libraries, and utilities.  It
+   is safe (and recommended) to use "make obj" and "make depend" on the subtree
+   that includes this integration of BIND.
+
+7. Watch comp.protocols.tcp-ip.domains and/or the bind@uunet.uu.net mailing
+   list for patches and updates to BIND.  When new kits are made available,
+   grab them and repeat these instructions (or, if you are brave, diff things
+   and apply patches by hand).
+
+This package has been brought to you by the Internet Software Consortium.
+For more information about the ISC, send mail to <info@isc.org>.
+
+(*) no 4.4BSD-Lite include diffs are available yet, use your own judgement and
+do the merge on your own.

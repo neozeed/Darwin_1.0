@@ -1,0 +1,68 @@
+Sun Jul 24 18:07:09 EDT 1994
+----------------
+This kit consists of the following files:
+
+	MULTIZDB          this file
+	MZDB.patch        a patch file
+	ns_init.c         complete replacement for nslookup/ns_init.c
+
+(I included a new version of ns_init.c since it was dramatically
+rearranged.  There isn't that much new functionality there, but lots
+of old things were done in ways inconvenient for this extension.)
+ns_init.c and the patches are based on BIND 4.9.3-beta-9.  Sorry in
+advance for the difference in code indent style, but somebody can run
+it through a beautifier later.
+
+The patch enables MULTIZDB by default, but it has no effect unless you
+put "multizone" directives in your named.boot file.
+----------------
+
+
+This is a description of the Multizone Database File (MULTIZDB)
+extension for BIND.  The overall feature is controlled via an option;
+to enable it, define MULTIZDB in "conf/options.h".
+
+MULTIZDB allows you to put records from more than one zone in a single
+database file.  For some scenarios, this can simplify database
+maintenance, and, by simplifying it, make it less error-prone.  The
+MULTIZDB extension affects only the local storage format of the zone
+files.  It does not affect any DNS protocol elements nor does it alter
+any algorithm by which BIND arrives at an answer.
+
+A simple example is that of a DNS administrator who happens to have
+authority for a subdomain and a Class C network address, and where the
+two happen to be well-aligned.  The standard way to operate BIND for
+this case would be to have two database files.  First, for the forward
+zone, e.g., buzz.bomb.org ==> db.buzz.  Second, for the reverse
+mapping zone, e.g., 23.45.201.in-addr.arpa ==> db.201.445.23.
+Whenever an endpoint is added, deleted, or changed, both database
+files must be updated.  With MULTIZDB, both zones could be kept in a
+single file, making it more likely that both halves of an update would
+be done in synch.
+
+A new keyword, multizone, is recognized for named.boot.  It takes as
+its single argument the name of the file containing the resource
+records.  Like other directives in named.boot, the filename is
+relative to the assumed directory.
+
+A handful of new $ directives are recognized inside a multizone
+database file:
+
+	$primary
+	$secondary
+	$stub
+	$cache
+
+These are like the similarly-named directives from the named.boot
+file.  For $primary, if a database file is named, it is ignored.
+($secondary, $stub, and $cache are provided primarily for completeness
+since in most scenarios there is no real win in putting that
+information in a multizone database file instead of in named.boot.)
+These directives demark zones inside the multizone database file.
+Logically, it's as if the reading of a new file were begun at that
+point.  Multizone database files do not nest and may not contain
+$include directives.
+-- 
+  Bill@attmail.com                    billc@pegasus.ATT.COM    or
+  +1 908 576 2932, Fax x4473          William_J_Carpenter@ATT.COM
+  AT&T Bell Labs / AT&T EasyLink Services               LZ 3C-207

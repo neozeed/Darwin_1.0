@@ -1,0 +1,15 @@
+/^gethostent.o/c\
+gethnamaddr.o\
+herror.o\
+sethostent.o\
+res_query.o\
+res_mkquery.o\
+res_send.o\
+res_debug.o\
+res_data.o\
+res_comp.o\
+res_init.o\
+getnetnamadr.o\
+getnetbyname.o\
+getnetbyaddr.o\
+strerror.o\

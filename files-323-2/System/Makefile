@@ -1,0 +1,20 @@
+Destination = $(DSTROOT)/System
+
+# Common Makefile
+include $(MAKEFILEPATH)/CoreOS/ReleaseControl/Common.make
+
+# Subdirectories with their own makefiles
+SubDirs = Demos Library
+
+install::
+	$(_v) for subdir in $(SubDirs); do						\
+		(cd "$$subdir" && $(MAKE) $@ Destination="$(Destination)/$$subdir");	\
+	      done
+
+install::
+	@echo "Installing $(Destination)"
+	$(_v) $(INSTALL_DIRECTORY) "$(Destination)"
+	$(_v) (cd ../Local/Administration && $(MAKE) $@ Destination="$(Destination)/Administration");
+	$(_v) (cd ../Local/Applications   && $(MAKE) $@ Destination="$(Destination)/Applications"  );
+	$(_v) (cd ../Local/Developer      && $(MAKE) $@ Destination="$(Destination)/Developer"     );
+	$(_v) (cd ../Local/Documentation  && $(MAKE) $@ Destination="$(Destination)/Documentation" );

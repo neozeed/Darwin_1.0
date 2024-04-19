@@ -1,0 +1,26 @@
+#!/bin/sh
+
+UNAME_R=`/usr/bin/uname -r`
+
+OS_MAJOR=`echo $UNAME_R | /usr/bin/sed -e 's/^\([^.]*\).*/\1/'`
+OS_MINOR=`echo $UNAME_R | /usr/bin/sed -e 's/^[^.]*\.\([^.]*\).*/\1/'`
+
+if [ $OS_MAJOR -ne 5 ]; then
+	echo 'SunOS version is not 5.'
+	exit 1
+fi
+
+if [ $OS_MINOR -lt 6 ]; then
+	BITYPES=intNt_bitypes.h
+else
+	BITYPES=no_intNt_bitypes.h
+fi
+
+if /usr/bin/cmp -s $BITYPES bitypes.h; then
+	echo 'sys/bitypes.h is up-to-date.'
+else
+	/usr/bin/rm -f bitypes.h
+	/usr/bin/cp $BITYPES bitypes.h
+fi
+
+exit 0
